@@ -1,0 +1,5 @@
+---
+Checks: 'readability-*,performance-*,modernize-*,bugprone-*,clang-analyzer-*,-llvmlibc-*,-fuchsia-*,-cppcoreguidelines-avoid-magic-numbers,-modernize-use-trailing-return-type'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+FormatStyle: file

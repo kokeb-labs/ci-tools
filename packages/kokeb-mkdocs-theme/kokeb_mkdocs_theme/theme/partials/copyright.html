@@ -1,0 +1,16 @@
+{#- Kokeb Labs footer: organisation links, the repository, the licence, then the copyright line. -#}
+{% set kb = config.extra.kokeb or {} %}
+<div class="md-copyright kb-footer">
+  <nav class="kb-footer__links" aria-label="Kokeb Labs">
+    <a href="{{ kb.portal_url | d('https://kokeb-labs.github.io/') }}">Kokeb Labs docs</a>
+    <a href="{{ kb.org_url | d('https://github.com/kokeb-labs') }}">GitHub organisation</a>
+    {% if config.repo_url %}
+      <a href="{{ config.repo_url }}">Source</a>
+      <a href="{{ config.repo_url }}/issues">Report an issue</a>
+      <a href="{{ config.repo_url }}/blob/{{ kb.default_branch | d('main') }}/LICENSE">License</a>
+    {% endif %}
+  </nav>
+  {% if config.copyright %}
+    <div class="md-copyright__highlight">{{ config.copyright }}</div>
+  {% endif %}
+</div>

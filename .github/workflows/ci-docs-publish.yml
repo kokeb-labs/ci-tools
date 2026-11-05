@@ -1,0 +1,62 @@
+---
+name: 📚 Docs
+
+# This repository's documentation site, built and published by ru-mkdocs-publish at the same commit (the platform
+# documents itself on its own theme), plus self-tests of the documentation workflows.
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:  # any base branch, so stacked pull requests are checked too
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  docs:
+    uses: ./.github/workflows/ru-mkdocs-publish.yml
+    permissions:
+      contents: write  # the publish job pushes gh-pages; pull requests never publish
+    with:
+      # Release tags here move every few merges; publish one version per minor release.
+      release_version: minor
+      deploy: true
+
+  # Self-test: a site whose Jekyll source is a subdirectory with its config
+  # inside it (the layout product repos use with docs/), plus a Doxyfile whose
+  # OUTPUT_DIRECTORY parent does not exist. Never deploys.
+  selftest-site-in-subdir:
+    uses: ./.github/workflows/ru-docs-publish.yml
+    permissions:
+      contents: write  # the workflow's contract; deploy_pages is false
+    with:
+      doxygen_config: "tests/fixtures/site-in-subdir/Doxyfile"
+      jekyll_enabled: true
+      jekyll_source: "tests/fixtures/site-in-subdir"
+      jekyll_config: "tests/fixtures/site-in-subdir/_config/_config.yml"
+      jekyll_destination: "_site_selftest"
+      run_link_check: false
+      run_markdown_lint: false
+      run_spell_check: false
+      deploy_pages: false
+      artifact_name: "docs-html-selftest-subdir"
+
+  # Self-test of ru-mkdocs-publish with versioning: false on the organisation-site fixture of the theme package: the
+  # strict build, the plugin's unversioned switch and the offline link check, through the real workflow. Never
+  # deploys (pull requests never deploy, and deploy is false).
+  selftest-mkdocs-unversioned:
+    uses: ./.github/workflows/ru-mkdocs-publish.yml
+    permissions:
+      contents: write
+    with:
+      mkdocs_config: packages/kokeb-mkdocs-theme/tests/fixtures/org-site/mkdocs.yml
+      check_commands: ""
+      versioning: false
+      lighthouse: false
+      screenshots: false
+      deploy: false

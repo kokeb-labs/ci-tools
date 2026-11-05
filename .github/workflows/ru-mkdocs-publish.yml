@@ -1,0 +1,562 @@
+---
+# Reusable workflow: build, check and publish a MkDocs (Material) documentation site, versioned with mike, with the
+# Doxygen API reference merged under api/.
+#
+#   pull request        strict build + figure / generated-table drift checks + offline link check + Lighthouse budget
+#                       + phone / desktop screenshots (artifacts); no deploy
+#   push to main        the same, then publish as version `dev` (also aliased `latest` until the first release)
+#   push of a v* tag    the same, then publish as version `vX.Y.Z` (the tag) and move the `latest` alias to it
+#
+# With `versioning: false` (the organisation portal, kokeb-labs.github.io) there are no versions: a push to the default
+# branch publishes the built site as the whole content of the deployment branch, at its root, in one ordinary commit.
+#
+# The theme, the plugin, figkit and the toolchain are the kokeb-mkdocs-theme package in packages/ of this
+# repository, installed at the commit of this workflow (a caller pinned to @v1 gets the theme released with v1), so a
+# site carries no CSS, templates or hooks of its own. docs/MIGRATING-TO-MKDOCS.md says how a repository adopts it,
+# docs/DOCS-STYLE-GUIDE.md what its pages contain and docs/ru-mkdocs-publish.md lists every input.
+name: "[RU] MkDocs Publish"
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        description: "Python used to build the site."
+        type: string
+        default: "3.12"
+      requirements:
+        description: >-
+          Optional pip requirements file installed after the theme package (extra MkDocs plugins). Skipped when the
+          file does not exist; the theme package already pins mkdocs, mkdocs-material, awesome-nav, pymdown and mike.
+        type: string
+        default: "requirements-docs.txt"
+      theme_ref:
+        description: >-
+          Ref of kokeb-labs/ci-tools to install the theme package from. Empty: the commit this workflow runs
+          from, so the theme always matches the workflow.
+        type: string
+        default: ""
+      mkdocs_config:
+        description: >-
+          Path of the site configuration. A repository that keeps tool configuration out of its root passes
+          _config/mkdocs.yml (with docs_dir: ../docs); the theme then takes the folder that holds docs_dir as the
+          repository root (snippets, repository links, figures) and the check commands get it as KOKEB_DOCS_CONFIG.
+        type: string
+        default: "mkdocs.yml"
+      submodules:
+        description: "Submodules to check out with the repository: 'false', 'true' (top level) or 'recursive'."
+        type: string
+        default: "false"
+      submodule_paths:
+        description: >-
+          Space-separated submodule paths to initialise (shallow) after checkout, nested ones included: each parent
+          submodule on the way is initialised without recursion, e.g. 'lib/core/drivers/internal/pincfg'. Use it
+          instead of 'recursive' when the checks need a few nested submodules.
+        type: string
+        default: ""
+      check_commands:
+        description: >-
+          Shell lines run before the build, with GH_TOKEN set to the job's read-only token (for commands that read the
+          GitHub API); any failure fails the job. The default runs the figure drift check and
+          the generated-region check (kokeb-docs check), or a repository's own tools/figkit and tools/docs/gen.py
+          when it still carries them.
+        type: string
+        default: |
+          if [ -f tools/figkit/build.py ]; then python3 tools/figkit/build.py --check; fi
+          if [ -f tools/docs/gen.py ]; then python3 tools/docs/gen.py --check; fi
+          if [ ! -f tools/figkit/build.py ] && [ ! -f tools/docs/gen.py ]; then kokeb-docs check; fi
+      doxygen_config:
+        description: "Doxyfile for the API reference, relative to doxygen_working_directory. Empty: no API."
+        type: string
+        default: ""
+      doxygen_working_directory:
+        description: "Directory Doxygen runs in; relative paths in the Doxyfile resolve against it."
+        type: string
+        default: "."
+      doxygen_html_dir:
+        description: >-
+          Directory of the generated HTML, relative to doxygen_working_directory. Empty: read OUTPUT_DIRECTORY and
+          HTML_OUTPUT from the Doxyfile.
+        type: string
+        default: ""
+      api_dir:
+        description: "Folder of the site that receives the Doxygen HTML (match extra.api_dir in mkdocs.yml)."
+        type: string
+        default: "api"
+      link_check:
+        description: "Run lychee offline on the built site (internal links, anchors and images, API included)."
+        type: boolean
+        default: true
+      link_check_args:
+        description: "Extra lychee arguments, for example --exclude-path patterns."
+        type: string
+        default: ""
+      lighthouse:
+        description: "Run Lighthouse on the built site (home page and the first navigation pages) against the budgets."
+        type: boolean
+        default: true
+      lighthouse_budgets:
+        description: >-
+          Minimum Lighthouse category scores (0-1, median of three runs, mobile emulation), space-separated
+          category=score pairs. A score below its minimum fails the job.
+        type: string
+        default: "performance=0.8 accessibility=0.95 best-practices=0.9 seo=0.9"
+      screenshots:
+        description: "Capture the home page and the first navigation pages at 375 and 1280 px, light and dark (artifact)."
+        type: boolean
+        default: true
+      versioning:
+        description: >-
+          true: a versioned site, published with mike (default branch -> dev_version, v* tag -> that version, with
+          latest_alias moved to it). false: one unversioned site (the organisation portal), published from the default
+          branch as the whole content of deployment_branch at its root (a custom domain only from a CNAME file in the site); tags publish nothing. The build
+          tells the theme plugin which (KOKEB_DOCS_VERSIONED), so site_url and the version selector match.
+        type: boolean
+        default: true
+      deploy:
+        description: >-
+          Publish to deployment_branch. Never happens on a pull_request event, whatever this says; callers usually
+          pass a repository-variable gate here.
+        type: boolean
+        default: false
+      deployment_branch:
+        description: "Branch GitHub Pages serves from."
+        type: string
+        default: "gh-pages"
+      dev_version:
+        description: "mike version name a push to the default branch publishes to."
+        type: string
+        default: "dev"
+      latest_alias:
+        description: "mike alias moved to each release (v* tag)."
+        type: string
+        default: "latest"
+      release_version:
+        description: >-
+          Version name a v* tag publishes: 'tag' (the tag itself, vX.Y.Z) or 'minor' (X.Y, a patch release replaces
+          the docs of its minor release).
+        type: string
+        default: "tag"
+      prune_legacy:
+        description: >-
+          On publish, remove every top-level entry of the deployment branch that is not a mike version or alias
+          (the old Jekyll / Doxygen site: development/, doxs/, html/, version_selector.html, ...), in the publish
+          commit. Kept: versions.json, index.html, 404.html, .nojekyll, CNAME, robots.txt.
+        type: boolean
+        default: true
+
+env:
+  NO_MKDOCS_2_WARNING: "1"
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build and check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      KOKEB_DOCS_VERSIONED: ${{ inputs.versioning }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+
+      - name: Initialise the listed submodules
+        if: ${{ inputs.submodule_paths != '' }}
+        env:
+          PATHS: ${{ inputs.submodule_paths }}
+        run: |
+          set -euo pipefail
+          init_path() {
+            local repo="." rest="$1" sub
+            while [ -n "$rest" ]; do
+              sub=""
+              while read -r _key p; do
+                case "$rest/" in "$p"/*) [ ${#p} -gt ${#sub} ] && sub="$p" ;; esac
+              done < <(git -C "$repo" config -f .gitmodules --get-regexp '\.path$' || true)
+              [ -n "$sub" ] || { echo "::error::$1: no submodule of $repo contains $rest"; exit 1; }
+              git -C "$repo" submodule update --init --depth 1 -- "$sub"
+              repo="$repo/$sub"
+              rest="${rest#"$sub"}"
+              rest="${rest#/}"
+            done
+          }
+          for p in $PATHS; do init_path "$p"; done
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: ${{ inputs.python_version }}
+          cache: pip
+          cache-dependency-path: |
+            ${{ inputs.requirements }}
+            ${{ inputs.mkdocs_config }}
+
+      - name: Install the theme and the site toolchain
+        env:
+          REQUIREMENTS: ${{ inputs.requirements }}
+          THEME_REPO: ${{ fromJSON(toJSON(job)).workflow_repository }}  # the repository of this workflow
+          THEME_SHA: ${{ fromJSON(toJSON(job)).workflow_sha }}  # the commit of this workflow
+          THEME_REF: ${{ inputs.theme_ref }}
+        run: |
+          set -euo pipefail
+          ref="${THEME_REF:-$THEME_SHA}"
+          repo="${THEME_REPO:-kokeb-labs/ci-tools}"
+          if [ -z "$ref" ]; then
+            echo "::warning::cannot tell which commit of $repo this workflow runs from; installing the theme from v1"
+            ref=v1
+          fi
+          echo "Theme: $repo@$ref"
+          python3 -m pip install "kokeb-mkdocs-theme @ git+https://github.com/$repo@$ref#subdirectory=packages/kokeb-mkdocs-theme"
+          if [ -f "$REQUIREMENTS" ]; then python3 -m pip install -r "$REQUIREMENTS"; fi
+
+      - name: Drift checks (figures, generated tables)
+        if: ${{ inputs.check_commands != '' }}
+        env:
+          CHECKS: ${{ inputs.check_commands }}
+          # kokeb-docs reads the site configuration from here, so a config outside the root needs no -f.
+          KOKEB_DOCS_CONFIG: ${{ inputs.mkdocs_config }}
+          # The job's read-only token, for commands that read the GitHub API (the portal's repository catalogue).
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          bash -euo pipefail -c "$CHECKS"
+
+      - name: Build the site (strict)
+        env:
+          CONFIG: ${{ inputs.mkdocs_config }}
+        run: python3 -m mkdocs build --strict --config-file "$CONFIG" --site-dir "$RUNNER_TEMP/site"
+
+      - name: Install Doxygen
+        if: ${{ inputs.doxygen_config != '' }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq doxygen graphviz
+
+      - name: Build the API reference
+        if: ${{ inputs.doxygen_config != '' }}
+        env:
+          DOXYFILE: ${{ inputs.doxygen_config }}
+          WORKDIR: ${{ inputs.doxygen_working_directory }}
+          HTML_DIR: ${{ inputs.doxygen_html_dir }}
+          API_DIR: ${{ inputs.api_dir }}
+        run: |
+          set -euo pipefail
+          cd "$WORKDIR"
+          # Doxygen creates only the last level of OUTPUT_DIRECTORY (build/doxygen needs build/).
+          outdir=$(doxygen -x "$DOXYFILE" 2>/dev/null | sed -n 's/^OUTPUT_DIRECTORY *= *//p' | tr -d '"')
+          if [ -n "$outdir" ]; then mkdir -p "$outdir"; fi
+          # A Doxyfile without its own stylesheet gets the Kokeb Labs API look (light / dark with the system).
+          if doxygen -x "$DOXYFILE" 2>/dev/null | grep -qE '^HTML_EXTRA_STYLESHEET *= *[^ ]'; then
+            doxygen "$DOXYFILE"
+          else
+            css=$(python3 -c 'import kokeb_mkdocs_theme.theme as t, pathlib; print(pathlib.Path(t.__file__).parent / "assets/kokeb/kokeb-doxygen.css")')
+            { cat "$DOXYFILE"; echo; echo "HTML_EXTRA_STYLESHEET = \"$css\""; echo "HTML_COLORSTYLE = AUTO_LIGHT"; } | doxygen -
+          fi
+          if [ -z "$HTML_DIR" ]; then
+            out=$(doxygen -x "$DOXYFILE" 2>/dev/null | sed -n 's/^OUTPUT_DIRECTORY *= *//p' | tr -d '"')
+            html=$(doxygen -x "$DOXYFILE" 2>/dev/null | sed -n 's/^HTML_OUTPUT *= *//p' | tr -d '"')
+            HTML_DIR="${out:-.}/${html:-html}"
+          fi
+          test -f "$HTML_DIR/index.html" || { echo "::error::no Doxygen index.html in $HTML_DIR"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/site/$API_DIR"
+          cp -a "$HTML_DIR/." "$RUNNER_TEMP/site/$API_DIR/"
+          echo "API reference: $(find "$RUNNER_TEMP/site/$API_DIR" -name '*.html' | wc -l) pages"
+
+      - name: Check links on the built site (offline)
+        if: ${{ inputs.link_check }}
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
+        with:
+          fail: true
+          args: >-
+            --offline --no-progress --include-fragments --index-files index.html
+            --root-dir ${{ runner.temp }}/site
+            --exclude-path '404\.html$'
+            ${{ inputs.link_check_args }}
+            '${{ runner.temp }}/site/**/*.html'
+
+      - name: Keep the built site
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: docs-site
+          path: ${{ runner.temp }}/site
+          retention-days: 7
+
+  quality:
+    name: Lighthouse and screenshots
+    needs: build
+    if: ${{ inputs.lighthouse || inputs.screenshots }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Fetch the built site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: docs-site
+          path: ${{ runner.temp }}/site
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - name: Install the theme tools
+        env:
+          THEME_REPO: ${{ fromJSON(toJSON(job)).workflow_repository }}  # the repository of this workflow
+          THEME_SHA: ${{ fromJSON(toJSON(job)).workflow_sha }}  # the commit of this workflow
+          THEME_REF: ${{ inputs.theme_ref }}
+          SCREENSHOTS: ${{ inputs.screenshots }}
+        run: |
+          set -euo pipefail
+          ref="${THEME_REF:-${THEME_SHA:-v1}}"
+          repo="${THEME_REPO:-kokeb-labs/ci-tools}"
+          extra=""
+          if [ "$SCREENSHOTS" = true ]; then extra="[screenshots]"; fi
+          python3 -m pip install "kokeb-mkdocs-theme${extra} @ git+https://github.com/$repo@$ref#subdirectory=packages/kokeb-mkdocs-theme"
+          if [ "$SCREENSHOTS" = true ]; then python3 -m playwright install --with-deps chromium; fi
+
+      - name: Pick the pages
+        id: pages
+        run: echo "list=$(kokeb-docs pages "$RUNNER_TEMP/site" | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+
+      - name: Lighthouse (budgets)
+        if: ${{ inputs.lighthouse }}
+        env:
+          PAGES: ${{ steps.pages.outputs.list }}
+          BUDGETS: ${{ inputs.lighthouse_budgets }}
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory site >/dev/null 2>&1 &
+          python3 - <<'PY'
+          import json, os
+          urls = ["http://127.0.0.1:8765/" + p.removesuffix("index.html") for p in os.environ["PAGES"].split()]
+          assertions = {}
+          for pair in os.environ["BUDGETS"].split():
+              cat, score = pair.split("=")
+              assertions[f"categories:{cat}"] = ["error", {"minScore": float(score), "aggregationMethod": "median-run"}]
+          rc = {"ci": {
+              "collect": {"url": urls, "numberOfRuns": 3,
+                          "settings": {"chromeFlags": "--no-sandbox --headless=new"}},
+              "assert": {"assertions": assertions},
+              "upload": {"target": "filesystem", "outputDir": "lighthouse"},
+          }}
+          with open("lighthouserc.json", "w") as f:
+              json.dump(rc, f, indent=2)
+          print(json.dumps(rc, indent=2))
+          PY
+          npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.json
+
+      - name: Keep the Lighthouse reports
+        if: ${{ always() && inputs.lighthouse }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: lighthouse-report
+          path: ${{ runner.temp }}/lighthouse
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Screenshots (375 px and 1280 px, light and dark)
+        if: ${{ inputs.screenshots }}
+        env:
+          PAGES: ${{ steps.pages.outputs.list }}
+        run: |
+          set -euo pipefail
+          args=()
+          for p in $PAGES; do args+=(--page "$p"); done
+          kokeb-docs screenshots "$RUNNER_TEMP/site" "$RUNNER_TEMP/screenshots" "${args[@]}"
+
+      - name: Keep the screenshots
+        if: ${{ always() && inputs.screenshots }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: docs-screenshots
+          path: ${{ runner.temp }}/screenshots
+          retention-days: 14
+          if-no-files-found: ignore
+
+  deploy:
+    name: Publish
+    needs: build
+    if: ${{ inputs.deploy && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write  # push to the deployment branch
+    concurrency:
+      group: mkdocs-publish-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      # Credentials stay in the checkout: this job pushes the deployment branch.
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: ${{ inputs.python_version }}
+          cache: pip
+          cache-dependency-path: |
+            ${{ inputs.requirements }}
+            ${{ inputs.mkdocs_config }}
+
+      - name: Install the theme and the site toolchain
+        env:
+          REQUIREMENTS: ${{ inputs.requirements }}
+          THEME_REPO: ${{ fromJSON(toJSON(job)).workflow_repository }}  # the repository of this workflow
+          THEME_SHA: ${{ fromJSON(toJSON(job)).workflow_sha }}  # the commit of this workflow
+          THEME_REF: ${{ inputs.theme_ref }}
+        run: |
+          set -euo pipefail
+          ref="${THEME_REF:-$THEME_SHA}"
+          repo="${THEME_REPO:-kokeb-labs/ci-tools}"
+          if [ -z "$ref" ]; then
+            echo "::warning::cannot tell which commit of $repo this workflow runs from; installing the theme from v1"
+            ref=v1
+          fi
+          echo "Theme: $repo@$ref"
+          python3 -m pip install "kokeb-mkdocs-theme @ git+https://github.com/$repo@$ref#subdirectory=packages/kokeb-mkdocs-theme"
+          if [ -f "$REQUIREMENTS" ]; then python3 -m pip install -r "$REQUIREMENTS"; fi
+
+      - name: Fetch the built site (for the API reference)
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: docs-site
+          path: ${{ runner.temp }}/built
+
+      - name: Publish at the root of the branch (unversioned)
+        if: ${{ !inputs.versioning }}
+        env:
+          BRANCH: ${{ inputs.deployment_branch }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          if [ "$REF_TYPE" != branch ] || [ "$REF_NAME" != "$DEFAULT_BRANCH" ]; then
+            echo "::notice::an unversioned site publishes only from $DEFAULT_BRANCH, not $REF_TYPE $REF_NAME"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          result=$(kokeb-docs publish-root "$RUNNER_TEMP/built" --branch "$BRANCH" \
+            --message "Publish the site from ${GITHUB_SHA::12}")
+          echo "Site: $result"
+          if [ "$result" = changed ]; then
+            git push origin "$BRANCH"
+          fi
+          echo "### Published the site at the root of \`$BRANCH\` ($result)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Work out the version
+        if: ${{ inputs.versioning }}
+        id: version
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          DEV: ${{ inputs.dev_version }}
+          LATEST: ${{ inputs.latest_alias }}
+          RELEASE_VERSION: ${{ inputs.release_version }}
+        run: |
+          set -euo pipefail
+          if [ "$REF_TYPE" = tag ] && [[ "$REF_NAME" =~ ^v([0-9]+)\.([0-9]+) ]]; then
+            if [ "$RELEASE_VERSION" = minor ]; then
+              version="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+            else
+              version="$REF_NAME"
+            fi
+            { echo "version=$version"; echo "aliases=$LATEST"; } >> "$GITHUB_OUTPUT"
+          elif [ "$REF_TYPE" = branch ] && [ "$REF_NAME" = "$DEFAULT_BRANCH" ]; then
+            # Until the first release, `latest` points at the dev version, so /latest/ links always work.
+            { echo "version=$DEV"; echo "aliases="; echo "claim_latest=true"; } >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::publishes only from $DEFAULT_BRANCH or a vX.Y[.Z] tag, not $REF_TYPE $REF_NAME"
+            exit 1
+          fi
+
+      - name: Publish with mike
+        if: ${{ inputs.versioning }}
+        env:
+          CONFIG: ${{ inputs.mkdocs_config }}
+          BRANCH: ${{ inputs.deployment_branch }}
+          VERSION: ${{ steps.version.outputs.version }}
+          ALIASES: ${{ steps.version.outputs.aliases }}
+          CLAIM_LATEST: ${{ steps.version.outputs.claim_latest }}
+          LATEST: ${{ inputs.latest_alias }}
+          API_DIR: ${{ inputs.api_dir }}
+          PRUNE: ${{ inputs.prune_legacy }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "$BRANCH:$BRANCH" || true
+          if [ "$PRUNE" = true ] && git rev-parse --verify -q "$BRANCH" >/dev/null; then
+            # The first publish replaces an older (Jekyll / Doxygen) site: everything at the top of the branch that
+            # is not a mike version or alias goes, in an ordinary commit (never a force push).
+            git worktree add -q "$RUNNER_TEMP/prune" "$BRANCH"
+            python3 - "$RUNNER_TEMP/prune" "$VERSION" "$LATEST" <<'PY'
+          import json, pathlib, subprocess, sys
+          root, version, latest = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3]
+          keep = {".git", "versions.json", "index.html", "404.html", ".nojekyll", "CNAME", "robots.txt", version, latest}
+          vj = root / "versions.json"
+          if vj.exists():
+              for v in json.loads(vj.read_text()):
+                  keep.add(v["version"])
+                  keep.update(v.get("aliases", []))
+          else:
+              keep.discard("index.html")  # an index.html without versions.json belongs to the old site
+              keep.discard("404.html")
+          gone = sorted(p.name for p in root.iterdir() if p.name not in keep)
+          if gone:
+              print("Removing the previous site:", " ".join(gone))
+              subprocess.run(["git", "-C", str(root), "rm", "-r", "-q", "-f", "--ignore-unmatch", "--", *gone], check=True)
+              subprocess.run(["rm", "-rf", "--", *[str(root / g) for g in gone]], check=True)
+              subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "Remove the previous documentation site"],
+                             check=True)
+          PY
+            git worktree remove --force "$RUNNER_TEMP/prune"
+          fi
+          if [ "$CLAIM_LATEST" = true ]; then
+            # Take the latest alias only if no release holds it yet.
+            holder=$(mike list --config-file "$CONFIG" --branch "$BRANCH" 2>/dev/null \
+              | grep -E "\[.*\b$LATEST\b.*\]" | awk '{print $1}' || true)
+            if [ -z "$holder" ] || [ "$holder" = "$VERSION" ]; then
+              ALIASES="$LATEST"
+            fi
+          fi
+          # shellcheck disable=SC2086  # ALIASES is empty or one word
+          mike deploy --config-file "$CONFIG" --branch "$BRANCH" --update-aliases --alias-type symlink \
+            --message "Publish docs $VERSION from ${GITHUB_SHA::12}" "$VERSION" $ALIASES
+          if [ -d "$RUNNER_TEMP/built/$API_DIR" ]; then
+            git worktree add "$RUNNER_TEMP/pages" "$BRANCH"
+            rm -rf "${RUNNER_TEMP:?}/pages/$VERSION/$API_DIR"
+            mkdir -p "$RUNNER_TEMP/pages/$VERSION"
+            cp -a "$RUNNER_TEMP/built/$API_DIR" "$RUNNER_TEMP/pages/$VERSION/$API_DIR"
+            touch "$RUNNER_TEMP/pages/.nojekyll"
+            git -C "$RUNNER_TEMP/pages" add -A
+            git -C "$RUNNER_TEMP/pages" commit -q -m "Add API reference to docs $VERSION" || true
+            git worktree remove "$RUNNER_TEMP/pages"
+          fi
+          mike set-default --config-file "$CONFIG" --branch "$BRANCH" "$LATEST"
+          # A missing page under the site root lands on the latest version instead of GitHub's 404.
+          git worktree add -q "$RUNNER_TEMP/root" "$BRANCH"
+          python3 -c 'import kokeb_mkdocs_theme.theme as t, pathlib, sys; sys.stdout.write((pathlib.Path(t.__file__).parent / "root-404.html").read_text())' \
+            > "$RUNNER_TEMP/root/404.html"
+          touch "$RUNNER_TEMP/root/.nojekyll"
+          git -C "$RUNNER_TEMP/root" add 404.html .nojekyll
+          git -C "$RUNNER_TEMP/root" commit -q -m "Root 404 page" || true
+          git worktree remove "$RUNNER_TEMP/root"
+          git push origin "$BRANCH"
+          {
+            echo "### Published docs \`$VERSION\`"
+            echo ""
+            mike list --config-file "$CONFIG" --branch "$BRANCH" | sed 's/^/    /'
+          } >> "$GITHUB_STEP_SUMMARY"

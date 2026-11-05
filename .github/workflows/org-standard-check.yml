@@ -1,0 +1,96 @@
+---
+# Checks that a repository carries the files every Kokeb Labs repository must have at its root, and that its
+# licence is MIT:
+#
+#   README.md, LICENSE, CHANGELOG.md, .github/CODEOWNERS   (plus any extra_files)
+#   LICENSE: the MIT licence text with a copyright line
+#
+# Caller pattern:
+#
+#   jobs:
+#     org-standard:
+#       uses: kokeb-labs/ci-tools/.github/workflows/org-standard-check.yml@v1
+#       permissions:
+#         contents: read
+#
+# The check is reported as "<calling job> / Organisation standard".
+name: 📋 [RU] Organisation standard
+
+on:
+  workflow_call:
+    inputs:
+      extra_files:
+        description: >-
+          More files that must exist, as paths relative to the repository root separated by spaces or newlines
+          (for example `SECURITY.md docs/index.md`). The organisation's own list is always checked.
+        type: string
+        required: false
+        default: ""
+
+permissions: {}
+
+jobs:
+  check:
+    name: Organisation standard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read  # checkout
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Required files and the MIT licence
+        env:
+          EXTRA_FILES: ${{ inputs.extra_files }}
+        run: |
+          set -euo pipefail
+          required=(README.md LICENSE CHANGELOG.md .github/CODEOWNERS)
+          for f in $EXTRA_FILES; do required+=("$f"); done
+          missing=0
+          for f in "${required[@]}"; do
+            if [ -f "$f" ] && [ -s "$f" ]; then
+              echo "ok: $f"
+            else
+              echo "::error file=$f::required file $f is missing or empty"
+              missing=$((missing + 1))
+            fi
+          done
+
+          licence_ok=0
+          if [ -f LICENSE ]; then
+            # Compare with whitespace collapsed, so line wrapping does not matter.
+            text="$(tr -s '[:space:]' ' ' < LICENSE)"
+            grant="Permission is hereby granted, free of charge, to any person obtaining a copy of this software"
+            grant="$grant and associated documentation files (the \"Software\"), to deal in the Software without"
+            grant="$grant restriction"
+            notice="The above copyright notice and this permission notice shall be included in all copies or"
+            notice="$notice substantial portions of the Software."
+            warranty="THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND"
+            if [[ "$text" != *"$grant"* ]] || [[ "$text" != *"$notice"* ]] || [[ "$text" != *"$warranty"* ]]; then
+              echo "::error file=LICENSE::LICENSE is not the MIT licence (its grant, notice or warranty text is missing)"
+            elif ! printf '%s\n' "$text" | grep -qiE 'copyright (\(c\) |© )?[0-9]{4}'; then
+              echo "::error file=LICENSE::LICENSE has no 'Copyright (c) <year> <holder>' line"
+            else
+              echo "ok: LICENSE is MIT"
+              licence_ok=1
+            fi
+          fi
+
+          {
+            echo "### Organisation standard"
+            echo ""
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            for f in "${required[@]}"; do
+              if [ -f "$f" ] && [ -s "$f" ]; then echo "| \`$f\` | present |"; else echo "| \`$f\` | **missing** |"; fi
+            done
+            if [ "$licence_ok" = 1 ]; then echo "| MIT licence | yes |"; else echo "| MIT licence | **no** |"; fi
+          } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+
+          if [ "$missing" -gt 0 ] || [ "$licence_ok" != 1 ]; then
+            echo "::error::the repository does not meet the organisation standard (see the job summary)"
+            exit 1
+          fi
+          echo "the repository meets the organisation standard"

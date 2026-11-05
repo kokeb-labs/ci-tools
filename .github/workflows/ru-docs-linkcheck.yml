@@ -1,0 +1,132 @@
+---
+name: 🔗 [RU] Documentation Link Check
+
+on:
+  workflow_call:
+    inputs:
+      checkout_recursive:
+        description: 'Checkout submodules recursively (useful for projects with documentation in submodules)'
+        required: false
+        type: boolean
+        default: false
+      paths:
+        description: 'Space-separated paths to check for broken links'
+        required: false
+        type: string
+        default: 'docs/** *.md **/docs/**'
+      fail_on_errors:
+        description: 'Fail the workflow if broken links are found'
+        required: false
+        type: boolean
+        default: true
+      timeout:
+        description: 'Timeout in seconds for each link check'
+        required: false
+        type: string
+        default: '10'
+      max_retries:
+        description: 'Maximum number of retries per request'
+        required: false
+        type: string
+        default: '3'
+      retry_wait_time:
+        description: 'Minimum wait time in seconds between retries'
+        required: false
+        type: string
+        default: '1'
+      exclude_private:
+        description: 'Exclude private/internal links'
+        required: false
+        type: boolean
+        default: true
+      exclude_mail:
+        description: 'Exclude mailto links'
+        required: false
+        type: boolean
+        default: true
+      verbose:
+        description: 'Enable verbose output'
+        required: false
+        type: boolean
+        default: false
+      config_file:
+        description: 'Path to lychee.toml config file (optional)'
+        required: false
+        type: string
+        default: ''
+      exclude_own_site:
+        description: >-
+          Skip links to this repository's own GitHub Pages site (https://<owner>.github.io/<repo>/) on pull requests,
+          where the pages a change links to are not published yet, and on other events while the site's latest/
+          version (the root, for <owner>.github.io) does not answer yet, as before a repository's first MkDocs publish.
+        required: false
+        type: boolean
+        default: true
+
+permissions: {}
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: ${{ inputs.checkout_recursive && 'recursive' || 'false' }}
+          fetch-depth: 0
+
+      - name: Own documentation site
+        id: own_site
+        if: ${{ inputs.exclude_own_site }}
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          owner=$(printf '%s' "$OWNER" | tr '[:upper:]' '[:lower:]')
+          repo=$(printf '%s' "$REPO" | tr '[:upper:]' '[:lower:]')
+          if [ "$repo" = "$owner.github.io" ]; then
+            site="https://$owner.github.io/"
+            probe="$site"
+          else
+            site="https://$owner.github.io/$repo/"
+            probe="${site}latest/"
+          fi
+          pattern="^$(printf '%s' "$site" | sed 's/\./\\./g')"
+          if [ "$EVENT" = pull_request ]; then
+            reason="a pull request: its pages are not published yet"
+          elif ! curl -fsS -o /dev/null --max-time 20 "$probe"; then
+            reason="$probe does not answer yet"
+          else
+            reason=""
+          fi
+          if [ -n "$reason" ]; then
+            echo "Not checking links to $site ($reason)"
+            echo "args=--exclude $pattern" >> "$GITHUB_OUTPUT"
+          else
+            echo "Checking links to $site"
+            echo "args=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Link check with Lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
+        with:
+          # `fail` is the action's own switch (default true); the inputs are
+          # booleans, so they are tested directly, not compared with 'true'.
+          fail: ${{ inputs.fail_on_errors }}
+          args: >-
+            ${{ inputs.config_file != '' && format('--config {0}', inputs.config_file) || '' }}
+            --no-progress
+            ${{ inputs.verbose && '--verbose' || '' }}
+            --format detailed
+            --timeout ${{ inputs.timeout }}
+            --max-retries ${{ inputs.max_retries }}
+            --retry-wait-time ${{ inputs.retry_wait_time }}
+            ${{ inputs.exclude_private && '--exclude-all-private' || '' }}
+            ${{ !inputs.exclude_mail && '--include-mail' || '' }}
+            ${{ steps.own_site.outputs.args }}
+            ${{ inputs.paths }}

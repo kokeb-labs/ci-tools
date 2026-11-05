@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kokeb-mkdocs-theme"
+version = "1.0.0"
+description = "The Kokeb Labs documentation theme for MkDocs: brand, layout, page checks and figkit, in one package."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+# Exact versions: every Kokeb Labs site builds with the same toolchain. ru-mkdocs-publish.yml installs this package at
+# the commit of the workflow itself, so a caller pinned to @v1 gets the theme and toolchain released with v1.
+dependencies = [
+  "mkdocs==1.6.1",
+  "mkdocs-material==9.8.0",
+  "mkdocs-awesome-nav==3.3.0",
+  "pymdown-extensions==12.3",
+  "mike==2.2.0",
+  "PyYAML==6.0.3",
+]
+
+[project.optional-dependencies]
+# Screenshots of the built site at phone and desktop widths (CI quality job, or locally).
+screenshots = ["playwright==1.64.1"]
+
+[project.scripts]
+kokeb-docs = "kokeb_mkdocs_theme.cli:main"
+
+[project.entry-points."mkdocs.themes"]
+kokeb = "kokeb_mkdocs_theme.theme"
+
+[project.entry-points."mkdocs.plugins"]
+kokeb = "kokeb_mkdocs_theme.plugin:KokebPlugin"
+
+[tool.setuptools.packages.find]
+include = ["kokeb_mkdocs_theme*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.html", "*.css", "*.js", "*.svg", "*.png", "*.ico", "*.json", "*.webmanifest"]

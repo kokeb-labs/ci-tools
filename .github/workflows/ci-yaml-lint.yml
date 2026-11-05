@@ -1,0 +1,22 @@
+---
+name: 📝 YAML Lint CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  yamllint:
+    name: YAML Lint
+    uses: ./.github/workflows/ru-yaml-lint.yml
+    with:
+      paths: '.github/workflows/*.yml,**/*.yml,**/*.yaml'
+      config_file: '_config/.yamllint'
+      strict_mode: false
+      exclude_patterns: '.git/**,node_modules/**,venv/**,.venv/**,_site/**,**/espidf-tools/**'

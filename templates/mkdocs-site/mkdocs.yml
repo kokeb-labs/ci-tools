@@ -1,0 +1,22 @@
+# Documentation site on the Kokeb Labs MkDocs platform: theme, plugin and toolchain come from the kokeb-mkdocs-theme
+# package in kokeb-labs/ci-tools. Preview locally:
+#
+#   pip install "git+https://github.com/kokeb-labs/ci-tools@v1\
+#   #subdirectory=packages/kokeb-mkdocs-theme"      (one line, without the backslash)
+#   mkdocs serve                                     http://127.0.0.1:8000
+#   mkdocs build --strict                            what CI runs
+#   kokeb-docs figures && kokeb-docs gen         refresh figures and generated tables
+#
+# Pages: docs/, order: docs/.nav.yml, rules: docs/DOCS-STYLE-GUIDE.md in ci-tools.
+site_name: CHIP Driver  # EDIT
+site_description: >-
+  One sentence: what the chip is, what the driver does, on which buses.
+repo_url: https://github.com/kokeb-labs/driver-example  # EDIT
+
+theme:
+  name: kokeb
+
+plugins:
+  - kokeb
+  - search
+  - awesome-nav

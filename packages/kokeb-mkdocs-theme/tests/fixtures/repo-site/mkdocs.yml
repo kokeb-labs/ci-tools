@@ -1,0 +1,7 @@
+site_name: Example
+repo_url: https://github.com/kokeb-labs/driver-example
+theme:
+  name: kokeb
+plugins:
+  - kokeb
+  - search

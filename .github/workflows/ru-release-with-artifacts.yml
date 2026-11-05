@@ -1,0 +1,76 @@
+---
+name: 📦 [RU] Release with Artifacts
+
+on:
+  workflow_call:
+    inputs:
+      build_workflow:
+        description: 'Name of the ESP32 build workflow'
+        required: false
+        type: string
+        default: 'esp32-examples-build-ci.yml'
+      artifact_pattern:
+        description: 'Pattern for firmware artifacts'
+        required: false
+        type: string
+        default: 'fw-.*'
+      draft:
+        description: 'Create as draft release'
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+      tag_name:
+        description: 'Tag name for release (defaults to github.ref_name)'
+        required: false
+        type: string
+        default: ''
+      fail_on_no_artifacts:
+        description: 'Fail if no firmware artifacts found'
+        required: false
+        type: boolean
+        default: false
+
+permissions: {}
+
+jobs:
+  release:
+    name: Create Release with Artifacts
+    runs-on: ubuntu-latest
+    # contents: write creates the release. Downloading artifacts from another
+    # workflow's run works with this token for the callers' repositories;
+    # actions: read is deliberately not requested, because existing callers
+    # grant only contents: write and would hit startup_failure.
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      # Get the build artifacts that were already tested
+      - name: Download build artifacts
+        uses: dawidd6/action-download-artifact@a92c7ae74cf1df8810783758581e485ac3aaa309  # v28
+        with:
+          workflow: ${{ inputs.build_workflow }}
+          commit: ${{ github.sha }}
+          path: artifacts/
+          name_is_regexp: true
+          name: ${{ inputs.artifact_pattern }}
+          if_no_artifact_found: ${{ inputs.fail_on_no_artifacts && 'fail' || 'warn' }}
+
+      # Create the release; GitHub writes the notes
+      - name: Create Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64  # v3.0.3
+        with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
+          files: artifacts/**/*
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true

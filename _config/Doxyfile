@@ -1,0 +1,157 @@
+#
+# Doxygen configuration for the Publish Docs project.
+# Run from the repository root with: `doxygen _config/Doxyfile`
+#
+
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = "Publish Docs API"
+PROJECT_BRIEF          = "Auto-generated API documentation for example C and C++ code used by the workflow guides."
+PROJECT_LOGO           =
+OUTPUT_DIRECTORY       = docs/doxygen
+CREATE_SUBDIRS         = NO
+ALLOW_UNICODE_NAMES    = NO
+OUTPUT_LANGUAGE        = English
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ABBREVIATE_BRIEF       = "The $name class" \
+                         "The $name widget" \
+                         "The $name file" \
+                         is \
+                         provides \
+                         specifies \
+                         contains \
+                         represents \
+                         a \
+                         an \
+                         the
+ALWAYS_DETAILED_SEC    = YES
+INLINE_INHERITED_MEMB  = YES
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = .
+STRIP_FROM_INC_PATH    = .
+SHORT_NAMES            = NO
+JAVADOC_AUTOBRIEF      = YES
+MULTILINE_CPP_IS_BRIEF = YES
+TAB_SIZE               = 4
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+BUILTIN_STL_SUPPORT    = YES
+CPP_CLI_SUPPORT        = NO
+SIP_SUPPORT            = NO
+IDL_PROPERTY_SUPPORT   = YES
+DISTRIBUTE_GROUP_DOC   = YES
+SUBGROUPING            = YES
+
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_PACKAGE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_ANON_NSPACES   = NO
+RESOLVE_UNNAMED_PARAMS = YES
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_SCOPE_NAMES       = NO
+SHOW_INCLUDE_FILES     = YES
+SHOW_GROUPED_MEMB_INC  = YES
+SHOW_USED_FILES        = YES
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
+INLINE_SOURCES         = YES
+SOURCE_BROWSER         = YES
+REFERENCES_RELATION    = YES
+REFERENCED_BY_RELATION = YES
+USE_HTAGS              = NO
+
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+WARN_AS_ERROR          = NO
+WARN_FORMAT            = "$file:$line: $text"
+WARN_LOGFILE           = docs/doxygen/doxygen-warnings.log
+
+INPUT                  = README.md \
+                         docs \
+                         cpp-ci-test
+INPUT_ENCODING         = UTF-8
+FILE_PATTERNS          = *.c \
+                         *.cpp \
+                         *.cc \
+                         *.cxx \
+                         *.h \
+                         *.hpp \
+                         *.hh \
+                         *.md
+RECURSIVE              = YES
+EXCLUDE                = docs/_site
+INCLUDE_PATH           = cpp-ci-test/include
+EXCLUDE_SYMLINKS       = NO
+EXCLUDE_PATTERNS       = */build/* \
+                         */.cache/*
+EXCLUDE_SYMBOLS        =
+INPUT_FILTER           =
+
+USE_MDFILE_AS_MAINPAGE = README.md
+FILTER_SOURCE_FILES    = NO
+SOURCE_TOOLTIPS        = YES
+
+ALIASES                =
+ALIASES                += "testcase=@par Test Case:\n"
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+GENERATE_DOCSET        = NO
+DOCSET_FEEDNAME        = "Publish Docs API Documentation"
+DOCSET_BUNDLE_ID       = com.example.publishdocs
+GENERATE_HTMLHELP      = NO
+GENERATE_QHP           = NO
+GENERATE_ECLIPSEHELP   = NO
+GENERATE_TREEVIEW      = YES
+ENUM_VALUES_PER_LINE   = 4
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = YES
+SEARCHENGINE           = YES
+TIMESTAMP              = YES
+
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_DOCBOOK       = NO
+GENERATE_AUTOGEN_DEF   = NO
+GENERATE_PERLMOD       = NO
+
+DIA_PATH               =
+HIDE_UNDOC_RELATIONS   = NO
+HAVE_DOT               = YES
+DOT_NUM_THREADS        = 0
+DOT_FONTPATH           =
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+GROUP_GRAPHS           = YES
+UML_LOOK               = YES
+UML_LIMIT_NUM_FIELDS   = 25
+TEMPLATE_RELATIONS     = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = YES
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = YES
+DOT_PATH               =
+DOTFILE_DIRS           =
+MSCFILE_DIRS           =
+DOT_GRAPH_MAX_NODES    = 50
+MAX_DOT_GRAPH_DEPTH    = 0
+DOT_MULTI_TARGETS      = YES
+GENERATE_LEGEND        = YES
+DOT_CLEANUP            = YES
+
+PYTHON_DOCSTRING       = NO

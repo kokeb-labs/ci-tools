@@ -1,0 +1,121 @@
+---
+# Developer Certificate of Origin check for pull requests.
+#
+# Fails when a commit of the pull request has no `Signed-off-by: Name <email>`
+# trailer whose name and email match the commit's author (`git commit -s`
+# writes one). Reads the commits through the GitHub API: no checkout, so the
+# pull request's code never runs here.
+#
+# Caller pattern:
+#
+#   on:
+#     pull_request:
+#   jobs:
+#     dco:
+#       uses: kokeb-labs/ci-tools/.github/workflows/dco.yml@v1
+#       permissions:
+#         contents: read
+#         pull-requests: read
+#
+# The check is reported as "<calling job> / DCO".
+name: ✍️ [RU] DCO sign-off
+
+on:
+  workflow_call:
+    inputs:
+      allow_bots:
+        description: >-
+          Accept commits whose GitHub author is a bot account (type Bot, or a login ending in [bot]), such as
+          Dependabot or github-actions, without a sign-off.
+        type: boolean
+        required: false
+        default: true
+      skip_merge_commits:
+        description: >-
+          Accept merge commits (more than one parent) without a sign-off; they add no authored change of their own.
+        type: boolean
+        required: false
+        default: true
+
+permissions: {}
+
+jobs:
+  dco:
+    name: DCO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read        # read the commits
+      pull-requests: read   # list the pull request's commits
+    steps:
+      - name: Check the sign-off of every commit
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+        env:
+          ALLOW_BOTS: ${{ inputs.allow_bots }}
+          SKIP_MERGE_COMMITS: ${{ inputs.skip_merge_commits }}
+        with:
+          script: |
+            // Every commit needs a Signed-off-by trailer naming its author (name and email, case-insensitive).
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.notice(`DCO: event ${context.eventName} has no pull request; nothing to check`);
+              return;
+            }
+            const allowBots = process.env.ALLOW_BOTS === "true";
+            const skipMerges = process.env.SKIP_MERGE_COMMITS === "true";
+            const norm = (s) => String(s || "").trim().replace(/\s+/g, " ").toLowerCase();
+            const SIGNOFF = /^\s*Signed-off-by:\s*(.+?)\s*<([^<>\s]+)>\s*$/gim;
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            if (typeof pr.commits === "number" && commits.length < pr.commits) {
+              core.setFailed(`DCO: the API listed ${commits.length} of ${pr.commits} commits (it stops at 250); ` +
+                "split the pull request so every commit can be checked");
+              return;
+            }
+
+            const bad = [];
+            let checked = 0;
+            for (const c of commits) {
+              const sha = c.sha.slice(0, 12);
+              const subject = (c.commit.message || "").split("\n")[0];
+              if (skipMerges && (c.parents || []).length > 1) {
+                core.info(`${sha} merge commit: skipped`);
+                continue;
+              }
+              const user = c.author || {};
+              if (allowBots && (user.type === "Bot" || /\[bot\]$/.test(user.login || ""))) {
+                core.info(`${sha} bot author ${user.login}: skipped`);
+                continue;
+              }
+              checked += 1;
+              const name = norm(c.commit.author && c.commit.author.name);
+              const email = norm(c.commit.author && c.commit.author.email);
+              const found = [...(c.commit.message || "").matchAll(SIGNOFF)].map((m) => [norm(m[1]), norm(m[2])]);
+              if (found.some(([n, e]) => n === name && e === email)) {
+                core.info(`${sha} signed off by its author`);
+                continue;
+              }
+              const why = found.length
+                ? `sign-off is ${found.map(([n, e]) => `${n} <${e}>`).join(", ")}, author is ${name} <${email}>`
+                : "no Signed-off-by line";
+              bad.push({ sha, subject, why });
+            }
+
+            const rows = bad.map((b) => `| \`${b.sha}\` | ${b.subject.replace(/\|/g, "\\|")} | ${b.why} |`);
+            if (bad.length) {
+              await core.summary
+                .addHeading("DCO: commits without a matching sign-off", 3)
+                .addRaw(["| Commit | Subject | Problem |", "| --- | --- | --- |", ...rows].join("\n") + "\n\n")
+                .addRaw("Add a sign-off to each commit with `git commit --amend -s` (last commit) or " +
+                        "`git rebase --signoff <base>` (all commits), then force-push the branch.\n")
+                .write();
+              for (const b of bad) core.error(`${b.sha} ${b.subject}: ${b.why}`);
+              core.setFailed(`DCO: ${bad.length} of ${checked} commit(s) lack a Signed-off-by line matching the author`);
+              return;
+            }
+            core.info(`DCO: all ${checked} checked commit(s) are signed off by their authors`);

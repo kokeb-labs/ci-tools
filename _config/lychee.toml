@@ -1,0 +1,30 @@
+# Lychee configuration file for link checking
+# See https://github.com/lycheeverse/lychee/blob/master/lychee.example.toml
+
+# Files/directories that should not be scanned (regex, relative to repository root)
+exclude_path = [
+    "_config/_includes",
+    "_config/_layouts",
+    "_config/_pages",
+    "_config/_sass",
+    "_config/_data",
+    "404\\.html",
+    "robots\\.txt",
+]
+
+# URLs that should not be checked (regex)
+exclude = [
+    # Jekyll template variables (URL-encoded Liquid syntax like %7B%7B = {{)
+    "^file://.*%7B%7B.*%7D%7D",
+    "^file://.*\\{\\{.*\\}\\}",
+    ".*%7B%7B.*%7D%7D",
+    ".*\\{\\{.*\\}\\}",
+]
+
+# Exclude private URLs
+exclude_all_private = true
+
+# Timeout settings
+timeout = 30
+max_retries = 3
+retry_wait_time = 2

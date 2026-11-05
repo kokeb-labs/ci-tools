@@ -1,0 +1,38 @@
+---
+name: 📝 Markdown Lint CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdownlint:
+    name: Markdown Lint
+    uses: ./.github/workflows/ru-markdown-lint.yml
+    with:
+      # =============================================================================
+      # File Selection
+      # =============================================================================
+      globs: 'docs/** *.md **/*.md'
+      exclude_patterns: '.git/**,node_modules/**,venv/**,.venv/**,_site/**,**/espidf-tools/**'
+
+      # =============================================================================
+      # Configuration
+      # =============================================================================
+      config_file: '_config/.markdownlint.json'
+
+      # =============================================================================
+      # Execution Options
+      # =============================================================================
+      # use_docker: false = Use official action (faster, recommended)
+      # use_docker: true  = Use Docker container (more control, supports exclude_patterns)
+      use_docker: false
+      fix: true  # Automatically fix fixable issues (does not commit changes)
+      separator: ''  # Separator between glob patterns (default: space)
+

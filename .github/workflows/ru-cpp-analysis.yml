@@ -1,0 +1,120 @@
+---
+name: 🔍 [RU] C++ Static Analysis
+
+on:
+  workflow_call:
+    inputs:
+      paths:
+        description: "Dirs to analyze (space-separated)"
+        type: string
+        required: false
+        default: "src inc examples"
+      std:
+        description: "C++ standard"
+        type: string
+        required: false
+        default: "c++17"
+      strict:
+        description: "Fail job if any issues found"
+        type: boolean
+        required: false
+        default: false
+      exclude:
+        description: "Paths to exclude (space-separated)"
+        type: string
+        required: false
+        default: ""
+      enable:
+        description: >
+          Checks to enable (comma-separated: all,warning,style,performance,
+          portability,information,unusedFunction,missingInclude)
+        type: string
+        required: false
+        default: "warning,style,performance,portability,information"
+      force:
+        description: "Force checking even with incomplete analysis"
+        type: boolean
+        required: false
+        default: false
+      max_configs:
+        description: >
+          Maximum configs to check (for template-heavy code, 0=unlimited)
+        type: number
+        required: false
+        default: 0
+
+permissions: {}
+
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run cppcheck (Docker)
+        id: run
+        shell: bash
+        env:
+          CPPCHECK_PATHS: ${{ inputs.paths }}
+          CPPCHECK_EXCLUDE: ${{ inputs.exclude }}
+          CPPCHECK_ENABLE: ${{ inputs.enable }}
+          CPPCHECK_FORCE: ${{ inputs.force }}
+          CPPCHECK_MAX_CONFIGS: ${{ inputs.max_configs }}
+          CPPCHECK_STD: ${{ inputs.std }}
+        run: |
+          set -euo pipefail
+
+          # Suppress missingIncludeSystem (system headers are not mounted) and
+          # unmatchedSuppression (inline suppressions that match nothing).
+          args=(
+            "--enable=${CPPCHECK_ENABLE}"
+            --suppress=missingIncludeSystem
+            --suppress=unmatchedSuppression
+            --inline-suppr
+            "--std=${CPPCHECK_STD}"
+          )
+          if [ "${CPPCHECK_FORCE}" = "true" ]; then
+            args+=(--force)
+          fi
+          if [ -n "${CPPCHECK_MAX_CONFIGS}" ] && [ "${CPPCHECK_MAX_CONFIGS}" != "0" ]; then
+            args+=("--max-configs=${CPPCHECK_MAX_CONFIGS}")
+          fi
+          args+=(--xml --output-file=/src/cppcheck_report.xml)
+
+          # cppcheck ignores paths with -i (there is no --exclude).
+          read -r -a excludes <<< "${CPPCHECK_EXCLUDE}"
+          for ex in "${excludes[@]}"; do
+            args+=(-i "/src/${ex}")
+          done
+          read -r -a paths <<< "${CPPCHECK_PATHS}"
+          for p in "${paths[@]}"; do
+            args+=("/src/${p}")
+          done
+
+          docker run --rm -v "$PWD":/src ghcr.io/facthunder/cppcheck:latest \
+            cppcheck "${args[@]}" 2>&1 | tee cppcheck_output.txt || true
+
+          if [ -s cppcheck_report.xml ]; then
+            echo "issues=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "issues=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload report
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: always()
+        with:
+          name: cppcheck-report
+          path: |
+            cppcheck_report.xml
+            cppcheck_output.txt
+          retention-days: 14
+
+      - name: Fail on issues (strict)
+        if: ${{ inputs.strict && steps.run.outputs.issues == 'true' }}
+        run: |
+          echo "Cppcheck reported issues (strict mode)"; exit 1

@@ -1,0 +1,7 @@
+site_name: Kokeb Labs
+repo_url: https://github.com/kokeb-labs/kokeb-labs.github.io
+theme:
+  name: kokeb
+plugins:
+  - kokeb
+  - search

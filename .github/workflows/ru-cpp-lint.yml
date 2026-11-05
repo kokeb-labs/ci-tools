@@ -1,0 +1,194 @@
+---
+name: 🔧 [RU] C++ Linting Tools
+
+on:
+  workflow_call:
+    inputs:
+      clang_version:
+        description: "Clang major version"
+        type: string
+        required: false
+        default: "20"
+      clang_format_config:
+        description: "Path to clang-format configuration file"
+        type: string
+        required: false
+        default: "_config/.clang-format"
+      clang_tidy_config:
+        description: "Path to clang-tidy configuration file"
+        type: string
+        required: false
+        default: "_config/.clang-tidy"
+      tidy_checks:
+        description: "clang-tidy checks (comma-separated glob patterns, use - prefix to disable)"
+        type: string
+        required: false
+      extensions:
+        description: "File extensions to check (comma-separated)"
+        type: string
+        required: false
+        default: "c,cpp,cc,cxx,h,hpp"
+      ignore:
+        description: "Files or directories to exclude from linting (pipe-separated)"
+        type: string
+        required: false
+        default: "build|.git"
+      files_changed_only:
+        description: "Only lint files that have been changed in the pull request"
+        type: boolean
+        required: false
+        default: false
+      lines_changed_only:
+        description: "Only inspect lines that have changed in the pull request"
+        type: boolean
+        required: false
+        default: false
+      step_summary:
+        description: "Add a summary of linting results to the workflow step summary"
+        type: boolean
+        required: false
+        default: true
+      file_annotations:
+        description: "Display linting errors and warnings as file annotations in the GitHub UI"
+        type: boolean
+        required: false
+        default: true
+      thread_comments:
+        description: "Post a single, collapsible thread comment in a pull request detailing all linting issues"
+        type: boolean
+        required: false
+        default: false
+
+permissions: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # pull-requests: write is used by thread_comments and file_annotations. A job
+    # cannot ask for more than its caller grants, so callers must grant it.
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Prepare clang configuration
+        env:
+          FORMAT_CONFIG: ${{ inputs.clang_format_config }}
+          TIDY_CONFIG: ${{ inputs.clang_tidy_config }}
+        run: |
+          set -e
+
+          if [ -n "$FORMAT_CONFIG" ]; then
+            if [ -f "$FORMAT_CONFIG" ]; then
+              if [ "$FORMAT_CONFIG" = ".clang-format" ]; then
+                echo "✅ Using existing .clang-format in repository root"
+              else
+                echo "✅ Linking clang-format config from $FORMAT_CONFIG"
+                ln -sf "$FORMAT_CONFIG" .clang-format
+              fi
+            else
+              echo "⚠️  clang-format config not found at $FORMAT_CONFIG"
+            fi
+          fi
+
+          if [ -n "$TIDY_CONFIG" ]; then
+            if [ -f "$TIDY_CONFIG" ]; then
+              if [ "$TIDY_CONFIG" = ".clang-tidy" ]; then
+                echo "✅ Using existing .clang-tidy in repository root"
+              else
+                echo "✅ Linking clang-tidy config from $TIDY_CONFIG"
+                ln -sf "$TIDY_CONFIG" .clang-tidy
+              fi
+            else
+              echo "⚠️  clang-tidy config not found at $TIDY_CONFIG"
+            fi
+          fi
+
+      - name: Report C/C++ files to lint
+        env:
+          LINT_EXTENSIONS: ${{ inputs.extensions }}
+          IGNORE_RAW: ${{ inputs.ignore }}
+          FILES_CHANGED_ONLY: ${{ inputs.files_changed_only }}
+          LINES_CHANGED_ONLY: ${{ inputs.lines_changed_only }}
+        run: |
+          echo "🔍 Gathering files for clang-format and clang-tidy..."
+
+          IFS=',' read -ra EXT_ARRAY <<< "${LINT_EXTENSIONS}"
+          PATTERNS=()
+          for ext in "${EXT_ARRAY[@]}"; do
+            ext=$(echo "$ext" | xargs)
+            if [ -n "$ext" ]; then
+              PATTERNS+=("*.$ext")
+            fi
+          done
+
+          if [ ${#PATTERNS[@]} -eq 0 ]; then
+            echo "⚠️  No valid extensions specified in inputs.extensions (${LINT_EXTENSIONS})"
+            echo "✅ Skipping file list preview."
+            exit 0
+          fi
+
+          mapfile -t CANDIDATES < <(git ls-files -- "${PATTERNS[@]}")
+
+          if [ ${#CANDIDATES[@]} -eq 0 ]; then
+            echo "⚠️  No tracked files match extensions: ${PATTERNS[*]}"
+            echo "✅ Skipping file list preview."
+            exit 0
+          fi
+
+          if [ -n "$IGNORE_RAW" ]; then
+            IFS='|' read -ra IGNORE_ARRAY <<< "$IGNORE_RAW"
+          else
+            IGNORE_ARRAY=()
+          fi
+
+          FILTERED=()
+          for file in "${CANDIDATES[@]}"; do
+            skip=false
+            for patt in "${IGNORE_ARRAY[@]}"; do
+              patt=$(echo "$patt" | xargs)
+              if [ -n "$patt" ] && [[ "$file" == *"$patt"* ]]; then
+                skip=true
+                break
+              fi
+            done
+            if [ "$skip" = false ]; then
+              FILTERED+=("$file")
+            fi
+          done
+
+          if [ ${#FILTERED[@]} -eq 0 ]; then
+            echo "⚠️  All matched files are excluded by ignore patterns: ${IGNORE_RAW}"
+            echo "✅ Skipping file list preview."
+            exit 0
+          fi
+
+          echo "📄 Files eligible for clang-format/clang-tidy (${#FILTERED[@]}):"
+          for file in "${FILTERED[@]}"; do
+            echo "  - $file"
+          done
+
+          if [ "${FILES_CHANGED_ONLY}" = "true" ]; then
+            echo "ℹ️  files_changed_only=true: cpp-linter will further restrict to changed files."
+          fi
+          if [ "${LINES_CHANGED_ONLY}" = "true" ]; then
+            echo "ℹ️  lines_changed_only=true: diagnostics limited to changed lines."
+          fi
+
+      - name: Run C/C++ Linter
+        uses: cpp-linter/cpp-linter-action@774040af57f011a5fc47911f08ff0c3059d1835a  # v2.24.0
+        with:
+          style: file
+          tidy-checks: ${{ inputs.tidy_checks }}
+          version: ${{ inputs.clang_version }}
+          extensions: ${{ inputs.extensions }}
+          ignore: ${{ inputs.ignore }}
+          files-changed-only: ${{ inputs.files_changed_only }}
+          lines-changed-only: ${{ inputs.lines_changed_only }}
+          file-annotations: ${{ inputs.file_annotations }}
+          step-summary: ${{ inputs.step_summary }}
+          thread-comments: ${{ inputs.thread_comments }}
+          repo-root: '.'

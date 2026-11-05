@@ -1,0 +1,23 @@
+# Documentation site of ci-tools, built with the theme package in packages/ of this repository (the
+# platform documents itself on itself). Preview locally:
+#
+#   pip install ./packages/kokeb-mkdocs-theme
+#   mkdocs serve                      http://127.0.0.1:8000
+#   mkdocs build --strict             what CI runs
+#   kokeb-docs figures && kokeb-docs gen   refresh figures and the tables read from the workflows
+#
+# Pages: docs/, order: docs/.nav.yml, rules: docs/DOCS-STYLE-GUIDE.md.
+site_name: CI Tools
+site_description: >-
+  Reusable GitHub Actions workflows for the Kokeb Labs organisation: C/C++ lint and analysis, host builds, ESP-IDF
+  firmware builds, the documentation platform, link and lint checks, DCO and organisation-standard checks,
+  releases and a single required CI gate.
+repo_url: https://github.com/kokeb-labs/ci-tools
+
+theme:
+  name: kokeb
+
+plugins:
+  - kokeb
+  - search
+  - awesome-nav

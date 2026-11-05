@@ -1,0 +1,505 @@
+---
+name: 🏗️ [RU] ESP-IDF Build
+
+on:
+  workflow_call:
+    inputs:
+      project_dir:
+        description: >
+          Path to the ESP-IDF project (contains CMakeLists.txt)
+        type: string
+        required: true
+      project_tools_dir:
+        description: >
+          Path to project tools directory (contains scripts directly).
+          Leave empty to auto-detect.
+        type: string
+        required: false
+      clean_build:
+        description: "Skip caches for a clean build."
+        type: boolean
+        default: false
+      auto_clone_tools:
+        description: "Auto-clone tools repo if project_tools_dir is missing"
+        type: boolean
+        default: true
+      max_dec_total:
+        description: "Maximum total dec size in bytes for size budget enforcement (0 to disable)"
+        type: string
+        default: "0"
+
+env:
+  ESP32_PROJECT_PATH: ${{ inputs.project_dir }}
+  PROJECT_TOOLS_DIR: ${{ inputs.project_tools_dir }}
+
+permissions: {}
+
+jobs:
+  generate-matrix:
+    name: Generate Build Matrix
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+      project_tools_path: ${{ steps.validate.outputs.project_tools_path }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      # Same logic as .github/actions/ensure-tools-directory, inlined: a
+      # reusable workflow cannot reference an action in its own repository at
+      # the caller's ref, so `uses: ...@main` here would run main's copy even
+      # for callers pinned to @v1.
+      - name: Ensure tools directory present
+        id: validate
+        shell: bash
+        env:
+          INPUT_TOOLS_DIR: ${{ env.PROJECT_TOOLS_DIR }}
+          INPUT_PROJECT_DIR: ${{ env.ESP32_PROJECT_PATH }}
+          INPUT_AUTO_CLONE: ${{ inputs.auto_clone_tools }}
+        run: |
+          set -e
+
+          # Use hardcoded trusted repository URL and main branch
+          TOOLS_REPO_URL="https://github.com/kokeb-labs/espidf-tools.git"
+          TOOLS_BRANCH="main"
+          TOOLS_DIR_NAME=$(basename "${TOOLS_REPO_URL}" .git)
+          echo "Tools directory name: ${TOOLS_DIR_NAME}"
+
+          # Resolve project tools path using consistent logic - always output relative paths
+          if [ -n "${INPUT_TOOLS_DIR}" ]; then
+            # Use the input as-is if it's already relative, or make it relative if absolute
+            if [[ "${INPUT_TOOLS_DIR}" == /* ]]; then
+              # Convert absolute path to relative by removing the workspace root
+              SCRIPTS_PATH="${INPUT_TOOLS_DIR#"$(pwd)/"}"
+            else
+              SCRIPTS_PATH="${INPUT_TOOLS_DIR}"
+            fi
+          else
+            if [ -d "${INPUT_PROJECT_DIR}/${TOOLS_DIR_NAME}" ]; then
+              SCRIPTS_PATH="${INPUT_PROJECT_DIR}/${TOOLS_DIR_NAME}"
+            else
+              SCRIPTS_PATH="${TOOLS_DIR_NAME}"
+            fi
+          fi
+
+          echo "Resolved project tools path (relative): ${SCRIPTS_PATH}"
+
+          # Also resolve project directory path to absolute
+          if [[ "${INPUT_PROJECT_DIR}" == /* ]]; then
+            PROJECT_PATH="${INPUT_PROJECT_DIR}"
+          else
+            PROJECT_PATH="$(pwd)/${INPUT_PROJECT_DIR}"
+          fi
+          echo "Resolved project path: ${PROJECT_PATH}"
+
+          # Check if directory exists and handle accordingly
+          if [ ! -d "${SCRIPTS_PATH}" ]; then
+            # Only auto-clone if project_tools_dir was not explicitly provided
+            if [ -z "${INPUT_TOOLS_DIR}" ] && [ "${INPUT_AUTO_CLONE}" = "true" ]; then
+              echo "Auto-cloning tools repo to ${SCRIPTS_PATH}"
+
+              # Security: Using hardcoded trusted repository URL and main branch
+              echo "Cloning from trusted source: ${TOOLS_REPO_URL} (${TOOLS_BRANCH} branch)"
+              git clone --depth 1 --branch "${TOOLS_BRANCH}" \
+                "${TOOLS_REPO_URL}" "${SCRIPTS_PATH}"
+            else
+              echo "ERROR: Project tools directory not found at ${SCRIPTS_PATH}" >&2
+              echo "Available directories:" >&2
+              ls -la . || true
+              ls -la "${PROJECT_PATH}" || true
+              echo ""
+              if [ -n "${INPUT_TOOLS_DIR}" ]; then
+                echo "HINT: You specified project_tools_dir='${INPUT_TOOLS_DIR}' but it doesn't exist." >&2
+                echo "HINT: Check the path or ensure the submodule is properly initialized." >&2
+              else
+                echo "HINT: If using submodules, ensure the submodule is properly initialized." >&2
+                echo "HINT: If using auto-clone, set auto_clone_tools: true" >&2
+              fi
+              exit 1
+            fi
+          else
+            echo "Tools directory exists: ${SCRIPTS_PATH}"
+
+            # Check if this looks like a submodule (has .git file or directory)
+            if [ -f "${SCRIPTS_PATH}/.git" ] || [ -d "${SCRIPTS_PATH}/.git" ]; then
+              echo "Detected submodule at ${SCRIPTS_PATH}"
+              # Verify it's the correct submodule
+              if [ -f "${SCRIPTS_PATH}/.git" ]; then
+                SUBMODULE_URL=$(git config --file "${SCRIPTS_PATH}/.git" remote.origin.url 2>/dev/null || echo "")
+                if [ "$SUBMODULE_URL" = "${TOOLS_REPO_URL}" ]; then
+                  echo "✓ Confirmed correct submodule: ${SUBMODULE_URL}"
+                else
+                  echo "⚠️  Submodule URL mismatch: ${SUBMODULE_URL} (expected: ${TOOLS_REPO_URL})"
+                fi
+              fi
+            else
+              echo "Directory exists but doesn't appear to be a git repository"
+            fi
+          fi
+
+          # Debug: List directory contents and check permissions
+          echo "======================================================"
+          echo "TOOLS DIRECTORY VALIDATION"
+          echo "======================================================"
+          echo "Scripts path (relative): ${SCRIPTS_PATH}"
+          echo "Directory contents:"
+          ls -la "${SCRIPTS_PATH}" || echo "Failed to list directory"
+          echo ""
+          echo "Checking script permissions:"
+
+          # Validate required scripts exist and ensure they're executable
+          REQUIRED_SCRIPTS=("generate_matrix.py" "build_app.sh" "config_loader.sh")
+          for script in "${REQUIRED_SCRIPTS[@]}"; do
+            script_path="${SCRIPTS_PATH}/${script}"
+            if [ ! -f "${script_path}" ]; then
+              echo "ERROR: Required script '${script}' not found in ${SCRIPTS_PATH}" >&2
+              echo "Available scripts:" >&2
+              ls -la "${SCRIPTS_PATH}" || true
+              exit 1
+            else
+              echo "✓ Found ${script}: $(ls -la "${script_path}")"
+              # Ensure script is executable
+              chmod +x "${script_path}" 2>/dev/null || echo "Warning: Could not chmod ${script}"
+            fi
+          done
+
+          echo "======================================================"
+          echo "✓ All required scripts found and made executable in ${SCRIPTS_PATH}"
+          echo "project_tools_path=${SCRIPTS_PATH}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: '3.x'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml jq
+
+      - name: Generate matrix
+        id: gen
+        env:
+          TOOLS_PATH: ${{ steps.validate.outputs.project_tools_path }}
+        run: |
+          set -e
+          # Scripts directory and generate_matrix.py already validated
+          MATRIX=$(python3 "${TOOLS_PATH}/generate_matrix.py")
+          echo "matrix=${MATRIX}" >> "$GITHUB_OUTPUT"
+          echo "$MATRIX" | python3 -m json.tool
+
+  build:
+    name: >
+      Build ➜ ${{ matrix.idf_version }} · ${{ matrix.build_type }} ·
+      ${{ matrix.app_name }}
+    runs-on: ubuntu-latest
+    needs: generate-matrix
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    steps:
+      # The ESP-IDF image plus one build needs more disk than the smaller
+      # private-repo runners leave free. None of these SDKs are used here.
+      - name: Free runner disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Cache Python deps (for project scripts)
+        if: ${{ !inputs.clean_build }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/lib/python3.*/site-packages
+          key: >-
+            espidf-python-${{ runner.os }}-${{ matrix.idf_version_docker }}-
+            ${{ hashFiles(format('{0}/setup_common.sh',
+                                 needs.generate-matrix.outputs.project_tools_path),
+                          format('{0}/requirements.txt',
+                                 needs.generate-matrix.outputs.project_tools_path)) }}
+          restore-keys: |
+            espidf-python-${{ runner.os }}-
+
+      - name: Install Python deps (optional)
+        env:
+          TOOLS_PATH: ${{ needs.generate-matrix.outputs.project_tools_path }}
+        run: |
+          # Project tools directory already validated in generate-matrix job
+          if [ -f "${TOOLS_PATH}/requirements.txt" ]; then
+            python -m pip install --upgrade pip
+            pip install -r "${TOOLS_PATH}/requirements.txt"
+          fi
+
+      # esp-idf-ci-action runs `docker run espressif/idf:<tag>`, which pulls the
+      # image once with no retry; a transient Docker Hub error mid-pull fails
+      # the build (exit 125). Pull it here with retries so the action finds
+      # the image locally.
+      - name: Pre-pull ESP-IDF image (with retries)
+        env:
+          IDF_IMAGE: espressif/idf:${{ matrix.idf_version_docker }}
+        run: |
+          delays=(10 30 60)
+          for attempt in 1 2 3 4; do
+            echo "Pulling ${IDF_IMAGE} (attempt ${attempt}/4)"
+            if docker pull "${IDF_IMAGE}"; then
+              exit 0
+            fi
+            if [ "${attempt}" -lt 4 ]; then
+              delay="${delays[$((attempt - 1))]}"
+              echo "::warning::docker pull ${IDF_IMAGE} failed (attempt ${attempt}); retrying in ${delay}s"
+              sleep "${delay}"
+            fi
+          done
+          echo "::error::Could not pull ${IDF_IMAGE} after 4 attempts"
+          exit 1
+
+      - name: Build (espressif/esp-idf-ci-action)
+        id: build
+        uses: espressif/esp-idf-ci-action@e6f5c74232b1ccd4c97ed641f1e48553853f1fd5  # v1.2.0
+        with:
+          esp_idf_version: ${{ matrix.idf_version_docker }}
+          target: ${{ matrix.target }}
+          path: .
+          extra_docker_args: >-
+            -e IDF_CCACHE_ENABLE=1
+          command: |
+            set -e
+            export ESP32_PROJECT_PATH="${{ env.ESP32_PROJECT_PATH }}"
+            export IDF_TARGET="${{ matrix.target }}"
+            export BUILD_TYPE="${{ matrix.build_type }}"
+            export APP_TYPE="${{ matrix.app_name }}"
+            # Debug: List ESP32 project directory contents
+            echo "======================================================"
+            echo "ESP32 PROJECT DIRECTORY DEBUG INFO"
+            echo "======================================================"
+            echo "ESP32 project path: ${ESP32_PROJECT_PATH}"
+            echo "Current working directory: $(pwd)"
+            echo ""
+            echo "Current directory contents:"
+            ls -la . || echo "Failed to list current directory"
+            echo ""
+            echo "Looking for key files:"
+            for file in CMakeLists.txt app_config.yml main components; do
+              if [ -e "./${ESP32_PROJECT_PATH}/${file}" ]; then
+                echo "✓ Found ${file}: $(ls -la "./${ESP32_PROJECT_PATH}/${file}")"
+              else
+                echo "✗ Missing ${file}"
+              fi
+            done
+            echo "======================================================"
+            echo ""
+            # Debug: List scripts directory contents and check permissions
+            echo "======================================================"
+            echo "SCRIPTS DIRECTORY DEBUG INFO"
+            echo "======================================================"
+            echo "Scripts path: ${{ needs.generate-matrix.outputs.project_tools_path }}"
+            echo "Current working directory: $(pwd)"
+            echo ""
+            echo "Scripts directory contents:"
+            ls -la "${{ needs.generate-matrix.outputs.project_tools_path }}" || echo "Failed to list scripts directory"
+            echo ""
+            echo "Checking script permissions:"
+            for script in build_app.sh flash_app.sh config_loader.sh generate_matrix.py; do
+              script_path="${{ needs.generate-matrix.outputs.project_tools_path }}/$script"
+              if [ -f "$script_path" ]; then
+                echo "✓ Found $script: $(ls -la "$script_path")"
+                # Ensure script is executable
+                chmod +x "$script_path" 2>/dev/null || echo "Warning: Could not chmod $script"
+              else
+                echo "✗ Missing $script"
+              fi
+            done
+            echo "======================================================"
+            echo ""
+            # Project tools directory already validated in generate-matrix job
+            # Run build script with correct paths
+            "${{ needs.generate-matrix.outputs.project_tools_path }}/build_app.sh" \
+              --project-path "${ESP32_PROJECT_PATH}" \
+              "${APP_TYPE}" "${BUILD_TYPE}" "${{ matrix.idf_version }}"
+            # Find build directory - try multiple patterns
+            echo "Looking for build directory..."
+            echo "Changing to ESP-IDF project directory: ${ESP32_PROJECT_PATH}"
+            cd "${ESP32_PROJECT_PATH}" || {
+              echo "ERROR: Failed to change to ESP-IDF project directory: ${ESP32_PROJECT_PATH}"
+              exit 1
+            }
+            echo "Current directory contents:"
+            ls -la . || echo "Failed to list current directory"
+            echo ""
+            # Try different build directory patterns
+            build_dir=""
+            for pattern in "build*" "build-app-*" "build_*"; do
+              echo "Trying pattern: $pattern"
+              found_dirs=$(ls -td $pattern 2>/dev/null | head -1)
+              if [ -n "$found_dirs" ]; then
+                build_dir="$found_dirs"
+                echo "Found build directory with pattern '$pattern': $build_dir"
+                break
+              fi
+            done
+            # If still no build directory found, list all directories
+            if [ -z "$build_dir" ]; then
+              echo "No build directory found with standard patterns. All directories:"
+              ls -la | grep "^d" || echo "No directories found"
+              echo "All files and directories:"
+              ls -la
+              echo "ERROR: No build directory found!"
+              exit 1
+            fi
+
+            echo "Using build directory: $build_dir"
+            # Note: Cannot set GitHub outputs from inside Docker container
+            # Will use wildcard pattern for upload instead
+      - name: Upload artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: always()
+        with:
+          name: fw-${{ matrix.app_name }}-${{ matrix.idf_version_docker }}-${{ matrix.build_type }}
+          path: ${{ env.ESP32_PROJECT_PATH }}/build*
+          retention-days: 7
+
+  size-report:
+    name: Firmware Size Report
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write  # post the size summary as a PR comment
+    steps:
+      - name: Download all firmware artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: fw-*
+          merge-multiple: true
+          path: fw_artifacts/
+
+      - name: Build markdown summary
+        id: mk
+        shell: bash
+        run: |
+          set -uo pipefail
+          # Literal backticks for Markdown code spans in the table cells.
+          # shellcheck disable=SC2016
+          BT='`'
+          OUT="size-summary.md"
+          {
+            echo "## 📦 Firmware Size Summary"
+            echo ""
+            echo "| App | IDF | Target | Build | Flash/RAM summary |"
+            echo "|---|---|---|---|---|"
+          } > "$OUT"
+
+          found=0
+          shopt -s nullglob
+          # Preferred: use size.info (written by build_app.sh)
+          while IFS= read -r -d '' info; do
+            dir="$(dirname "$info")"
+            app=$(grep -E '^APP='    "$info" | cut -d= -f2- || echo "-")
+            idf=$(grep -E '^IDF='    "$info" | cut -d= -f2- || echo "-")
+            tgt=$(grep -E '^TARGET=' "$info" | cut -d= -f2- || echo "-")
+            bld=$(grep -E '^BUILD='  "$info" | cut -d= -f2- || echo "-")
+
+            if [[ -f "$dir/size.txt" ]]; then
+              summary="$(grep -E 'Total|text\s+data\s+bss' "$dir/size.txt" 2>/dev/null | \
+                        head -2 | tr -s ' ' ' ' | sed "s/^/${BT}/;s/\$/${BT}/" | \
+                        paste -sd '<br/>' - 2>/dev/null || echo "${BT}size.txt parse error${BT}")"
+            else
+              summary="${BT}size.txt missing${BT}"
+            fi
+
+            echo "| $app | $idf | $tgt | $bld |" \
+                 " ${summary:-\`See size.txt\`} |" \
+                 >> "$OUT"
+            found=$((found+1))
+          done < <(find fw_artifacts -type f -name "size.info" -print0)
+
+          # Fallback: if no size.info available, scan for size.txt
+          if [[ $found -eq 0 ]]; then
+            while IFS= read -r -d '' st; do
+              dir="$(dirname "$st")"
+              parent="$(basename "$dir")"
+              app="$(echo "$parent" | sed -E 's/^build_([^_]+).*/\1/')" || \
+                  app="-"
+              idf="-"; tgt="-"
+              bld="$(echo "$parent" | grep -Eo '(Debug|Release)' || \
+                  echo '-')"
+              summary="$(grep -E 'Total|text\s+data\s+bss' "$st" 2>/dev/null | \
+                        head -2 | tr -s ' ' ' ' | sed "s/^/${BT}/;s/\$/${BT}/" | \
+                        paste -sd '<br/>' - 2>/dev/null || echo "${BT}size.txt parse error${BT}")"
+              echo "| $app | $idf | $tgt | $bld |" \
+                   " ${summary:-\`See size.txt\`} |" \
+                   >> "$OUT"
+              found=$((found+1))
+            done < <(find fw_artifacts -type f -name "size.txt" -print0)
+          fi
+
+          if [[ $found -eq 0 ]]; then
+            echo "_No size artifacts found. Ensure build_app.sh writes" \
+                 "size.txt/size.info inside build dirs._" >> "$OUT"
+          fi
+
+          echo "file=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Comment summary on PR
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+        with:
+          script: |
+            // Only create comment if we have a valid issue number
+            if (!context.issue || !context.issue.number) {
+              console.log('No issue number available, skipping PR comment');
+              return;
+            }
+
+            const fs = require('fs');
+            const body = fs.readFileSync('${{ steps.mk.outputs.file }}',
+                                        'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      # Optional guardrail: fail if size exceeds your budget
+      - name: Enforce size budgets (optional)
+        if: always() && inputs.max_dec_total != '0'
+        shell: bash
+        env:
+          MAX_DEC_TOTAL: ${{ inputs.max_dec_total }}
+        run: |
+          set -uo pipefail
+          echo "Enforcing size budget: MAX_DEC_TOTAL=${MAX_DEC_TOTAL} bytes"
+          vio=0
+          while IFS= read -r -d '' st; do
+            dec=$(grep -E '^\s*text\s+data\s+bss\s+dec' -A1 "$st" 2>/dev/null | \
+                  tail -1 | awk '{print $4}' 2>/dev/null || echo 0)
+            dir="$(dirname "$st")"
+            if [[ "${dec:-0}" -gt "$MAX_DEC_TOTAL" ]]; then
+              echo "::error file=${st}::${dir} dec=${dec} exceeds" \
+                   "MAX_DEC_TOTAL=${MAX_DEC_TOTAL}"
+              vio=$((vio+1))
+            elif [[ "${dec:-0}" -eq 0 ]]; then
+              echo "::warning file=${st}::Could not parse size information from ${dir}"
+            fi
+          done < <(find fw_artifacts -type f -name "size.txt" -print0)
+          if [[ $vio -gt 0 ]]; then
+            echo "::error::Size budget exceeded in $vio build(s). Check individual errors above."
+            exit 1
+          else
+            echo "✅ All builds within size budget (${MAX_DEC_TOTAL} bytes)"
+          fi
