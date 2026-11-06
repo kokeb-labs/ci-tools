@@ -186,7 +186,7 @@ jobs:
           set -uo pipefail
           read -r -a paths <<< "$PATHS"
           existing=()
-          for p in "${paths[@]}"; do [ -e "$p" ] && existing+=("$p"); done
+          for p in "${paths[@]}"; do if [ -e "$p" ]; then existing+=("$p"); fi; done
           if [ "${#existing[@]}" -eq 0 ]; then
             echo "::error::none of the library_paths exist: $PATHS"
             exit 1
