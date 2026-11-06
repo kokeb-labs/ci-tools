@@ -1487,30 +1487,37 @@
 <h1 id="ru-cpp-lint">ru-cpp-lint<a class="headerlink" href="#ru-cpp-lint" title="Permanent link">&para;</a></h1>
 <p>Check C and C++ formatting with clang-format and lint with clang-tidy, with results as annotations on the pull
 request.</p>
-<p><code>ru-cpp-lint.yml</code> runs <a href="https://github.com/cpp-linter/cpp-linter-action">cpp-linter-action</a> with the repository's
-own <code>.clang-format</code> and <code>.clang-tidy</code>. It needs no build: clang-tidy runs without a compile database, so it sees
-headers and defines only as far as it can guess them. A repository with a CMake host build gets more exact
-results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
+<p><code>ru-cpp-lint.yml</code> runs clang-format 20.1.8 and clang-tidy 20.1.0 with the repository's own <code>.clang-format</code> and
+<code>.clang-tidy</code>. Both come from LLVM's builds published on PyPI, pinned and checked against their SHA-256, so no
+install script or third-party action runs. With <code>cmake_args</code>, it configures the project first and gives clang-tidy
+the CMake compile database, so clang-tidy sees the include paths and defines the compiler sees; without it,
+clang-tidy guesses and cannot find the project's own headers. Every finding fails the job unless
+<code>fail_on_findings</code> is false.</p>
 <h2 id="what-it-does">What it does<a class="headerlink" href="#what-it-does" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Checks out the repository.</li>
 <li>Links <code>clang_format_config</code> and <code>clang_tidy_config</code> to <code>.clang-format</code> and <code>.clang-tidy</code> at the root when they
    live elsewhere (the Kokeb Labs layout keeps them in <code>_config/</code>). A missing file is a warning, not an error.</li>
-<li>Lists the files it will lint (<code>git ls-files</code> with <code>extensions</code>, without <code>ignore</code>), so the log shows the scope.</li>
-<li>Runs clang-format (<code>style: file</code>) and clang-tidy at <code>clang_version</code>, on every file or only on changed files and
-   lines, with annotations, a step summary and, optionally, one thread comment on the pull request.</li>
+<li>Installs the pinned clang-format and clang-tidy.</li>
+<li>Selects the files: <code>git ls-files</code> with <code>extensions</code>, without <code>ignore</code>, and only the files a pull request changes
+   when <code>files_changed_only</code> is true.</li>
+<li>With <code>cmake_args</code>, configures CMake with <code>CMAKE_EXPORT_COMPILE_COMMANDS=ON</code> into <code>build-clang-tidy/</code>.</li>
+<li>Runs clang-format (<code>--dry-run -Werror</code>) and clang-tidy on every selected file in parallel. Each finding is an
+   annotation on its line; the run summary has a table and the clang-tidy findings. Compiler warnings that
+   clang-tidy echoes as <code>clang-diagnostic-*</code> are left to the build, except hard errors.</li>
+<li>Fails when any file has a finding (<code>fail_on_findings</code>, default true). <code>findings</code> is the number of such files.</li>
 </ol>
+<p><code>thread_comments</code> and <code>lines_changed_only</code> are still accepted but ignored: whole files are always checked.</p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">jobs</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">lint</span><span class="p">:</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kokeb-labs/ci-tools/.github/workflows/ru-cpp-lint.yml@v1</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">permissions</span><span class="p">:</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">pull-requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">with</span><span class="p">:</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">clang_format_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_config/.clang-format</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="nt">clang_tidy_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_config/.clang-tidy</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="nt">files_changed_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">with</span><span class="p">:</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">clang_format_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_config/.clang-format</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">clang_tidy_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_config/.clang-tidy</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="nt">files_changed_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </span></code></pre></div>
 <h2 id="jobs-and-permissions">Jobs and permissions<a class="headerlink" href="#jobs-and-permissions" title="Permanent link">&para;</a></h2>
 <!-- generated: jobs-ru-cpp-lint -->
@@ -1525,14 +1532,14 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 <tbody>
 <tr>
 <td><code>lint</code></td>
-<td><code>contents: read</code>, <code>pull-requests: write</code></td>
-<td><code>actions/checkout</code>; Prepare clang configuration; Report C/C++ files to lint; Configure for clang-tidy (compile_commands.json); Run C/C++ Linter; Fail on findings</td>
+<td><code>contents: read</code></td>
+<td><code>actions/checkout</code>; Prepare clang configuration; Install clang-format and clang-tidy (pinned, hash-checked); Select files; Configure for clang-tidy (compile_commands.json); clang-format and clang-tidy; Fail on findings</td>
 </tr>
 </tbody>
 </table>
 <!-- /generated -->
 
-<p><code>pull-requests: write</code> is for annotations and the thread comment. The caller grants it even with both turned off.</p>
+<p>The job needs only <code>contents: read</code>: annotations come from the log, and nothing is posted to the pull request.</p>
 <h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
 <!-- generated: inputs-ru-cpp-lint -->
 <table>
@@ -1549,7 +1556,7 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 <td><code>clang_version</code></td>
 <td>string</td>
 <td><code>20</code></td>
-<td>Clang major version</td>
+<td>Clang major version of clang-format and clang-tidy (20 is the supported version)</td>
 </tr>
 <tr>
 <td><code>clang_format_config</code></td>
@@ -1591,7 +1598,7 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 <td><code>lines_changed_only</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>Only inspect lines that have changed in the pull request</td>
+<td>Deprecated, ignored: whole files are always checked, which is stricter. Kept so existing callers do not break.</td>
 </tr>
 <tr>
 <td><code>step_summary</code></td>
@@ -1609,7 +1616,7 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 <td><code>thread_comments</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>Post a single, collapsible thread comment in a pull request detailing all linting issues</td>
+<td>Deprecated, ignored: findings are reported as annotations and in the run summary. Kept so existing callers do not break.</td>
 </tr>
 <tr>
 <td><code>cmake_args</code></td>
@@ -1644,9 +1651,9 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>startup_failure</code></td>
-<td>The caller does not grant <code>pull-requests: write</code></td>
-<td>Grant it on the calling job</td>
+<td>clang-tidy reports <code>file not found</code> for the project's own headers</td>
+<td>No compile database</td>
+<td>Set <code>cmake_args</code> so CMake exports one</td>
 </tr>
 <tr>
 <td>Every line of a file is reported by clang-format</td>
