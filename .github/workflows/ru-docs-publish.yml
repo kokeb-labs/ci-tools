@@ -877,7 +877,9 @@ jobs:
         if: >-
           steps.doxygen-check.outputs.doxygen_needed == 'true' &&
           steps.graphviz-check.outputs.graphviz_available == 'false'
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq graphviz
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq graphviz
       # Language Runtime Setup with Comprehensive Caching
       # =============================================================================
       - name: Setup Ruby (bundler cache)
