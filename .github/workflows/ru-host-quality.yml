@@ -1,0 +1,395 @@
+---
+# Host quality gates for a CMake C/C++ project, as the Kokeb Labs handbook defines them (ADR-0020):
+#   complexity  lizard (modified cyclomatic complexity, function length, parameters) over the library sources
+#   coverage    GCC --coverage build, ctest, gcovr over the library sources: lines, branches and, at the safety
+#               level, MC/DC (GCC condition coverage); floors per level
+#   sanitizers  clang build with AddressSanitizer and UndefinedBehaviorSanitizer, ctest
+# Each job fails on its limits when `enforce` is true. The limits default to the level's; any can be overridden.
+# Python tools are installed from pinned versions with their SHA-256 hashes.
+name: 🧮 [RU] Host quality gates
+
+on:
+  workflow_call:
+    inputs:
+      level:
+        description: "Assurance level: standard, high or safety. Sets the default limits (ADR-0020)."
+        type: string
+        required: false
+        default: "high"
+      source_dir:
+        description: "CMake source directory, relative to the repository root"
+        type: string
+        required: false
+        default: "."
+      cmake_args:
+        description: "Extra CMake configure arguments, e.g. -DMYCHIP_BUILD_TESTS=ON"
+        type: string
+        required: false
+        default: ""
+      ctest_args:
+        description: "Extra ctest arguments"
+        type: string
+        required: false
+        default: ""
+      library_paths:
+        description: >-
+          Space-separated paths of library code, relative to the repository root. Complexity is measured on them and
+          coverage counts only them; tests and examples are left out.
+        type: string
+        required: false
+        default: "inc src"
+      run_complexity:
+        description: "Run the complexity job"
+        type: boolean
+        required: false
+        default: true
+      run_coverage:
+        description: "Run the coverage job"
+        type: boolean
+        required: false
+        default: true
+      run_sanitizers:
+        description: "Run the sanitizer job"
+        type: boolean
+        required: false
+        default: true
+      max_ccn:
+        description: "Maximum modified cyclomatic complexity per function. Empty: the level's (15, 15, 10)."
+        type: string
+        required: false
+        default: ""
+      max_length:
+        description: "Maximum lines of code per function. Empty: the level's (80, 60, 60)."
+        type: string
+        required: false
+        default: ""
+      max_params:
+        description: "Maximum parameters per function. Empty: the level's (7, 6, 6)."
+        type: string
+        required: false
+        default: ""
+      min_line:
+        description: "Minimum line coverage, percent. Empty: the level's (0 = report only, 85, 100)."
+        type: string
+        required: false
+        default: ""
+      min_branch:
+        description: "Minimum branch coverage, percent. Empty: the level's (0 = report only, 75, 100)."
+        type: string
+        required: false
+        default: ""
+      min_condition:
+        description: "Minimum MC/DC (GCC condition) coverage, percent. Empty: the level's (off, report, 100)."
+        type: string
+        required: false
+        default: ""
+      enforce:
+        description: "Fail a job when a limit is exceeded. False reports only (the counts are in the outputs)."
+        type: boolean
+        required: false
+        default: true
+      artifact_name:
+        description: "Name of the uploaded reports artifact"
+        type: string
+        required: false
+        default: "host-quality-reports"
+    outputs:
+      complexity_findings:
+        description: "Number of functions over a complexity, length or parameter limit"
+        value: ${{ jobs.complexity.outputs.findings }}
+      line_coverage:
+        description: "Line coverage of the library code, percent"
+        value: ${{ jobs.coverage.outputs.line }}
+      branch_coverage:
+        description: "Branch coverage of the library code, percent"
+        value: ${{ jobs.coverage.outputs.branch }}
+      condition_coverage:
+        description: "MC/DC (condition) coverage of the library code, percent; empty when not measured"
+        value: ${{ jobs.coverage.outputs.condition }}
+
+permissions: {}
+
+jobs:
+  limits:
+    name: limits for the level
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    outputs:
+      ccn: ${{ steps.l.outputs.ccn }}
+      length: ${{ steps.l.outputs.length }}
+      params: ${{ steps.l.outputs.params }}
+      line: ${{ steps.l.outputs.line }}
+      branch: ${{ steps.l.outputs.branch }}
+      condition: ${{ steps.l.outputs.condition }}
+    steps:
+      - name: Resolve the limits (ADR-0020 defaults, then overrides)
+        id: l
+        env:
+          LEVEL: ${{ inputs.level }}
+          CCN: ${{ inputs.max_ccn }}
+          LENGTH: ${{ inputs.max_length }}
+          PARAMS: ${{ inputs.max_params }}
+          LINE: ${{ inputs.min_line }}
+          BRANCH: ${{ inputs.min_branch }}
+          CONDITION: ${{ inputs.min_condition }}
+        run: |
+          set -euo pipefail
+          case "$LEVEL" in
+            standard) d=(15 80 7 0 0 off) ;;
+            high)     d=(15 60 6 85 75 report) ;;
+            safety)   d=(10 60 6 100 100 100) ;;
+            *) echo "::error::level must be standard, high or safety, not '$LEVEL'"; exit 1 ;;
+          esac
+          {
+            echo "ccn=${CCN:-${d[0]}}"
+            echo "length=${LENGTH:-${d[1]}}"
+            echo "params=${PARAMS:-${d[2]}}"
+            echo "line=${LINE:-${d[3]}}"
+            echo "branch=${BRANCH:-${d[4]}}"
+            echo "condition=${CONDITION:-${d[5]}}"
+          } | tee -a "$GITHUB_OUTPUT"
+
+  complexity:
+    name: complexity (lizard)
+    if: ${{ inputs.run_complexity }}
+    needs: limits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      findings: ${{ steps.lizard.outputs.findings }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install lizard (pinned, hash-checked)
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          lizard==1.24.1 --hash=sha256:746060a3e9a375af7340b2d4c6aab307b8a8b4199339c36ddc7afc4188b53d1c
+          pathspec==1.1.1 --hash=sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189
+          Pygments==2.21.0 --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9
+          REQ
+          python3 -m venv "$RUNNER_TEMP/q"
+          "$RUNNER_TEMP/q/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
+      - name: Measure (modified cyclomatic complexity, length, parameters)
+        id: lizard
+        env:
+          PATHS: ${{ inputs.library_paths }}
+          CCN: ${{ needs.limits.outputs.ccn }}
+          LENGTH: ${{ needs.limits.outputs.length }}
+          PARAMS: ${{ needs.limits.outputs.params }}
+          ENFORCE: ${{ inputs.enforce }}
+        run: |
+          set -uo pipefail
+          read -r -a paths <<< "$PATHS"
+          existing=()
+          for p in "${paths[@]}"; do if [ -e "$p" ]; then existing+=("$p"); fi; done
+          if [ "${#existing[@]}" -eq 0 ]; then
+            echo "::error::none of the library_paths exist: $PATHS"
+            exit 1
+          fi
+          # -m: modified CCN (a switch counts once); -w: one line per function over a limit.
+          # lizard exits 1 when a function is over a limit; the count below decides (run: steps use bash -e).
+          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m -w -C "$CCN" -L "$LENGTH" -a "$PARAMS" "${existing[@]}" \
+            > "$RUNNER_TEMP/over.txt" || true
+          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m "${existing[@]}" > "$RUNNER_TEMP/complexity.txt" || true
+          n=$(grep -c ': warning: ' "$RUNNER_TEMP/over.txt" || true)
+          echo "findings=$n" >> "$GITHUB_OUTPUT"
+          mkdir -p reports && cp "$RUNNER_TEMP/complexity.txt" "$RUNNER_TEMP/over.txt" reports/
+          {
+            echo "### Complexity (limits: CCN $CCN, $LENGTH lines, $PARAMS parameters)"
+            echo
+            if [ "$n" -eq 0 ]; then echo "No function over a limit."; else echo '```'; cat "$RUNNER_TEMP/over.txt"; echo '```'; fi
+            echo
+            echo '```'
+            tail -n 4 "$RUNNER_TEMP/complexity.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          sed -E 's#^([^:]+):([0-9]+): warning: (.*)$#::error file=\1,line=\2::\3#' "$RUNNER_TEMP/over.txt"
+          if [ "$n" -gt 0 ] && [ "$ENFORCE" = "true" ]; then
+            echo "::error::$n function(s) over the limits of the ${{ inputs.level }} level (a deviation record covers a justified one)"
+            exit 1
+          fi
+          exit 0
+      - name: Upload the complexity report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-complexity
+          path: reports/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  coverage:
+    name: coverage (GCC, gcovr)
+    if: ${{ inputs.run_coverage }}
+    needs: limits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      line: ${{ steps.gcovr.outputs.line }}
+      branch: ${{ steps.gcovr.outputs.branch }}
+      condition: ${{ steps.gcovr.outputs.condition }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install GCC 14 and gcovr (pinned, hash-checked)
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends gcc-14 g++-14 cmake ninja-build; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
+            sleep $((attempt * 15))
+          done
+          cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          gcovr==8.7 --hash=sha256:2a68612c5981c388537f2e236c231a5d788b8bd9e406d13ced662c97b17e9784
+          Pygments==2.21.0 --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9
+          colorlog==6.12.0 --hash=sha256:30d392604e9110045a2c2aeefc27d7a017abbab63f3a8aee594eac0801df784e
+          Jinja2==3.1.6 --hash=sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67
+          MarkupSafe==3.0.4 --hash=sha256:8e124f974786f831d6043728e38296969d3579db8896fe004682f5758e613581
+          lxml==6.1.3 --hash=sha256:909f4e927bb051f7740d6367285fc60cdcfdaf0258c2dba4ff5ba7eadadc250c
+          REQ
+          python3 -m venv "$RUNNER_TEMP/q"
+          "$RUNNER_TEMP/q/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
+          g++-14 --version | head -1
+      - name: Configure and build with coverage
+        env:
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          CMAKE_ARGS: ${{ inputs.cmake_args }}
+          CONDITION: ${{ needs.limits.outputs.condition }}
+        run: |
+          set -euo pipefail
+          read -r -a extra <<< "$CMAKE_ARGS"
+          flags="--coverage -O0 -g"
+          # MC/DC: GCC 14 records whether each condition independently decided its outcome.
+          if [ "$CONDITION" != "off" ]; then flags="$flags -fcondition-coverage"; fi
+          cmake -S "$SOURCE_DIR" -B build-coverage -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_C_FLAGS="$flags" -DCMAKE_CXX_FLAGS="$flags" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage" "${extra[@]}"
+          cmake --build build-coverage --parallel
+      - name: Test
+        env:
+          CTEST_ARGS: ${{ inputs.ctest_args }}
+        run: |
+          set -euo pipefail
+          read -r -a extra <<< "$CTEST_ARGS"
+          ctest --test-dir build-coverage --output-on-failure --parallel "$(nproc)" "${extra[@]}"
+      - name: Measure (library code, test binaries that ran)
+        id: gcovr
+        env:
+          PATHS: ${{ inputs.library_paths }}
+          LINE: ${{ needs.limits.outputs.line }}
+          BRANCH: ${{ needs.limits.outputs.branch }}
+          CONDITION: ${{ needs.limits.outputs.condition }}
+          ENFORCE: ${{ inputs.enforce }}
+        run: |
+          set -uo pipefail
+          read -r -a paths <<< "$PATHS"
+          filters=()
+          esc() { printf '%s' "$1" | sed 's/[.[\*^$+?(){}|]/\\&/g'; }
+          for p in "${paths[@]}"; do
+            if [ -f "$p" ]; then filters+=(--filter "^$(esc "$p")\$"); else filters+=(--filter "^$(esc "${p%/}")/"); fi
+          done
+          # Only objects of binaries that ran: a compile-only target has notes but no data and would count as 0%.
+          mapfile -t dirs < <(find build-coverage -name '*.gcda' -printf '%h\n' | sort -u)
+          if [ "${#dirs[@]}" -eq 0 ]; then
+            echo "::error::no coverage data: did any test run?"
+            exit 1
+          fi
+          mkdir -p reports
+          args=(--root . --gcov-executable gcov-14 "${filters[@]}" --exclude-unreachable-branches
+                --exclude-throw-branches --json-summary reports/coverage-summary.json --cobertura reports/coverage.xml
+                --html-details reports/coverage.html --txt reports/coverage.txt)
+          "$RUNNER_TEMP/q/bin/gcovr" "${args[@]}" "${dirs[@]}"
+          read -r line branch condition < <(python3 - <<'PY'
+          import json
+          s = json.load(open("reports/coverage-summary.json"))
+          def pct(k):
+              v = s.get(k)
+              return "" if v is None else f"{float(v):.1f}"
+          print(pct("line_percent") or "0", pct("branch_percent") or "0", pct("condition_percent") or "-")
+          PY
+          )
+          if [ "$condition" = "-" ]; then condition=""; fi
+          { echo "line=$line"; echo "branch=$branch"; echo "condition=$condition"; } >> "$GITHUB_OUTPUT"
+          {
+            echo "### Coverage of library code (${{ inputs.level }} level)"
+            echo
+            echo "| Metric | Measured | Floor |"
+            echo "| --- | --- | --- |"
+            echo "| Lines | ${line}% | ${LINE}% |"
+            echo "| Branches | ${branch}% | ${BRANCH}% |"
+            if [ "$CONDITION" != "off" ]; then echo "| MC/DC (conditions) | ${condition:-n/a}% | ${CONDITION} |"; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          fail=0
+          below() { python3 -c "import sys; sys.exit(0 if float('$1' or 0) < float('$2') else 1)"; }
+          if below "$line" "$LINE"; then echo "::error::line coverage ${line}% is below ${LINE}%"; fail=1; fi
+          if below "$branch" "$BRANCH"; then echo "::error::branch coverage ${branch}% is below ${BRANCH}%"; fail=1; fi
+          if [[ "$CONDITION" =~ ^[0-9]+$ ]] && below "$condition" "$CONDITION"; then
+            echo "::error::MC/DC coverage ${condition:-0}% is below ${CONDITION}%"; fail=1
+          fi
+          if [ "$fail" -eq 1 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi
+          exit 0
+      - name: Upload the coverage report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-coverage
+          path: reports/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  sanitizers:
+    name: sanitizers (ASan, UBSan)
+    if: ${{ inputs.run_sanitizers }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install clang
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends clang cmake ninja-build; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
+            sleep $((attempt * 15))
+          done
+          clang++ --version | head -1
+      - name: Configure and build with AddressSanitizer and UndefinedBehaviorSanitizer
+        env:
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          CMAKE_ARGS: ${{ inputs.cmake_args }}
+        run: |
+          set -euo pipefail
+          read -r -a extra <<< "$CMAKE_ARGS"
+          # Any report is fatal (no recover); the frame pointer gives readable stacks.
+          flags="-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g"
+          cmake -S "$SOURCE_DIR" -B build-sanitizers -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_C_FLAGS="$flags" -DCMAKE_CXX_FLAGS="$flags" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" "${extra[@]}"
+          cmake --build build-sanitizers --parallel
+      - name: Test under the sanitizers
+        env:
+          CTEST_ARGS: ${{ inputs.ctest_args }}
+          ASAN_OPTIONS: "detect_leaks=1:halt_on_error=1:abort_on_error=1"
+          UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+        run: |
+          set -euo pipefail
+          read -r -a extra <<< "$CTEST_ARGS"
+          ctest --test-dir build-sanitizers --output-on-failure --parallel "$(nproc)" "${extra[@]}"

@@ -10,6 +10,7 @@ nav:
       - Catalogue: workflows.md
       - ru-ci-gate (CI gate): ru-ci-gate.md
       - ru-host-ci: ru-host-ci.md
+      - ru-host-quality: ru-host-quality.md
       - ru-cpp-lint: ru-cpp-lint.md
       - ru-cpp-analysis: ru-cpp-analysis.md
       - ru-mkdocs-publish: ru-mkdocs-publish.md

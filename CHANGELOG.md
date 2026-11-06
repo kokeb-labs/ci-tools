@@ -15,6 +15,16 @@ that heading.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-06
+
+### Added
+
+- `ru-host-quality`: complexity (lizard, modified cyclomatic complexity, length, parameters), coverage (GCC 14 and
+  gcovr: lines, branches and MC/DC from `-fcondition-coverage`) and AddressSanitizer/UndefinedBehaviorSanitizer
+  jobs, with the limits the Kokeb Labs handbook sets per assurance level (`level: standard | high | safety`). Tools
+  are pinned and hash-checked. Its self-test runs under the CI gate, including a fixture over every complexity
+  limit that must be reported.
+
 ## [1.1.0] - 2026-11-06
 
 ### Changed

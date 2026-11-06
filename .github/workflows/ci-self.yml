@@ -261,6 +261,12 @@ jobs:
     permissions:
       contents: read
 
+  selftest-host-quality:
+    name: Self-test host quality gates
+    uses: ./.github/workflows/ci-host-quality.yml
+    permissions:
+      contents: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
@@ -276,6 +282,7 @@ jobs:
       - selftest-markdown-lint
       - selftest-yaml-lint
       - selftest-docs-linkcheck
+      - selftest-host-quality
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:
