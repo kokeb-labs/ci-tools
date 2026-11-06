@@ -373,10 +373,11 @@ jobs:
         env:
           TIDY: ${{ steps.tidy.outputs.findings }}
           CPPCHECK: ${{ steps.cppcheck.outputs.findings }}
+          ARTIFACT: ${{ inputs.artifact_name }}
         run: |
           total=$(( ${TIDY:-0} + ${CPPCHECK:-0} ))
           echo "clang-tidy: ${TIDY:-not run}, cppcheck: ${CPPCHECK:-not run}"
           if [ "$total" -gt 0 ]; then
-            echo "::error::$total static-analysis finding(s); see the annotations and the ${{ inputs.artifact_name }} artifact"
+            echo "::error::$total static-analysis finding(s); see the annotations and the $ARTIFACT artifact"
             exit 1
           fi

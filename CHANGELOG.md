@@ -30,6 +30,12 @@ that heading.
   for them (and never fails the job), and the size table is always written to the run summary. On same-repository
   pull requests the comment is updated on each push instead of added again.
 
+### Security
+
+- `ru-yaml-lint` installs yamllint 1.38.0 pinned with SHA-256 hashes on `ubuntu-24.04`, instead of the latest
+  yamllint from an unpinned `pip install`.
+- `ru-host-ci` passes `artifact_name` through the environment instead of expanding it inside a shell command.
+
 ## [1.2.1] - 2026-11-06
 
 ### Changed
