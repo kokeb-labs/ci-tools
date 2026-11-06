@@ -19,8 +19,8 @@
 
 {% block fonts %}
   {#- Inter and JetBrains Mono come from this site (assets/kokeb/, @font-face in kokeb.css), never a third party.
-      Only the Latin text face is preloaded: it is on every page; the rest load when a page uses them. -#}
-  <link rel="preload" href="{{ 'assets/kokeb/inter-latin-wght-normal.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+      Not preloaded: a preload competes with the stylesheets for the first paint, and with font-display: optional
+      the first page renders in the metric-matched fallback anyway. -#}
 {% endblock %}
 
 {% block styles %}

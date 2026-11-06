@@ -15,6 +15,11 @@ that heading.
 
 ## [Unreleased]
 
+### Fixed
+
+- Bundled fonts use `font-display: optional` and are no longer preloaded. Swapping Inter in late made it the
+  largest paint and pushed Lighthouse performance on the portal from 0.89 to 0.79 (LCP about 3.1 s to 4.3 s).
+
 ### Changed
 
 - The kokeb docs theme ships Inter and JetBrains Mono itself (variable woff2, SIL Open Font License) instead of
