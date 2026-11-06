@@ -192,8 +192,9 @@ jobs:
             exit 1
           fi
           # -m: modified CCN (a switch counts once); -w: one line per function over a limit.
+          # lizard exits 1 when a function is over a limit; the count below decides (run: steps use bash -e).
           "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m -w -C "$CCN" -L "$LENGTH" -a "$PARAMS" "${existing[@]}" \
-            > "$RUNNER_TEMP/over.txt"
+            > "$RUNNER_TEMP/over.txt" || true
           "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m "${existing[@]}" > "$RUNNER_TEMP/complexity.txt" || true
           n=$(grep -c ': warning: ' "$RUNNER_TEMP/over.txt" || true)
           echo "findings=$n" >> "$GITHUB_OUTPUT"
@@ -318,7 +319,7 @@ jobs:
           print(pct("line_percent") or "0", pct("branch_percent") or "0", pct("condition_percent") or "-")
           PY
           )
-          [ "$condition" = "-" ] && condition=""
+          if [ "$condition" = "-" ]; then condition=""; fi
           { echo "line=$line"; echo "branch=$branch"; echo "condition=$condition"; } >> "$GITHUB_OUTPUT"
           {
             echo "### Coverage of library code (${{ inputs.level }} level)"
@@ -327,7 +328,7 @@ jobs:
             echo "| --- | --- | --- |"
             echo "| Lines | ${line}% | ${LINE}% |"
             echo "| Branches | ${branch}% | ${BRANCH}% |"
-            [ "$CONDITION" != "off" ] && echo "| MC/DC (conditions) | ${condition:-n/a}% | ${CONDITION} |"
+            if [ "$CONDITION" != "off" ]; then echo "| MC/DC (conditions) | ${condition:-n/a}% | ${CONDITION} |"; fi
           } >> "$GITHUB_STEP_SUMMARY"
           fail=0
           below() { python3 -c "import sys; sys.exit(0 if float('$1' or 0) < float('$2') else 1)"; }
