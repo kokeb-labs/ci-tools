@@ -27,7 +27,7 @@ jobs:
       # File Patterns
       # =============================================================================
       extensions: "c,cpp,cc,cxx,h,hpp"
-      ignore: "build|.git|docs|_site"
+      ignore: "build|.git|docs|_site|tests/fixtures/cpp-findings"
 
       # =============================================================================
       # Analysis Options
@@ -41,3 +41,27 @@ jobs:
       # =============================================================================
       # Use the configuration file for tidy checks (don't override)
       tidy_checks: ""  # Empty to use _config/.clang-tidy file
+
+  # Negative test: a file with known formatting problems must be reported (findings > 0).
+  finds-issues:
+    name: Lint reports a known-bad file
+    uses: ./.github/workflows/ru-cpp-lint.yml
+    with:
+      clang_version: "20"
+      clang_format_config: "_config/.clang-format"
+      clang_tidy_config: "_config/.clang-tidy"
+      ignore: "build|.git|docs|_site|cpp-ci-test|templates|packages|tests/fixtures/host-ci|tests/fixtures/jekyll-driver"
+      fail_on_findings: false
+
+  finds-issues-check:
+    name: Lint findings were counted
+    needs: finds-issues
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Expect findings
+        env:
+          FINDINGS: ${{ needs.finds-issues.outputs.findings }}
+        run: |
+          echo "findings=${FINDINGS}"
+          test "${FINDINGS:-0}" -gt 0
