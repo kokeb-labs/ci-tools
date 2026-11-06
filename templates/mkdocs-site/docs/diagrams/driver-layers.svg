@@ -1,40 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="816" viewBox="0 0 1200 816" role="img" aria-labelledby="driver-layers-title driver-layers-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
-<title id="driver-layers-title">Three layers, one of them yours</title>
-<desc id="driver-layers-desc">Layer diagram: the application calls the hardware-agnostic driver, which calls the communication interface, which the platform port implements with the MCU's SDK, which talks to the chip.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="912" viewBox="0 0 1200 912" role="img" aria-labelledby="driver-layers-title driver-layers-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="driver-layers-title">The layers, one of them yours</title>
+<desc id="driver-layers-desc">Layer diagram: your application calls the hardware-agnostic driver, which sends transactions through the communication interface to the platform port you write, which drives the chip; only the port changes from one MCU to the next.</desc>
 <defs><marker id="fk-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8893A2"/></marker></defs>
-<rect x="0.5" y="0.5" width="1199" height="815" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
-<text x="32" y="46.8" font-size="16" font-weight="700" letter-spacing="1.2" fill="#3730A3">ARCHITECTURE</text>
-<text x="32" y="85.6" font-size="32" font-weight="700" fill="#0E1726">Three layers, one of them yours</text>
-<text x="32" y="115.4" font-size="18" fill="#566070">The driver and the interface are the same on every MCU; the port is a small class.</text>
+<rect x="0.5" y="0.5" width="1199" height="911" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="46.8" font-size="16" font-weight="700" letter-spacing="1.2" fill="#7A360E">ARCHITECTURE</text>
+<text x="32" y="85.6" font-size="32" font-weight="700" fill="#0E1726">The layers, one of them yours</text>
+<text x="32" y="115.4" font-size="18" fill="#566070">Each arrow is a call. Only the port changes from one MCU to the next.</text>
 <rect x="32" y="131.4" width="1136" height="1" fill="#E2E7EE"/>
-<path d="M600 242.4 L600 274.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
-<path d="M600 371.4 L600 403.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
-<path d="M600 499.4 L600 531.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
-<path d="M600 628.4 L600 660.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
-<rect x="32" y="149.4" width="1136" height="89" rx="12" fill="#FFFFFF" stroke="#C9D1DB" stroke-width="1"/>
-<rect x="32" y="157.4" width="4" height="73" rx="2" fill="#64748B"/>
-<rect x="32" y="278.4" width="1136" height="89" rx="12" fill="#FBEFE6" stroke="#4F46E5" stroke-width="1.4"/>
-<rect x="32" y="286.4" width="4" height="73" rx="2" fill="#4F46E5"/>
-<rect x="32" y="407.4" width="1136" height="88" rx="12" fill="#FFFFFF" stroke="#C9D1DB" stroke-width="1"/>
-<rect x="32" y="415.4" width="4" height="72" rx="2" fill="#4F46E5"/>
-<rect x="32" y="535.4" width="1136" height="89" rx="12" fill="#E6F6F4" stroke="#0F8B80" stroke-width="1.4"/>
-<rect x="32" y="543.4" width="4" height="73" rx="2" fill="#0F8B80"/>
-<rect x="32" y="664.4" width="1136" height="89" rx="12" fill="#FFFFFF" stroke="#C9D1DB" stroke-width="1"/>
-<rect x="32" y="672.4" width="4" height="73" rx="2" fill="#64748B"/>
-<text x="56" y="184.4" font-size="20" font-weight="700" fill="#0E1726">Your application</text>
+<path d="M430 242.4 L430 298.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M430 395.4 L430 451.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M430 547.4 L430 603.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M430 700.4 L430 756.4" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<rect x="32" y="149.4" width="796" height="89" rx="12" fill="#E6F6F4" stroke="#0B7A72" stroke-width="1.4"/>
+<rect x="32" y="157.4" width="4" height="73" rx="2" fill="#0B7A72"/>
+<rect x="32" y="302.4" width="796" height="89" rx="12" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<rect x="32" y="310.4" width="4" height="73" rx="2" fill="#9A4A17"/>
+<rect x="32" y="455.4" width="796" height="88" rx="12" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<rect x="32" y="463.4" width="4" height="72" rx="2" fill="#9A4A17"/>
+<rect x="32" y="607.4" width="796" height="89" rx="12" fill="#E6F6F4" stroke="#0B7A72" stroke-width="1.4"/>
+<rect x="32" y="615.4" width="4" height="73" rx="2" fill="#0B7A72"/>
+<rect x="32" y="760.4" width="796" height="89" rx="12" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
+<rect x="32" y="768.4" width="4" height="73" rx="2" fill="#64748B"/>
+<rect x="868" y="302.4" width="300" height="128.3" rx="12" fill="#FBEFE6" stroke="#E9C3A6" stroke-width="1"/>
+<rect x="868" y="607.4" width="300" height="103.6" rx="12" fill="#E6F6F4" stroke="#A6DCD5" stroke-width="1"/>
+<text x="56" y="184.4" font-size="20" font-weight="700" fill="#0B5F59">Your application</text>
 <text x="56" y="215" font-size="17" fill="#2B3442">control loop, state machine, CLI</text>
-<text x="56" y="313.4" font-size="20" font-weight="700" fill="#3730A3">Hardware-agnostic core</text>
-<text x="56" y="344" font-size="17" fill="#2B3442">Driver&lt;Comm&gt;: configure, read, write, errors</text>
-<text x="56" y="442.4" font-size="20" font-weight="700" fill="#0E1726">Communication interface</text>
-<text x="56" y="471.6" font-size="16" font-family="'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" fill="#2B3442">transfer(), gpioSet(), delayUs()</text>
-<text x="56" y="570.4" font-size="20" font-weight="700" fill="#115E59">Platform port (your class)</text>
-<text x="56" y="601" font-size="17" fill="#2B3442">ESP-IDF, STM32 HAL, Zephyr, Linux</text>
-<text x="56" y="699.4" font-size="20" font-weight="700" fill="#0E1726">The chip</text>
-<text x="56" y="730" font-size="17" fill="#2B3442">SPI / I2C / UART and control pins</text>
-<rect x="32" y="765.8" width="14" height="14" rx="4" fill="#FBEFE6" stroke="#4F46E5" stroke-width="1.4"/>
-<text x="54" y="780.4" font-size="16" fill="#566070">this library</text>
-<rect x="161.8" y="765.8" width="14" height="14" rx="4" fill="#E6F6F4" stroke="#0F8B80" stroke-width="1.4"/>
-<text x="183.8" y="780.4" font-size="16" fill="#566070">you write</text>
-<rect x="282.1" y="765.8" width="14" height="14" rx="4" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
-<text x="304.1" y="780.4" font-size="16" fill="#566070">hardware</text>
+<text x="56" y="337.4" font-size="20" font-weight="700" fill="#7A360E">Hardware-agnostic core</text>
+<text x="56" y="368" font-size="17" fill="#2B3442">Driver&lt;Comm&gt;: configure, read, write, errors</text>
+<text x="56" y="490.4" font-size="20" font-weight="700" fill="#7A360E">Communication interface</text>
+<text x="56" y="519.6" font-size="16" font-family="'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" fill="#2B3442">transfer(), gpioSet(), delayUs()</text>
+<text x="56" y="642.4" font-size="20" font-weight="700" fill="#0B5F59">Your port</text>
+<text x="56" y="673" font-size="17" fill="#2B3442">ESP-IDF, STM32 HAL, Zephyr, Linux</text>
+<text x="56" y="795.4" font-size="20" font-weight="700" fill="#334155">The chip</text>
+<text x="56" y="826" font-size="17" fill="#2B3442">SPI, I2C or UART, and control pins</text>
+<rect x="405.4" y="258.4" width="49.1" height="24" rx="12" fill="#FFFFFF"/>
+<text x="430" y="276.2" font-size="16" font-weight="500" text-anchor="middle" fill="#566070">calls</text>
+<rect x="322.9" y="411.4" width="214.1" height="24" rx="12" fill="#FFFFFF"/>
+<text x="430" y="429.2" font-size="16" font-weight="500" text-anchor="middle" fill="#566070">register reads and writes</text>
+<rect x="329.6" y="563.4" width="200.8" height="24" rx="12" fill="#FFFFFF"/>
+<text x="430" y="581.2" font-size="16" font-weight="500" text-anchor="middle" fill="#566070">forwards to your hooks</text>
+<rect x="370.1" y="716.4" width="119.7" height="24" rx="12" fill="#FFFFFF"/>
+<text x="430" y="734.2" font-size="16" font-weight="500" text-anchor="middle" fill="#566070">bus transfers</text>
+<text x="886" y="337.4" font-size="20" font-weight="700" fill="#7A360E">Shared</text>
+<text x="886" y="360.8" font-size="17" fill="#7A360E">The core and the interface are</text>
+<text x="886" y="385.5" font-size="17" fill="#7A360E">the same code on every MCU</text>
+<text x="886" y="410.1" font-size="17" fill="#7A360E">and on the host.</text>
+<text x="886" y="642.4" font-size="20" font-weight="700" fill="#0B5F59">Yours</text>
+<text x="886" y="665.9" font-size="17" fill="#0B5F59">One small class per MCU or</text>
+<text x="886" y="690.5" font-size="17" fill="#0B5F59">board.</text>
+<rect x="32" y="861.8" width="14" height="14" rx="4" fill="#E6F6F4" stroke="#0B7A72" stroke-width="1.4"/>
+<text x="54" y="876.4" font-size="16" fill="#566070">you write</text>
+<rect x="152.3" y="861.8" width="14" height="14" rx="4" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<text x="174.3" y="876.4" font-size="16" fill="#566070">this library</text>
+<rect x="282.1" y="861.8" width="14" height="14" rx="4" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
+<text x="304.1" y="876.4" font-size="16" fill="#566070">hardware</text>
+<path d="M404.1 869.8L434.1 869.8" fill="none" stroke="#8893A2" stroke-width="2.2" marker-end="url(#fk-arrow-rail)"/>
+<text x="448.1" y="876.4" font-size="16" fill="#566070">calls</text>
 </svg>

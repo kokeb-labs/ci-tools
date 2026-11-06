@@ -142,6 +142,8 @@ class Fig:
     subtitle: str = ""
     kicker: str = ""
     profile: str = "detail"
+    #: ``(tone, label)`` pairs, drawn as a swatch like an ``accent`` card of that tone. ``("~solid", label)`` and
+    #: ``("~dashed", label)`` draw an arrow sample instead, to say what the two kinds of arrow mean.
     legend: list = field(default_factory=list)
     source: str = ""
     doc: str = ""
@@ -270,22 +272,32 @@ class Fig:
         tone: str = "slate",
         sub: str = "",
         dashed: bool = False,
+        sub_below: bool = False,
     ) -> Box:
-        """A tinted band that groups cards; the label sits in its top-left corner."""
+        """A tinted band that groups cards; the label sits in its top-left corner.
+
+        ``sub`` follows the label on the same line, or on the next line with ``sub_below`` (then start the cards at
+        ``region_inner_top(y, sub_below=True)``).
+        """
         self.rect(x, y, w, h, fill=f"{tone}.tint", stroke=f"{tone}.soft", sw=1.2, dash="6 4" if dashed else None,
                   layer="region", rx=self.k["rx"] + 4)
         size = self.k["region"]
         bb = self.text(x + 16, y + 12 + size, label.upper(), size=size, weight=700, color=f"{tone}.text",
                        bg=f"{tone}.tint", layer="label")
-        if sub:
-            self.text(bb.r + 12, y + 12 + size, sub, size=self.k["small"], color=f"{tone}.text", bg=f"{tone}.tint")
+        if sub and sub_below:
+            sb = self.text(x + 16, y + 12 + size + self.k["small"] * 1.45, sub, size=self.k["small"],
+                           color=f"{tone}.text", bg=f"{tone}.tint")
+            bb = sb if sb.r > bb.r else bb
+        elif sub:
+            bb = self.text(bb.r + 12, y + 12 + size, sub, size=self.k["small"], color=f"{tone}.text",
+                           bg=f"{tone}.tint")
         if bb.r > x + w - 8:
             self.problem(f"region label {label!r} is wider than its region")
         return Box(x, y, w, h)
 
-    def region_inner_top(self, y: float) -> float:
-        """Body y under a region label, where its first card can start."""
-        return y + 12 + self.k["region"] + 16
+    def region_inner_top(self, y: float, sub_below: bool = False) -> float:
+        """Body y under a region label (and its sub line with ``sub_below``), where its first card can start."""
+        return y + 12 + self.k["region"] + 16 + (self.k["small"] * 1.45 if sub_below else 0)
 
     def pill(self, x: float, y: float, s: str, tone: str = "slate", solid: bool = False, layer: str = "label",
              on: str = "card") -> Box:
@@ -555,12 +567,24 @@ class Fig:
             x, row_y = 0.0, y + 26
             for tone, label in self.legend:
                 w = 14 + 8 + text_width(label, size) + 24
+                if tone in ("~solid", "~dashed"):
+                    w += 22
                 if x + w > self.body_w:
                     x, row_y = 0.0, row_y + size * 2
-                self._put("label", f'<rect x="{_f(self._X(x))}" y="{_f(self._Y(row_y - size * 0.85))}" width="14" '
-                                   f'height="14" rx="4" fill="{C(tone + ".tint")}" stroke="{C(tone + ".strong")}" '
-                                   f'stroke-width="1.4"/>')
-                self.text(x + 22, row_y + 1, label, size=size, color="muted", bg="canvas")
+                if tone in ("~solid", "~dashed"):
+                    # An arrow sample: solid arrows run or call something, dashed arrows carry data.
+                    mk = self._marker("rail")
+                    da = ' stroke-dasharray="7 5"' if tone == "~dashed" else ""
+                    yy = self._Y(row_y - size * 0.35)
+                    self._put("label", f'<path d="M{_f(self._X(x))} {_f(yy)}L{_f(self._X(x + 30))} {_f(yy)}" '
+                                       f'fill="none" stroke="{C("rail")}" stroke-width="{_f(self.k["stroke"])}"'
+                                       f'{da} marker-end="url(#{mk})"/>')
+                    self.text(x + 44, row_y + 1, label, size=size, color="muted", bg="canvas")
+                else:
+                    self._put("label", f'<rect x="{_f(self._X(x))}" y="{_f(self._Y(row_y - size * 0.85))}" '
+                                       f'width="14" height="14" rx="4" fill="{C(tone + ".tint")}" '
+                                       f'stroke="{C(tone + ".strong")}" stroke-width="1.4"/>')
+                    self.text(x + 22, row_y + 1, label, size=size, color="muted", bg="canvas")
                 x += w
         self._end_y = self._maxy
         # Arrows must not run under a card, and edge labels must not sit on one.
