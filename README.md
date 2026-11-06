@@ -64,6 +64,7 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | --- | --- |
 | [`ru-ci-gate.yml`](.github/workflows/ru-ci-gate.yml) | One required check that passes only if every job passed ([guide](docs/ru-ci-gate.md)) |
 | [`ru-host-ci.yml`](.github/workflows/ru-host-ci.yml) | CMake configure/build/ctest, then clang-tidy 18 and cppcheck on the compile database ([guide](docs/ru-host-ci.md)) |
+| [`ru-host-quality.yml`](.github/workflows/ru-host-quality.yml) | Complexity (lizard), coverage with MC/DC (GCC 14, gcovr) and ASan/UBSan, gated by assurance level ([guide](docs/ru-host-quality.md)) |
 | [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | clang-format and clang-tidy through cpp-linter-action ([guide](docs/ru-cpp-lint.md)) |
 | [`ru-cpp-analysis.yml`](.github/workflows/ru-cpp-analysis.yml) | cppcheck over source directories ([guide](docs/ru-cpp-analysis.md)) |
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | The Kokeb Labs documentation platform: MkDocs with the shared theme, Doxygen under `/api/`, link check, Lighthouse budget and screenshots on PRs, versioned deploy with mike ([guide](docs/ru-mkdocs-publish.md), [migration](docs/MIGRATING-TO-MKDOCS.md), [style guide](docs/DOCS-STYLE-GUIDE.md)) |
@@ -119,6 +120,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-docs-linkcheck.yml`](.github/workflows/ru-docs-linkcheck.yml) | `contents: read` | checkout |
 | [`ru-docs-publish.yml`](.github/workflows/ru-docs-publish.yml) | `contents: write` | push to the deployment branch; required on pull requests too, although PRs never deploy |
 | [`ru-host-ci.yml`](.github/workflows/ru-host-ci.yml) | `contents: read` | checkout |
+| [`ru-host-quality.yml`](.github/workflows/ru-host-quality.yml) | `contents: read` | checkout |
 | [`ru-markdown-lint.yml`](.github/workflows/ru-markdown-lint.yml) | `contents: read` | checkout |
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | `contents: write` | push to the deployment branch (publish job only; the build and quality jobs read) |
 | [`ru-release.yml`](.github/workflows/ru-release.yml) | `contents: write` | create the GitHub Release |
@@ -166,6 +168,40 @@ See [the CI gate](#one-required-check-the-ci-gate) for the caller.
 | `allow_skipped` | string | no | `""` | Jobs (ids from `needs`) that may be skipped without failing the gate, separated by commas, spaces or newlines. Every other job must succeed. |
 | `verify_needs` | boolean | no | `true` | Read the calling workflow file and fail if a job is missing from the gate's `needs`, or if the gate job lacks `if: always()`. |
 <!-- inputs:ru-ci-gate.yml:end -->
+
+### ru-host-quality
+
+```yaml
+jobs:
+  quality:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-host-quality.yml@v1
+    permissions:
+      contents: read
+    with:
+      level: high                          # standard | high | safety (handbook ADR-0020)
+      cmake_args: "-DMYCHIP_BUILD_TESTS=ON"
+```
+
+<!-- inputs:ru-host-quality.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `level` | string | no | `high` | Assurance level: standard, high or safety. Sets the default limits (ADR-0020). |
+| `source_dir` | string | no | `.` | CMake source directory, relative to the repository root |
+| `cmake_args` | string | no | `""` | Extra CMake configure arguments, e.g. -DMYCHIP_BUILD_TESTS=ON |
+| `ctest_args` | string | no | `""` | Extra ctest arguments |
+| `library_paths` | string | no | `inc src` | Space-separated paths of library code, relative to the repository root. Complexity is measured on them and coverage counts only them; tests and examples are left out. |
+| `run_complexity` | boolean | no | `true` | Run the complexity job |
+| `run_coverage` | boolean | no | `true` | Run the coverage job |
+| `run_sanitizers` | boolean | no | `true` | Run the sanitizer job |
+| `max_ccn` | string | no | `""` | Maximum modified cyclomatic complexity per function. Empty: the level's (15, 15, 10). |
+| `max_length` | string | no | `""` | Maximum lines of code per function. Empty: the level's (80, 60, 60). |
+| `max_params` | string | no | `""` | Maximum parameters per function. Empty: the level's (7, 6, 6). |
+| `min_line` | string | no | `""` | Minimum line coverage, percent. Empty: the level's (0 = report only, 85, 100). |
+| `min_branch` | string | no | `""` | Minimum branch coverage, percent. Empty: the level's (0 = report only, 75, 100). |
+| `min_condition` | string | no | `""` | Minimum MC/DC (GCC condition) coverage, percent. Empty: the level's (off, report, 100). |
+| `enforce` | boolean | no | `true` | Fail a job when a limit is exceeded. False reports only (the counts are in the outputs). |
+| `artifact_name` | string | no | `host-quality-reports` | Name of the uploaded reports artifact |
+<!-- inputs:ru-host-quality.yml:end -->
 
 ### ru-host-ci
 

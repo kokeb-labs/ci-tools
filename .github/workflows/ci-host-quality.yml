@@ -1,0 +1,62 @@
+---
+name: 🧮 Host quality self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # The fixture project at the standard level, enforced: complexity within limits, tests pass under the
+  # sanitizers, and coverage is measured (report only at this level).
+  fixture-standard:
+    uses: ./.github/workflows/ru-host-quality.yml
+    permissions:
+      contents: read
+    with:
+      level: standard
+      source_dir: tests/fixtures/host-ci
+      library_paths: "tests/fixtures/host-ci/src/calc.cpp tests/fixtures/host-ci/include"
+      enforce: true
+      artifact_name: host-quality-fixture
+
+  fixture-coverage-measured:
+    needs: fixture-standard
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Coverage figures were produced
+        env:
+          LINE: ${{ needs.fixture-standard.outputs.line_coverage }}
+          BRANCH: ${{ needs.fixture-standard.outputs.branch_coverage }}
+        run: |
+          echo "lines ${LINE}%, branches ${BRANCH}%"
+          python3 -c "import sys; sys.exit(0 if float('${LINE:-0}') > 0 else 1)"
+
+  # A function over every limit must be reported (enforce: false, so the job itself passes).
+  too-complex:
+    uses: ./.github/workflows/ru-host-quality.yml
+    permissions:
+      contents: read
+    with:
+      level: safety
+      library_paths: tests/fixtures/quality
+      run_coverage: false
+      run_sanitizers: false
+      enforce: false
+      artifact_name: host-quality-too-complex
+
+  too-complex-reported:
+    needs: too-complex
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: The complex function was reported
+        env:
+          FINDINGS: ${{ needs.too-complex.outputs.complexity_findings }}
+        run: |
+          echo "findings=${FINDINGS}"
+          test "${FINDINGS:-0}" -gt 0
