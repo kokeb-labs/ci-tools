@@ -35,6 +35,8 @@ that heading.
 - `ru-yaml-lint` installs yamllint 1.38.0 pinned with SHA-256 hashes on `ubuntu-24.04`, instead of the latest
   yamllint from an unpinned `pip install`.
 - `ru-host-ci` passes `artifact_name` through the environment instead of expanding it inside a shell command.
+- `ru-markdown-lint` with `use_docker: true` pulled `markdownlint/markdownlint-cli2:latest`, an image that does not
+  exist; it now uses the author's image `davidanson/markdownlint-cli2`, pinned to v0.23.3 by digest.
 
 ## [1.2.1] - 2026-11-06
 
