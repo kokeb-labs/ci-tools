@@ -28,6 +28,10 @@ that heading.
   rules are fetched at this workflow's own commit; 15 unit tests and good and bad fixture repositories run under
   the CI gate.
 
+### Fixed
+
+- `tools/docs-migrate.py`: a character range listed twice in the emoji pattern (CodeQL `py/overly-large-range`).
+
 ## [1.4.0] - 2026-11-06
 
 ### Added
