@@ -122,8 +122,8 @@ jobs:
           PY
 
       # Removed inputs, new required inputs or wider permissions break every
-      # caller on the current major; they need a "### Breaking" entry under
-      # Unreleased in CHANGELOG.md (and then a major release).
+      # caller on the current major; they need a "### Breaking" entry in
+      # CHANGELOG.md (and then a major release).
       - name: No unrecorded breaking change against the base branch
         if: ${{ github.event_name == 'pull_request' }}
         env:
@@ -131,6 +131,17 @@ jobs:
         run: |
           git fetch --no-tags --depth=1 origin "$BASE_REF"
           python .github/scripts/check_contract.py --base-ref FETCH_HEAD
+
+      # A new [X.Y.Z] section is what release.yml tags on merge: it must be the
+      # next patch, minor or major, dated, with Unreleased emptied into it.
+      - name: Changelog release section
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --quiet --tags --force origin
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+          python .github/scripts/changelog.py check --base-ref FETCH_HEAD
 
   docs-platform:
     name: docs platform (theme package, template, migration)

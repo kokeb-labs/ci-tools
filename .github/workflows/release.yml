@@ -1,16 +1,15 @@
----
 # Cuts a release of this repository's reusable workflows (see docs/VERSIONING.md):
-#   push to main  -> automatic patch release: the next vX.Y.(Z+1) after the
-#                    highest release is tagged on the pushed commit and
-#                    released as below, so callers pinned to @vX get every
-#                    merged fix without a manual release. Skipped when the
-#                    commit is already released, or when CHANGELOG.md's
-#                    Unreleased section has a "### Breaking" heading (a major
-#                    release is cut by hand with a tag push; the self-CI
-#                    contract check is what forces that heading).
-#   vX.Y.Z        -> GitHub Release with generated notes, and the moving major
-#                    tag vX is force-updated to the same commit, if vX.Y.Z is
-#                    the highest release in that major.
+#   push to main  -> if CHANGELOG.md's top version section ([X.Y.Z]) is not
+#                    tagged yet, vX.Y.Z is tagged on the pushed commit and
+#                    released as below, with that section as the notes. A
+#                    pull request asks for a release by adding the section
+#                    (.github/scripts/changelog.py bump patch); the self-CI
+#                    checks the step and the ### Breaking rule. No new section:
+#                    no release, and the entries wait under Unreleased.
+#   vX.Y.Z        -> GitHub Release (notes from the matching changelog section,
+#                    else generated), and the moving major tag vX is
+#                    force-updated to the same commit, if vX.Y.Z is the
+#                    highest release in that major.
 #   vX.Y.Z-<pre>  -> pre-release; the major tag is not moved.
 name: 🏷️ Release
 
@@ -38,34 +37,33 @@ jobs:
         with:
           fetch-depth: 0  # all tags, to find the highest release in the major
 
-      - name: Pick the patch release (push to main)
+      - name: Release named in CHANGELOG.md (push to main)
         id: auto
         if: ${{ github.ref_type == 'branch' }}
         run: |
           set -euo pipefail
           echo "tag=" >> "$GITHUB_OUTPUT"
-          if git tag --points-at HEAD | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "::notice::HEAD is already released: $(git tag --points-at HEAD | tr '\n' ' ')"
+          version="$(python3 .github/scripts/changelog.py release --notes "$RUNNER_TEMP/notes.md" | sed -n 's/^version=//p')"
+          if [ -z "$version" ]; then
+            echo "::notice::no version section in CHANGELOG.md: nothing to release"
             exit 0
           fi
-          unreleased="$(awk '/^## \[Unreleased\]/{f=1; next} /^## \[/{f=0} f' CHANGELOG.md)"
-          if grep -q '^### Breaking' <<<"$unreleased"; then
-            echo "::notice::Unreleased has a Breaking section: no automatic release (cut the major by hand)"
+          tag="v$version"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            echo "::notice::$tag is already released; this push adds no new version section"
             exit 0
           fi
           highest="$(git tag -l 'v*.*.*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)"
-          if [ -z "$highest" ]; then
-            echo "::notice::no release yet: the first one is cut by hand"
-            exit 0
+          if [ -n "$highest" ] && [ "$(printf '%s\n%s\n' "$highest" "$tag" | sort -V | tail -n 1)" != "$tag" ]; then
+            echo "::error::CHANGELOG.md names $tag, which is not above the highest release $highest"
+            exit 1
           fi
-          IFS=. read -r major minor patch <<<"${highest#v}"
-          next="v${major}.${minor}.$((patch + 1))"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$next" -m "$next" HEAD
-          git push origin "refs/tags/$next"
-          echo "tag=$next" >> "$GITHUB_OUTPUT"
-          echo "::notice::tagged $next (after $highest)"
+          git tag -a "$tag" -m "$tag" HEAD
+          git push origin "refs/tags/$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "::notice::tagged $tag (after ${highest:-none})"
 
       - name: Parse tag
         id: tag
@@ -86,7 +84,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "tag=$TAG major=$major prerelease=$prerelease"
 
-      - name: Create GitHub Release (generated notes)
+      - name: Create GitHub Release
         if: ${{ steps.tag.outputs.tag != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
@@ -97,7 +95,14 @@ jobs:
             echo "Release $TAG already exists; leaving it as is"
             exit 0
           fi
-          args=("$TAG" --verify-tag --generate-notes --title "$TAG")
+          # Notes: the changelog section of this version; generated notes when there is none.
+          notes="$RUNNER_TEMP/notes-$TAG.md"
+          found="$(python3 .github/scripts/changelog.py release --version "${TAG#v}" --notes "$notes")"
+          if [ "$found" = "version=${TAG#v}" ]; then
+            args=("$TAG" --verify-tag --notes-file "$notes" --title "$TAG")
+          else
+            args=("$TAG" --verify-tag --generate-notes --title "$TAG")
+          fi
           if [ "$PRERELEASE" = "true" ]; then
             args+=(--prerelease --latest=false)
           fi
