@@ -847,9 +847,19 @@ jobs:
       # =============================================================================
       - name: Install Doxygen (pinned version)
         if: steps.doxygen-check.outputs.doxygen_needed == 'true'
-        uses: ssciwr/doxygen-install@fa3e94d34131d3990b6b8ba939ab982964aa3758  # v2.0.3
-        with:
-          version: '1.10.0'
+        # Doxygen's own release, checked against a pinned SHA-256 (no third-party action in between).
+        env:
+          DOXYGEN_VERSION: '1.10.0'
+          DOXYGEN_SHA256: dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747
+        run: |
+          set -euo pipefail
+          tarball="doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
+          curl -sSLf -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/$tarball"
+          echo "${DOXYGEN_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP"
+          sudo make -C "$RUNNER_TEMP/doxygen-${DOXYGEN_VERSION}" install
+          doxygen --version
 
       - name: Check for pre-installed Graphviz
         if: steps.doxygen-check.outputs.doxygen_needed == 'true'
@@ -860,14 +870,16 @@ jobs:
           echo "✅ Graphviz pre-installed: $(dot -V 2>&1 | head -1)"
           else
           echo "graphviz_available=false" >> "$GITHUB_OUTPUT"
-          echo "⚠️  Graphviz not pre-installed, will install via action"
+          echo "⚠️  Graphviz not pre-installed, installing it with apt"
           fi
 
       - name: Install Graphviz (Optimized)
         if: >-
           steps.doxygen-check.outputs.doxygen_needed == 'true' &&
           steps.graphviz-check.outputs.graphviz_available == 'false'
-        uses: tlylt/install-graphviz@b2201200d85f06f0189cb74d9b69208504cf12cd  # v1.0.0
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq graphviz
       # Language Runtime Setup with Comprehensive Caching
       # =============================================================================
       - name: Setup Ruby (bundler cache)

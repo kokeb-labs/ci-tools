@@ -17,6 +17,13 @@ that heading.
 
 ### Changed
 
+- `ru-docs-publish` installs Doxygen from its own release, checked against a pinned SHA-256, and Graphviz with
+  apt, instead of two small third-party actions (`ssciwr/doxygen-install`, `tlylt/install-graphviz`).
+
+## [1.0.1] - 2026-11-06
+
+### Changed
+
 - figkit draws in the Kokeb palette (copper on light, star gold on dark), and its legend can explain solid and
   dashed arrows. A region can put its caption on a second line.
 - The workflow figure shows the push lane and the tag lane apart, with labelled arrows.
