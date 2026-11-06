@@ -226,7 +226,7 @@ jobs:
           tidy-checks: ${{ inputs.tidy_checks }}
           version: ${{ inputs.clang_version }}
           extensions: ${{ inputs.extensions }}
-          ignore: ${{ inputs.ignore }}
+          ignore: ${{ inputs.ignore }}|build-clang-tidy  # the compile-database configure's own output
           files-changed-only: ${{ inputs.files_changed_only }}
           lines-changed-only: ${{ inputs.lines_changed_only }}
           file-annotations: ${{ inputs.file_annotations }}
