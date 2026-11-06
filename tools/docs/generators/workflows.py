@@ -35,7 +35,8 @@ def _is_reusable(doc: dict) -> bool:
 
 
 def _workflows() -> list[pathlib.Path]:
-    return [p for p in sorted(WORKFLOWS.glob("*.yml")) if _is_reusable(_load(p))]
+    # ci-*.yml are this repository's own self-tests (called by ci-self.yml), not part of the catalogue.
+    return [p for p in sorted(WORKFLOWS.glob("*.yml")) if _is_reusable(_load(p)) and not p.name.startswith("ci-")]
 
 
 def _inputs(doc: dict) -> dict:
