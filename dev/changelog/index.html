@@ -1041,7 +1041,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[Unreleased]">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.1.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.1.0] - 2026-11-06">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1301,7 +1312,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[Unreleased]">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.1.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.1.0] - 2026-11-06">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1538,17 +1560,30 @@
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <p>Every change to the reusable workflows, the theme package and the tools, newest first, from <code>CHANGELOG.md</code>.</p>
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="110---2026-11-06">[1.1.0] - 2026-11-06<a class="headerlink" href="#110---2026-11-06" title="Permanent link">&para;</a></h2>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>A release waits for the whole self-CI on the merged commit (<code>release.yml</code> runs on <code>workflow_run</code> of
   "🧪 Workflow Self-CI"). The self-tests of the reusable workflows (<code>ci-*.yml</code>) are now called from <code>ci-self.yml</code>, so
   the required "CI gate" covers them: a red reusable workflow can neither merge nor reach <code>@v1</code>. The Markdown lint
   self-test reports issues instead of fixing them in the runner.</li>
-<li>Releases of this repository are cut from <code>CHANGELOG.md</code>: a pull request that should be released moves the
+<li><code>ru-cpp-lint</code> fails the job when clang-format or clang-tidy reports a finding (<code>fail_on_findings</code>, default true);
+  before, findings were only annotated and the job always passed. A new <code>cmake_args</code> input configures CMake with
+  <code>compile_commands.json</code>, so clang-tidy sees the project's include paths; without it clang-tidy could not find
+  the project's own headers. A <code>findings</code> output gives the count.</li>
+<li>
+<p><code>ru-cpp-analysis</code> runs cppcheck from Ubuntu's archive instead of the unpinned <code>ghcr.io/facthunder/cppcheck:latest</code>
+  image, no longer ignores cppcheck's own exit status, counts findings from the XML report (<code>strict</code> used to fail
+  on every run, because the report always has a header), defaults <code>std</code> to <code>c++20</code>, takes an <code>artifact_name</code>, and
+  has a <code>findings</code> output.</p>
+</li>
+<li>
+<p>Releases of this repository are cut from <code>CHANGELOG.md</code>: a pull request that should be released moves the
   Unreleased entries to a new <code>## [X.Y.Z] - YYYY-MM-DD</code> section (<code>python .github/scripts/changelog.py bump patch</code>),
   and merging it tags that version, publishes the section as the release notes and moves <code>v1</code>. Before, every merge
   was tagged and the changelog was left behind. The self-CI checks that a new section is the next version, is
-  dated, and is a major when it has <code>### Breaking</code>.</li>
+  dated, and is a major when it has <code>### Breaking</code>.</p>
+</li>
 </ul>
 <h2 id="105---2026-11-06">[1.0.5] - 2026-11-06<a class="headerlink" href="#105---2026-11-06" title="Permanent link">&para;</a></h2>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>

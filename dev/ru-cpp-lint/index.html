@@ -1496,7 +1496,7 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 <tr>
 <td><code>lint</code></td>
 <td><code>contents: read</code>, <code>pull-requests: write</code></td>
-<td><code>actions/checkout</code>; Prepare clang configuration; Report C/C++ files to lint; Run C/C++ Linter</td>
+<td><code>actions/checkout</code>; Prepare clang configuration; Report C/C++ files to lint; Configure for clang-tidy (compile_commands.json); Run C/C++ Linter; Fail on findings</td>
 </tr>
 </tbody>
 </table>
@@ -1580,6 +1580,24 @@ results from <a href="../ru-host-ci/"><code>ru-host-ci</code></a>.</p>
 <td>boolean</td>
 <td><code>false</code></td>
 <td>Post a single, collapsible thread comment in a pull request detailing all linting issues</td>
+</tr>
+<tr>
+<td><code>cmake_args</code></td>
+<td>string</td>
+<td>empty</td>
+<td>Arguments for a CMake configure that exports compile_commands.json for clang-tidy (for example "-DMYCHIP_BUILD_TESTS=ON"). Without a compile database clang-tidy cannot see the project's include paths and reports "file not found" for its own headers. Empty: no configure, no database.</td>
+</tr>
+<tr>
+<td><code>cmake_source_dir</code></td>
+<td>string</td>
+<td><code>.</code></td>
+<td>Directory with the top-level CMakeLists.txt for the cmake_args configure</td>
+</tr>
+<tr>
+<td><code>fail_on_findings</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in the findings output).</td>
 </tr>
 </tbody>
 </table>
