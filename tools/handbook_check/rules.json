@@ -836,7 +836,7 @@
   },
   "KB-BLD-002": {
    "area": "build",
-   "enforce_from": "2027-01-15",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
@@ -845,7 +845,7 @@
     "hal",
     "template"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "No file(GLOB) for library sources"
   },
   "KB-BLD-003": {
@@ -1634,7 +1634,7 @@
   },
   "KB-CPP-012": {
    "area": "cpp",
-   "enforce_from": "2027-03-01",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
@@ -1644,7 +1644,7 @@
     "firmware",
     "template"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Target code uses only the target library subset and C++20 the pinned compilers share"
   },
   "KB-CPP-013": {
@@ -3003,7 +3003,7 @@
   },
   "KB-DOC-004": {
    "area": "docs",
-   "enforce_from": "2027-01-15",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
@@ -3012,7 +3012,7 @@
     "hal",
     "template"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Every public API is documented and Doxygen is warning-free"
   },
   "KB-DOC-005": {
@@ -3406,7 +3406,7 @@
   },
   "KB-DOC-035": {
    "area": "docs",
-   "enforce_from": "2027-03-01",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
@@ -3414,7 +3414,7 @@
     "hal",
     "template"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Datasheets are referenced by exact revision, never committed"
   },
   "KB-DOC-036": {
@@ -4349,24 +4349,24 @@
   },
   "KB-REPO-002": {
    "area": "repo",
-   "enforce_from": "2027-01-15",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
     "all"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Each repository declares the handbook version, kind and level it follows"
   },
   "KB-REPO-003": {
    "area": "repo",
-   "enforce_from": "2027-01-15",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
     "all"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Waivers name a rule, a reason, an approver and an expiry"
   },
   "KB-REPO-004": {
@@ -4387,13 +4387,13 @@
   },
   "KB-REPO-005": {
    "area": "repo",
-   "enforce_from": "2027-03-01",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
     "all"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "The root holds only the entries listed for the repository's kind"
   },
   "KB-REPO-006": {
@@ -4519,7 +4519,7 @@
   },
   "KB-REPO-016": {
    "area": "repo",
-   "enforce_from": "2027-03-01",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
@@ -4529,7 +4529,7 @@
     "firmware",
     "template"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "ESP-IDF projects commit sdkconfig.defaults, never sdkconfig"
   },
   "KB-REPO-017": {
@@ -4547,14 +4547,14 @@
   },
   "KB-REPO-018": {
    "area": "repo",
-   "enforce_from": "2027-03-01",
+   "enforce_from": null,
    "from_level": "standard",
    "level": "must",
    "profiles": [
     "driver",
     "template"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Every driver declares itself in driver.yml"
   },
   "KB-REPO-019": {
@@ -4713,14 +4713,14 @@
   },
   "KB-TST-005": {
    "area": "testing",
-   "enforce_from": "2027-01-15",
+   "enforce_from": null,
    "from_level": "high",
    "level": "must",
    "profiles": [
     "driver",
     "library"
    ],
-   "status": "proposed",
+   "status": "active",
    "title": "Compiles for every supported target"
   },
   "KB-TST-006": {

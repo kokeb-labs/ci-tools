@@ -153,9 +153,15 @@ class HandbookCheckTest(unittest.TestCase):
     def test_proposed_rule_warns_before_its_date(self):
         bad = dict(GOOD)
         bad["CMakeLists.txt"] = GOOD["CMakeLists.txt"] + "file(GLOB X src/*.cpp)\n"
-        repo = run(bad, today=TODAY)
-        glob = [f for f in repo.findings if f.rule == "KB-BLD-002"]
-        self.assertEqual([f.severity for f in glob], ["warning"])
+        rules = json.loads(json.dumps(RULES))
+        rules["KB-BLD-002"].update(status="proposed", enforce_from="2027-01-15")
+        root = make(bad)
+        for today, expected in ((TODAY, "warning"), (LATER, "error")):
+            repo = hc.Repo(root, rules, today)
+            repo.load_declaration()
+            repo.check_cmake(repo.tracked())
+            repo.settle()
+            self.assertEqual([f.severity for f in repo.findings if f.rule == "KB-BLD-002"], [expected])
 
     def test_waiver_turns_an_error_into_a_notice_and_expires(self):
         bad = dict(GOOD)
