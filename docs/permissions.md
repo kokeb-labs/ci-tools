@@ -22,6 +22,7 @@ read from the workflow files.
 | [`ru-ci-gate.yml`](ru-ci-gate.md) | `contents: read` | `gate`: `contents: read` |
 | [`ru-cpp-analysis.yml`](ru-cpp-analysis.md) | `contents: read` | `cppcheck`: `contents: read` |
 | [`ru-cpp-lint.yml`](ru-cpp-lint.md) | `contents: read` | `lint`: `contents: read` |
+| [`ru-cross-build.yml`](ru-cross-build.md) | `contents: read` | `plan`: none<br>`build`: `contents: read` |
 | [`ru-docs-linkcheck.yml`](ru-docs-linkcheck.md) | `contents: read` | `link-check`: `contents: read` |
 | [`ru-docs-publish.yml`](ru-docs-publish.md) | `contents: write` | `input-validation`: none<br>`quality-checks`: `contents: read`<br>`version-detection`: `contents: read`<br>`build`: `contents: write` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | `contents: read` | `host`: `contents: read` |

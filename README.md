@@ -65,6 +65,7 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | [`ru-ci-gate.yml`](.github/workflows/ru-ci-gate.yml) | One required check that passes only if every job passed ([guide](docs/ru-ci-gate.md)) |
 | [`ru-host-ci.yml`](.github/workflows/ru-host-ci.yml) | CMake configure/build/ctest, then clang-tidy 18 and cppcheck on the compile database ([guide](docs/ru-host-ci.md)) |
 | [`ru-host-quality.yml`](.github/workflows/ru-host-quality.yml) | Complexity (lizard), coverage with MC/DC (GCC 14, gcovr) and ASan/UBSan, gated by assurance level ([guide](docs/ru-host-quality.md)) |
+| [`ru-cross-build.yml`](.github/workflows/ru-cross-build.yml) | Builds a CMake target for Cortex-M cores with arm-none-eabi-gcc and reports object sizes ([guide](docs/ru-cross-build.md)) |
 | [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | clang-format and clang-tidy 20 from pinned, hash-checked LLVM builds, with the CMake compile database ([guide](docs/ru-cpp-lint.md)) |
 | [`ru-cpp-analysis.yml`](.github/workflows/ru-cpp-analysis.yml) | cppcheck over source directories ([guide](docs/ru-cpp-analysis.md)) |
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | The Kokeb Labs documentation platform: MkDocs with the shared theme, Doxygen under `/api/`, link check, Lighthouse budget and screenshots on PRs, versioned deploy with mike ([guide](docs/ru-mkdocs-publish.md), [migration](docs/MIGRATING-TO-MKDOCS.md), [style guide](docs/DOCS-STYLE-GUIDE.md)) |
@@ -121,6 +122,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-docs-publish.yml`](.github/workflows/ru-docs-publish.yml) | `contents: write` | push to the deployment branch; required on pull requests too, although PRs never deploy |
 | [`ru-host-ci.yml`](.github/workflows/ru-host-ci.yml) | `contents: read` | checkout |
 | [`ru-host-quality.yml`](.github/workflows/ru-host-quality.yml) | `contents: read` | checkout |
+| [`ru-cross-build.yml`](.github/workflows/ru-cross-build.yml) | `contents: read` | checkout |
 | [`ru-markdown-lint.yml`](.github/workflows/ru-markdown-lint.yml) | `contents: read` | checkout |
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | `contents: write` | push to the deployment branch (publish job only; the build and quality jobs read) |
 | [`ru-release.yml`](.github/workflows/ru-release.yml) | `contents: write` | create the GitHub Release |
@@ -168,6 +170,28 @@ See [the CI gate](#one-required-check-the-ci-gate) for the caller.
 | `allow_skipped` | string | no | `""` | Jobs (ids from `needs`) that may be skipped without failing the gate, separated by commas, spaces or newlines. Every other job must succeed. |
 | `verify_needs` | boolean | no | `true` | Read the calling workflow file and fail if a job is missing from the gate's `needs`, or if the gate job lacks `if: always()`. |
 <!-- inputs:ru-ci-gate.yml:end -->
+
+### ru-cross-build
+
+```yaml
+jobs:
+  cross:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-cross-build.yml@v1
+    permissions:
+      contents: read
+    with:
+      build_target: mychip_optimised_build
+      cmake_args: "-DMYCHIP_BUILD_TESTS=ON"
+```
+
+<!-- inputs:ru-cross-build.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `build_target` | string | yes | - | The CMake target to build for each core: a library or object library that instantiates the code (for a Kokeb driver, `<chip>_optimised_build`, which compiles every test source with the strict flags). |
+| `cmake_args` | string | no | `""` | Extra CMake configure arguments, e.g. -DMYCHIP_BUILD_TESTS=ON |
+| `source_dir` | string | no | `.` | CMake source directory, relative to the repository root |
+| `cores` | string | no | `cortex-m0plus cortex-m4f cortex-m7f` | Space-separated cores: cortex-m0plus, cortex-m3, cortex-m4f, cortex-m7f, cortex-m33f. Each is built in its own job. |
+<!-- inputs:ru-cross-build.yml:end -->
 
 ### ru-host-quality
 
