@@ -30,7 +30,7 @@ jobs:
       # =============================================================================
       # C++ Standard
       # =============================================================================
-      std: "c++17"
+      std: "c++20"
 
       # =============================================================================
       # Quality Control
@@ -38,3 +38,25 @@ jobs:
       # Set to false to allow the workflow to complete even if issues are found
       # This is for testing the tooling, not enforcing code quality
       strict: false
+
+  # Negative test: an out-of-bounds read must be found, and strict mode must then fail.
+  finds-issues:
+    name: Cppcheck reports a known-bad file
+    uses: ./.github/workflows/ru-cpp-analysis.yml
+    with:
+      paths: "tests/fixtures/cpp-findings"
+      strict: false
+      artifact_name: cppcheck-report-negative
+
+  finds-issues-check:
+    name: Cppcheck findings were counted
+    needs: finds-issues
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Expect findings
+        env:
+          FINDINGS: ${{ needs.finds-issues.outputs.findings }}
+        run: |
+          echo "findings=${FINDINGS}"
+          test "${FINDINGS:-0}" -gt 0

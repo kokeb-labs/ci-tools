@@ -58,12 +58,26 @@ on:
         type: boolean
         required: false
         default: false
+      fail_on_findings:
+        description: >-
+          Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in
+          the findings output).
+        type: boolean
+        required: false
+        default: true
+    outputs:
+      findings:
+        description: "Number of files with clang-format or clang-tidy findings"
+        value: ${{ jobs.lint.outputs.findings }}
 
 permissions: {}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      findings: ${{ steps.lint.outputs.checks-failed }}
     # pull-requests: write is used by thread_comments and file_annotations. A job
     # cannot ask for more than its caller grants, so callers must grant it.
     permissions:
@@ -179,6 +193,7 @@ jobs:
           fi
 
       - name: Run C/C++ Linter
+        id: lint
         uses: cpp-linter/cpp-linter-action@774040af57f011a5fc47911f08ff0c3059d1835a  # v2.24.0
         with:
           style: file
@@ -192,3 +207,13 @@ jobs:
           step-summary: ${{ inputs.step_summary }}
           thread-comments: ${{ inputs.thread_comments }}
           repo-root: '.'
+
+      # cpp-linter-action reports but never fails the job itself.
+      - name: Fail on findings
+        if: ${{ inputs.fail_on_findings && steps.lint.outputs.checks-failed != '0' }}
+        env:
+          FORMAT: ${{ steps.lint.outputs.clang-format-checks-failed }}
+          TIDY: ${{ steps.lint.outputs.clang-tidy-checks-failed }}
+        run: |
+          echo "::error::clang-format findings in ${FORMAT:-?} file(s), clang-tidy findings in ${TIDY:-?} file(s)"
+          exit 1
