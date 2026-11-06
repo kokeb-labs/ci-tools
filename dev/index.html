@@ -704,6 +704,8 @@
       
         
       
+        
+      
     
     
     
@@ -1156,6 +1158,11 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
 <tr>
 <td><a href="ru-host-ci/"><code>ru-host-ci.yml</code></a></td>
 <td>Build, test and analyse a CMake project on the host, with clang-tidy 18 and cppcheck over the compiler's own compile database.</td>
+<td><code>contents: read</code></td>
+</tr>
+<tr>
+<td><a href="ru-host-quality/"><code>ru-host-quality.yml</code></a></td>
+<td>Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets for each assurance level (ADR-0020).</td>
 <td><code>contents: read</code></td>
 </tr>
 <tr>
