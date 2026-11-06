@@ -81,8 +81,7 @@
     
       
     
-    <link rel="preload" href="../assets/kokeb/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-
+    
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -1165,7 +1164,7 @@
 
 <h1 id="ensure-tools-directory">ensure-tools-directory<a class="headerlink" href="#ensure-tools-directory" title="Permanent link">&para;</a></h1>
 <p>Find espidf-tools in a checkout, or clone it, from a job of your own.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/4ebe240273d4433ec62775162711c83e7c438764/.github/actions/ensure-tools-directory/action.yml"><code>.github/actions/ensure-tools-directory/action.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/d4effc4df69aebcde3a695a036c818529c117f82/.github/actions/ensure-tools-directory/action.yml"><code>.github/actions/ensure-tools-directory/action.yml</code></a></p>
 <p><code>ru-build</code> runs the same script inline: a reusable workflow cannot use an action of its own repository at the
 caller's ref, so <code>uses: ...@main</code> inside it would run <code>main</code>'s copy for callers pinned to <code>@v1</code>. The self-CI fails
 when the two copies differ. Use the action only in jobs you write yourself.</p>
