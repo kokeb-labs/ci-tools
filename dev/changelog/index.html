@@ -79,11 +79,7 @@
     
       
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" media="print" onload="this.media='all'"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"></noscript>
+    <link rel="preload" href="../assets/kokeb/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -106,7 +102,8 @@
   <script>
 (function () {
   if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11/dist/mermaid.min.js", config = {}, real, loading;
+  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
+      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
   var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
   var stub = {
     initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
@@ -121,6 +118,8 @@
     return loading || (loading = new Promise(function (resolve, reject) {
       var s = document.createElement("script");
       s.src = SRC;
+      s.integrity = SRI;
+      s.crossOrigin = "anonymous";
       s.onload = function () {
         real = window.mermaid;
         window.mermaid = stub;
@@ -1294,6 +1293,11 @@
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>The kokeb docs theme ships Inter and JetBrains Mono itself (variable woff2, SIL Open Font License) instead of
+  loading them from Google Fonts, so no Kokeb page sends a reader's address to Google. <code>ru-mkdocs-publish</code> copies
+  the fonts beside the Doxygen stylesheet for the API pages; the root 404 page uses system fonts.</li>
+<li>Mermaid, still loaded on demand from unpkg, is pinned to 11.17.2 and checked with Subresource Integrity, so a
+  changed file on the CDN is refused instead of run.</li>
 <li><code>ru-docs-publish</code> installs Doxygen from its own release, checked against a pinned SHA-256, and Graphviz with
   apt, instead of two small third-party actions (<code>ssciwr/doxygen-install</code>, <code>tlylt/install-graphviz</code>).</li>
 </ul>

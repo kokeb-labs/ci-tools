@@ -81,11 +81,7 @@
     
       
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" media="print" onload="this.media='all'"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"></noscript>
+    <link rel="preload" href="../assets/kokeb/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -108,7 +104,8 @@
   <script>
 (function () {
   if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11/dist/mermaid.min.js", config = {}, real, loading;
+  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
+      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
   var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
   var stub = {
     initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
@@ -123,6 +120,8 @@
     return loading || (loading = new Promise(function (resolve, reject) {
       var s = document.createElement("script");
       s.src = SRC;
+      s.integrity = SRI;
+      s.crossOrigin = "anonymous";
       s.onload = function () {
         real = window.mermaid;
         window.mermaid = stub;
@@ -1266,7 +1265,7 @@
 <tbody>
 <tr>
 <td>Theme package</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/45a3f72909aba20779387aa4ec8e9060239ebc41/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/4ebe240273d4433ec62775162711c83e7c438764/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
 <td><code>theme: kokeb</code> (brand, layout, components, light and dark), <code>plugins: [kokeb]</code> (Markdown dialect, validation, repository links, figures, page checks), figkit, the <code>kokeb-docs</code> command and the pinned toolchain</td>
 </tr>
 <tr>
@@ -1276,12 +1275,12 @@
 </tr>
 <tr>
 <td>Template</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/45a3f72909aba20779387aa4ec8e9060239ebc41/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/4ebe240273d4433ec62775162711c83e7c438764/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
 <td>The skeleton of a driver site; the self-CI builds it</td>
 </tr>
 <tr>
 <td>Migration tool</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/45a3f72909aba20779387aa4ec8e9060239ebc41/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/4ebe240273d4433ec62775162711c83e7c438764/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
 <td>The mechanical move from Jekyll, with a <code>--check</code> dry run</td>
 </tr>
 <tr>
@@ -1377,7 +1376,7 @@ Markdown extensions, strict validation and the version selector.</p>
 </tr>
 </tbody>
 </table>
-<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/45a3f72909aba20779387aa4ec8e9060239ebc41/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
+<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/4ebe240273d4433ec62775162711c83e7c438764/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
 writes the catalogue, the permissions table and every inputs and jobs table from the workflow files.</p>
 <h2 id="preview-a-site-locally">Preview a site locally<a class="headerlink" href="#preview-a-site-locally" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>.venv/bin/activate

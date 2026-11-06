@@ -81,11 +81,7 @@
     
       
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" media="print" onload="this.media='all'"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"></noscript>
+    <link rel="preload" href="../assets/kokeb/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -108,7 +104,8 @@
   <script>
 (function () {
   if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11/dist/mermaid.min.js", config = {}, real, loading;
+  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
+      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
   var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
   var stub = {
     initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
@@ -123,6 +120,8 @@
     return loading || (loading = new Promise(function (resolve, reject) {
       var s = document.createElement("script");
       s.src = SRC;
+      s.integrity = SRI;
+      s.crossOrigin = "anonymous";
       s.onload = function () {
         real = window.mermaid;
         window.mermaid = stub;
@@ -1380,7 +1379,7 @@ exists so that does not happen again.</p>
 </tbody>
 </table>
 <p>A breaking change needs a <strong>major</strong> bump (<code>v1</code> → <code>v2</code>). It is listed under
-<code>### Breaking</code> in the Unreleased section of <a href="https://github.com/kokeb-labs/ci-tools/blob/45a3f72909aba20779387aa4ec8e9060239ebc41/CHANGELOG.md">CHANGELOG.md</a>.
+<code>### Breaking</code> in the Unreleased section of <a href="https://github.com/kokeb-labs/ci-tools/blob/4ebe240273d4433ec62775162711c83e7c438764/CHANGELOG.md">CHANGELOG.md</a>.
 On pull requests, the self-CI (<code>.github/scripts/check_contract.py</code>) compares
 each <code>ru-*.yml</code> with the base branch. It fails if it finds one of these
 changes and that heading is missing.</p>
