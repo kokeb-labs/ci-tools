@@ -24,6 +24,12 @@ that heading.
   that the release tag points to that commit before releasing. The guide shows a caller that releases only after
   CI passed on the tag.
 
+### Fixed
+
+- `ru-build` no longer fails pull requests from forks: their token cannot comment, so the size comment is skipped
+  for them (and never fails the job), and the size table is always written to the run summary. On same-repository
+  pull requests the comment is updated on each push instead of added again.
+
 ## [1.2.1] - 2026-11-06
 
 ### Changed
