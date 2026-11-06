@@ -44,6 +44,9 @@ jobs:
         with:
           persist-credentials: false
       # The checker and its rules snapshot at the commit of this workflow, so @v1 callers get the matching pair.
+      # Trust: this is kokeb-labs/ci-tools' own code at the commit the caller pinned (the same trust as this
+      # workflow file). The job has contents: read only, no secrets and no cache, so nothing it runs can write
+      # to the caller's repository, its caches or its releases.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
