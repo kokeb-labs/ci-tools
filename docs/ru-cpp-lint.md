@@ -48,7 +48,7 @@ jobs:
 | `lint` | `contents: read` | `actions/checkout`; Prepare clang configuration; Install clang-format and clang-tidy (pinned, hash-checked); Select files; Configure for clang-tidy (compile_commands.json); clang-format and clang-tidy; Fail on findings |
 <!-- /generated -->
 
-`pull-requests: write` is for annotations and the thread comment. The caller grants it even with both turned off.
+The job needs only `contents: read`: annotations come from the log, and nothing is posted to the pull request.
 
 ## Inputs
 
@@ -75,7 +75,7 @@ jobs:
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| `startup_failure` | The caller does not grant `pull-requests: write` | Grant it on the calling job |
+| clang-tidy reports `file not found` for the project's own headers | No compile database | Set `cmake_args` so CMake exports one |
 | Every line of a file is reported by clang-format | The config was not found, so the default style was used | Check the `clang_format_config` path; the log says which file was linked |
 | clang-tidy reports missing headers | No compile database: include paths are guessed | Use [`ru-host-ci`](ru-host-ci.md) for clang-tidy, keep this for formatting |
 | Findings in vendored code | The folder is not in `ignore` | Add it, pipe-separated: `build\|.git\|third_party` |
