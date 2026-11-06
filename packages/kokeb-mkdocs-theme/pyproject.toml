@@ -38,4 +38,4 @@ kokeb = "kokeb_mkdocs_theme.plugin:KokebPlugin"
 include = ["kokeb_mkdocs_theme*"]
 
 [tool.setuptools.package-data]
-"*" = ["*.yml", "*.html", "*.css", "*.js", "*.svg", "*.png", "*.ico", "*.json", "*.webmanifest"]
+"*" = ["*.yml", "*.html", "*.css", "*.js", "*.svg", "*.png", "*.ico", "*.json", "*.webmanifest", "*.woff2", "*.txt"]

@@ -6,8 +6,8 @@ language: en
 logo: assets/kokeb/mark.svg
 favicon: assets/kokeb/favicon.svg
 
-# Fonts: Inter and JetBrains Mono from Google Fonts, loaded without blocking the first paint (main.html); the
-# system font stack shows until they arrive. Material's own font loading is off for that reason.
+# Fonts: Inter and JetBrains Mono ship with the theme (assets/kokeb/*.woff2, @font-face in kokeb.css), so no page
+# loads a font from a third party. Material's own font loading (Google Fonts) is off for that reason.
 font: false
 
 icon:

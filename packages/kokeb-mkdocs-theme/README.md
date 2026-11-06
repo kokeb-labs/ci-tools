@@ -87,7 +87,8 @@ kokeb-docs publish-root SITE         commit SITE as the whole deployment branch 
 ## Brand
 
 Indigo `#0E1726` (primary), teal `#2BB3A3` / `#0B7A72` (accent), ink `#0E1726`; dark surface `#0A111D`. Inter for
-text and JetBrains Mono for code, from Google Fonts, loaded without blocking the first paint. The mark is a five-point
+text and JetBrains Mono for code, bundled with the theme (`theme/assets/kokeb/*.woff2`, SIL Open Font License in
+`FONTS-LICENSE.txt`), so no page loads a font from a third party. The mark is a five-point
 star (kokeb) on the brand tile (`theme/assets/kokeb/mark.svg`, `wordmark.svg`, `favicon.svg`).
 Every text colour is at least 4.5:1 on its background in both schemes; the ratios are noted in `kokeb.css`.
 
