@@ -1,0 +1,150 @@
+---
+# Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, to prove the code builds
+# on a target and not only on the host (Kokeb Labs handbook KB-TST-005). One job per core: a generated toolchain
+# file sets the core's flags, the caller's own CMake flags still apply (warnings as errors, no exceptions, no RTTI),
+# and only `build_target` is built, so host-only executables in the same project are never compiled for the core.
+# The run summary lists the code and data size of the built objects per core.
+name: 🧩 [RU] Cross-compile for MCU cores
+
+on:
+  workflow_call:
+    inputs:
+      build_target:
+        description: >-
+          The CMake target to build for each core: a library or object library that instantiates the code (for a
+          Kokeb driver, `<chip>_optimised_build`, which compiles every test source with the strict flags).
+        type: string
+        required: true
+      cmake_args:
+        description: "Extra CMake configure arguments, e.g. -DMYCHIP_BUILD_TESTS=ON"
+        type: string
+        required: false
+        default: ""
+      source_dir:
+        description: "CMake source directory, relative to the repository root"
+        type: string
+        required: false
+        default: "."
+      cores:
+        description: >-
+          Space-separated cores: cortex-m0plus, cortex-m3, cortex-m4f, cortex-m7f, cortex-m33f. Each is built in its
+          own job.
+        type: string
+        required: false
+        default: "cortex-m0plus cortex-m4f cortex-m7f"
+    outputs:
+      cores:
+        description: "The cores that were built, as a JSON list"
+        value: ${{ jobs.plan.outputs.cores }}
+
+permissions: {}
+
+jobs:
+  plan:
+    name: cores
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    outputs:
+      cores: ${{ steps.p.outputs.cores }}
+    steps:
+      - name: Check the core list
+        id: p
+        env:
+          CORES: ${{ inputs.cores }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          known = {"cortex-m0plus", "cortex-m3", "cortex-m4f", "cortex-m7f", "cortex-m33f"}
+          cores = os.environ["CORES"].split()
+          bad = [c for c in cores if c not in known]
+          if not cores or bad:
+              print(f"::error::unknown core(s) {bad or '(none given)'}; known: {', '.join(sorted(known))}")
+              sys.exit(1)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"cores={json.dumps(cores)}\n")
+          PY
+
+  build:
+    name: ${{ matrix.core }}
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        core: ${{ fromJSON(needs.plan.outputs.cores) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the GNU Arm Embedded toolchain (Ubuntu archive)
+        run: |
+          set -euo pipefail
+          pkgs=(gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib cmake ninja-build)
+          for attempt in 1 2 3; do
+            if sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends "${pkgs[@]}"; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
+            sleep $((attempt * 15))
+          done
+          arm-none-eabi-g++ --version | head -1
+      - name: Toolchain file for ${{ matrix.core }}
+        env:
+          CORE: ${{ matrix.core }}
+        run: |
+          set -euo pipefail
+          case "$CORE" in
+            cortex-m0plus) flags="-mcpu=cortex-m0plus -mthumb -mfloat-abi=soft" ;;
+            cortex-m3)     flags="-mcpu=cortex-m3 -mthumb -mfloat-abi=soft" ;;
+            cortex-m4f)    flags="-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16" ;;
+            cortex-m7f)    flags="-mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-d16" ;;
+            cortex-m33f)   flags="-mcpu=cortex-m33 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16" ;;
+          esac
+          cat > "$RUNNER_TEMP/toolchain.cmake" <<EOF
+          set(CMAKE_SYSTEM_NAME Generic)
+          set(CMAKE_SYSTEM_PROCESSOR arm)
+          set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+          set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
+          set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+          set(CMAKE_C_FLAGS_INIT "$flags -ffunction-sections -fdata-sections")
+          set(CMAKE_CXX_FLAGS_INIT "$flags -ffunction-sections -fdata-sections")
+          EOF
+          cat "$RUNNER_TEMP/toolchain.cmake"
+      - name: Configure and build ${{ inputs.build_target }}
+        env:
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          CMAKE_ARGS: ${{ inputs.cmake_args }}
+          TARGET: ${{ inputs.build_target }}
+          CORE: ${{ matrix.core }}
+        run: |
+          set -euo pipefail
+          read -r -a extra <<< "$CMAKE_ARGS"
+          cmake -S "$SOURCE_DIR" -B "build-$CORE" -G Ninja -DCMAKE_BUILD_TYPE=MinSizeRel \
+            -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/toolchain.cmake" "${extra[@]}"
+          cmake --build "build-$CORE" --target "$TARGET" --parallel
+      - name: Size of the built objects
+        env:
+          CORE: ${{ matrix.core }}
+          TARGET: ${{ inputs.build_target }}
+        run: |
+          set -euo pipefail
+          mapfile -t objs < <(find "build-$CORE" \( -name '*.obj' -o -name '*.o' \) -path "*${TARGET}*" | sort)
+          if [ "${#objs[@]}" -eq 0 ]; then mapfile -t objs < <(find "build-$CORE" -name '*.a' | sort); fi
+          if [ "${#objs[@]}" -eq 0 ]; then
+            echo "::warning::no object files found for $TARGET"
+            exit 0
+          fi
+          read -r text data bss < <(arm-none-eabi-size -t "${objs[@]}" | tail -n 1 | awk '{print $1, $2, $3}')
+          {
+            echo "### $CORE: \`$TARGET\` built"
+            echo
+            echo "| Objects | text (code, constants) | data | bss |"
+            echo "| --- | --- | --- | --- |"
+            echo "| ${#objs[@]} | $text B | $data B | $bss B |"
+            echo
+            echo "Sizes are of the target's objects before linking, at -Os (MinSizeRel) with unused sections separable."
+          } >> "$GITHUB_STEP_SUMMARY"

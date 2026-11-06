@@ -267,6 +267,12 @@ jobs:
     permissions:
       contents: read
 
+  selftest-cross-build:
+    name: Self-test cross-compile
+    uses: ./.github/workflows/ci-cross-build.yml
+    permissions:
+      contents: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
@@ -283,6 +289,7 @@ jobs:
       - selftest-yaml-lint
       - selftest-docs-linkcheck
       - selftest-host-quality
+      - selftest-cross-build
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:

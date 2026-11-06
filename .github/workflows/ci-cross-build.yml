@@ -1,0 +1,21 @@
+---
+name: 🧩 Cross-compile self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # The fixture project's library, built for every core the workflow knows.
+  fixture-all-cores:
+    uses: ./.github/workflows/ru-cross-build.yml
+    permissions:
+      contents: read
+    with:
+      source_dir: tests/fixtures/host-ci
+      build_target: calc
+      cores: "cortex-m0plus cortex-m3 cortex-m4f cortex-m7f cortex-m33f"
