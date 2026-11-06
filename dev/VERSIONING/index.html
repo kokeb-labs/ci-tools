@@ -766,10 +766,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#automatic-patch-releases" class="md-nav__link">
+  <a href="#releases-come-from-the-changelog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Automatic patch releases
+        Releases come from the changelog
       
     </span>
   </a>
@@ -777,10 +777,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cutting-a-release-maintainers" class="md-nav__link">
+  <a href="#cutting-a-release-by-hand-maintainers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cutting a release (maintainers)
+        Cutting a release by hand (maintainers)
       
     </span>
   </a>
@@ -1245,10 +1245,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#automatic-patch-releases" class="md-nav__link">
+  <a href="#releases-come-from-the-changelog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Automatic patch releases
+        Releases come from the changelog
       
     </span>
   </a>
@@ -1256,10 +1256,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cutting-a-release-maintainers" class="md-nav__link">
+  <a href="#cutting-a-release-by-hand-maintainers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cutting a release (maintainers)
+        Cutting a release by hand (maintainers)
       
     </span>
   </a>
@@ -1380,7 +1380,7 @@ exists so that does not happen again.</p>
 </tbody>
 </table>
 <p>A breaking change needs a <strong>major</strong> bump (<code>v1</code> → <code>v2</code>). It is listed under
-<code>### Breaking</code> in the Unreleased section of <a href="https://github.com/kokeb-labs/ci-tools/blob/1111efd9e7942b81822c49e2fb19331f0e9f8ff8/CHANGELOG.md">CHANGELOG.md</a>.
+<code>### Breaking</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/d419db25920085d1a89ed89d315794268c5525c0/CHANGELOG.md">CHANGELOG.md</a>, under Unreleased or in the new version section.
 On pull requests, the self-CI (<code>.github/scripts/check_contract.py</code>) compares
 each <code>ru-*.yml</code> with the base branch. It fails if it finds one of these
 changes and that heading is missing.</p>
@@ -1396,24 +1396,31 @@ new output) or a <strong>patch</strong> release (bug fix, action bump, documenta
 <li>List it under <code>### Deprecated</code> in the changelog.</li>
 <li>Remove it in the next major, and list the removal under <code>### Breaking</code>.</li>
 </ol>
-<h2 id="automatic-patch-releases">Automatic patch releases<a class="headerlink" href="#automatic-patch-releases" title="Permanent link">&para;</a></h2>
-<p>Every push to <code>main</code> is released: <code>release.yml</code> tags the commit <code>vX.Y.(Z+1)</code> after the highest release, creates
-the GitHub Release and moves <code>vX</code>. Callers pinned to <code>@v1</code> therefore get each merged fix without anyone cutting a
-release. Nothing is tagged when the commit is already released, or when <code>CHANGELOG.md</code>'s Unreleased section has a
-<code>### Breaking</code> heading: the self-CI contract check forces that heading on any breaking change, and a breaking
-change needs a new major, cut by hand as below. Minor releases (new features worth a line in the notes) are also
-cut by hand.</p>
-<h2 id="cutting-a-release-maintainers">Cutting a release (maintainers)<a class="headerlink" href="#cutting-a-release-maintainers" title="Permanent link">&para;</a></h2>
+<h2 id="releases-come-from-the-changelog">Releases come from the changelog<a class="headerlink" href="#releases-come-from-the-changelog" title="Permanent link">&para;</a></h2>
+<p><code>CHANGELOG.md</code> decides what is released. Entries go under <code>## [Unreleased]</code> as usual. A pull request that should
+reach callers also moves them to a new version section:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>.github/scripts/changelog.py<span class="w"> </span>bump<span class="w"> </span>patch<span class="w">   </span><span class="c1"># or minor, or major</span>
+</span></code></pre></div>
+<p>That writes <code>## [X.Y.Z] - YYYY-MM-DD</code> with the Unreleased entries under it. When the pull request merges,
+<code>release.yml</code> tags <code>vX.Y.Z</code> on the merge commit, publishes the section as the GitHub Release notes and moves <code>vX</code>.
+A pull request without a new section is merged without a release; its entries wait under Unreleased for the next
+one. Callers pinned to <code>@v1</code> therefore get a fix as soon as a pull request asks for its release, and the changelog
+and the releases never drift apart.</p>
+<p>The self-CI (<code>changelog.py check</code>) fails a pull request whose new section is not the next patch, minor or major,
+has no date or no entries, leaves entries under Unreleased, or has <code>### Breaking</code> without being a major. Two pull
+requests that both add <code>1.0.6</code> cannot both merge: the second must be rebased and bumped again.</p>
+<h2 id="cutting-a-release-by-hand-maintainers">Cutting a release by hand (maintainers)<a class="headerlink" href="#cutting-a-release-by-hand-maintainers" title="Permanent link">&para;</a></h2>
+<p>A tag push still works, for a pre-release or to re-run a release:</p>
 <ol>
-<li>Move the Unreleased entries in <code>CHANGELOG.md</code> under a new
-   <code>## [X.Y.Z] - YYYY-MM-DD</code> heading, and merge that to <code>main</code>.</li>
-<li>Tag the merge commit and push the tag:</li>
+<li>Make sure <code>CHANGELOG.md</code> has the <code>## [X.Y.Z] - YYYY-MM-DD</code> section on <code>main</code>.</li>
+<li>Tag the commit and push the tag:</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.0.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">"v1.0.0"</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.0.0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>v1.0.0<span class="w"> </span>-m<span class="w"> </span><span class="s2">"v1.0.0"</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v1.0.0
 </span></code></pre></div>
 <ol>
-<li><code>release.yml</code> then creates the GitHub Release with generated notes. If the
+<li><code>release.yml</code> then creates the GitHub Release, with the matching changelog section as notes (generated notes when
+   there is none). If the
    tag is the highest <code>v1.*.*</code> release, it also force-updates <code>v1</code> to the
    same commit. A pre-release tag (<code>v1.1.0-rc.1</code>) gets a pre-release and
    leaves <code>v1</code> alone. A patch to an older minor does not move <code>v1</code> backwards.</li>

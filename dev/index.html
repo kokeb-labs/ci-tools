@@ -1097,8 +1097,8 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
   tested firmware (<a href="esp-idf-quickstart/">ESP-IDF quickstart</a>).</li>
 <li><strong>Organisation checks.</strong> <a href="dco/"><code>dco</code></a> fails a pull request with an unsigned commit;
   <a href="org-standard-check/"><code>org-standard-check</code></a> checks the required root files and the MIT licence.</li>
-<li><strong>Releases without breaking callers.</strong> Semver tags, a moving <code>v1</code>, an automatic patch release on every merge,
-  and a check that stops a breaking change from landing without a major (<a href="VERSIONING/">Versioning</a>).</li>
+<li><strong>Releases without breaking callers.</strong> Semver tags, a moving <code>v1</code>, a release for each changelog version a pull
+  request adds, and a check that stops a breaking change from landing without a major (<a href="VERSIONING/">Versioning</a>).</li>
 <li><strong>A permissions contract.</strong> Each workflow asks for the least it needs, per job, and the self-CI holds it to
   the <a href="permissions/">documented table</a>.</li>
 </ul>
@@ -1195,7 +1195,7 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
 </li>
 <li>
 <p><strong><a href="VERSIONING/">Versioning</a></strong></p>
-<p>Tags, the moving major, what counts as breaking, automatic patch releases.</p>
+<p>Tags, the moving major, what counts as breaking, releases from the changelog.</p>
 </li>
 <li>
 <p><strong><a href="permissions/">Permissions contract</a></strong></p>
