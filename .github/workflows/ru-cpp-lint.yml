@@ -66,6 +66,11 @@ on:
         type: string
         required: false
         default: ""
+      cmake_source_dir:
+        description: "Directory with the top-level CMakeLists.txt for the cmake_args configure"
+        type: string
+        required: false
+        default: "."
       fail_on_findings:
         description: >-
           Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in
@@ -205,10 +210,11 @@ jobs:
         if: ${{ inputs.cmake_args != '' }}
         env:
           CMAKE_ARGS: ${{ inputs.cmake_args }}
+          CMAKE_SOURCE: ${{ inputs.cmake_source_dir }}
         run: |
           set -euo pipefail
           read -r -a args <<< "$CMAKE_ARGS"
-          cmake -S . -B build-clang-tidy -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "${args[@]}"
+          cmake -S "$CMAKE_SOURCE" -B build-clang-tidy -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "${args[@]}"
           test -f build-clang-tidy/compile_commands.json
           echo "compile database: $(grep -c '"file"' build-clang-tidy/compile_commands.json) entries"
 

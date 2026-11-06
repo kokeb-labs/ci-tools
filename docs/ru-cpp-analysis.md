@@ -34,7 +34,7 @@ jobs:
 <!-- generated: jobs-ru-cpp-analysis -->
 | Job | Permissions | Steps |
 | --- | --- | --- |
-| `cppcheck` | `contents: read` | `actions/checkout`; Run cppcheck (Docker); Upload report; Fail on issues (strict) |
+| `cppcheck` | `contents: read` | `actions/checkout`; Install cppcheck; Run cppcheck; Upload report; Fail on findings (strict) |
 <!-- /generated -->
 
 ## Inputs
@@ -43,12 +43,13 @@ jobs:
 | Input | Type | Default | Description |
 | --- | --- | --- | --- |
 | `paths` | string | `src inc examples` | Dirs to analyze (space-separated) |
-| `std` | string | `c++17` | C++ standard |
-| `strict` | boolean | `false` | Fail job if any issues found |
+| `std` | string | `c++20` | C++ standard |
+| `strict` | boolean | `false` | Fail the job when cppcheck reports a finding (severity other than information) |
 | `exclude` | string | empty | Paths to exclude (space-separated) |
 | `enable` | string | `warning,style,performance,portability,information` | Checks to enable (comma-separated: all,warning,style,performance, portability,information,unusedFunction,missingInclude) |
 | `force` | boolean | `false` | Force checking even with incomplete analysis |
 | `max_configs` | number | `0` | Maximum configs to check (for template-heavy code, 0=unlimited) |
+| `artifact_name` | string | `cppcheck-report` | Name of the uploaded report artifact (unique per call when a run calls this more than once) |
 <!-- /generated -->
 
 ## When it fails
