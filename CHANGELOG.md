@@ -15,19 +15,46 @@ that heading.
 
 ## [Unreleased]
 
+### Changed
+
+- Releases of this repository are cut from `CHANGELOG.md`: a pull request that should be released moves the
+  Unreleased entries to a new `## [X.Y.Z] - YYYY-MM-DD` section (`python .github/scripts/changelog.py bump patch`),
+  and merging it tags that version, publishes the section as the release notes and moves `v1`. Before, every merge
+  was tagged and the changelog was left behind. The self-CI checks that a new section is the next version, is
+  dated, and is a major when it has `### Breaking`.
+
+## [1.0.5] - 2026-11-06
+
 ### Fixed
 
 - The bundled fonts' `@font-face` rules moved from `kokeb.css` to `assets/kokeb/fonts.css`, which loads without
   blocking the first paint (as Google Fonts did before). Referenced from the render-blocking stylesheet, the font
   files sat on Lighthouse's critical path and the portal's performance score fell from about 0.89 to 0.78.
 
+## [1.0.4] - 2026-11-06
+
+### Changed
+
+- Bundled fonts used `font-display: optional` without a preload. This did not restore the Lighthouse score and was
+  replaced in 1.0.5.
+
+## [1.0.3] - 2026-11-06
+
 ### Changed
 
 - The kokeb docs theme ships Inter and JetBrains Mono itself (variable woff2, SIL Open Font License) instead of
   loading them from Google Fonts, so no Kokeb page sends a reader's address to Google. `ru-mkdocs-publish` copies
   the fonts beside the Doxygen stylesheet for the API pages; the root 404 page uses system fonts.
+
+### Security
+
 - Mermaid, still loaded on demand from unpkg, is pinned to 11.17.2 and checked with Subresource Integrity, so a
   changed file on the CDN is refused instead of run.
+
+## [1.0.2] - 2026-11-05
+
+### Security
+
 - `ru-docs-publish` installs Doxygen from its own release, checked against a pinned SHA-256, and Graphviz with
   apt, instead of two small third-party actions (`ssciwr/doxygen-install`, `tlylt/install-graphviz`).
 

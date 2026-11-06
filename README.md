@@ -19,7 +19,7 @@ uses: kokeb-labs/ci-tools/.github/workflows/<name>.yml@v1
 | --- | --- |
 | [Quickstart](https://kokeb-labs.github.io/ci-tools/latest/quickstart/) | The smallest CI for a repository, pinned to `@v1`, with the gate |
 | [Workflow catalogue](https://kokeb-labs.github.io/ci-tools/latest/workflows/) | Every reusable workflow: purpose, jobs, permissions, inputs, failure modes |
-| [Versioning](https://kokeb-labs.github.io/ci-tools/latest/VERSIONING/) | Tags, the moving `v1`, what is breaking, automatic patch releases |
+| [Versioning](https://kokeb-labs.github.io/ci-tools/latest/VERSIONING/) | Tags, the moving `v1`, what is breaking, releases from the changelog |
 | [Permissions contract](https://kokeb-labs.github.io/ci-tools/latest/permissions/) | What each workflow needs from its caller |
 | [ESP-IDF quickstart](https://kokeb-labs.github.io/ci-tools/latest/esp-idf-quickstart/) | ESP32 example builds with `ru-build`, firmware releases |
 | [Docs platform](https://kokeb-labs.github.io/ci-tools/latest/docs-platform/) | The theme package, the publish workflow, migration and the style guide |

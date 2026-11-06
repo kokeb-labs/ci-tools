@@ -35,8 +35,8 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
   tested firmware ([ESP-IDF quickstart](esp-idf-quickstart.md)).
 - **Organisation checks.** [`dco`](dco.md) fails a pull request with an unsigned commit;
   [`org-standard-check`](org-standard-check.md) checks the required root files and the MIT licence.
-- **Releases without breaking callers.** Semver tags, a moving `v1`, an automatic patch release on every merge,
-  and a check that stops a breaking change from landing without a major ([Versioning](VERSIONING.md)).
+- **Releases without breaking callers.** Semver tags, a moving `v1`, a release for each changelog version a pull
+  request adds, and a check that stops a breaking change from landing without a major ([Versioning](VERSIONING.md)).
 - **A permissions contract.** Each workflow asks for the least it needs, per job, and the self-CI holds it to
   the [documented table](permissions.md).
 
@@ -69,7 +69,7 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 
 -   **[Versioning](VERSIONING.md)**
 
-    Tags, the moving major, what counts as breaking, automatic patch releases.
+    Tags, the moving major, what counts as breaking, releases from the changelog.
 
 -   **[Permissions contract](permissions.md)**
 

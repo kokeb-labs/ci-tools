@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
@@ -384,7 +385,7 @@ class ContractDiff(unittest.TestCase):
           a: {runs-on: ubuntu-latest, permissions: {contents: read}, steps: [{run: "true"}]}
         """)
 
-    def check(self, new: str, changelog: str = "") -> subprocess.CompletedProcess:
+    def check(self, new: str, changelog: str = "", base_changelog: str = "") -> subprocess.CompletedProcess:
         d = tempfile.mkdtemp()
         wf = os.path.join(d, ".github", "workflows")
         os.makedirs(wf)
@@ -392,6 +393,8 @@ class ContractDiff(unittest.TestCase):
         git("init", "-q")
         with open(os.path.join(wf, "ru-x.yml"), "w") as fh:
             fh.write(self.BASE)
+        with open(os.path.join(d, "CHANGELOG.md"), "w") as fh:
+            fh.write(base_changelog)
         git("add", "-A")
         git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "base")
         with open(os.path.join(wf, "ru-x.yml"), "w") as fh:
@@ -422,10 +425,67 @@ class ContractDiff(unittest.TestCase):
         new = "\n".join(l for l in self.BASE.splitlines() if "gone" not in l) + "\n"
         self.assertEqual(self.check(new, log).returncode, 0)
 
+    def test_breaking_in_the_new_major_section_passes(self):
+        log = "# Changelog\n\n## [Unreleased]\n\n## [2.0.0] - 2026-11-06\n\n### Breaking\n\n- removed gone\n\n## [1.0.0]\n"
+        new = "\n".join(l for l in self.BASE.splitlines() if "gone" not in l) + "\n"
+        self.assertEqual(self.check(new, log, "# Changelog\n\n## [Unreleased]\n\n## [1.0.0]\n").returncode, 0)
+
     def test_breaking_under_released_section_does_not_count(self):
         log = "# Changelog\n\n## [Unreleased]\n\n### Added\n\n## [1.0.0]\n\n### Breaking\n"
         new = "\n".join(l for l in self.BASE.splitlines() if "gone" not in l) + "\n"
-        self.assertEqual(self.check(new, log).returncode, 1)
+        self.assertEqual(self.check(new, log, log).returncode, 1)
+
+
+class ChangelogTest(unittest.TestCase):
+    """changelog.py: the release a pull request asks for, and the bump helper."""
+
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import changelog as cl  # noqa: E402
+
+    BASE = "# Changelog\n\n## [Unreleased]\n\n## [1.2.3] - 2026-01-01\n\n### Fixed\n\n- old\n"
+
+    def chk(self, text, base):
+        return self.cl.check(text, base, is_tagged=lambda v: False)
+
+    def test_already_tagged_version_is_not_a_new_release(self):
+        text = self.log("## [1.2.9] - 2026-11-06\n\n- x\n\n", "- pending\n\n")
+        self.assertEqual(self.cl.check(text, self.BASE, is_tagged=lambda v: v == "1.2.9"), [])
+
+    def log(self, new_section: str, unreleased: str = "") -> str:
+        return f"# Changelog\n\n## [Unreleased]\n\n{unreleased}{new_section}## [1.2.3] - 2026-01-01\n\n### Fixed\n\n- old\n"
+
+    def test_no_new_section_is_fine(self):
+        self.assertEqual(self.chk(self.log("", "### Added\n\n- pending\n\n"), self.BASE), [])
+
+    def test_next_patch_minor_major_pass(self):
+        for v in ("1.2.4", "1.3.0", "2.0.0"):
+            self.assertEqual(self.chk(self.log(f"## [{v}] - 2026-11-06\n\n### Fixed\n\n- x\n\n"), self.BASE), [], v)
+
+    def test_skipped_version_fails(self):
+        errs = self.chk(self.log("## [1.2.5] - 2026-11-06\n\n- x\n\n"), self.BASE)
+        self.assertTrue(any("one step" in e for e in errs), errs)
+
+    def test_breaking_needs_major(self):
+        errs = self.chk(self.log("## [1.3.0] - 2026-11-06\n\n### Breaking\n\n- x\n\n"), self.BASE)
+        self.assertTrue(any("major" in e for e in errs), errs)
+
+    def test_needs_date_entries_and_empty_unreleased(self):
+        errs = self.chk(self.log("## [1.2.4]\n\n### Fixed\n\n", "- left behind\n\n"), self.BASE)
+        self.assertEqual(len(errs), 3, errs)
+
+    def test_bump_moves_unreleased(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = pathlib.Path(d) / "CHANGELOG.md"
+            p.write_text(self.log("", "### Fixed\n\n- new fix\n\n"))
+            self.assertEqual(self.cl.cmd_bump(str(p), "patch", "2026-11-06"), 0)
+            text = p.read_text()
+            self.assertIn("## [Unreleased]\n\n## [1.2.4] - 2026-11-06\n\n### Fixed\n\n- new fix\n\n## [1.2.3]", text)
+            self.assertEqual(self.chk(text, self.BASE), [])
+
+    def test_release_notes_are_the_top_section(self):
+        top = self.cl.top_version(self.log("## [1.2.4] - 2026-11-06\n\n### Fixed\n\n- x\n\n"))
+        self.assertEqual(top[0], "1.2.4")
+        self.assertIn("- x", top[2])
 
 
 if __name__ == "__main__":

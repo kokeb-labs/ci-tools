@@ -14,9 +14,10 @@ pinned to the current major version:
   * a secret added as required, or a secret removed;
   * job permissions widened (callers granting the old set hit startup_failure).
 
-Breaking changes are allowed only when CHANGELOG.md's "Unreleased" section
-has a "### Breaking" subsection, which marks the next release as a major
-bump (docs/VERSIONING.md). Without one this script fails and lists them.
+Breaking changes are allowed only when CHANGELOG.md records them under a
+"### Breaking" subsection, in the Unreleased section or in the version section
+this pull request adds (which changelog.py then requires to be a major bump;
+docs/VERSIONING.md). Without one this script fails and lists them.
 
 Usage: check_contract.py --base-ref <git ref> [--workflows .github/workflows] [--changelog CHANGELOG.md]
 """
@@ -105,12 +106,13 @@ def breaking_changes(name: str, old: dict, new: dict) -> list[str]:
     return out
 
 
-def unreleased_has_breaking(changelog: str) -> bool:
+def breaking_recorded(changelog: str, base_ref: str) -> bool:
     if not os.path.exists(changelog):
         return False
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from changelog import breaking_allowed  # noqa: E402  (sibling script)
     text = open(changelog, encoding="utf-8").read()
-    m = re.search(r"^## \[Unreleased\][^\n]*\n(.*?)(?=^## \[|\Z)", text, re.M | re.S)
-    return bool(m and re.search(r"^### Breaking\b", m.group(1), re.M))
+    return breaking_allowed(text, git_show(base_ref, changelog))
 
 
 def git_show(ref: str, path: str) -> str | None:
@@ -150,15 +152,15 @@ def main() -> int:
     if not changes:
         print(f"no breaking contract changes against {args.base_ref}")
         return 0
-    if unreleased_has_breaking(args.changelog):
+    if breaking_recorded(args.changelog, args.base_ref):
         for c in changes:
             print(f"::warning::breaking (recorded in {args.changelog}): {c}")
-        print("breaking changes are recorded under Unreleased / ### Breaking: the next release must be a major bump")
+        print("breaking changes are recorded under ### Breaking: the next release must be a major bump")
         return 0
     for c in changes:
         print(f"::error::breaking change: {c}")
     print(f"{len(changes)} breaking change(s). Either keep the contract compatible (deprecate instead of "
-          f"removing), or record them under '## [Unreleased]' / '### Breaking' in {args.changelog} "
+          f"removing), or record them under '### Breaking' in {args.changelog} "
           "so the next release is a major bump (see docs/VERSIONING.md).")
     return 1
 
