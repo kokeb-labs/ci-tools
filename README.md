@@ -65,7 +65,7 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | [`ru-ci-gate.yml`](.github/workflows/ru-ci-gate.yml) | One required check that passes only if every job passed ([guide](docs/ru-ci-gate.md)) |
 | [`ru-host-ci.yml`](.github/workflows/ru-host-ci.yml) | CMake configure/build/ctest, then clang-tidy 18 and cppcheck on the compile database ([guide](docs/ru-host-ci.md)) |
 | [`ru-host-quality.yml`](.github/workflows/ru-host-quality.yml) | Complexity (lizard), coverage with MC/DC (GCC 14, gcovr) and ASan/UBSan, gated by assurance level ([guide](docs/ru-host-quality.md)) |
-| [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | clang-format and clang-tidy through cpp-linter-action ([guide](docs/ru-cpp-lint.md)) |
+| [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | clang-format and clang-tidy 20 from pinned, hash-checked LLVM builds, with the CMake compile database ([guide](docs/ru-cpp-lint.md)) |
 | [`ru-cpp-analysis.yml`](.github/workflows/ru-cpp-analysis.yml) | cppcheck over source directories ([guide](docs/ru-cpp-analysis.md)) |
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | The Kokeb Labs documentation platform: MkDocs with the shared theme, Doxygen under `/api/`, link check, Lighthouse budget and screenshots on PRs, versioned deploy with mike ([guide](docs/ru-mkdocs-publish.md), [migration](docs/MIGRATING-TO-MKDOCS.md), [style guide](docs/DOCS-STYLE-GUIDE.md)) |
 | [`ru-docs-publish.yml`](.github/workflows/ru-docs-publish.yml) | Legacy: Doxygen and Jekyll, versioned deploy to `gh-pages`; being replaced by `ru-mkdocs-publish.yml` ([guide](docs/ru-docs-publish.md)) |
@@ -116,7 +116,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-build.yml`](.github/workflows/ru-build.yml) | `contents: read`, `pull-requests: write` | checkout; firmware size comment on pull requests |
 | [`ru-ci-gate.yml`](.github/workflows/ru-ci-gate.yml) | `contents: read` | read the calling workflow to verify `needs` |
 | [`ru-cpp-analysis.yml`](.github/workflows/ru-cpp-analysis.yml) | `contents: read` | checkout |
-| [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | `contents: read`, `pull-requests: write` | checkout; cpp-linter thread comments and annotations |
+| [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | `contents: read` | checkout |
 | [`ru-docs-linkcheck.yml`](.github/workflows/ru-docs-linkcheck.yml) | `contents: read` | checkout |
 | [`ru-docs-publish.yml`](.github/workflows/ru-docs-publish.yml) | `contents: write` | push to the deployment branch; required on pull requests too, although PRs never deploy |
 | [`ru-host-ci.yml`](.github/workflows/ru-host-ci.yml) | `contents: read` | checkout |
@@ -258,17 +258,17 @@ jobs:
 <!-- inputs:ru-cpp-lint.yml:start -->
 | Input | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `clang_version` | string | no | `20` | Clang major version |
+| `clang_version` | string | no | `20` | Clang major version of clang-format and clang-tidy (20 is the supported version) |
 | `clang_format_config` | string | no | `_config/.clang-format` | Path to clang-format configuration file |
 | `clang_tidy_config` | string | no | `_config/.clang-tidy` | Path to clang-tidy configuration file |
 | `tidy_checks` | string | no | - | clang-tidy checks (comma-separated glob patterns, use - prefix to disable) |
 | `extensions` | string | no | `c,cpp,cc,cxx,h,hpp` | File extensions to check (comma-separated) |
 | `ignore` | string | no | `build\|.git` | Files or directories to exclude from linting (pipe-separated) |
 | `files_changed_only` | boolean | no | `false` | Only lint files that have been changed in the pull request |
-| `lines_changed_only` | boolean | no | `false` | Only inspect lines that have changed in the pull request |
+| `lines_changed_only` | boolean | no | `false` | Deprecated, ignored: whole files are always checked, which is stricter. Kept so existing callers do not break. |
 | `step_summary` | boolean | no | `true` | Add a summary of linting results to the workflow step summary |
 | `file_annotations` | boolean | no | `true` | Display linting errors and warnings as file annotations in the GitHub UI |
-| `thread_comments` | boolean | no | `false` | Post a single, collapsible thread comment in a pull request detailing all linting issues |
+| `thread_comments` | boolean | no | `false` | Deprecated, ignored: findings are reported as annotations and in the run summary. Kept so existing callers do not break. |
 | `cmake_args` | string | no | `""` | Arguments for a CMake configure that exports compile_commands.json for clang-tidy (for example "-DMYCHIP_BUILD_TESTS=ON"). Without a compile database clang-tidy cannot see the project's include paths and reports "file not found" for its own headers. Empty: no configure, no database. |
 | `cmake_source_dir` | string | no | `.` | Directory with the top-level CMakeLists.txt for the cmake_args configure |
 | `fail_on_findings` | boolean | no | `true` | Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in the findings output). |

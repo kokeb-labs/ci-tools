@@ -15,6 +15,21 @@ that heading.
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-06
+
+### Changed
+
+- `ru-cpp-lint` runs clang-format 20.1.8 and clang-tidy 20.1.0 itself, from LLVM's builds on PyPI pinned with their
+  SHA-256, instead of cpp-linter-action. That action installed clang from LLVM's apt server, fetching and running its
+  install script as root without a pinned version or checksum, and the install hung for 20 minutes several times
+  a day. The job now needs only `contents: read`; `thread_comments` and `lines_changed_only` are accepted but
+  ignored (whole files are checked). Findings are annotations and a run-summary table, as before.
+
+### Security
+
+- The `cpp-linter/cpp-linter-action` and `hustcer/setup-nu` actions are no longer used, so they can leave the
+  organisation's allow-list.
+
 ## [1.2.0] - 2026-11-06
 
 ### Added

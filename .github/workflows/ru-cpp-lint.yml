@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       clang_version:
-        description: "Clang major version"
+        description: "Clang major version of clang-format and clang-tidy (20 is the supported version)"
         type: string
         required: false
         default: "20"
@@ -39,7 +39,9 @@ on:
         required: false
         default: false
       lines_changed_only:
-        description: "Only inspect lines that have changed in the pull request"
+        description: >-
+          Deprecated, ignored: whole files are always checked, which is stricter. Kept so existing callers do not
+          break.
         type: boolean
         required: false
         default: false
@@ -54,7 +56,9 @@ on:
         required: false
         default: true
       thread_comments:
-        description: "Post a single, collapsible thread comment in a pull request detailing all linting issues"
+        description: >-
+          Deprecated, ignored: findings are reported as annotations and in the run summary. Kept so existing callers
+          do not break.
         type: boolean
         required: false
         default: false
@@ -87,19 +91,17 @@ permissions: {}
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
-    outputs:
-      findings: ${{ steps.lint.outputs.checks-failed }}
-    # pull-requests: write is used by thread_comments and file_annotations. A job
-    # cannot ask for more than its caller grants, so callers must grant it.
     permissions:
       contents: read
-      pull-requests: write
+    outputs:
+      findings: ${{ steps.lint.outputs.findings }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: ${{ inputs.files_changed_only && 0 || 1 }}  # the base branch, to list changed files
 
       - name: Prepare clang configuration
         env:
@@ -134,76 +136,58 @@ jobs:
             fi
           fi
 
-      - name: Report C/C++ files to lint
+      # LLVM's own clang-format and clang-tidy builds, from pinned PyPI wheels checked against their SHA-256.
+      # No third-party action and no install script fetched at run time.
+      - name: Install clang-format and clang-tidy (pinned, hash-checked)
+        env:
+          CLANG_VERSION: ${{ inputs.clang_version }}
+        run: |
+          set -euo pipefail
+          case "$CLANG_VERSION" in
+            20)
+              cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          clang-format==20.1.8 --hash=sha256:7c6bcb7e01ba4f05a4c980fda147b330f7e4833c2aea8c92a0c2df9573ae7afe
+          clang-tidy==20.1.0 --hash=sha256:e205541e350044ffe0b0d1fcaf62b9953890f8ecba31458bbcdcfe73040e58b6
+          REQ
+              ;;
+            *) echo "::error::clang_version $CLANG_VERSION is not supported; use 20"; exit 1 ;;
+          esac
+          python3 -m venv "$RUNNER_TEMP/clang"
+          "$RUNNER_TEMP/clang/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
+          echo "$RUNNER_TEMP/clang/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/clang/bin/clang-format" --version
+          "$RUNNER_TEMP/clang/bin/clang-tidy" --version | grep -m1 -i version
+
+      - name: Select files
         env:
           LINT_EXTENSIONS: ${{ inputs.extensions }}
           IGNORE_RAW: ${{ inputs.ignore }}
           FILES_CHANGED_ONLY: ${{ inputs.files_changed_only }}
           LINES_CHANGED_ONLY: ${{ inputs.lines_changed_only }}
+          BASE_REF: ${{ github.base_ref }}
+          EVENT: ${{ github.event_name }}
         run: |
-          echo "🔍 Gathering files for clang-format and clang-tidy..."
-
-          IFS=',' read -ra EXT_ARRAY <<< "${LINT_EXTENSIONS}"
-          PATTERNS=()
-          for ext in "${EXT_ARRAY[@]}"; do
-            ext=$(echo "$ext" | xargs)
-            if [ -n "$ext" ]; then
-              PATTERNS+=("*.$ext")
-            fi
-          done
-
-          if [ ${#PATTERNS[@]} -eq 0 ]; then
-            echo "⚠️  No valid extensions specified in inputs.extensions (${LINT_EXTENSIONS})"
-            echo "✅ Skipping file list preview."
-            exit 0
-          fi
-
-          mapfile -t CANDIDATES < <(git ls-files -- "${PATTERNS[@]}")
-
-          if [ ${#CANDIDATES[@]} -eq 0 ]; then
-            echo "⚠️  No tracked files match extensions: ${PATTERNS[*]}"
-            echo "✅ Skipping file list preview."
-            exit 0
-          fi
-
-          if [ -n "$IGNORE_RAW" ]; then
-            IFS='|' read -ra IGNORE_ARRAY <<< "$IGNORE_RAW"
-          else
-            IGNORE_ARRAY=()
-          fi
-
-          FILTERED=()
-          for file in "${CANDIDATES[@]}"; do
-            skip=false
-            for patt in "${IGNORE_ARRAY[@]}"; do
-              patt=$(echo "$patt" | xargs)
-              if [ -n "$patt" ] && [[ "$file" == *"$patt"* ]]; then
-                skip=true
-                break
-              fi
-            done
-            if [ "$skip" = false ]; then
-              FILTERED+=("$file")
-            fi
-          done
-
-          if [ ${#FILTERED[@]} -eq 0 ]; then
-            echo "⚠️  All matched files are excluded by ignore patterns: ${IGNORE_RAW}"
-            echo "✅ Skipping file list preview."
-            exit 0
-          fi
-
-          echo "📄 Files eligible for clang-format/clang-tidy (${#FILTERED[@]}):"
-          for file in "${FILTERED[@]}"; do
-            echo "  - $file"
-          done
-
-          if [ "${FILES_CHANGED_ONLY}" = "true" ]; then
-            echo "ℹ️  files_changed_only=true: cpp-linter will further restrict to changed files."
-          fi
-          if [ "${LINES_CHANGED_ONLY}" = "true" ]; then
-            echo "ℹ️  lines_changed_only=true: diagnostics limited to changed lines."
-          fi
+          python3 - <<'PY'
+          import os, subprocess
+          exts = [e.strip().lstrip(".") for e in os.environ["LINT_EXTENSIONS"].split(",") if e.strip()]
+          ignore = [p.strip() for p in os.environ["IGNORE_RAW"].split("|") if p.strip()]
+          ignore.append("build-clang-tidy")  # the compile-database configure's own output
+          files = subprocess.run(["git", "ls-files", "--", *[f"*.{e}" for e in exts]],
+                                 capture_output=True, text=True, check=True).stdout.split()
+          if os.environ["FILES_CHANGED_ONLY"] == "true" and os.environ["EVENT"].startswith("pull_request"):
+              base = f"origin/{os.environ['BASE_REF']}"
+              changed = set(subprocess.run(["git", "diff", "--name-only", "--diff-filter=d", f"{base}...HEAD"],
+                                           capture_output=True, text=True, check=True).stdout.split())
+              files = [f for f in files if f in changed]
+          if os.environ["LINES_CHANGED_ONLY"] == "true":
+              print("::notice::lines_changed_only is deprecated and ignored: whole files are checked")
+          files = [f for f in files if not any(p in f for p in ignore)]
+          with open(os.path.join(os.environ["RUNNER_TEMP"], "lint-files.txt"), "w") as fh:
+              fh.write("\n".join(files) + ("\n" if files else ""))
+          print(f"{len(files)} file(s) to check")
+          for f in files:
+              print(f"  {f}")
+          PY
 
       # clang-tidy needs each file's compile flags (include paths, -std, defines): export them from CMake.
       - name: Configure for clang-tidy (compile_commands.json)
@@ -218,29 +202,88 @@ jobs:
           test -f build-clang-tidy/compile_commands.json
           echo "compile database: $(grep -c '"file"' build-clang-tidy/compile_commands.json) entries"
 
-      - name: Run C/C++ Linter
+      - name: clang-format and clang-tidy
         id: lint
-        uses: cpp-linter/cpp-linter-action@774040af57f011a5fc47911f08ff0c3059d1835a  # v2.24.0
-        with:
-          style: file
-          tidy-checks: ${{ inputs.tidy_checks }}
-          version: ${{ inputs.clang_version }}
-          extensions: ${{ inputs.extensions }}
-          ignore: ${{ inputs.ignore }}|build-clang-tidy  # the compile-database configure's own output
-          files-changed-only: ${{ inputs.files_changed_only }}
-          lines-changed-only: ${{ inputs.lines_changed_only }}
-          file-annotations: ${{ inputs.file_annotations }}
-          step-summary: ${{ inputs.step_summary }}
-          thread-comments: ${{ inputs.thread_comments }}
-          repo-root: '.'
-          database: ${{ inputs.cmake_args != '' && 'build-clang-tidy' || '' }}
-
-      # cpp-linter-action reports but never fails the job itself.
-      - name: Fail on findings
-        if: ${{ inputs.fail_on_findings && steps.lint.outputs.checks-failed != '0' }}
         env:
-          FORMAT: ${{ steps.lint.outputs.clang-format-checks-failed }}
-          TIDY: ${{ steps.lint.outputs.clang-tidy-checks-failed }}
+          TIDY_CHECKS: ${{ inputs.tidy_checks }}
+          DATABASE: ${{ inputs.cmake_args != '' && 'build-clang-tidy' || '' }}
+          ANNOTATE: ${{ inputs.file_annotations }}
+          SUMMARY: ${{ inputs.step_summary }}
         run: |
-          echo "::error::clang-format findings in ${FORMAT:-?} file(s), clang-tidy findings in ${TIDY:-?} file(s)"
+          python3 - <<'PY'
+          import concurrent.futures as cf, os, re, subprocess
+          tmp = os.environ["RUNNER_TEMP"]
+          files = [f for f in open(os.path.join(tmp, "lint-files.txt")).read().split("\n") if f]
+          checks = os.environ["TIDY_CHECKS"].strip()
+          run_tidy = checks != "-*"
+          db = os.environ["DATABASE"]
+          root = os.getcwd()
+          diag = re.compile(r"^(?P<file>[^:\n]+):(?P<line>\d+):(?P<col>\d+): (?P<sev>warning|error): (?P<msg>.*?)(?: \[(?P<check>[^\]]+)\])?$")
+
+          def rel(path):
+              path = os.path.normpath(os.path.join(root, path))
+              return os.path.relpath(path, root) if path.startswith(root + os.sep) else None
+
+          def fmt(f):
+              r = subprocess.run(["clang-format", "--style=file", "--dry-run", "-Werror", f], capture_output=True, text=True)
+              lines = sorted({int(m.group("line")) for m in map(diag.match, r.stderr.splitlines()) if m})
+              return f, lines
+
+          def tidy(f):
+              cmd = ["clang-tidy", "--quiet"]
+              if checks:
+                  cmd.append(f"--checks={checks}")
+              cmd += (["-p", db] if db else []) + [f] + ([] if db else ["--", "-std=c++20"])
+              r = subprocess.run(cmd, capture_output=True, text=True)
+              out = []
+              for line in (r.stdout + r.stderr).splitlines():
+                  m = diag.match(line)
+                  if not m:
+                      continue
+                  path = rel(m.group("file"))
+                  check = m.group("check") or ""
+                  # Compiler warnings echoed as clang-diagnostic-* are the build's business, except hard errors.
+                  if path is None or (check.startswith("clang-diagnostic-") and check != "clang-diagnostic-error"):
+                      continue
+                  out.append((path, int(m.group("line")), m.group("sev"), m.group("msg"), check))
+              return f, out
+
+          workers = os.cpu_count() or 2
+          with cf.ThreadPoolExecutor(workers) as ex:
+              fmt_res = list(ex.map(fmt, files))
+              tidy_res = list(ex.map(tidy, files)) if run_tidy else []
+
+          fmt_bad = {f: lines for f, lines in fmt_res if lines}
+          tidy_by_file = {}
+          for _, items in tidy_res:
+              for path, line, sev, msg, check in items:
+                  tidy_by_file.setdefault(path, set()).add((line, sev, msg, check))
+          annotate = os.environ["ANNOTATE"] == "true"
+          if annotate:
+              for f, lines in fmt_bad.items():
+                  print(f"::error file={f},line={lines[0]}::not formatted with clang-format (lines {', '.join(map(str, lines[:20]))})")
+              for f, items in sorted(tidy_by_file.items()):
+                  for line, sev, msg, check in sorted(items):
+                      kind = "error" if sev == "error" else "warning"
+                      print(f"::{kind} file={f},line={line}::{msg} [{check}]")
+          bad_files = set(fmt_bad) | set(tidy_by_file)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"findings={len(bad_files)}\nformat_findings={len(fmt_bad)}\ntidy_findings={len(tidy_by_file)}\n")
+          if os.environ["SUMMARY"] == "true":
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as fh:
+                  fh.write("### C/C++ lint\n\n| Tool | Files checked | Files with findings |\n| --- | --- | --- |\n")
+                  fh.write(f"| clang-format | {len(files)} | {len(fmt_bad)} |\n")
+                  fh.write(f"| clang-tidy | {len(files) if run_tidy else 'off'} | {len(tidy_by_file) if run_tidy else '-'} |\n\n")
+                  for f, items in sorted(tidy_by_file.items()):
+                      for line, sev, msg, check in sorted(items)[:50]:
+                          fh.write(f"- `{f}:{line}` {msg} `{check}`\n")
+          print(f"clang-format: {len(fmt_bad)} file(s); clang-tidy: {len(tidy_by_file)} file(s) with findings")
+          PY
+
+      - name: Fail on findings
+        if: ${{ inputs.fail_on_findings && steps.lint.outputs.findings != '0' }}
+        env:
+          FINDINGS: ${{ steps.lint.outputs.findings }}
+        run: |
+          echo "::error::$FINDINGS file(s) have clang-format or clang-tidy findings"
           exit 1
