@@ -79,7 +79,9 @@
     
       
     
-    
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="../assets/kokeb/fonts.css">
+  <noscript><link rel="stylesheet" href="../assets/kokeb/fonts.css"></noscript>
+
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -1314,8 +1316,9 @@
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Bundled fonts use <code>font-display: optional</code> and are no longer preloaded. Swapping Inter in late made it the
-  largest paint and pushed Lighthouse performance on the portal from 0.89 to 0.79 (LCP about 3.1 s to 4.3 s).</li>
+<li>The bundled fonts' <code>@font-face</code> rules moved from <code>kokeb.css</code> to <code>assets/kokeb/fonts.css</code>, which loads without
+  blocking the first paint (as Google Fonts did before). Referenced from the render-blocking stylesheet, the font
+  files sat on Lighthouse's critical path and the portal's performance score fell from about 0.89 to 0.78.</li>
 </ul>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
