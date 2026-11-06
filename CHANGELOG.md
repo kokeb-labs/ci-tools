@@ -17,6 +17,10 @@ that heading.
 
 ### Changed
 
+- A release waits for the whole self-CI on the merged commit (`release.yml` runs on `workflow_run` of
+  "🧪 Workflow Self-CI"). The self-tests of the reusable workflows (`ci-*.yml`) are now called from `ci-self.yml`, so
+  the required "CI gate" covers them: a red reusable workflow can neither merge nor reach `@v1`. The Markdown lint
+  self-test reports issues instead of fixing them in the runner.
 - Releases of this repository are cut from `CHANGELOG.md`: a pull request that should be released moves the
   Unreleased entries to a new `## [X.Y.Z] - YYYY-MM-DD` section (`python .github/scripts/changelog.py bump patch`),
   and merging it tags that version, publishes the section as the release notes and moves `v1`. Before, every merge

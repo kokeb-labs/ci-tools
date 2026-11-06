@@ -222,10 +222,60 @@ jobs:
     with:
       extra_files: CONTRIBUTING.md
 
+  # The self-tests of the reusable workflows: each calls one ru-*.yml on fixtures. They sit under the gate, so a red
+  # reusable workflow cannot merge, and release.yml (which waits for this workflow) cannot ship it to @v1.
+  selftest-host-ci:
+    name: Self-test host CI
+    uses: ./.github/workflows/ci-host-ci.yml
+    permissions:
+      contents: read
+
+  selftest-cpp-lint:
+    name: Self-test C++ lint
+    uses: ./.github/workflows/ci-cpp-lint.yml
+    permissions:
+      contents: read
+      pull-requests: write
+
+  selftest-cpp-analysis:
+    name: Self-test C++ analysis
+    uses: ./.github/workflows/ci-cpp-analysis.yml
+    permissions:
+      contents: read
+
+  selftest-markdown-lint:
+    name: Self-test Markdown lint
+    uses: ./.github/workflows/ci-markdown-lint.yml
+    permissions:
+      contents: read
+
+  selftest-yaml-lint:
+    name: Self-test YAML lint
+    uses: ./.github/workflows/ci-yaml-lint.yml
+    permissions:
+      contents: read
+
+  selftest-docs-linkcheck:
+    name: Self-test docs link check
+    uses: ./.github/workflows/ci-docs-linkcheck.yml
+    permissions:
+      contents: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
-    needs: [actionlint, workflow-checks, docs-platform, dco, org-standard]
+    needs:
+      - actionlint
+      - workflow-checks
+      - docs-platform
+      - dco
+      - org-standard
+      - selftest-host-ci
+      - selftest-cpp-lint
+      - selftest-cpp-analysis
+      - selftest-markdown-lint
+      - selftest-yaml-lint
+      - selftest-docs-linkcheck
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:

@@ -1,6 +1,8 @@
 # Cuts a release of this repository's reusable workflows (see docs/VERSIONING.md):
-#   push to main  -> if CHANGELOG.md's top version section ([X.Y.Z]) is not
-#                    tagged yet, vX.Y.Z is tagged on the pushed commit and
+#   main green    -> after "🧪 Workflow Self-CI" (which holds the CI gate and
+#                    every self-test) succeeds for a push to main: if
+#                    CHANGELOG.md's top version section ([X.Y.Z]) is not
+#                    tagged yet, vX.Y.Z is tagged on that commit and
 #                    released as below, with that section as the notes. A
 #                    pull request asks for a release by adding the section
 #                    (.github/scripts/changelog.py bump patch); the self-CI
@@ -14,8 +16,12 @@
 name: 🏷️ Release
 
 on:
-  push:
+  # Releases wait for the whole self-CI on the merged commit: a red reusable workflow never reaches @v1.
+  workflow_run:
+    workflows: ["🧪 Workflow Self-CI"]
+    types: [completed]
     branches: [main]
+  push:
     tags: ['v*.*.*']
 
 permissions: {}
@@ -27,6 +33,9 @@ concurrency:
 jobs:
   release:
     name: Release
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -35,11 +44,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         # Credentials stay in the checkout: this job pushes tags.
         with:
+          # The commit the self-CI passed on (workflow_run), or the pushed tag.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0  # all tags, to find the highest release in the major
 
-      - name: Release named in CHANGELOG.md (push to main)
+      - name: Release named in CHANGELOG.md (main green)
         id: auto
-        if: ${{ github.ref_type == 'branch' }}
+        if: ${{ github.event_name == 'workflow_run' }}
         run: |
           set -euo pipefail
           echo "tag=" >> "$GITHUB_OUTPUT"
@@ -67,7 +78,7 @@ jobs:
 
       - name: Parse tag
         id: tag
-        if: ${{ github.ref_type == 'tag' || steps.auto.outputs.tag != '' }}
+        if: ${{ github.event_name == 'push' || steps.auto.outputs.tag != '' }}
         env:
           TAG: ${{ steps.auto.outputs.tag || github.ref_name }}
         run: |

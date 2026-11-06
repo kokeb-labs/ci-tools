@@ -69,9 +69,9 @@ def main() -> int:
     for path in sorted(glob.glob(os.path.join(args.workflows, "*.yml"))):
         with open(path, encoding="utf-8") as fh:
             doc = yaml.safe_load(fh) or {}
-        if not is_reusable(doc):
-            continue
         name = os.path.basename(path)
+        if not is_reusable(doc) or name.startswith("ci-"):  # ci-*.yml: this repository's own self-tests
+            continue
         start, end = f"<!-- inputs:{name}:start -->", f"<!-- inputs:{name}:end -->"
         if start not in new:
             stale.append(f"{name}: no inputs table in {args.readme} (add {start} ... {end})")

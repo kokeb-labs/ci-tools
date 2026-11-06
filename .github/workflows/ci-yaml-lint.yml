@@ -1,11 +1,9 @@
 ---
 name: 📝 YAML Lint CI
 
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
