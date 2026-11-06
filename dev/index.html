@@ -706,6 +706,8 @@
       
         
       
+        
+      
     
     
     
@@ -1143,6 +1145,11 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
 <tr>
 <td><a href="ru-cpp-lint/"><code>ru-cpp-lint.yml</code></a></td>
 <td>Check C and C++ formatting with clang-format and lint with clang-tidy, with results as annotations on the pull request.</td>
+<td><code>contents: read</code></td>
+</tr>
+<tr>
+<td><a href="ru-cross-build/"><code>ru-cross-build.yml</code></a></td>
+<td>Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, so code that claims to run on any MCU is shown to compile for one on every pull request.</td>
 <td><code>contents: read</code></td>
 </tr>
 <tr>
