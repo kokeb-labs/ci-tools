@@ -23,6 +23,35 @@ jobs:
       fail_on_no_artifacts: true
 ```
 
+## Release only after CI passed on the tag
+
+Triggered by the tag push itself, the release runs at the same time as CI on that tag and can publish before (or
+without) a green build. Trigger it from the finished CI run instead, and pass the tag and the commit:
+
+```yaml
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' &&
+      startsWith(github.event.workflow_run.head_branch, 'v')
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-release-with-artifacts.yml@v1
+    with:
+      build_workflow: ci.yml
+      tag_name: ${{ github.event.workflow_run.head_branch }}
+      commit: ${{ github.event.workflow_run.head_sha }}
+      fail_on_no_artifacts: true
+```
+
+The workflow checks that the tag points to `commit` before it releases anything.
+
 ## Inputs
 
 <!-- generated: inputs-ru-release-with-artifacts -->
@@ -34,6 +63,7 @@ jobs:
 | `prerelease` | boolean | `false` | Mark as pre-release |
 | `tag_name` | string | empty | Tag name for release (defaults to github.ref_name) |
 | `fail_on_no_artifacts` | boolean | `false` | Fail if no firmware artifacts found |
+| `commit` | string | empty | Commit whose CI artifacts are released, and that the release tag must point to. Empty: github.sha. A caller triggered by workflow_run passes github.event.workflow_run.head_sha, because github.sha is then the default branch's head, not the tagged commit. |
 <!-- /generated -->
 
 ## Jobs and permissions

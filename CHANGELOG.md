@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-06
+
+### Added
+
+- `ru-release-with-artifacts` takes a `commit` input: the commit whose CI artifacts are released, for callers that
+  release from a finished CI run (`workflow_run`), where `github.sha` is the default branch's head. It also checks
+  that the release tag points to that commit before releasing. The guide shows a caller that releases only after
+  CI passed on the tag.
+
 ## [1.2.1] - 2026-11-06
 
 ### Changed
