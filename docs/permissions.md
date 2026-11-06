@@ -25,6 +25,7 @@ read from the workflow files.
 | [`ru-cross-build.yml`](ru-cross-build.md) | `contents: read` | `plan`: none<br>`build`: `contents: read` |
 | [`ru-docs-linkcheck.yml`](ru-docs-linkcheck.md) | `contents: read` | `link-check`: `contents: read` |
 | [`ru-docs-publish.yml`](ru-docs-publish.md) | `contents: write` | `input-validation`: none<br>`quality-checks`: `contents: read`<br>`version-detection`: `contents: read`<br>`build`: `contents: write` |
+| [`ru-handbook-check.yml`](ru-handbook-check.md) | `contents: read` | `check`: `contents: read` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | `contents: read` | `host`: `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | `contents: read` | `limits`: none<br>`complexity`: `contents: read`<br>`coverage`: `contents: read`<br>`sanitizers`: `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | `contents: read` | `markdownlint`: `contents: read` |

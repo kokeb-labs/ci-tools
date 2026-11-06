@@ -104,6 +104,9 @@ jobs:
       - name: Unit tests for the check scripts (CI gate, DCO, organisation standard included)
         run: python .github/scripts/test_checks.py
 
+      - name: Unit tests for the handbook checker
+        run: python tools/handbook_check/test_handbook_check.py
+
       # ru-build inlines the ensure-tools-directory action's script (see the
       # comment there); the two copies must not drift apart.
       - name: ru-build's inlined tools-directory step matches the action
@@ -273,6 +276,12 @@ jobs:
     permissions:
       contents: read
 
+  selftest-handbook-check:
+    name: Self-test handbook check
+    uses: ./.github/workflows/ci-handbook-check.yml
+    permissions:
+      contents: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
@@ -290,6 +299,7 @@ jobs:
       - selftest-docs-linkcheck
       - selftest-host-quality
       - selftest-cross-build
+      - selftest-handbook-check
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:
