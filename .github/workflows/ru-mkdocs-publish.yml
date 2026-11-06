@@ -254,8 +254,15 @@ jobs:
           if doxygen -x "$DOXYFILE" 2>/dev/null | grep -qE '^HTML_EXTRA_STYLESHEET *= *[^ ]'; then
             doxygen "$DOXYFILE"
           else
-            css=$(python3 -c 'import kokeb_mkdocs_theme.theme as t, pathlib; print(pathlib.Path(t.__file__).parent / "assets/kokeb/kokeb-doxygen.css")')
-            { cat "$DOXYFILE"; echo; echo "HTML_EXTRA_STYLESHEET = \"$css\""; echo "HTML_COLORSTYLE = AUTO_LIGHT"; } | doxygen -
+            kb=$(python3 -c 'import kokeb_mkdocs_theme.theme as t, pathlib; print(pathlib.Path(t.__file__).parent / "assets/kokeb")')
+            # The fonts go beside the stylesheet, so the API pages load nothing from a third party.
+            fonts=$(find "$kb" -maxdepth 1 -name '*.woff2' -printf '"%p" ' | sort)
+            {
+              cat "$DOXYFILE"; echo
+              echo "HTML_EXTRA_STYLESHEET = \"$kb/kokeb-doxygen.css\""
+              echo "HTML_EXTRA_FILES = $fonts\"$kb/FONTS-LICENSE.txt\""
+              echo "HTML_COLORSTYLE = AUTO_LIGHT"
+            } | doxygen -
           fi
           if [ -z "$HTML_DIR" ]; then
             out=$(doxygen -x "$DOXYFILE" 2>/dev/null | sed -n 's/^OUTPUT_DIRECTORY *= *//p' | tr -d '"')

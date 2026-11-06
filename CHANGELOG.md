@@ -17,6 +17,11 @@ that heading.
 
 ### Changed
 
+- The kokeb docs theme ships Inter and JetBrains Mono itself (variable woff2, SIL Open Font License) instead of
+  loading them from Google Fonts, so no Kokeb page sends a reader's address to Google. `ru-mkdocs-publish` copies
+  the fonts beside the Doxygen stylesheet for the API pages; the root 404 page uses system fonts.
+- Mermaid, still loaded on demand from unpkg, is pinned to 11.17.2 and checked with Subresource Integrity, so a
+  changed file on the CDN is refused instead of run.
 - `ru-docs-publish` installs Doxygen from its own release, checked against a pinned SHA-256, and Graphviz with
   apt, instead of two small third-party actions (`ssciwr/doxygen-install`, `tlylt/install-graphviz`).
 

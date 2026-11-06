@@ -18,12 +18,9 @@
 {% endblock %}
 
 {% block fonts %}
-  {#- Non-blocking: the stylesheet loads as print media and switches to all once it is in; display=swap. -#}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" media="print" onload="this.media='all'"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"></noscript>
+  {#- Inter and JetBrains Mono come from this site (assets/kokeb/, @font-face in kokeb.css), never a third party.
+      Only the Latin text face is preloaded: it is on every page; the rest load when a page uses them. -#}
+  <link rel="preload" href="{{ 'assets/kokeb/inter-latin-wght-normal.woff2' | url }}" as="font" type="font/woff2" crossorigin>
 {% endblock %}
 
 {% block styles %}

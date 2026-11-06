@@ -250,6 +250,29 @@ class MermaidStandInBehaviourTest(unittest.TestCase):
         self.assertEqual(s["print"]["scripts"], 1)
 
 
+class ThirdPartyTest(unittest.TestCase):
+    """No page loads a font from a third party, and the one script from a CDN is pinned and integrity-checked."""
+
+    theme = pathlib.Path(__file__).resolve().parents[1] / "kokeb_mkdocs_theme/theme"
+
+    def test_no_google_fonts(self):
+        for f in self.theme.rglob("*"):
+            if f.suffix in {".html", ".css", ".yml", ".js"}:
+                self.assertNotRegex(f.read_text(), r"fonts\.(googleapis|gstatic)\.com", f)
+
+    def test_fonts_ship_with_the_theme(self):
+        css = (self.theme / "assets/kokeb/kokeb.css").read_text() + (self.theme / "assets/kokeb/kokeb-doxygen.css").read_text()
+        for url in re.findall(r'url\("([^"]+\.woff2)"\)', css):
+            self.assertTrue((self.theme / "assets/kokeb" / url).is_file(), url)
+        self.assertIn("Open Font License", (self.theme / "assets/kokeb/FONTS-LICENSE.txt").read_text())
+
+    def test_mermaid_is_pinned_with_integrity(self):
+        js = (self.theme / "partials/mermaid-lazy.html").read_text()
+        self.assertRegex(js, r'"https://unpkg\.com/mermaid@\d+\.\d+\.\d+/dist/mermaid\.min\.js"')
+        self.assertRegex(js, r'SRI = "sha384-[A-Za-z0-9+/=]{64}"')
+        self.assertIn("s.integrity = SRI", js)
+
+
 class Root404Test(unittest.TestCase):
     """The page GitHub Pages serves for a missing path of a versioned site, before it redirects."""
 
@@ -261,7 +284,8 @@ class Root404Test(unittest.TestCase):
         self.assertIn("prefers-color-scheme: dark", self.page)
         self.assertIn("M32 14L36.7 26.53", self.page)  # the Kokeb Labs mark, inline
         stylesheets = re.findall(r'<link rel="stylesheet" href="([^"]+)"', self.page)
-        self.assertTrue(all(h.startswith("https://fonts.googleapis.com/") for h in stylesheets), stylesheets)
+        self.assertEqual(stylesheets, [])
+        self.assertNotRegex(self.page, r"<link[^>]+(preconnect|preload)")  # nothing fetched from another host
         self.assertNotRegex(self.page, r"<script[^>]+src=")
 
     def test_not_found_waits_for_the_redirect_decision(self):

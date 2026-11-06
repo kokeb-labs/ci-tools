@@ -161,8 +161,46 @@
   --md-accent-fg-color--transparent: #2bb3a31a;
 }
 
-/* Fonts: Inter / JetBrains Mono when loaded (main.html). Until then a local face with Inter's metrics (Arial or its
-   metric twins, scaled), so text does not move when Inter arrives (no layout shift from the font swap). */
+/* Fonts: Inter and JetBrains Mono, served from this site (the woff2 files next to this stylesheet; licence in
+   FONTS-LICENSE.txt). No font comes from a third party, so no reader's address reaches one. Each is one variable
+   file per script range; a browser fetches only the ranges a page uses. Until a font is in, a local face with its
+   metrics (Arial or Courier New, or their metric twins, scaled) stands in, so text does not move when it arrives. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("inter-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("inter-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url("jetbrains-mono-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url("jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
 @font-face {
   font-family: "Inter Fallback";
   src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Arimo"), local("Helvetica");

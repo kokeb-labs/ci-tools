@@ -7,11 +7,14 @@
     theme's colours. Before the reader does anything, a diagram just below the first screen waits: loading it then
     would run Mermaid while the page is still loading, on the main thread the page needs for its first paint.
     Without IntersectionObserver every diagram renders at once, as before.
+    The script is pinned to one release and checked against its SHA-384 (Subresource Integrity), so a changed
+    file on the CDN is refused, not run. To update, change the version and the hash together.
     tests/test_plugin.py checks that Material's bundle still uses these two calls, and runs this script in Node. -#}
 <script>
 (function () {
   if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11/dist/mermaid.min.js", config = {}, real, loading;
+  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
+      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
   var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
   var stub = {
     initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
@@ -26,6 +29,8 @@
     return loading || (loading = new Promise(function (resolve, reject) {
       var s = document.createElement("script");
       s.src = SRC;
+      s.integrity = SRI;
+      s.crossOrigin = "anonymous";
       s.onload = function () {
         real = window.mermaid;
         window.mermaid = stub;
