@@ -856,6 +856,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#release-only-after-ci-passed-on-the-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release only after CI passed on the tag
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1164,6 +1175,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#release-only-after-ci-passed-on-the-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release only after CI passed on the tag
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1234,7 +1256,7 @@
 
 <h1 id="ru-release-with-artifacts">ru-release-with-artifacts<a class="headerlink" href="#ru-release-with-artifacts" title="Permanent link">&para;</a></h1>
 <p>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/addbae634c81b38bd32e332c0a04e3ed9b03e50f/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/435fd45cb789308d4ac89e106cee0caa15c5bc3f/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">---</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
@@ -1251,6 +1273,30 @@
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="nt">build_workflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">esp32-examples-build-ci.yml</span>
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="nt">fail_on_no_artifacts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </span></code></pre></div>
+<h2 id="release-only-after-ci-passed-on-the-tag">Release only after CI passed on the tag<a class="headerlink" href="#release-only-after-ci-passed-on-the-tag" title="Permanent link">&para;</a></h2>
+<p>Triggered by the tag push itself, the release runs at the same time as CI on that tag and can publish before (or
+without) a green build. Trigger it from the finished CI run instead, and pass the tag and the commit:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">on</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">workflow_run</span><span class="p">:</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">workflows</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">CI</span><span class="p p-Indicator">]</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">completed</span><span class="p p-Indicator">]</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nt">permissions</span><span class="p">:</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nt">jobs</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="nt">release</span><span class="p">:</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="no">github.event.workflow_run.conclusion == 'success' &amp;&amp; github.event.workflow_run.event == 'push' &amp;&amp;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="no">startsWith(github.event.workflow_run.head_branch, 'v')</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kokeb-labs/ci-tools/.github/workflows/ru-release-with-artifacts.yml@v1</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="nt">with</span><span class="p">:</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">      </span><span class="nt">build_workflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ci.yml</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">tag_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.event.workflow_run.head_branch }}</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="nt">commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.event.workflow_run.head_sha }}</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="nt">fail_on_no_artifacts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<p>The workflow checks that the tag points to <code>commit</code> before it releases anything.</p>
 <h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
 <!-- generated: inputs-ru-release-with-artifacts -->
 <table>
@@ -1298,6 +1344,12 @@
 <td>boolean</td>
 <td><code>false</code></td>
 <td>Fail if no firmware artifacts found</td>
+</tr>
+<tr>
+<td><code>commit</code></td>
+<td>string</td>
+<td>empty</td>
+<td>Commit whose CI artifacts are released, and that the release tag must point to. Empty: github.sha. A caller triggered by workflow_run passes github.event.workflow_run.head_sha, because github.sha is then the default branch's head, not the tagged commit.</td>
 </tr>
 </tbody>
 </table>
