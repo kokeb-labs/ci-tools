@@ -95,6 +95,24 @@ driver uses. A board uses `class="kb-chip kb-chip--board"` with MCU, power input
   refuses text under 4.5:1 contrast in either theme, overlaps and missing alt text; `kokeb-docs figures --check`
   fails CI when the code changed and the figure did not. Embed with `<!-- figure: <id> -->` / `<!-- /figure -->`.
 - **Mermaid** for sequences and state machines.
+
+### How a figure reads
+
+Most confusing diagrams mix up what an arrow means or which way to read. Every figure follows these rules:
+
+- **One reading direction, said in the subtitle.** Top to bottom for layers and calls, left to right for steps in
+  time. When two things happen at different times (a push and a tag), draw two lanes, one per trigger, each with its
+  trigger as the lane title.
+- **Every arrow is a verb.** Solid arrows run or call something; dashed arrows carry data (a file, an artifact, a
+  setting). Label an arrow whenever the verb isn't obvious from the legend (`uploads`, `reads`, `forwards to your
+  hooks`). An arrow points from the one acting to the one acted on.
+- **Colour is ownership, three tones at most.** `teal` is what the reader writes or owns, `brand` is this
+  repository, `slate` is outside (hardware, GitHub, ESP-IDF). Draw owned cards with `accent=True` so they match
+  the legend swatches. Add `("~solid", ...)` and `("~dashed", ...)` to the legend when both arrow kinds appear.
+- **Few boxes, short text.** At most about eight cards, a title and one or two short lines each. Lists that come
+  from the code (public calls, commands) go in chips inside a region.
+- **Say the point.** The subtitle states the one thing the reader should take away; a `note` answers the question
+  the figure raises (for example, why the release does not rebuild).
 - **Vendor diagrams** only as SVG or compressed PNG, with `{ .kb-plate }`, never screenshots of PDFs.
 - **Alt text** on every image: one sentence that says what the figure shows, not "diagram". The build fails on a
   missing alt.

@@ -6,14 +6,15 @@ Every figure on this site is drawn by a Python module from facts extracted from 
 not redrawn, when the code changes. CI runs `kokeb-docs figures --check` and fails when a
 committed figure no longer matches the code. Each figure below lists the files it is drawn from.
 
-## Three layers, one of them yours
+## The layers, one of them yours
 
 <!-- figure: driver-layers -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="driver-layers.dark.svg">
   <img src="driver-layers.svg"
-    alt="Layer diagram: the application calls the hardware-agnostic driver, which calls the communication
-    interface, which the platform port implements with the MCU's SDK, which talks to the chip.">
+    alt="Layer diagram: your application calls the hardware-agnostic driver, which sends transactions through
+    the communication interface to the platform port you write, which drives the chip; only the port
+    changes from one MCU to the next.">
 </picture>
 <!-- /figure -->
 

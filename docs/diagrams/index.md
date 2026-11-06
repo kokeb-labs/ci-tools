@@ -12,9 +12,9 @@ committed figure no longer matches the code. Each figure below lists the files i
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="workflow-flow.dark.svg">
   <img src="workflow-flow.svg"
-    alt="Flow diagram: a calling repository runs ru-build, whose generate-matrix, build and size-report jobs
-    read app_config.yml through espidf-tools, build every app in the espressif/idf image and upload fw-*
-    artifacts; on a version tag ru-release-with-artifacts attaches those artifacts to a GitHub Release.">
+    alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report
+    and uploads fw-* artifacts; on a version tag ru-release-with-artifacts downloads those same
+    artifacts and attaches them to a GitHub Release.">
 </picture>
 <!-- /figure -->
 

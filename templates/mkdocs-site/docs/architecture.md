@@ -8,7 +8,8 @@ How the driver is built: hardware-agnostic core, communication interface, platfo
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="diagrams/driver-layers.dark.svg">
   <img src="diagrams/driver-layers.svg"
-    alt="Layer diagram: the application calls the hardware-agnostic driver, which calls the communication
-    interface, which the platform port implements with the MCU's SDK, which talks to the chip.">
+    alt="Layer diagram: your application calls the hardware-agnostic driver, which sends transactions through
+    the communication interface to the platform port you write, which drives the chip; only the port
+    changes from one MCU to the next.">
 </picture>
 <!-- /figure -->

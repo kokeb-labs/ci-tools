@@ -15,6 +15,13 @@ that heading.
 
 ## [Unreleased]
 
+### Changed
+
+- figkit draws in the Kokeb palette (copper on light, star gold on dark), and its legend can explain solid and
+  dashed arrows. A region can put its caption on a second line.
+- The workflow figure shows the push lane and the tag lane apart, with labelled arrows.
+- The style guide says how a figure reads: one direction, a verb on every arrow, colour for ownership.
+
 ## [1.0.0] - 2026-11-05
 
 First release of `kokeb-labs/ci-tools`.

@@ -34,9 +34,10 @@ BASE: dict[str, tuple[str, str]] = {
 
 #: Tones: name -> {"light": (strong, text, tint, soft), "dark": (strong, text, tint, soft)}.
 TONES: dict[str, dict[str, tuple[str, str, str, str]]] = {
-    "brand": {"light": ("#4F46E5", "#3730A3", "#FBEFE6", "#C7CBF8"), "dark": ("#8C93FF", "#C7CBFF", "#1B2A41", "#3B4080")},
+    # Kokeb copper on light, star gold on dark: the same pairing the site uses for links.
+    "brand": {"light": ("#9A4A17", "#7A360E", "#FBEFE6", "#E9C3A6"), "dark": ("#F4B942", "#F8D27A", "#2A2113", "#6B5424")},
     "blue": {"light": ("#2563EB", "#1E429F", "#EAF2FF", "#BCD2F9"), "dark": ("#60A5FA", "#BFDBFE", "#13233A", "#2B4C78")},
-    "teal": {"light": ("#0F8B80", "#115E59", "#E6F6F4", "#A6DCD5"), "dark": ("#2DD4BF", "#A7F3E6", "#0F2A28", "#215A54")},
+    "teal": {"light": ("#0B7A72", "#0B5F59", "#E6F6F4", "#A6DCD5"), "dark": ("#2BB3A3", "#A7F3E6", "#0F2A28", "#215A54")},
     "violet": {"light": ("#7C3AED", "#5B21B6", "#F3EEFF", "#D5C5FA"), "dark": ("#A78BFA", "#DDD6FE", "#221A3A", "#4B3A82")},
     "amber": {"light": ("#C26A05", "#8A3C0B", "#FFF5E3", "#F1CF93"), "dark": ("#FBBF24", "#FDE68A", "#2C2310", "#6A5220")},
     "rose": {"light": ("#DB2752", "#9F1239", "#FFEEF2", "#F5BECB"), "dark": ("#FB7185", "#FECDD3", "#321820", "#6E3141")},
