@@ -18,9 +18,11 @@
 {% endblock %}
 
 {% block fonts %}
-  {#- Inter and JetBrains Mono come from this site (assets/kokeb/, @font-face in kokeb.css), never a third party.
-      Not preloaded: a preload competes with the stylesheets for the first paint, and with font-display: optional
-      the first page renders in the metric-matched fallback anyway. -#}
+  {#- Inter and JetBrains Mono come from this site (assets/kokeb/fonts.css), never a third party. Non-blocking: the
+      stylesheet loads as print media and switches to all once it is in; until then the fallback faces in kokeb.css
+      (same metrics) show. -#}
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="{{ 'assets/kokeb/fonts.css' | url }}">
+  <noscript><link rel="stylesheet" href="{{ 'assets/kokeb/fonts.css' | url }}"></noscript>
 {% endblock %}
 
 {% block styles %}
