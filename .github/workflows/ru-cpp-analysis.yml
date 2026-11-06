@@ -13,9 +13,9 @@ on:
         description: "C++ standard"
         type: string
         required: false
-        default: "c++17"
+        default: "c++20"
       strict:
-        description: "Fail job if any issues found"
+        description: "Fail the job when cppcheck reports a finding (severity other than information)"
         type: boolean
         required: false
         default: false
@@ -42,20 +42,39 @@ on:
         type: number
         required: false
         default: 0
+      artifact_name:
+        description: "Name of the uploaded report artifact (unique per call when a run calls this more than once)"
+        type: string
+        required: false
+        default: "cppcheck-report"
+    outputs:
+      findings:
+        description: "Number of cppcheck findings (severity other than information)"
+        value: ${{ jobs.cppcheck.outputs.findings }}
 
 permissions: {}
 
 jobs:
   cppcheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: read
+    outputs:
+      findings: ${{ steps.run.outputs.findings }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Run cppcheck (Docker)
+      # cppcheck from Ubuntu's archive (signed, versioned with the runner image), not a third-party container.
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends cppcheck
+          cppcheck --version
+
+      - name: Run cppcheck
         id: run
         shell: bash
         env:
@@ -68,7 +87,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Suppress missingIncludeSystem (system headers are not mounted) and
+          # Suppress missingIncludeSystem (system headers are not analysed) and
           # unmatchedSuppression (inline suppressions that match nothing).
           args=(
             "--enable=${CPPCHECK_ENABLE}"
@@ -83,38 +102,42 @@ jobs:
           if [ -n "${CPPCHECK_MAX_CONFIGS}" ] && [ "${CPPCHECK_MAX_CONFIGS}" != "0" ]; then
             args+=("--max-configs=${CPPCHECK_MAX_CONFIGS}")
           fi
-          args+=(--xml --output-file=/src/cppcheck_report.xml)
+          args+=(--xml --output-file=cppcheck_report.xml)
 
           # cppcheck ignores paths with -i (there is no --exclude).
           read -r -a excludes <<< "${CPPCHECK_EXCLUDE}"
           for ex in "${excludes[@]}"; do
-            args+=(-i "/src/${ex}")
+            args+=(-i "${ex}")
           done
           read -r -a paths <<< "${CPPCHECK_PATHS}"
           for p in "${paths[@]}"; do
-            args+=("/src/${p}")
+            if [ -e "$p" ]; then args+=("$p"); else echo "::warning::cppcheck path '$p' does not exist"; fi
           done
 
-          docker run --rm -v "$PWD":/src ghcr.io/facthunder/cppcheck:latest \
-            cppcheck "${args[@]}" 2>&1 | tee cppcheck_output.txt || true
+          # A non-zero exit here is cppcheck itself failing (bad arguments, crash), not a finding.
+          cppcheck "${args[@]}" 2>&1 | tee cppcheck_output.txt
 
-          if [ -s cppcheck_report.xml ]; then
-            echo "issues=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "issues=false" >> "$GITHUB_OUTPUT"
-          fi
+          # Findings are the <error> elements, except the informational ones (checker reports, include notes).
+          findings="$(python3 -c 'import sys, xml.etree.ElementTree as ET
+          errs = ET.parse(sys.argv[1]).getroot().iter("error")
+          print(sum(1 for e in errs if e.get("severity") != "information"))' cppcheck_report.xml)"
+          echo "findings=$findings" >> "$GITHUB_OUTPUT"
+          echo "cppcheck findings: $findings" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload report
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         if: always()
         with:
-          name: cppcheck-report
+          name: ${{ inputs.artifact_name }}
           path: |
             cppcheck_report.xml
             cppcheck_output.txt
           retention-days: 14
 
-      - name: Fail on issues (strict)
-        if: ${{ inputs.strict && steps.run.outputs.issues == 'true' }}
+      - name: Fail on findings (strict)
+        if: ${{ inputs.strict && steps.run.outputs.findings != '0' }}
+        env:
+          FINDINGS: ${{ steps.run.outputs.findings }}
         run: |
-          echo "Cppcheck reported issues (strict mode)"; exit 1
+          echo "::error::cppcheck reported ${FINDINGS} finding(s) (strict); see the report artifact"
+          exit 1

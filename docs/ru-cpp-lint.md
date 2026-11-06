@@ -37,7 +37,7 @@ jobs:
 <!-- generated: jobs-ru-cpp-lint -->
 | Job | Permissions | Steps |
 | --- | --- | --- |
-| `lint` | `contents: read`, `pull-requests: write` | `actions/checkout`; Prepare clang configuration; Report C/C++ files to lint; Run C/C++ Linter |
+| `lint` | `contents: read`, `pull-requests: write` | `actions/checkout`; Prepare clang configuration; Report C/C++ files to lint; Configure for clang-tidy (compile_commands.json); Run C/C++ Linter; Fail on findings |
 <!-- /generated -->
 
 `pull-requests: write` is for annotations and the thread comment. The caller grants it even with both turned off.
@@ -58,6 +58,9 @@ jobs:
 | `step_summary` | boolean | `true` | Add a summary of linting results to the workflow step summary |
 | `file_annotations` | boolean | `true` | Display linting errors and warnings as file annotations in the GitHub UI |
 | `thread_comments` | boolean | `false` | Post a single, collapsible thread comment in a pull request detailing all linting issues |
+| `cmake_args` | string | empty | Arguments for a CMake configure that exports compile_commands.json for clang-tidy (for example "-DMYCHIP_BUILD_TESTS=ON"). Without a compile database clang-tidy cannot see the project's include paths and reports "file not found" for its own headers. Empty: no configure, no database. |
+| `cmake_source_dir` | string | `.` | Directory with the top-level CMakeLists.txt for the cmake_args configure |
+| `fail_on_findings` | boolean | `true` | Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in the findings output). |
 <!-- /generated -->
 
 ## When it fails

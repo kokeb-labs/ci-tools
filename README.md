@@ -233,6 +233,9 @@ jobs:
 | `step_summary` | boolean | no | `true` | Add a summary of linting results to the workflow step summary |
 | `file_annotations` | boolean | no | `true` | Display linting errors and warnings as file annotations in the GitHub UI |
 | `thread_comments` | boolean | no | `false` | Post a single, collapsible thread comment in a pull request detailing all linting issues |
+| `cmake_args` | string | no | `""` | Arguments for a CMake configure that exports compile_commands.json for clang-tidy (for example "-DMYCHIP_BUILD_TESTS=ON"). Without a compile database clang-tidy cannot see the project's include paths and reports "file not found" for its own headers. Empty: no configure, no database. |
+| `cmake_source_dir` | string | no | `.` | Directory with the top-level CMakeLists.txt for the cmake_args configure |
+| `fail_on_findings` | boolean | no | `true` | Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in the findings output). |
 <!-- inputs:ru-cpp-lint.yml:end -->
 
 ### ru-cpp-analysis
@@ -251,12 +254,13 @@ jobs:
 | Input | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `paths` | string | no | `src inc examples` | Dirs to analyze (space-separated) |
-| `std` | string | no | `c++17` | C++ standard |
-| `strict` | boolean | no | `false` | Fail job if any issues found |
+| `std` | string | no | `c++20` | C++ standard |
+| `strict` | boolean | no | `false` | Fail the job when cppcheck reports a finding (severity other than information) |
 | `exclude` | string | no | `""` | Paths to exclude (space-separated) |
 | `enable` | string | no | `warning,style,performance,portability,information` | Checks to enable (comma-separated: all,warning,style,performance, portability,information,unusedFunction,missingInclude) |
 | `force` | boolean | no | `false` | Force checking even with incomplete analysis |
 | `max_configs` | number | no | `0` | Maximum configs to check (for template-heavy code, 0=unlimited) |
+| `artifact_name` | string | no | `cppcheck-report` | Name of the uploaded report artifact (unique per call when a run calls this more than once) |
 <!-- inputs:ru-cpp-analysis.yml:end -->
 
 ### ru-mkdocs-publish
