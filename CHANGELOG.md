@@ -17,8 +17,9 @@ that heading.
 
 ### Fixed
 
-- Bundled fonts use `font-display: optional` and are no longer preloaded. Swapping Inter in late made it the
-  largest paint and pushed Lighthouse performance on the portal from 0.89 to 0.79 (LCP about 3.1 s to 4.3 s).
+- The bundled fonts' `@font-face` rules moved from `kokeb.css` to `assets/kokeb/fonts.css`, which loads without
+  blocking the first paint (as Google Fonts did before). Referenced from the render-blocking stylesheet, the font
+  files sat on Lighthouse's critical path and the portal's performance score fell from about 0.89 to 0.78.
 
 ### Changed
 

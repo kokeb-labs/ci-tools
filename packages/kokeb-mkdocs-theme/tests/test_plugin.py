@@ -261,7 +261,9 @@ class ThirdPartyTest(unittest.TestCase):
                 self.assertNotRegex(f.read_text(), r"fonts\.(googleapis|gstatic)\.com", f)
 
     def test_fonts_ship_with_the_theme(self):
-        css = (self.theme / "assets/kokeb/kokeb.css").read_text() + (self.theme / "assets/kokeb/kokeb-doxygen.css").read_text()
+        css = "".join((self.theme / "assets/kokeb" / n).read_text() for n in ("fonts.css", "kokeb-doxygen.css"))
+        self.assertIn("url(", css)
+        self.assertNotIn(".woff2", (self.theme / "assets/kokeb/kokeb.css").read_text())  # kept off the critical path
         for url in re.findall(r'url\("([^"]+\.woff2)"\)', css):
             self.assertTrue((self.theme / "assets/kokeb" / url).is_file(), url)
         self.assertIn("Open Font License", (self.theme / "assets/kokeb/FONTS-LICENSE.txt").read_text())
