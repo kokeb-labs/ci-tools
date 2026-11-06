@@ -1060,6 +1060,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Figures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-a-figure-reads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How a figure reads
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1363,6 +1380,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Figures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-a-figure-reads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How a figure reads
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1673,6 +1707,23 @@ driver uses. A board uses <code>class="kb-chip kb-chip--board"</code> with MCU, 
   refuses text under 4.5:1 contrast in either theme, overlaps and missing alt text; <code>kokeb-docs figures --check</code>
   fails CI when the code changed and the figure did not. Embed with <code>&lt;!-- figure: &lt;id&gt; --&gt;</code> / <code>&lt;!-- /figure --&gt;</code>.</li>
 <li><strong>Mermaid</strong> for sequences and state machines.</li>
+</ul>
+<h3 id="how-a-figure-reads">How a figure reads<a class="headerlink" href="#how-a-figure-reads" title="Permanent link">&para;</a></h3>
+<p>Most confusing diagrams mix up what an arrow means or which way to read. Every figure follows these rules:</p>
+<ul>
+<li><strong>One reading direction, said in the subtitle.</strong> Top to bottom for layers and calls, left to right for steps in
+  time. When two things happen at different times (a push and a tag), draw two lanes, one per trigger, each with its
+  trigger as the lane title.</li>
+<li><strong>Every arrow is a verb.</strong> Solid arrows run or call something; dashed arrows carry data (a file, an artifact, a
+  setting). Label an arrow whenever the verb isn't obvious from the legend (<code>uploads</code>, <code>reads</code>, <code>forwards to your
+  hooks</code>). An arrow points from the one acting to the one acted on.</li>
+<li><strong>Colour is ownership, three tones at most.</strong> <code>teal</code> is what the reader writes or owns, <code>brand</code> is this
+  repository, <code>slate</code> is outside (hardware, GitHub, ESP-IDF). Draw owned cards with <code>accent=True</code> so they match
+  the legend swatches. Add <code>("~solid", ...)</code> and <code>("~dashed", ...)</code> to the legend when both arrow kinds appear.</li>
+<li><strong>Few boxes, short text.</strong> At most about eight cards, a title and one or two short lines each. Lists that come
+  from the code (public calls, commands) go in chips inside a region.</li>
+<li><strong>Say the point.</strong> The subtitle states the one thing the reader should take away; a <code>note</code> answers the question
+  the figure raises (for example, why the release does not rebuild).</li>
 <li><strong>Vendor diagrams</strong> only as SVG or compressed PNG, with <code>{ .kb-plate }</code>, never screenshots of PDFs.</li>
 <li><strong>Alt text</strong> on every image: one sentence that says what the figure shows, not "diagram". The build fails on a
   missing alt.</li>
