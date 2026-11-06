@@ -1380,7 +1380,7 @@ exists so that does not happen again.</p>
 </tbody>
 </table>
 <p>A breaking change needs a <strong>major</strong> bump (<code>v1</code> → <code>v2</code>). It is listed under
-<code>### Breaking</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/d419db25920085d1a89ed89d315794268c5525c0/CHANGELOG.md">CHANGELOG.md</a>, under Unreleased or in the new version section.
+<code>### Breaking</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/beb350263175039c45a6c1e373a6fe7e05b9067b/CHANGELOG.md">CHANGELOG.md</a>, under Unreleased or in the new version section.
 On pull requests, the self-CI (<code>.github/scripts/check_contract.py</code>) compares
 each <code>ru-*.yml</code> with the base branch. It fails if it finds one of these
 changes and that heading is missing.</p>
@@ -1401,8 +1401,8 @@ new output) or a <strong>patch</strong> release (bug fix, action bump, documenta
 reach callers also moves them to a new version section:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>.github/scripts/changelog.py<span class="w"> </span>bump<span class="w"> </span>patch<span class="w">   </span><span class="c1"># or minor, or major</span>
 </span></code></pre></div>
-<p>That writes <code>## [X.Y.Z] - YYYY-MM-DD</code> with the Unreleased entries under it. When the pull request merges,
-<code>release.yml</code> tags <code>vX.Y.Z</code> on the merge commit, publishes the section as the GitHub Release notes and moves <code>vX</code>.
+<p>That writes <code>## [X.Y.Z] - YYYY-MM-DD</code> with the Unreleased entries under it. When the pull request merges and the
+self-CI (every self-test and the CI gate) passes on <code>main</code>, <code>release.yml</code> tags <code>vX.Y.Z</code> on the merge commit, publishes the section as the GitHub Release notes and moves <code>vX</code>.
 A pull request without a new section is merged without a release; its entries wait under Unreleased for the next
 one. Callers pinned to <code>@v1</code> therefore get a fix as soon as a pull request asks for its release, and the changelog
 and the releases never drift apart.</p>

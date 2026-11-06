@@ -1540,6 +1540,10 @@
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li>A release waits for the whole self-CI on the merged commit (<code>release.yml</code> runs on <code>workflow_run</code> of
+  "🧪 Workflow Self-CI"). The self-tests of the reusable workflows (<code>ci-*.yml</code>) are now called from <code>ci-self.yml</code>, so
+  the required "CI gate" covers them: a red reusable workflow can neither merge nor reach <code>@v1</code>. The Markdown lint
+  self-test reports issues instead of fixing them in the runner.</li>
 <li>Releases of this repository are cut from <code>CHANGELOG.md</code>: a pull request that should be released moves the
   Unreleased entries to a new <code>## [X.Y.Z] - YYYY-MM-DD</code> section (<code>python .github/scripts/changelog.py bump patch</code>),
   and merging it tags that version, publishes the section as the release notes and moves <code>v1</code>. Before, every merge
