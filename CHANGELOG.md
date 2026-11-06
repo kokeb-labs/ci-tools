@@ -36,8 +36,8 @@ that heading.
 
 ### Added
 
-- `ru-cross-build`: builds one CMake target for Cortex-M0+, M3, M4F, M7F and M33F cores with the GNU Arm Embedded
-  toolchain from Ubuntu's archive, one job per core, with the caller's own warning and language flags, and reports
+- `ru-cross-build`: builds one CMake target for Cortex-M0+, M3, M4F, M7F and M33F cores with Arm's GNU toolchain
+  14.3.rel1 (pinned, SHA-256 checked; an Ubuntu mirror hung one install for 20 minutes), one job per core, with the caller's own warning and language flags, and reports
   the objects' code and data size. A driver proves its code compiles for a microcontroller, not only on the host.
 
 ## [1.3.0] - 2026-11-06

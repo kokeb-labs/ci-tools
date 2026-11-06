@@ -5,7 +5,8 @@ any MCU is shown to compile for one on every pull request.
 
 `ru-cross-build.yml` runs one job per core in `cores`:
 
-1. Installs `gcc-arm-none-eabi` with newlib and libstdc++ from Ubuntu's archive.
+1. Installs Arm's GNU toolchain release 14.3.rel1 (GCC 14, newlib, libstdc++), checked against the SHA-256 Arm
+   publishes with it, so every run uses the same identified compiler.
 2. Writes a CMake toolchain file for the core (`-mcpu`, `-mthumb`, the float ABI and FPU) with
    `CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY`, so configuring needs no linker script.
 3. Configures with that toolchain at `MinSizeRel` and builds **only** `build_target`. The project's own flags
