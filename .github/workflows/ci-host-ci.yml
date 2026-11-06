@@ -1,18 +1,14 @@
 ---
 name: 🖥️ Host CI Self-Test
 
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: ci-host-ci-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   # Preset path, clean code: must pass with fail_on_findings: true.

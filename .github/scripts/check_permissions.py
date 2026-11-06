@@ -51,10 +51,15 @@ def is_reusable(doc: dict) -> bool:
     return on == "workflow_call"
 
 
+# The repository's own self-tests (ci-*.yml) are called by ci-self.yml but are not part of the public contract.
+def internal(path: str) -> bool:
+    return os.path.basename(path).startswith("ci-")
+
+
 def reusable_workflows(folder: str) -> list[str]:
     out = []
     for path in sorted(glob.glob(os.path.join(folder, "*.yml")) + glob.glob(os.path.join(folder, "*.yaml"))):
-        if is_reusable(load(path)):
+        if is_reusable(load(path)) and not internal(path):
             out.append(path)
     return out
 

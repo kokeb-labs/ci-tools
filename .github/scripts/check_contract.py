@@ -132,12 +132,13 @@ def main() -> int:
     if listing.returncode != 0:
         print(f"::error::cannot list {args.workflows} at {args.base_ref}: {listing.stderr.strip()}")
         return 2
-    base_names = {n for n in listing.stdout.split() if re.fullmatch(r".*\.ya?ml", n)
+    # ci-*.yml are this repository's own self-tests (called by ci-self.yml), not part of the public contract.
+    base_names = {n for n in listing.stdout.split() if re.fullmatch(r".*\.ya?ml", n) and not n.startswith("ci-")
                   and call_spec_or_none(yaml.safe_load(git_show(args.base_ref, f"{args.workflows}/{n}") or "") or {})}
     head_names = set()
     for p in glob.glob(os.path.join(args.workflows, "*.y*ml")):
         with open(p, encoding="utf-8") as fh:
-            if call_spec_or_none(yaml.safe_load(fh) or {}):
+            if call_spec_or_none(yaml.safe_load(fh) or {}) and not os.path.basename(p).startswith("ci-"):
                 head_names.add(os.path.basename(p))
 
     changes: list[str] = []

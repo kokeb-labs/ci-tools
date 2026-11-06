@@ -1,11 +1,9 @@
 ---
 name: 📝 Markdown Lint CI
 
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+  workflow_call:
   workflow_dispatch:
 
 permissions:
@@ -33,6 +31,6 @@ jobs:
       # use_docker: false = Use official action (faster, recommended)
       # use_docker: true  = Use Docker container (more control, supports exclude_patterns)
       use_docker: false
-      fix: true  # Automatically fix fixable issues (does not commit changes)
+      fix: false  # report every issue; a fix in the runner would hide it
       separator: ''  # Separator between glob patterns (default: space)
 

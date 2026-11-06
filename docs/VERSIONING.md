@@ -64,8 +64,8 @@ reach callers also moves them to a new version section:
 python .github/scripts/changelog.py bump patch   # or minor, or major
 ```
 
-That writes `## [X.Y.Z] - YYYY-MM-DD` with the Unreleased entries under it. When the pull request merges,
-`release.yml` tags `vX.Y.Z` on the merge commit, publishes the section as the GitHub Release notes and moves `vX`.
+That writes `## [X.Y.Z] - YYYY-MM-DD` with the Unreleased entries under it. When the pull request merges and the
+self-CI (every self-test and the CI gate) passes on `main`, `release.yml` tags `vX.Y.Z` on the merge commit, publishes the section as the GitHub Release notes and moves `vX`.
 A pull request without a new section is merged without a release; its entries wait under Unreleased for the next
 one. Callers pinned to `@v1` therefore get a fix as soon as a pull request asks for its release, and the changelog
 and the releases never drift apart.

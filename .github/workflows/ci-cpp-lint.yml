@@ -1,21 +1,15 @@
 ---
 name: 🔍 C++ Lint CI
 
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
 on:
-  push:
-    branches: [main, 'release/*']  # Run on main and release branches
-    tags: ['v*']  # Run on version tags
-  pull_request:
-    branches: [main]  # Only run on PRs targeting main branch
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: write
 
-concurrency:
-  group: ci-cpp-lint-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test-cpp-lint:
