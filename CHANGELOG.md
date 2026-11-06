@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-06
+
 ### Changed
 
 - `ru-cpp-lint` runs clang-format 20.1.8 and clang-tidy 20.1.0 itself, from LLVM's builds on PyPI pinned with their
