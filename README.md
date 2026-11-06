@@ -561,6 +561,7 @@ jobs:
 | `prerelease` | boolean | no | `false` | Mark as pre-release |
 | `tag_name` | string | no | `""` | Tag name for release (defaults to github.ref_name) |
 | `fail_on_no_artifacts` | boolean | no | `false` | Fail if no firmware artifacts found |
+| `commit` | string | no | `""` | Commit whose CI artifacts are released, and that the release tag must point to. Empty: github.sha. A caller triggered by workflow_run passes github.event.workflow_run.head_sha, because github.sha is then the default branch's head, not the tagged commit. |
 <!-- inputs:ru-release-with-artifacts.yml:end -->
 
 ### dco

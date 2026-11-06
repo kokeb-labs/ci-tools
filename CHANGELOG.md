@@ -15,6 +15,29 @@ that heading.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-06
+
+### Added
+
+- `ru-release-with-artifacts` takes a `commit` input: the commit whose CI artifacts are released, for callers that
+  release from a finished CI run (`workflow_run`), where `github.sha` is the default branch's head. It also checks
+  that the release tag points to that commit before releasing. The guide shows a caller that releases only after
+  CI passed on the tag.
+
+### Fixed
+
+- `ru-build` no longer fails pull requests from forks: their token cannot comment, so the size comment is skipped
+  for them (and never fails the job), and the size table is always written to the run summary. On same-repository
+  pull requests the comment is updated on each push instead of added again.
+
+### Security
+
+- `ru-yaml-lint` installs yamllint 1.38.0 pinned with SHA-256 hashes on `ubuntu-24.04`, instead of the latest
+  yamllint from an unpinned `pip install`.
+- `ru-host-ci` passes `artifact_name` through the environment instead of expanding it inside a shell command.
+- `ru-markdown-lint` with `use_docker: true` pulled `markdownlint/markdownlint-cli2:latest`, an image that does not
+  exist; it now uses the author's image `davidanson/markdownlint-cli2`, pinned to v0.23.3 by digest.
+
 ## [1.2.1] - 2026-11-06
 
 ### Changed

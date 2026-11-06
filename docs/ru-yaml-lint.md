@@ -30,7 +30,7 @@ jobs:
 <!-- generated: jobs-ru-yaml-lint -->
 | Job | Permissions | Steps |
 | --- | --- | --- |
-| `yamllint` (YAML Lint) | `contents: read` | Checkout code; Install yamllint; Run yamllint |
+| `yamllint` (YAML Lint) | `contents: read` | Checkout code; Install yamllint (pinned, hash-checked); Run yamllint |
 <!-- /generated -->
 
 ## Inputs

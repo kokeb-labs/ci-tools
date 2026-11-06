@@ -455,25 +455,36 @@ jobs:
 
           echo "file=$OUT" >> "$GITHUB_OUTPUT"
 
+      # Always in the run summary, so contributors from forks see it too.
+      - name: Size summary in the run summary
+        env:
+          SUMMARY_FILE: ${{ steps.mk.outputs.file }}
+        run: cat "$SUMMARY_FILE" >> "$GITHUB_STEP_SUMMARY"
+
+      # A pull request from a fork gets a read-only token that cannot comment; it has the run summary instead.
+      # One comment per pull request, updated on each push rather than added again.
       - name: Comment summary on PR
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+        env:
+          SUMMARY_FILE: ${{ steps.mk.outputs.file }}
         with:
           script: |
-            // Only create comment if we have a valid issue number
-            if (!context.issue || !context.issue.number) {
-              console.log('No issue number available, skipping PR comment');
-              return;
-            }
-
             const fs = require('fs');
-            const body = fs.readFileSync('${{ steps.mk.outputs.file }}',
-                                        'utf8');
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body
-            });
+            const marker = '<!-- kokeb-firmware-size -->';
+            const body = marker + '\n' + fs.readFileSync(process.env.SUMMARY_FILE, 'utf8');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const mine = comments.find(c => c.user && c.user.type === 'Bot' && (c.body || '').startsWith(marker));
+            if (mine) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: mine.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
 
       # Optional guardrail: fail if size exceeds your budget
       - name: Enforce size budgets (optional)

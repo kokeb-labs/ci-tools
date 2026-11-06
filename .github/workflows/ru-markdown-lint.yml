@@ -109,7 +109,8 @@ jobs:
           EXCLUDE_PATTERNS: ${{ inputs.exclude_patterns }}
           LINT_FIX: ${{ inputs.fix }}
         run: |
-          IMAGE="markdownlint/markdownlint-cli2:latest"
+          # The markdownlint-cli2 author's image, pinned by digest (v0.23.3).
+          IMAGE="davidanson/markdownlint-cli2:v0.23.3@sha256:d5f3f3f04b2e285dcbcdcd13b4454d119e273e3c393a9dabd163dba4abad526d"
 
           # Convert space-separated globs to array (markdownlint-cli2 uses space-separated)
           read -r -a GLOB_ARRAY <<< "$GLOBS"
