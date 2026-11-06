@@ -233,6 +233,7 @@ jobs:
 | `step_summary` | boolean | no | `true` | Add a summary of linting results to the workflow step summary |
 | `file_annotations` | boolean | no | `true` | Display linting errors and warnings as file annotations in the GitHub UI |
 | `thread_comments` | boolean | no | `false` | Post a single, collapsible thread comment in a pull request detailing all linting issues |
+| `cmake_args` | string | no | `""` | Arguments for a CMake configure that exports compile_commands.json for clang-tidy (for example "-DMYCHIP_BUILD_TESTS=ON"). Without a compile database clang-tidy cannot see the project's include paths and reports "file not found" for its own headers. Empty: no configure, no database. |
 | `fail_on_findings` | boolean | no | `true` | Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in the findings output). |
 <!-- inputs:ru-cpp-lint.yml:end -->
 

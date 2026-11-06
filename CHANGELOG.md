@@ -17,6 +17,17 @@ that heading.
 
 ### Changed
 
+- `ru-cpp-lint` fails the job when clang-format or clang-tidy reports a finding (`fail_on_findings`, default true);
+  before, findings were only annotated and the job always passed. A new `cmake_args` input configures CMake with
+  `compile_commands.json`, so clang-tidy sees the project's include paths; without it clang-tidy could not find
+  the project's own headers. A `findings` output gives the count.
+- `ru-cpp-analysis` runs cppcheck from Ubuntu's archive instead of the unpinned `ghcr.io/facthunder/cppcheck:latest`
+  image, no longer ignores cppcheck's own exit status, counts findings from the XML report (`strict` used to fail
+  on every run, because the report always has a header), defaults `std` to `c++20`, takes an `artifact_name`, and
+  has a `findings` output.
+
+### Changed
+
 - Releases of this repository are cut from `CHANGELOG.md`: a pull request that should be released moves the
   Unreleased entries to a new `## [X.Y.Z] - YYYY-MM-DD` section (`python .github/scripts/changelog.py bump patch`),
   and merging it tags that version, publishes the section as the release notes and moves `v1`. Before, every merge

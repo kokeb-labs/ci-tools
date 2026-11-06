@@ -58,6 +58,14 @@ on:
         type: boolean
         required: false
         default: false
+      cmake_args:
+        description: >-
+          Arguments for a CMake configure that exports compile_commands.json for clang-tidy (for example
+          "-DMYCHIP_BUILD_TESTS=ON"). Without a compile database clang-tidy cannot see the project's include
+          paths and reports "file not found" for its own headers. Empty: no configure, no database.
+        type: string
+        required: false
+        default: ""
       fail_on_findings:
         description: >-
           Fail the job when clang-format or clang-tidy reports a finding. Set false to only report (the count is in
@@ -192,6 +200,18 @@ jobs:
             echo "ℹ️  lines_changed_only=true: diagnostics limited to changed lines."
           fi
 
+      # clang-tidy needs each file's compile flags (include paths, -std, defines): export them from CMake.
+      - name: Configure for clang-tidy (compile_commands.json)
+        if: ${{ inputs.cmake_args != '' }}
+        env:
+          CMAKE_ARGS: ${{ inputs.cmake_args }}
+        run: |
+          set -euo pipefail
+          read -r -a args <<< "$CMAKE_ARGS"
+          cmake -S . -B build-clang-tidy -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "${args[@]}"
+          test -f build-clang-tidy/compile_commands.json
+          echo "compile database: $(grep -c '"file"' build-clang-tidy/compile_commands.json) entries"
+
       - name: Run C/C++ Linter
         id: lint
         uses: cpp-linter/cpp-linter-action@774040af57f011a5fc47911f08ff0c3059d1835a  # v2.24.0
@@ -207,6 +227,7 @@ jobs:
           step-summary: ${{ inputs.step_summary }}
           thread-comments: ${{ inputs.thread_comments }}
           repo-root: '.'
+          database: ${{ inputs.cmake_args != '' && 'build-clang-tidy' || '' }}
 
       # cpp-linter-action reports but never fails the job itself.
       - name: Fail on findings
