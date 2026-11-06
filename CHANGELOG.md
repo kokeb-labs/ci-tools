@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-06
+
 ### Changed
 
 - A release waits for the whole self-CI on the merged commit (`release.yml` runs on `workflow_run` of
