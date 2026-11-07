@@ -2045,7 +2045,7 @@
     "template"
    ],
    "status": "active",
-   "title": "Run-time configuration is one Config struct passed to Initialize"
+   "title": "Run-time configuration is one Config struct passed to the constructor"
   },
   "KB-CPP-044": {
    "area": "cpp",
@@ -2231,7 +2231,7 @@
     "template"
    ],
    "status": "active",
-   "title": "Initialize runs the fixed sequence and leaves nothing half-initialised"
+   "title": "The start-up runs the fixed sequence and leaves nothing half-initialised"
   },
   "KB-CPP-059": {
    "area": "cpp",
@@ -2244,7 +2244,7 @@
     "template"
    ],
    "status": "active",
-   "title": "No call initialises as a side effect"
+   "title": "EnsureInitialized is the one start-up entry point, and no call starts as a side effect"
   },
   "KB-CPP-060": {
    "area": "cpp",
@@ -3756,6 +3756,18 @@
    ],
    "status": "active",
    "title": "Each test says what it verifies, with its data and expected result"
+  },
+  "KB-DOC-065": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "A driver's docs trace each part of the driver to its datasheet section"
   },
   "KB-GIT-001": {
    "area": "git",
