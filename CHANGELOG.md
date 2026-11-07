@@ -15,6 +15,13 @@ that heading.
 
 ## [Unreleased]
 
+## [1.5.3] - 2026-11-07
+
+### Changed
+
+- `ru-handbook-check`: the rules snapshot follows the handbook's ADR-0021 (`EnsureInitialized()` is the one start-up
+  entry point: KB-CPP-043, KB-CPP-058, KB-CPP-059) and the new datasheet-trail rule KB-DOC-065.
+
 ## [1.5.2] - 2026-11-07
 
 ### Fixed
