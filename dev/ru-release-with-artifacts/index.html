@@ -641,6 +641,8 @@
       
         
       
+        
+      
     
     
     
@@ -1338,7 +1340,7 @@
 
 <h1 id="ru-release-with-artifacts">ru-release-with-artifacts<a class="headerlink" href="#ru-release-with-artifacts" title="Permanent link">&para;</a></h1>
 <p>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/264319677ca5431e1650c47234a16b0b6938489d/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/a92c28b9cfa4754f3d148673ae58da84fb8a46f5/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">---</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
@@ -1484,11 +1486,10 @@ in Debug and Release overwrite each other, and could pass GitHub's limit of 1,00
 <p>Every line must say <code>OK</code>. To flash a firmware zip: unzip it, go to the build folder inside and run
 <code>esptool.py --chip &lt;chip&gt; write_flash @flash_args</code> (the chip is in <code>flasher_args.json</code>).</p>
 <h3 id="provenance">Provenance<a class="headerlink" href="#provenance" title="Permanent link">&para;</a></h3>
-<p>The release does not yet carry signed build provenance. GitHub artifact attestations
-(<code>actions/attest-build-provenance</code>) need a public repository, or GitHub Enterprise Cloud for a private one, and an
-extra <code>id-token: write</code> and <code>attestations: write</code> grant from every caller. They are added when the repositories
-are public; until then <code>SHA256SUMS</code> and the SBOM tie the files to the tagged commit, and the tag check above ties
-the firmware to the CI run that tested it.</p>
+<p>For a public repository, add <a href="../ru-attest-release/"><code>ru-attest-release</code></a> as a job after this one. It signs build
+provenance for every file in <code>SHA256SUMS</code>, and <code>gh attestation verify</code> checks a download against it. It is a
+separate workflow because it needs <code>id-token: write</code> and <code>attestations: write</code>, which callers of this workflow do
+not grant.</p>
 <h2 id="when-it-finds-no-firmware">When it finds no firmware<a class="headerlink" href="#when-it-finds-no-firmware" title="Permanent link">&para;</a></h2>
 <p>The release only reuses artifacts; it never builds. It finds none when:</p>
 <ul>
