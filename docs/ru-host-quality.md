@@ -32,6 +32,9 @@ Every limit can be overridden with an input (`max_ccn`, `max_length`, `max_param
 
 - **Library code only.** `library_paths` (default `inc src`) names it. Tests, examples and tools are not measured
   for complexity and do not count towards coverage.
+- **Every C and C++ file, header-only implementations included.** The complexity job lists `.c`, `.cc`, `.cpp`,
+  `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx`, `.ipp`, `.tpp` and `.inl` files under `library_paths` itself: lizard alone
+  skips `.ipp`, `.tpp` and `.inl` files in a directory, which is where a header-only driver keeps its code.
 - **Only code that ran.** Coverage reads the data of test binaries that executed. A compile-only target (for
   example an optimised build that exists to prove the code compiles at `-O2`) has no data and would otherwise count
   every line as missed.

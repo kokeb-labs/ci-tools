@@ -191,11 +191,23 @@ jobs:
             echo "::error::none of the library_paths exist: $PATHS"
             exit 1
           fi
+          # lizard picks files in a directory by extension and skips header-only implementation files
+          # (.ipp, .tpp, .inl), so list every C/C++ file explicitly; a file named in library_paths is
+          # measured whatever its extension.
+          files=()
+          while IFS= read -r -d '' f; do files+=("$f"); done < <(find "${existing[@]}" -type f \( \
+            -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.h' -o -name '*.hh' \
+            -o -name '*.hpp' -o -name '*.hxx' -o -name '*.ipp' -o -name '*.tpp' -o -name '*.inl' \) -print0 | sort -z)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "::error::no C or C++ files under library_paths: $PATHS"
+            exit 1
+          fi
+          echo "measuring ${#files[@]} file(s)"
           # -m: modified CCN (a switch counts once); -w: one line per function over a limit.
           # lizard exits 1 when a function is over a limit; the count below decides (run: steps use bash -e).
-          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m -w -C "$CCN" -L "$LENGTH" -a "$PARAMS" "${existing[@]}" \
+          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m -w -C "$CCN" -L "$LENGTH" -a "$PARAMS" "${files[@]}" \
             > "$RUNNER_TEMP/over.txt" || true
-          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m "${existing[@]}" > "$RUNNER_TEMP/complexity.txt" || true
+          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m "${files[@]}" > "$RUNNER_TEMP/complexity.txt" || true
           n=$(grep -c ': warning: ' "$RUNNER_TEMP/over.txt" || true)
           echo "findings=$n" >> "$GITHUB_OUTPUT"
           mkdir -p reports && cp "$RUNNER_TEMP/complexity.txt" "$RUNNER_TEMP/over.txt" reports/

@@ -26,7 +26,7 @@ jobs:
       # =============================================================================
       # File Patterns
       # =============================================================================
-      extensions: "c,cpp,cc,cxx,h,hpp"
+      extensions: "c,cpp,cc,cxx,h,hpp,ipp"
       # The sample project only: the fixtures under tests/ carry deliberate findings for other self-tests.
       ignore: "build|.git|docs|_site|templates|packages|tests"
       cmake_source_dir: cpp-ci-test

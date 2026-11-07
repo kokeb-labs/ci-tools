@@ -54,9 +54,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - name: The complex function was reported
+      - name: The complex functions were reported, in the .cpp and in the .ipp
         env:
           FINDINGS: ${{ needs.too-complex.outputs.complexity_findings }}
         run: |
           echo "findings=${FINDINGS}"
-          test "${FINDINGS:-0}" -gt 0
+          test "${FINDINGS:-0}" -ge 2

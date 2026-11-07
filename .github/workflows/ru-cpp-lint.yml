@@ -27,7 +27,7 @@ on:
         description: "File extensions to check (comma-separated)"
         type: string
         required: false
-        default: "c,cpp,cc,cxx,h,hpp"
+        default: "c,cpp,cc,cxx,h,hpp,ipp,tpp,inl"
       ignore:
         description: "Files or directories to exclude from linting (pipe-separated)"
         type: string
@@ -229,7 +229,13 @@ jobs:
               lines = sorted({int(m.group("line")) for m in map(diag.match, r.stderr.splitlines()) if m})
               return f, lines
 
+          # Implementation files included by a header (.ipp, .tpp, .inl) are not translation units: clang-tidy
+          # sees them through the sources that include them (HeaderFilterRegex), clang-format checks them here.
+          included_only = (".ipp", ".tpp", ".inl")
+
           def tidy(f):
+              if f.endswith(included_only):
+                  return f, []
               cmd = ["clang-tidy", "--quiet"]
               if checks:
                   cmd.append(f"--checks={checks}")
