@@ -70,11 +70,46 @@ The workflow checks that the tag points to `commit` before it releases anything.
 
 One job, `release`, with `contents: write`. It checks out with full history, downloads every artifact whose
 name matches `artifact_pattern` from the run of `build_workflow` on `github.sha`
-(`dawidd6/action-download-artifact`), and creates the release for `tag_name` (default: the pushed tag) with
-generated notes and the files attached (`softprops/action-gh-release`).
+(`dawidd6/action-download-artifact`), builds the [release files](#what-the-release-holds) with
+`tools/release_assets/release_assets.py` from ci-tools at the same commit as this workflow, and creates the release
+for `tag_name` (default: the pushed tag) with generated notes and those files attached
+(`softprops/action-gh-release`). The checksums also go to the run's summary.
 
 The workflow does not ask for `actions: read`: existing callers grant only `contents: write`, and the token can
 read artifacts of its own repository without it.
+
+## What the release holds
+
+For tag `v1.2.0` of a repository whose `driver.yml` names it `as5047u`:
+
+| File | What it is |
+| --- | --- |
+| `as5047u-1.2.0.tar.gz` | The tagged tree (`git archive`), compressed with a fixed date: the same tag always gives the same bytes. GitHub's own "Source code" archives are not promised to be byte-stable, so checksums name this one. Submodules are not inside; the SBOM names each at its pinned commit. |
+| `as5047u-1.2.0.spdx.json` | SBOM, [SPDX 2.3](https://spdx.github.io/spdx-spec/v2.3/) JSON: the repository as the main package (licence from `LICENSE`, the archive's SHA-256, the tagged commit), each git submodule as a package it contains (URL and pinned commit), and each firmware zip as a file generated from it. |
+| `fw-<app>-<idf>-<type>.zip` | One per firmware artifact: for each ESP-IDF build in it, `flasher_args.json`, `flash_args`, every file they flash (bootloader, partition table, app) and the app's `.elf` and `.map`, at their build paths. An artifact with no `flasher_args.json` is zipped whole, with a warning. |
+| `SHA256SUMS` | SHA-256 of every other file, in `sha256sum -c` format. |
+
+One zip per artifact keeps Debug and Release apart. Uploading the build folders file by file, as versions before
+1.7.0 did, attached thousands of files (an ESP-IDF build folder holds about 1,500), let files with the same name
+in Debug and Release overwrite each other, and could pass GitHub's limit of 1,000 files per release.
+
+### Check a download
+
+```bash
+gh release download v1.2.0 -R kokeb-labs/driver-as5047u -D v1.2.0
+cd v1.2.0 && sha256sum -c SHA256SUMS        # macOS: shasum -a 256 -c SHA256SUMS
+```
+
+Every line must say `OK`. To flash a firmware zip: unzip it, go to the build folder inside and run
+`esptool.py --chip <chip> write_flash @flash_args` (the chip is in `flasher_args.json`).
+
+### Provenance
+
+The release does not yet carry signed build provenance. GitHub artifact attestations
+(`actions/attest-build-provenance`) need a public repository, or GitHub Enterprise Cloud for a private one, and an
+extra `id-token: write` and `attestations: write` grant from every caller. They are added when the repositories
+are public; until then `SHA256SUMS` and the SBOM tie the files to the tagged commit, and the tag check above ties
+the firmware to the CI run that tested it.
 
 ## When it finds no firmware
 
@@ -95,6 +130,9 @@ logs a warning. Set it to `true` to fail instead.
 | --- | --- | --- |
 | `startup_failure` | The calling job does not grant `contents: write` | Grant it in the calling job |
 | `Resource not accessible by integration` when creating the release | The repository restricts the workflow token to read | Grant `contents: write` in the caller; check **Settings > Actions > Workflow permissions** |
-| Release has no files | See [above](#when-it-finds-no-firmware) | Set `fail_on_no_artifacts: true` to catch it |
+| Release has no firmware zips | See [above](#when-it-finds-no-firmware) | Set `fail_on_no_artifacts: true` to catch it |
+| `release files share a name` | Two artifacts would give zips with the same name | Give the artifacts distinct names (`ru-build` names them by app, IDF version and build type) |
+| `flasher_args.json lists files the artifact lacks` | The build artifact was uploaded without part of the build | Upload the whole build folder in `ru-build` |
+| `tag ... does not exist here` | The release ran for a tag that was not pushed | Push the tag first |
 
 Next: [ensure-tools-directory](ensure-tools-directory.md), for your own jobs that need the project tools.

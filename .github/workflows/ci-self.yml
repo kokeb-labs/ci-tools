@@ -107,6 +107,9 @@ jobs:
       - name: Unit tests for the handbook checker
         run: python tools/handbook_check/test_handbook_check.py
 
+      - name: Unit tests for the release asset script (source archive, SBOM, checksums, firmware zips)
+        run: python tools/release_assets/test_release_assets.py
+
       # ru-build inlines the ensure-tools-directory action's script (see the
       # comment there); the two copies must not drift apart.
       - name: ru-build's inlined tools-directory step matches the action
