@@ -105,11 +105,10 @@ Every line must say `OK`. To flash a firmware zip: unzip it, go to the build fol
 
 ### Provenance
 
-The release does not yet carry signed build provenance. GitHub artifact attestations
-(`actions/attest-build-provenance`) need a public repository, or GitHub Enterprise Cloud for a private one, and an
-extra `id-token: write` and `attestations: write` grant from every caller. They are added when the repositories
-are public; until then `SHA256SUMS` and the SBOM tie the files to the tagged commit, and the tag check above ties
-the firmware to the CI run that tested it.
+For a public repository, add [`ru-attest-release`](ru-attest-release.md) as a job after this one. It signs build
+provenance for every file in `SHA256SUMS`, and `gh attestation verify` checks a download against it. It is a
+separate workflow because it needs `id-token: write` and `attestations: write`, which callers of this workflow do
+not grant.
 
 ## When it finds no firmware
 

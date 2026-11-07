@@ -11,6 +11,7 @@ job starts ([Permissions contract](permissions.md)).
 | --- | --- | --- |
 | [`dco.yml`](dco.md) | Fail a pull request when any of its commits lacks a `Signed-off-by:` line that matches the commit's author. | `contents: read`, `pull-requests: read` |
 | [`org-standard-check.yml`](org-standard-check.md) | Check that a repository has the root files every Kokeb Labs repository must carry, and that its licence is MIT. | `contents: read` |
+| [`ru-attest-release.yml`](ru-attest-release.md) | Sign build provenance for every file of a published release. | `attestations: write`, `contents: read`, `id-token: write` |
 | [`ru-build.yml`](ru-build.md) | Build every ESP32 example app of a repository across ESP-IDF versions and build types, upload the firmware and report its size on pull requests. | `contents: read`, `pull-requests: write` |
 | [`ru-ci-gate.yml`](ru-ci-gate.md) | One required status check per repository: it passes only when every other CI job passed. | `contents: read` |
 | [`ru-cpp-analysis.yml`](ru-cpp-analysis.md) | Run cppcheck over source folders, without a build, and keep the report as an artifact. | `contents: read` |

@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-11-07
+
+### Added
+
+- `ru-attest-release`: signed build provenance (GitHub artifact attestation, SLSA, Sigstore) for every file of a
+  published release, after the files are checked against its `SHA256SUMS`. Callers add it as a job after
+  `ru-release` or `ru-release-with-artifacts` and grant `id-token: write` and `attestations: write`. Public
+  repositories, or GitHub Enterprise Cloud.
+
 ## [1.7.0] - 2026-11-07
 
 ### Added
