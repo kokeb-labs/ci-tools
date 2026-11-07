@@ -1,0 +1,41 @@
+---
+name: 📘 Handbook check self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # A driver that follows the rules passes with enforce: true.
+  good-driver:
+    uses: ./.github/workflows/ru-handbook-check.yml
+    permissions:
+      contents: read
+    with:
+      path: tests/fixtures/handbook/good-driver
+      enforce: true
+
+  # A driver with heap use, exceptions and a banned header must be reported.
+  bad-driver:
+    uses: ./.github/workflows/ru-handbook-check.yml
+    permissions:
+      contents: read
+    with:
+      path: tests/fixtures/handbook/bad-driver
+      enforce: false
+
+  bad-driver-reported:
+    needs: bad-driver
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: The bad driver's findings were counted
+        env:
+          ERRORS: ${{ needs.bad-driver.outputs.errors }}
+        run: |
+          echo "errors=${ERRORS}"
+          test "${ERRORS:-0}" -ge 3

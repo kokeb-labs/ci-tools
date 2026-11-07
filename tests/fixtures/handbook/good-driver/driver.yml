@@ -1,0 +1,7 @@
+---
+name: abc
+version: 0.1.0
+bus: [spi]
+mcus: [any]
+peripheral: null
+kb_core_min: null

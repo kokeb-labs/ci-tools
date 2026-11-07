@@ -54,6 +54,7 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 | [`ru-cross-build.yml`](ru-cross-build.md) | Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, so code that claims to run on any MCU is shown to compile for one on every pull request. | `contents: read` |
 | [`ru-docs-linkcheck.yml`](ru-docs-linkcheck.md) | Check every link in a repository's Markdown, external ones included, with lychee. | `contents: read` |
 | [`ru-docs-publish.yml`](ru-docs-publish.md) | Build a Jekyll site with Doxygen and publish it to `gh-pages` in version folders: the documentation pipeline that [`ru-mkdocs-publish`](ru-mkdocs-publish.md) replaces. | `contents: write` |
+| [`ru-handbook-check.yml`](ru-handbook-check.md) | Check a repository against the [Kokeb Labs handbook](https://kokeb-labs.github.io/handbook/) rules that a script can decide, and report every finding by rule ID. | `contents: read` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | Build, test and analyse a CMake project on the host, with clang-tidy 18 and cppcheck over the compiler's own compile database. | `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets for each assurance level (ADR-0020). | `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | Lint Markdown with markdownlint-cli2 against the repository's own rules. | `contents: read` |

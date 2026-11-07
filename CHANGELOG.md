@@ -15,6 +15,23 @@ that heading.
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-06
+
+### Added
+
+- `ru-handbook-check`: checks a repository against the Kokeb Labs handbook rules a script can decide. It reads the
+  `.kokeb/handbook.yml` declaration (handbook version, kind, assurance level, waivers) and checks the root layout,
+  `driver.yml` against the build settings, C++20 and no `file(GLOB)` in CMake, no heap, exceptions, RTTI or virtual
+  functions in driver code, the target library subset of headers, and no committed `sdkconfig` or datasheet. Each
+  finding names its rule, quotes its title and links to it; a rule still in its warning period warns, a waived
+  rule is a notice, and an expired waiver fails. The checker (`tools/handbook_check/`) and its snapshot of the
+  rules are fetched at this workflow's own commit; 15 unit tests and good and bad fixture repositories run under
+  the CI gate.
+
+### Fixed
+
+- `tools/docs-migrate.py`: a character range listed twice in the emoji pattern (CodeQL `py/overly-large-range`).
+
 ## [1.4.0] - 2026-11-06
 
 ### Added

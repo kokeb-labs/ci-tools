@@ -1,0 +1,5031 @@
+{
+ "exported": "2026-11-06",
+ "rules": {
+  "KB-AGT-001": {
+   "area": "agents",
+   "enforce_from": "2027-01-15",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Every repository tells agents its rules"
+  },
+  "KB-AGT-002": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent never merges, releases or changes settings without the maintainer's go-ahead"
+  },
+  "KB-AGT-003": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent follows the whole standard, and the person who asked owns the change"
+  },
+  "KB-AGT-004": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "CLAUDE.md only points to AGENTS.md"
+  },
+  "KB-AGT-005": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "AGENTS.md is short, specific to the repository, and links rules instead of restating them"
+  },
+  "KB-AGT-006": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "docs"
+   ],
+   "status": "active",
+   "title": "The organisation's AGENTS.md points to the agents standard"
+  },
+  "KB-AGT-007": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every repository carries the skills its kind needs"
+  },
+  "KB-AGT-008": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A skill is one task in `.claude/skills/<name>/SKILL.md`, with when to use it"
+  },
+  "KB-AGT-009": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A skill holds no secrets and never tells an agent to bypass a check or merge"
+  },
+  "KB-AGT-010": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A change is done only when the definition of done holds"
+  },
+  "KB-AGT-011": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "template"
+   ],
+   "status": "active",
+   "title": "The agent runs every CI check locally before it pushes"
+  },
+  "KB-AGT-012": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Anything that needs hardware is marked not verified on hardware, with bench steps"
+  },
+  "KB-AGT-013": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Changes that can move or energise hardware get the safety label and a human review"
+  },
+  "KB-AGT-014": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent signs off only as the person who owns the task, and only when asked"
+  },
+  "KB-AGT-015": {
+   "area": "agents",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "An agent adds no attribution or AI-disclosure line"
+  },
+  "KB-AGT-016": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent works on a branch and opens a pull request, never on main"
+  },
+  "KB-AGT-017": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent never force-pushes a shared branch or turns on auto-merge by itself"
+  },
+  "KB-AGT-018": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The diff stays on the task"
+  },
+  "KB-AGT-019": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The pull request description is plain and follows the template"
+  },
+  "KB-AGT-020": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A failing check is fixed, never weakened"
+  },
+  "KB-AGT-021": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The author reads their own diff before asking for review"
+  },
+  "KB-AGT-022": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Before changing a public API, find and list its callers"
+  },
+  "KB-AGT-023": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Use the repository's skill when one covers the task"
+  },
+  "KB-AGT-024": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Read AGENTS.md, the layer contract and the checklist before starting"
+  },
+  "KB-AGT-025": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent reviewer triages first, then reviews architecture, then details"
+  },
+  "KB-AGT-026": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Review objections cite the rule ID they rest on"
+  },
+  "KB-AGT-027": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Review comments are tagged by severity, specific and few"
+  },
+  "KB-AGT-028": {
+   "area": "agents",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An agent never approves a diff it has not read, nor a safety change in a person's place"
+  },
+  "KB-ARCH-001": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Dependencies point down the stack only"
+  },
+  "KB-ARCH-002": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "A layer skip is a defect even when it works"
+  },
+  "KB-ARCH-003": {
+   "area": "architecture",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "The submodule graph is acyclic and points down"
+  },
+  "KB-ARCH-004": {
+   "area": "architecture",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Inside kb-core: utils, then rtos, then interfaces, then handlers"
+  },
+  "KB-ARCH-005": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Drivers and kb-core meet only in the handler adapter"
+  },
+  "KB-ARCH-006": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Port hooks move raw bytes; the driver never configures the bus"
+  },
+  "KB-ARCH-007": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Drivers never lock, sleep or call an RTOS"
+  },
+  "KB-ARCH-008": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Only a chip's driver and handler know its registers"
+  },
+  "KB-ARCH-009": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "MCU-specific code lives only in the selected family's folders"
+  },
+  "KB-ARCH-010": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Product-specific needs reach kb-core and drivers only as generic extension points"
+  },
+  "KB-ARCH-011": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Virtual functions only at the three run-time boundaries"
+  },
+  "KB-ARCH-012": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library"
+   ],
+   "status": "active",
+   "title": "A peripheral only one MCU family has gets a Base* interface and a gate row"
+  },
+  "KB-ARCH-013": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver"
+   ],
+   "status": "active",
+   "title": "A protocol client follows the driver contract except the chip rules"
+  },
+  "KB-ARCH-014": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver"
+   ],
+   "status": "active",
+   "title": "Split a large chip into sub-object facades that share the driver"
+  },
+  "KB-ARCH-015": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "utils take locks and clocks as arguments; CANopen frames are values"
+  },
+  "KB-ARCH-016": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "The kb-core logger is the one logging API above the bind"
+  },
+  "KB-ARCH-017": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Raw pin numbers appear only in the board's pin table and its bind"
+  },
+  "KB-ARCH-018": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Adapters are mechanical and build on the shared adapter bases"
+  },
+  "KB-ARCH-019": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "A driver feature reached through VisitDriver in two places becomes a typed method"
+  },
+  "KB-ARCH-020": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "A board HAL never copies kb-hal-common; shared managers move there"
+  },
+  "KB-ARCH-021": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "library"
+   ],
+   "status": "active",
+   "title": "Common managers take board specifics as configuration and never name a board"
+  },
+  "KB-ARCH-022": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "One manager per board function, owning its handlers"
+  },
+  "KB-ARCH-023": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "The facade starts managers in a fixed, documented order"
+  },
+  "KB-ARCH-024": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Start-up fails closed and leaves every actuator safe"
+  },
+  "KB-ARCH-025": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "The facade is the product's only way into the board"
+  },
+  "KB-ARCH-026": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "The bind is the only HAL code that names the MCU family"
+  },
+  "KB-ARCH-027": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware",
+    "hal"
+   ],
+   "status": "active",
+   "title": "A board function the facade lacks is added to the HAL first"
+  },
+  "KB-ARCH-028": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Application logic lives in the application, not in platform/ or the HAL"
+  },
+  "KB-ARCH-029": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Run-time faults follow the fault catalogue's reaction"
+  },
+  "KB-ARCH-030": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "safety",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "A safety-classified product records its classification and what it implies"
+  },
+  "KB-ARCH-031": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Only kb-core rtos includes RTOS headers; everything above uses kb::rtos"
+  },
+  "KB-ARCH-032": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Only the product or a HAL manager creates tasks"
+  },
+  "KB-ARCH-033": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Core affinity is the product's decision"
+  },
+  "KB-ARCH-034": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Handler callbacks run in the caller's task"
+  },
+  "KB-ARCH-035": {
+   "area": "architecture",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb-core pins each driver to a release tag, with its handler and catalogue entry"
+  },
+  "KB-ARCH-036": {
+   "area": "architecture",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "The compatibility catalogue is generated from the pinned drivers"
+  },
+  "KB-ARCH-037": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Extend what exists before adding a new entity"
+  },
+  "KB-ARCH-038": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Design for bounded memory and cheap bus traffic"
+  },
+  "KB-ARCH-039": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Real-time paths have bounded latency and named priorities"
+  },
+  "KB-ARCH-040": {
+   "area": "architecture",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Review architecture before details"
+  },
+  "KB-BLD-001": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "The installed package works with find_package"
+  },
+  "KB-BLD-002": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "No file(GLOB) for library sources"
+  },
+  "KB-BLD-003": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "The root CMakeLists.txt is also the ESP-IDF component"
+  },
+  "KB-BLD-004": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "One build-settings file holds the version, target name and source list"
+  },
+  "KB-BLD-005": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every copy of the version derives from or is tested against the build settings"
+  },
+  "KB-BLD-006": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "The same <chip>::<chip> target through add_subdirectory and find_package"
+  },
+  "KB-BLD-007": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Install rules install every header the public API reaches"
+  },
+  "KB-BLD-008": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Standard options `<CHIP>_BUILD_TESTS` and `<CHIP>_ENABLE_WARNINGS`, both off by default"
+  },
+  "KB-BLD-009": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Compile flags and definitions are set per target, never globally"
+  },
+  "KB-BLD-010": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "CMake configures without developer warnings"
+  },
+  "KB-BLD-011": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Header-only libraries are INTERFACE targets; compiled ones are STATIC"
+  },
+  "KB-BLD-012": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "The root CMakeLists.txt declares the org's CMake minimum, 3.16"
+  },
+  "KB-BLD-013": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Kconfig lives in _config/Kconfig and defines every CONFIG_ value the code reads"
+  },
+  "KB-BLD-014": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "The exported target itself builds warning-free with the org flag set"
+  },
+  "KB-BLD-015": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Supported compilers and toolchains are pinned and listed"
+  },
+  "KB-BLD-016": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Release builds are reproducible"
+  },
+  "KB-BLD-017": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Image size and stack usage stay within recorded budgets"
+  },
+  "KB-BLD-018": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Firmware reports its version and the exact source of every pinned component"
+  },
+  "KB-BLD-019": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "ESP-IDF builds set a 1 kHz FreeRTOS tick in sdkconfig.defaults"
+  },
+  "KB-BLD-020": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb-core parts are separate targets with distinct include roots"
+  },
+  "KB-BLD-021": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Each build selects exactly one MCU family and one RTOS backend"
+  },
+  "KB-BLD-022": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Enabling an MCU-bound driver for the wrong MCU fails at configure time"
+  },
+  "KB-BLD-023": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb-core options use the KB_ scheme and default to the smallest build"
+  },
+  "KB-BLD-024": {
+   "area": "build",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Enabling a module enables what it depends on, never the reverse"
+  },
+  "KB-BLD-025": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "kb-core links each driver's target and never copies its file lists"
+  },
+  "KB-BLD-026": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "ESP-IDF REQUIRES follow the enabled options"
+  },
+  "KB-BLD-027": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Configure prints a summary of what is built"
+  },
+  "KB-BLD-028": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Keep CMake plain and linear"
+  },
+  "KB-BLD-029": {
+   "area": "build",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Depend on as little as possible"
+  },
+  "KB-CC-001": {
+   "area": "c",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "C is C17 without compiler extensions"
+  },
+  "KB-CC-002": {
+   "area": "c",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "C headers work from C++ and expose only C types"
+  },
+  "KB-CC-003": {
+   "area": "c",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "C names are snake_case with the repository prefix; file-local functions are static"
+  },
+  "KB-CC-004": {
+   "area": "c",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "C APIs return an error enum whose zero is success, and the result is used"
+  },
+  "KB-CC-005": {
+   "area": "c",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every C function has a prototype"
+  },
+  "KB-CC-006": {
+   "area": "c",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Generated vendor code is edited only between its user-code markers"
+  },
+  "KB-CC-007": {
+   "area": "c",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Vendor and third-party code lives in excluded directories"
+  },
+  "KB-CI-001": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Only allow-listed actions, pinned to a full commit SHA"
+  },
+  "KB-CI-002": {
+   "area": "ci",
+   "enforce_from": "2027-01-15",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Least privilege in every workflow"
+  },
+  "KB-CI-003": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Workflows call the shared ci-tools workflows at @v1"
+  },
+  "KB-CI-004": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The CI gate needs every other job, including DCO"
+  },
+  "KB-CI-005": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Code from a fork never runs with secrets"
+  },
+  "KB-CI-006": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Dependabot keeps the actions current"
+  },
+  "KB-CI-007": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Public repositories run GitHub's security features"
+  },
+  "KB-CI-008": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "No credentials, private datasheets or personal data are committed"
+  },
+  "KB-CI-009": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Tags that start workflows are pushed with a GitHub App token"
+  },
+  "KB-CI-010": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every example builds in CI, and a platform arrives with its job"
+  },
+  "KB-CI-011": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb-core CI builds every part for every MCU family and for no MCU"
+  },
+  "KB-CI-012": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Tables generated from compat.yml are never stale"
+  },
+  "KB-CI-013": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "proposed",
+   "title": "Every board HAL runs the kb-hal-common lints"
+  },
+  "KB-CI-014": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "version_lock.txt matches the submodule pins"
+  },
+  "KB-CI-015": {
+   "area": "ci",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "ESP-IDF builds run the declared IDF matrix, validated first"
+  },
+  "KB-CI-016": {
+   "area": "ci",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "CI keeps the test and coverage reports as artifacts"
+  },
+  "KB-CPP-001": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "C++20, no compiler extensions"
+  },
+  "KB-CPP-002": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "No exceptions and no RTTI"
+  },
+  "KB-CPP-003": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "No heap in drivers; no heap after start-up anywhere"
+  },
+  "KB-CPP-004": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Errors are values, and every result is used"
+  },
+  "KB-CPP-005": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Format with the org clang-format configuration"
+  },
+  "KB-CPP-006": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Names follow the org naming scheme"
+  },
+  "KB-CPP-007": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "No reinterpret_cast or C-style casts outside the port layer"
+  },
+  "KB-CPP-008": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Static analysis is clean, and every suppression is a recorded deviation"
+  },
+  "KB-CPP-009": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "proposed",
+   "title": "Register frames have their layout asserted"
+  },
+  "KB-CPP-010": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Data shared with an interrupt is atomic or explicitly guarded"
+  },
+  "KB-CPP-011": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Driver code includes only its own headers and the allowed standard headers"
+  },
+  "KB-CPP-012": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Target code uses only the target library subset and C++20 the pinned compilers share"
+  },
+  "KB-CPP-013": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Each kb-core part includes only what its layer table allows"
+  },
+  "KB-CPP-014": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Handlers include only their driver, Base headers and kb-core utilities"
+  },
+  "KB-CPP-015": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "HAL and product code reach hardware only through their bind and handlers"
+  },
+  "KB-CPP-016": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Shared code never tests platform, board or product macros"
+  },
+  "KB-CPP-017": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "An MCU family header fails to compile outside its family"
+  },
+  "KB-CPP-018": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Includes are quoted from the include root and never climb with ../"
+  },
+  "KB-CPP-019": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every header uses #pragma once"
+  },
+  "KB-CPP-020": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Includes are grouped own header, standard, other repositories, this repository"
+  },
+  "KB-CPP-021": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every header includes what it uses and compiles on its own"
+  },
+  "KB-CPP-022": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Drivers carry no organisation brand"
+  },
+  "KB-CPP-023": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Driver names derive from the chip"
+  },
+  "KB-CPP-024": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "A driver declares nothing at global scope"
+  },
+  "KB-CPP-025": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Namespaces follow the layer they belong to"
+  },
+  "KB-CPP-026": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "No using-directives in headers; anonymous namespaces only in source files"
+  },
+  "KB-CPP-027": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Macros carry their repository's prefix and never leak generic names"
+  },
+  "KB-CPP-028": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "No m_, s_, g_ or p_ prefixes on names"
+  },
+  "KB-CPP-029": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Function names say whether they touch the chip"
+  },
+  "KB-CPP-030": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Quantities carry their unit in the name"
+  },
+  "KB-CPP-031": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Names describe what they hold"
+  },
+  "KB-CPP-032": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "One CRTP port base per bus, and the driver is constrained by its port concept"
+  },
+  "KB-CPP-033": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "No virtual functions in a driver or its port"
+  },
+  "KB-CPP-034": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "The port base never declares a required hook"
+  },
+  "KB-CPP-035": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Port hooks are PascalCase, noexcept and return bool, with the bus's fixed signatures"
+  },
+  "KB-CPP-036": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Optional hooks are detected with requires, in one place"
+  },
+  "KB-CPP-037": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "A missing hook fails to compile or falls back in a documented way, never silently"
+  },
+  "KB-CPP-038": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Driver pins are logical; the port maps them to the board"
+  },
+  "KB-CPP-039": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Drivers use no std::function or printf-family output; callbacks are a function pointer"
+  },
+  "KB-CPP-040": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Drivers and kb-core utilities hold no mutable global or static state"
+  },
+  "KB-CPP-041": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "A driver waits only through the port's delay hooks"
+  },
+  "KB-CPP-042": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Drivers declare no friends"
+  },
+  "KB-CPP-043": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Run-time configuration is one Config struct passed to Initialize"
+  },
+  "KB-CPP-044": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Kconfig values are read in one header"
+  },
+  "KB-CPP-045": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Destructive chip operations need explicit input"
+  },
+  "KB-CPP-046": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Each driver has its own Error enum and a trivially copyable Result type"
+  },
+  "KB-CPP-047": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Driver error codes 0 to 9 are fixed; chip-specific codes start at 16"
+  },
+  "KB-CPP-048": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every chip-specific error code is returned somewhere"
+  },
+  "KB-CPP-049": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb::Status values are fixed and only grow"
+  },
+  "KB-CPP-050": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "A failed bus transfer always reaches the caller"
+  },
+  "KB-CPP-051": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Above the drivers, one error type per layer and no vendor error types"
+  },
+  "KB-CPP-052": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Error mapping follows the fixed tables"
+  },
+  "KB-CPP-053": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "A mapping switch lists every enumerator and has no default"
+  },
+  "KB-CPP-054": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Code branches on the status, never on its detail"
+  },
+  "KB-CPP-055": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Never log an error and return Ok"
+  },
+  "KB-CPP-056": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Error handling separates recoverable from fatal failures and keeps context"
+  },
+  "KB-CPP-057": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Constructors are noexcept, do no I/O and cannot fail"
+  },
+  "KB-CPP-058": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Initialize runs the fixed sequence and leaves nothing half-initialised"
+  },
+  "KB-CPP-059": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "No call initialises as a side effect"
+  },
+  "KB-CPP-060": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Deinitialize leaves the chip in its documented safe state"
+  },
+  "KB-CPP-061": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Handler files and classes follow the handler naming"
+  },
+  "KB-CPP-062": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "A handler keeps its driver in place and rebuilds it cleanly on a failed start"
+  },
+  "KB-CPP-063": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Every public handler method holds the handler's mutex for its whole duration"
+  },
+  "KB-CPP-064": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Locks follow the fixed order and are held for one call only"
+  },
+  "KB-CPP-065": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Handlers lend their driver only through VisitDriver"
+  },
+  "KB-CPP-066": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "The bus adapter implements the driver's port with Base calls only"
+  },
+  "KB-CPP-067": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Every handler reports diagnostics with the common header first"
+  },
+  "KB-CPP-068": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Channel wrappers live in a fixed array created at start-up"
+  },
+  "KB-CPP-069": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Each Base interface keeps its error list and a ToStatus mapping"
+  },
+  "KB-CPP-070": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Base interfaces start idempotently and report missing features as Unsupported"
+  },
+  "KB-CPP-071": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Base interfaces expose operations through non-virtual public functions"
+  },
+  "KB-CPP-072": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Every overriding function says override"
+  },
+  "KB-CPP-073": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Drivers are never stored type-erased as void pointers"
+  },
+  "KB-CPP-074": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Dispatch is chosen by measurement and changed incrementally"
+  },
+  "KB-CPP-075": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "RTOS objects are statically allocated"
+  },
+  "KB-CPP-076": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Above the bind, threads, locks and delays go through kb::rtos only"
+  },
+  "KB-CPP-077": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Code above kb::rtos builds and runs on every RTOS backend"
+  },
+  "KB-CPP-078": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "The only clock above the bind is kb::MonotonicUs"
+  },
+  "KB-CPP-079": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Durations are unsigned integers with a unit, and deadlines compare by subtraction"
+  },
+  "KB-CPP-080": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Delays never return early"
+  },
+  "KB-CPP-081": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Ticks are converted from milliseconds, never written as raw counts"
+  },
+  "KB-CPP-082": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Long busy-waits stay off normal task priorities"
+  },
+  "KB-CPP-083": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Fixed-rate work uses a periodic timer or a drift-corrected loop"
+  },
+  "KB-CPP-084": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Interrupt handlers never block"
+  },
+  "KB-CPP-085": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Data shared between tasks has exactly one guard"
+  },
+  "KB-CPP-086": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Memory-mapped registers are accessed through volatile, only in the MCU port"
+  },
+  "KB-CPP-087": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Interrupt handlers keep their stack small"
+  },
+  "KB-CPP-088": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Stack use is bounded, measured and within budget"
+  },
+  "KB-CPP-089": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Task stacks, priorities and core affinity are named in one header"
+  },
+  "KB-CPP-090": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Applications never put the CPU to sleep themselves"
+  },
+  "KB-CPP-091": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "Managers live in static storage owned by the board facade"
+  },
+  "KB-CPP-092": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "Managers are thread-safe and report failure state consistently"
+  },
+  "KB-CPP-093": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "Diagnostics are collected through one facade call into a sink"
+  },
+  "KB-CPP-094": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "The platform bind uses fixed verbs and fixed slots"
+  },
+  "KB-CPP-095": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "retired",
+   "title": "Raw pin numbers appear only in the pin table and the bind"
+  },
+  "KB-CPP-096": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Borrowed references never outlive their owner"
+  },
+  "KB-CPP-097": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Scoped resources are released by RAII guards"
+  },
+  "KB-CPP-098": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Constants are constexpr, not macros"
+  },
+  "KB-CPP-099": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Const by default"
+  },
+  "KB-CPP-100": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Large objects are passed by const reference, and moved when ownership moves"
+  },
+  "KB-CPP-101": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Static initialisation never depends on translation-unit order"
+  },
+  "KB-CPP-102": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Members are initialised in declaration order"
+  },
+  "KB-CPP-103": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Fixed-width integer types where size matters"
+  },
+  "KB-CPP-104": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Integer arithmetic does not overflow or narrow silently"
+  },
+  "KB-CPP-105": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Bit operations use unsigned operands and shifts stay within the width"
+  },
+  "KB-CPP-106": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Register fields and wire bytes are packed with masks, shifts and explicit byte order"
+  },
+  "KB-CPP-107": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Register maps are written as tables"
+  },
+  "KB-CPP-108": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Parsers of external input check length and type before use"
+  },
+  "KB-CPP-109": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "retired",
+   "title": "Frame, CRC and protocol parsers have fuzz targets"
+  },
+  "KB-CPP-110": {
+   "area": "cpp",
+   "enforce_from": "2027-03-01",
+   "from_level": "safety",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "At the safety level, code follows the MISRA subset in the compliance matrix"
+  },
+  "KB-CPP-111": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Comments explain why, and datasheet references are exact"
+  },
+  "KB-CPP-112": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "No commented-out code, untracked TODOs, author banners or tool attribution"
+  },
+  "KB-CPP-113": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Class members are grouped by access"
+  },
+  "KB-CPP-114": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Slow start-up steps are opt-in or visible"
+  },
+  "KB-CPP-115": {
+   "area": "cpp",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Functions stay within the complexity, length and parameter limits of their level"
+  },
+  "KB-DOC-001": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Markdown passes the org lint configuration"
+  },
+  "KB-DOC-002": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "tooling",
+    "docs",
+    "template"
+   ],
+   "status": "active",
+   "title": "The documentation site builds strictly"
+  },
+  "KB-DOC-003": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "tooling",
+    "docs",
+    "template"
+   ],
+   "status": "active",
+   "title": "No broken links on the built site"
+  },
+  "KB-DOC-004": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every public API is documented and Doxygen is warning-free"
+  },
+  "KB-DOC-005": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "docs",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every public repository publishes a versioned MkDocs site"
+  },
+  "KB-DOC-006": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "docs",
+    "template"
+   ],
+   "status": "active",
+   "title": "Pages live in docs/ and the site config in _config/mkdocs.yml"
+  },
+  "KB-DOC-007": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "docs",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "The navigation has the five standard tabs"
+  },
+  "KB-DOC-008": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "The site has the page set for its kind"
+  },
+  "KB-DOC-009": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every code repository has a Contract page under Concepts"
+  },
+  "KB-DOC-010": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "The Contract page has the standard sections in order"
+  },
+  "KB-DOC-011": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "The Contract page lists every handbook rule the repository does not meet"
+  },
+  "KB-DOC-012": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Repository docs link the handbook instead of restating it"
+  },
+  "KB-DOC-013": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "CONTRIBUTING.md links the handbook"
+  },
+  "KB-DOC-014": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A change to behaviour or API updates its docs in the same pull request"
+  },
+  "KB-DOC-015": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "The README has the standard sections in order"
+  },
+  "KB-DOC-016": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The README is short and leaves the reference to the site"
+  },
+  "KB-DOC-017": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "A driver's README names the chip and the part, not the organisation"
+  },
+  "KB-DOC-018": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The README licence line matches LICENSE and the package metadata"
+  },
+  "KB-DOC-019": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver"
+   ],
+   "status": "active",
+   "title": "A family driver is named after the member it was written for"
+  },
+  "KB-DOC-020": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every C++ block on the site compiles"
+  },
+  "KB-DOC-021": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Examples check every result"
+  },
+  "KB-DOC-022": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Generated regions and figures match the code"
+  },
+  "KB-DOC-023": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "The Porting page shows a complete, compiled port for each bus"
+  },
+  "KB-DOC-024": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "The API guide lists the errors each call can return"
+  },
+  "KB-DOC-025": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Every image has alt text"
+  },
+  "KB-DOC-026": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Figures are generated, themed, and drawn with the right tool"
+  },
+  "KB-DOC-027": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A figure has one reading direction, verbs on its arrows and three tones at most"
+  },
+  "KB-DOC-028": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "template"
+   ],
+   "status": "active",
+   "title": "The site's changelog page includes CHANGELOG.md"
+  },
+  "KB-DOC-029": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "The changelog keeps [Unreleased] first and the standard subsections in order"
+  },
+  "KB-DOC-030": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A released changelog section is never edited"
+  },
+  "KB-DOC-031": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Changelog entries describe what a user sees"
+  },
+  "KB-DOC-032": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "ADRs use the standard format and are numbered in acceptance order"
+  },
+  "KB-DOC-033": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "An accepted decision is superseded, never rewritten"
+  },
+  "KB-DOC-034": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Cross-repository decisions are handbook ADRs; local ones stay in the repository"
+  },
+  "KB-DOC-035": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Datasheets are referenced by exact revision, never committed"
+  },
+  "KB-DOC-036": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Markdown wraps at 120 columns"
+  },
+  "KB-DOC-037": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Every page has one title, a purpose line and sections in reading order"
+  },
+  "KB-DOC-038": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Headings step one level at a time and code fences name their language"
+  },
+  "KB-DOC-039": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Links are relative, by file, with descriptive text"
+  },
+  "KB-DOC-040": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Documentation is Markdown"
+  },
+  "KB-DOC-041": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "No Jekyll front matter or Liquid; front matter only for hide"
+  },
+  "KB-DOC-042": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Page file names are lower-case kebab-case"
+  },
+  "KB-DOC-043": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Write in the second person, present tense and active voice"
+  },
+  "KB-DOC-044": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "No hype or filler words"
+  },
+  "KB-DOC-045": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "No emoji, exclamation marks or walls of bold"
+  },
+  "KB-DOC-046": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Titles and headings are in sentence case"
+  },
+  "KB-DOC-047": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Pages never mention how they were produced"
+  },
+  "KB-DOC-048": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Spelling is correct and one variant is used per repository"
+  },
+  "KB-DOC-049": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Every name and number on a page is checked against its source"
+  },
+  "KB-DOC-050": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Use a table for three or more like items, with units in the header"
+  },
+  "KB-DOC-051": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Use the theme's components instead of inventing markup"
+  },
+  "KB-DOC-052": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Guides teach a task with complete examples and say why"
+  },
+  "KB-DOC-053": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "No undated future-plans sections"
+  },
+  "KB-DOC-054": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "docs",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "The site meets the Lighthouse accessibility budget"
+  },
+  "KB-DOC-055": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Interrupt wiring is documented"
+  },
+  "KB-DOC-056": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "kb-core has one page per handler"
+  },
+  "KB-DOC-057": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "A utility collection has one guide page per utility"
+  },
+  "KB-DOC-058": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "A product documents its fault catalogue on the Operation page"
+  },
+  "KB-DOC-059": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Release trains are announced with their bench status"
+  },
+  "KB-DOC-060": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "Patches to vendor-generated code are listed in PATCHES.md"
+  },
+  "KB-DOC-061": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "The Doxyfile lives in _config/ and Doxygen runs from the root"
+  },
+  "KB-DOC-062": {
+   "area": "docs",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Doxygen reads only the public headers and keeps private members out"
+  },
+  "KB-DOC-063": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "A public function's comment gives units, errors and whether it blocks"
+  },
+  "KB-DOC-064": {
+   "area": "docs",
+   "enforce_from": null,
+   "from_level": "safety",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "Each test says what it verifies, with its data and expected result"
+  },
+  "KB-GIT-001": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Every commit is signed off (DCO)"
+  },
+  "KB-GIT-002": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Changes reach main only through a pull request that passes the CI gate"
+  },
+  "KB-GIT-003": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Release tags are immutable"
+  },
+  "KB-GIT-004": {
+   "area": "git",
+   "enforce_from": "2027-01-15",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "The changelog names every release"
+  },
+  "KB-GIT-005": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "main is the only long-lived branch; work branches name their kind"
+  },
+  "KB-GIT-006": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A maintenance branch is cut from its release tag and changed only by pull request"
+  },
+  "KB-GIT-007": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Commits on main are signed; work-branch commits need not be"
+  },
+  "KB-GIT-008": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Repair a work branch by rebasing it; never rewrite main"
+  },
+  "KB-GIT-009": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Pull request titles are short imperative sentences"
+  },
+  "KB-GIT-010": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "One logical change per pull request"
+  },
+  "KB-GIT-011": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "The pull request template is filled in"
+  },
+  "KB-GIT-012": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Every change in behaviour adds a changelog entry under Unreleased"
+  },
+  "KB-GIT-013": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Every breaking change is listed under Breaking with what a caller must change"
+  },
+  "KB-GIT-014": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A pull request names every rule it does not follow"
+  },
+  "KB-GIT-015": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Every review conversation is resolved before merge"
+  },
+  "KB-GIT-016": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Approvals follow the organisation's review mode"
+  },
+  "KB-GIT-017": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Review starts with architecture and layering, then the details"
+  },
+  "KB-GIT-018": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Contributions come in under the repository's licence, with no CLA"
+  },
+  "KB-GIT-019": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Each repository has its own SemVer, starting at 0.1.0"
+  },
+  "KB-GIT-020": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A release tag matches the declared version on a green commit of main"
+  },
+  "KB-GIT-021": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A release is a `Release vX.Y.Z` pull request"
+  },
+  "KB-GIT-022": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Release notes are the changelog section and state the bench status"
+  },
+  "KB-GIT-023": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "A product release attaches its binaries, checksums and effective sdkconfig"
+  },
+  "KB-GIT-024": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Releases at high level carry checksums, provenance and an SBOM"
+  },
+  "KB-GIT-025": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "safety",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "At safety level, release tags and the evidence package are signed"
+  },
+  "KB-GIT-026": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Safety issues come first, and no release ships with one open against it"
+  },
+  "KB-GIT-027": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "safety",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "At safety level, a release lists its known anomalies"
+  },
+  "KB-GIT-028": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Submodules pin release-tag commits, and code is never edited inside one"
+  },
+  "KB-GIT-029": {
+   "area": "git",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "A pin bump is its own pull request, opened by the bump bot or by hand"
+  },
+  "KB-GIT-030": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Changes and releases travel up the stack one layer at a time"
+  },
+  "KB-GIT-031": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A release wave stabilises through release candidates"
+  },
+  "KB-GIT-032": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "A release train names one kb-core release and the drivers it pins"
+  },
+  "KB-GIT-033": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "docs"
+   ],
+   "status": "active",
+   "title": "A change of decision comes with its decision record, in the same pull request"
+  },
+  "KB-GIT-034": {
+   "area": "git",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "When a repository and the handbook disagree, the handbook wins"
+  },
+  "KB-HW-001": {
+   "area": "hardware",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Every MCU family implements the foundation interfaces"
+  },
+  "KB-HW-002": {
+   "area": "hardware",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "proposed",
+   "title": "A port passes the conformance suite before it is done"
+  },
+  "KB-HW-003": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "The port owns vendor-callback bridging, one entry point per interrupt family"
+  },
+  "KB-HW-004": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Configure peripherals the way the vendor SDK expects"
+  },
+  "KB-HW-005": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Clock speeds and bus settings come from configuration, not literals"
+  },
+  "KB-HW-006": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "A port publishes its measured performance"
+  },
+  "KB-HW-007": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "A board HAL starts from a complete hardware picture"
+  },
+  "KB-HW-008": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "STM32 ports use CubeMX, the STM32 HAL, CMake and FreeRTOS by default"
+  },
+  "KB-HW-009": {
+   "area": "hardware",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Vendor-generated code is regenerable and never hand-edited outside its markers"
+  },
+  "KB-HW-010": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Heavily used buses use DMA, with a timed-out polled fallback"
+  },
+  "KB-HW-011": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Hardware and protocol changes update the specification in the same pull request"
+  },
+  "KB-HW-012": {
+   "area": "hardware",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Shipping firmware enables the watchdog, serviced from a supervisor task"
+  },
+  "KB-HW-013": {
+   "area": "hardware",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Shipping firmware configures brownout reset"
+  },
+  "KB-HW-014": {
+   "area": "hardware",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Over-the-air updates verify signatures and can roll back"
+  },
+  "KB-HW-015": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Firmware logs why it booted and what it is"
+  },
+  "KB-HW-016": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Firmware reports its health and keeps a crash record"
+  },
+  "KB-HW-017": {
+   "area": "hardware",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "A factory test mode exists and is documented"
+  },
+  "KB-REPO-001": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Required root files"
+  },
+  "KB-REPO-002": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Each repository declares the handbook version, kind and level it follows"
+  },
+  "KB-REPO-003": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Waivers name a rule, a reason, an approver and an expiry"
+  },
+  "KB-REPO-004": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "tooling",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every source file carries an SPDX licence identifier"
+  },
+  "KB-REPO-005": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "The root holds only the entries listed for the repository's kind"
+  },
+  "KB-REPO-006": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "A driver has the driver layout"
+  },
+  "KB-REPO-007": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "File names follow the layer's convention"
+  },
+  "KB-REPO-008": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "A standalone library starts from driver-template and keeps its layout"
+  },
+  "KB-REPO-009": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb-core keeps its monorepo layout"
+  },
+  "KB-REPO-010": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "proposed",
+   "title": "A board HAL has the board HAL layout"
+  },
+  "KB-REPO-011": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "A product has the product layout"
+  },
+  "KB-REPO-012": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Board HALs and products live in the product's organisation"
+  },
+  "KB-REPO-013": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Each example platform stands alone, and sources have one home"
+  },
+  "KB-REPO-014": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "No symlinks anywhere in a repository"
+  },
+  "KB-REPO-015": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "_config/ holds the org's tool configs unchanged, and tools are pointed at it"
+  },
+  "KB-REPO-016": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware",
+    "template"
+   ],
+   "status": "active",
+   "title": "ESP-IDF projects commit sdkconfig.defaults, never sdkconfig"
+  },
+  "KB-REPO-017": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "No ESP-IDF wrapper component or idf_component.yml unless the registry is chosen"
+  },
+  "KB-REPO-018": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every driver declares itself in driver.yml"
+  },
+  "KB-REPO-019": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "Third-party code keeps its own licence under third_party/"
+  },
+  "KB-REPO-020": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Hardware is CERN-OHL-P-2.0; a product owner picks the board HAL licence"
+  },
+  "KB-REPO-021": {
+   "area": "repo",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "proposed",
+   "title": "CODEOWNERS gives every path a default owner"
+  },
+  "KB-REPO-022": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Vulnerabilities are reported privately, as SECURITY.md says"
+  },
+  "KB-REPO-023": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Issues use the org forms and labels"
+  },
+  "KB-REPO-024": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "Repository settings are code in the .github repository"
+  },
+  "KB-REPO-025": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A new repository starts from its kind's template and is declared first"
+  },
+  "KB-REPO-026": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "all"
+   ],
+   "status": "active",
+   "title": "A superseded repository is marked legacy and archived"
+  },
+  "KB-REPO-027": {
+   "area": "repo",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "hal",
+    "firmware"
+   ],
+   "status": "active",
+   "title": "CubeMX code is committed with the .ioc it came from"
+  },
+  "KB-TST-001": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Host tests build and pass with gcc and clang"
+  },
+  "KB-TST-002": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "API misuse is proved to be a compile error"
+  },
+  "KB-TST-003": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Tests pass under AddressSanitizer and UndefinedBehaviorSanitizer"
+  },
+  "KB-TST-004": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "Coverage floor per assurance level"
+  },
+  "KB-TST-005": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library"
+   ],
+   "status": "active",
+   "title": "Compiles for every supported target"
+  },
+  "KB-TST-006": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Host tests compile every header with the firmware's flags and no platform paths"
+  },
+  "KB-TST-007": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Driver tests run against a register-level model of the chip"
+  },
+  "KB-TST-008": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Host tests cover the failure paths, not only the happy path"
+  },
+  "KB-TST-009": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every driver ships a host example that CI builds and runs"
+  },
+  "KB-TST-010": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "template"
+   ],
+   "status": "active",
+   "title": "Every code block on the documentation site is compiled"
+  },
+  "KB-TST-011": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "proposed",
+   "title": "kb-core host tests run on every RTOS backend's host build"
+  },
+  "KB-TST-012": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library"
+   ],
+   "status": "active",
+   "title": "Every handler has a host test of its contract"
+  },
+  "KB-TST-013": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "hal"
+   ],
+   "status": "active",
+   "title": "A board HAL builds and is tested on the host"
+  },
+  "KB-TST-014": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "Firmware logic that needs no hardware is host-tested"
+  },
+  "KB-TST-015": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Tests are deterministic and independent of order"
+  },
+  "KB-TST-016": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every test has a timeout"
+  },
+  "KB-TST-017": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Test files and cases name what they test"
+  },
+  "KB-TST-018": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "proposed",
+   "title": "Every public function is exercised by a test"
+  },
+  "KB-TST-019": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "template"
+   ],
+   "status": "active",
+   "title": "Share test setup through fixtures and helpers"
+  },
+  "KB-TST-020": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library"
+   ],
+   "status": "proposed",
+   "title": "Frame, CRC and protocol parsers are fuzzed"
+  },
+  "KB-TST-021": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library"
+   ],
+   "status": "active",
+   "title": "Protocol and CRC code passes reference vectors"
+  },
+  "KB-TST-022": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "retired",
+   "title": "Every MCU port passes the interface conformance tests"
+  },
+  "KB-TST-023": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Hardware test runs leave a structured record"
+  },
+  "KB-TST-024": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "should",
+   "profiles": [
+    "driver",
+    "library",
+    "hal",
+    "firmware"
+   ],
+   "status": "proposed",
+   "title": "Real-time paths have a measured worst-case time and a regression check"
+  },
+  "KB-TST-025": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "high",
+   "level": "must",
+   "profiles": [
+    "library",
+    "hal"
+   ],
+   "status": "proposed",
+   "title": "Concurrent code is tested under ThreadSanitizer"
+  },
+  "KB-TST-026": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "standard",
+   "level": "should",
+   "profiles": [
+    "firmware"
+   ],
+   "status": "active",
+   "title": "OTA updates are tested on both the update and the rollback path"
+  },
+  "KB-TST-027": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "safety",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "At safety level, every decision has full MC/DC coverage"
+  },
+  "KB-TST-028": {
+   "area": "testing",
+   "enforce_from": "2027-03-01",
+   "from_level": "safety",
+   "level": "must",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "proposed",
+   "title": "At safety level, every uncovered item is justified"
+  },
+  "KB-TST-029": {
+   "area": "testing",
+   "enforce_from": null,
+   "from_level": "safety",
+   "level": "guide",
+   "profiles": [
+    "driver",
+    "library",
+    "hal"
+   ],
+   "status": "active",
+   "title": "At safety level, mutation testing checks that the tests check something"
+  }
+ },
+ "source": "kokeb-labs/handbook rules, exported by checks/handbook.py"
+}

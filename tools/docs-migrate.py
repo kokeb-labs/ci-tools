@@ -46,7 +46,7 @@ HEADING = re.compile(r"^(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$", re.M)
 FENCE = re.compile(r"^(?P<indent>[ \t]*)(?P<fence>`{3,}|~{3,}).*?^(?P=indent)(?P=fence)[ \t]*$", re.M | re.S)
 # Pictographs, dingbats, symbols, variation selectors, keycaps and ZWJ: what GitHub drops from anchors.
 EMOJI = re.compile(
-    "[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U0001F900-\U0001F9FF\U00002B00-\U00002BFF"
+    "[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U00002B00-\U00002BFF"
     "\U00002190-\U000021FF\U00002300-\U000023FF\U0000FE0F\U0000200D\U000020E3]+"
 )
 SKIP_DIRS = {".git", "build", "site", "node_modules", ".venv", "venv", "third_party", "external", "_doxygen"}
