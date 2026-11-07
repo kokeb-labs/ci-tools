@@ -1613,6 +1613,9 @@ least three weeks old when it was pinned.</p>
 <ul>
 <li><strong>Library code only.</strong> <code>library_paths</code> (default <code>inc src</code>) names it. Tests, examples and tools are not measured
   for complexity and do not count towards coverage.</li>
+<li><strong>Every C and C++ file, header-only implementations included.</strong> The complexity job lists <code>.c</code>, <code>.cc</code>, <code>.cpp</code>,
+  <code>.cxx</code>, <code>.h</code>, <code>.hh</code>, <code>.hpp</code>, <code>.hxx</code>, <code>.ipp</code>, <code>.tpp</code> and <code>.inl</code> files under <code>library_paths</code> itself: lizard alone
+  skips <code>.ipp</code>, <code>.tpp</code> and <code>.inl</code> files in a directory, which is where a header-only driver keeps its code.</li>
 <li><strong>Only code that ran.</strong> Coverage reads the data of test binaries that executed. A compile-only target (for
   example an optimised build that exists to prove the code compiles at <code>-O2</code>) has no data and would otherwise count
   every line as missed.</li>
