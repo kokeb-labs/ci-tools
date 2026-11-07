@@ -318,8 +318,10 @@ jobs:
             exit 1
           fi
           mkdir -p reports
+          # --merge-lines: a header-only driver is a template, compiled once per port type a test binary uses.
+          # Coverage is of the source: a line, branch or condition counts as covered when any instance ran it.
           args=(--root . --gcov-executable gcov-14 "${filters[@]}" --exclude-unreachable-branches
-                --exclude-throw-branches --json-summary reports/coverage-summary.json --cobertura reports/coverage.xml
+                --exclude-throw-branches --merge-lines --json-summary reports/coverage-summary.json --cobertura reports/coverage.xml
                 --html-details reports/coverage.html --txt reports/coverage.txt)
           "$RUNNER_TEMP/q/bin/gcovr" "${args[@]}" "${dirs[@]}"
           read -r line branch condition < <(python3 - <<'PY'
