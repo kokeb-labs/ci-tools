@@ -1526,8 +1526,10 @@
 <p>Create a GitHub Release with generated notes for a tag.</p>
 <p><code>ru-release.yml</code> creates the release with
 <a href="https://github.com/softprops/action-gh-release">action-gh-release</a> and <code>generate_release_notes: true</code>, so the
-notes list the pull requests merged since the previous tag. It attaches no build artifacts; firmware repositories
-use <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a>.</p>
+notes list the pull requests merged since the previous tag. It attaches a source archive with a stable checksum,
+an SPDX 2.3 SBOM and <code>SHA256SUMS</code>, built by <code>tools/release_assets/release_assets.py</code>
+(<a href="../ru-release-with-artifacts/#what-the-release-holds">what each holds and how to check a download</a>). It attaches
+no build artifacts; firmware repositories use <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a>.</p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">on</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">push</span><span class="p">:</span>
@@ -1553,7 +1555,7 @@ use <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</cod
 <tr>
 <td><code>release</code> (Create Release)</td>
 <td><code>contents: write</code></td>
-<td>Checkout code; Create Release</td>
+<td>Checkout code; Checkout the release asset script; Build source archive, SBOM and checksums; Create Release</td>
 </tr>
 </tbody>
 </table>
@@ -1607,6 +1609,11 @@ use <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</cod
 <td>"Resource not accessible by integration"</td>
 <td>The caller grants <code>contents: read</code></td>
 <td>Grant <code>contents: write</code></td>
+</tr>
+<tr>
+<td><code>tag ... does not exist here</code></td>
+<td>The tag was not pushed, or <code>tag_name</code> names one that does not exist</td>
+<td>Push the tag first; this workflow does not create tags</td>
 </tr>
 <tr>
 <td>The release has the branch name as its tag</td>

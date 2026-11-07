@@ -893,6 +893,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-the-release-holds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the release holds
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the release holds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-a-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check a download
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-it-finds-no-firmware" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1212,6 +1251,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-the-release-holds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the release holds
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the release holds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-a-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check a download
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-it-finds-no-firmware" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1260,7 +1338,7 @@
 
 <h1 id="ru-release-with-artifacts">ru-release-with-artifacts<a class="headerlink" href="#ru-release-with-artifacts" title="Permanent link">&para;</a></h1>
 <p>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/fd4866de2cc8097fff09f9fc3d7720aedb6ec127/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/264319677ca5431e1650c47234a16b0b6938489d/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">---</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
@@ -1362,10 +1440,55 @@ without) a green build. Trigger it from the finished CI run instead, and pass th
 <h2 id="jobs-and-permissions">Jobs and permissions<a class="headerlink" href="#jobs-and-permissions" title="Permanent link">&para;</a></h2>
 <p>One job, <code>release</code>, with <code>contents: write</code>. It checks out with full history, downloads every artifact whose
 name matches <code>artifact_pattern</code> from the run of <code>build_workflow</code> on <code>github.sha</code>
-(<code>dawidd6/action-download-artifact</code>), and creates the release for <code>tag_name</code> (default: the pushed tag) with
-generated notes and the files attached (<code>softprops/action-gh-release</code>).</p>
+(<code>dawidd6/action-download-artifact</code>), builds the <a href="#what-the-release-holds">release files</a> with
+<code>tools/release_assets/release_assets.py</code> from ci-tools at the same commit as this workflow, and creates the release
+for <code>tag_name</code> (default: the pushed tag) with generated notes and those files attached
+(<code>softprops/action-gh-release</code>). The checksums also go to the run's summary.</p>
 <p>The workflow does not ask for <code>actions: read</code>: existing callers grant only <code>contents: write</code>, and the token can
 read artifacts of its own repository without it.</p>
+<h2 id="what-the-release-holds">What the release holds<a class="headerlink" href="#what-the-release-holds" title="Permanent link">&para;</a></h2>
+<p>For tag <code>v1.2.0</code> of a repository whose <code>driver.yml</code> names it <code>as5047u</code>:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>as5047u-1.2.0.tar.gz</code></td>
+<td>The tagged tree (<code>git archive</code>), compressed with a fixed date: the same tag always gives the same bytes. GitHub's own "Source code" archives are not promised to be byte-stable, so checksums name this one. Submodules are not inside; the SBOM names each at its pinned commit.</td>
+</tr>
+<tr>
+<td><code>as5047u-1.2.0.spdx.json</code></td>
+<td>SBOM, <a href="https://spdx.github.io/spdx-spec/v2.3/">SPDX 2.3</a> JSON: the repository as the main package (licence from <code>LICENSE</code>, the archive's SHA-256, the tagged commit), each git submodule as a package it contains (URL and pinned commit), and each firmware zip as a file generated from it.</td>
+</tr>
+<tr>
+<td><code>fw-&lt;app&gt;-&lt;idf&gt;-&lt;type&gt;.zip</code></td>
+<td>One per firmware artifact: for each ESP-IDF build in it, <code>flasher_args.json</code>, <code>flash_args</code>, every file they flash (bootloader, partition table, app) and the app's <code>.elf</code> and <code>.map</code>, at their build paths. An artifact with no <code>flasher_args.json</code> is zipped whole, with a warning.</td>
+</tr>
+<tr>
+<td><code>SHA256SUMS</code></td>
+<td>SHA-256 of every other file, in <code>sha256sum -c</code> format.</td>
+</tr>
+</tbody>
+</table>
+<p>One zip per artifact keeps Debug and Release apart. Uploading the build folders file by file, as versions before
+1.7.0 did, attached thousands of files (an ESP-IDF build folder holds about 1,500), let files with the same name
+in Debug and Release overwrite each other, and could pass GitHub's limit of 1,000 files per release.</p>
+<h3 id="check-a-download">Check a download<a class="headerlink" href="#check-a-download" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>gh<span class="w"> </span>release<span class="w"> </span>download<span class="w"> </span>v1.2.0<span class="w"> </span>-R<span class="w"> </span>kokeb-labs/driver-as5047u<span class="w"> </span>-D<span class="w"> </span>v1.2.0
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>v1.2.0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>SHA256SUMS<span class="w">        </span><span class="c1"># macOS: shasum -a 256 -c SHA256SUMS</span>
+</span></code></pre></div>
+<p>Every line must say <code>OK</code>. To flash a firmware zip: unzip it, go to the build folder inside and run
+<code>esptool.py --chip &lt;chip&gt; write_flash @flash_args</code> (the chip is in <code>flasher_args.json</code>).</p>
+<h3 id="provenance">Provenance<a class="headerlink" href="#provenance" title="Permanent link">&para;</a></h3>
+<p>The release does not yet carry signed build provenance. GitHub artifact attestations
+(<code>actions/attest-build-provenance</code>) need a public repository, or GitHub Enterprise Cloud for a private one, and an
+extra <code>id-token: write</code> and <code>attestations: write</code> grant from every caller. They are added when the repositories
+are public; until then <code>SHA256SUMS</code> and the SBOM tie the files to the tagged commit, and the tag check above ties
+the firmware to the CI run that tested it.</p>
 <h2 id="when-it-finds-no-firmware">When it finds no firmware<a class="headerlink" href="#when-it-finds-no-firmware" title="Permanent link">&para;</a></h2>
 <p>The release only reuses artifacts; it never builds. It finds none when:</p>
 <ul>
@@ -1398,9 +1521,24 @@ logs a warning. Set it to <code>true</code> to fail instead.</p>
 <td>Grant <code>contents: write</code> in the caller; check <strong>Settings &gt; Actions &gt; Workflow permissions</strong></td>
 </tr>
 <tr>
-<td>Release has no files</td>
+<td>Release has no firmware zips</td>
 <td>See <a href="#when-it-finds-no-firmware">above</a></td>
 <td>Set <code>fail_on_no_artifacts: true</code> to catch it</td>
+</tr>
+<tr>
+<td><code>release files share a name</code></td>
+<td>Two artifacts would give zips with the same name</td>
+<td>Give the artifacts distinct names (<code>ru-build</code> names them by app, IDF version and build type)</td>
+</tr>
+<tr>
+<td><code>flasher_args.json lists files the artifact lacks</code></td>
+<td>The build artifact was uploaded without part of the build</td>
+<td>Upload the whole build folder in <code>ru-build</code></td>
+</tr>
+<tr>
+<td><code>tag ... does not exist here</code></td>
+<td>The release ran for a tag that was not pushed</td>
+<td>Push the tag first</td>
 </tr>
 </tbody>
 </table>
