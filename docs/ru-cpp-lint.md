@@ -59,7 +59,7 @@ The job needs only `contents: read`: annotations come from the log, and nothing 
 | `clang_format_config` | string | `_config/.clang-format` | Path to clang-format configuration file |
 | `clang_tidy_config` | string | `_config/.clang-tidy` | Path to clang-tidy configuration file |
 | `tidy_checks` | string | empty | clang-tidy checks (comma-separated glob patterns, use - prefix to disable) |
-| `extensions` | string | `c,cpp,cc,cxx,h,hpp` | File extensions to check (comma-separated) |
+| `extensions` | string | `c,cpp,cc,cxx,h,hpp,ipp,tpp,inl` | File extensions to check (comma-separated) |
 | `ignore` | string | `build\|.git` | Files or directories to exclude from linting (pipe-separated) |
 | `files_changed_only` | boolean | `false` | Only lint files that have been changed in the pull request |
 | `lines_changed_only` | boolean | `false` | Deprecated, ignored: whole files are always checked, which is stricter. Kept so existing callers do not break. |

@@ -15,6 +15,18 @@ that heading.
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-11-07
+
+### Fixed
+
+- `ru-host-quality`: the complexity job now measures header-only implementation files (`.ipp`, `.tpp`, `.inl`).
+  lizard picks the files of a directory by extension and skipped them, so a driver whose code lives in
+  `src/<chip>.ipp` had its implementation unmeasured. The job lists every C and C++ file under `library_paths`
+  itself; the self-test fixture has a too-complex function in an `.ipp` file as well and must report both.
+- `ru-cpp-lint`: `extensions` defaults to `c,cpp,cc,cxx,h,hpp,ipp,tpp,inl`, so clang-format checks header-only
+  implementation files. clang-tidy skips those files as translation units and reports on them through the
+  sources that include them, as before. Callers that set `extensions` add `ipp` themselves.
+
 ## [1.5.0] - 2026-11-06
 
 ### Added

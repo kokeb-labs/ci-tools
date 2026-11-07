@@ -305,7 +305,7 @@ jobs:
 | `clang_format_config` | string | no | `_config/.clang-format` | Path to clang-format configuration file |
 | `clang_tidy_config` | string | no | `_config/.clang-tidy` | Path to clang-tidy configuration file |
 | `tidy_checks` | string | no | - | clang-tidy checks (comma-separated glob patterns, use - prefix to disable) |
-| `extensions` | string | no | `c,cpp,cc,cxx,h,hpp` | File extensions to check (comma-separated) |
+| `extensions` | string | no | `c,cpp,cc,cxx,h,hpp,ipp,tpp,inl` | File extensions to check (comma-separated) |
 | `ignore` | string | no | `build\|.git` | Files or directories to exclude from linting (pipe-separated) |
 | `files_changed_only` | boolean | no | `false` | Only lint files that have been changed in the pull request |
 | `lines_changed_only` | boolean | no | `false` | Deprecated, ignored: whole files are always checked, which is stricter. Kept so existing callers do not break. |
