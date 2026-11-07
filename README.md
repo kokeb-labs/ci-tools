@@ -236,6 +236,8 @@ jobs:
 | `run_complexity` | boolean | no | `true` | Run the complexity job |
 | `run_coverage` | boolean | no | `true` | Run the coverage job |
 | `run_sanitizers` | boolean | no | `true` | Run the sanitizer job |
+| `fuzz_cmake_args` | string | no | `""` | CMake arguments that turn the libFuzzer targets on, e.g. -DMYCHIP_BUILD_FUZZERS=ON. Empty: no fuzz job. Every executable named fuzz_<name> in the build is fuzzed, seeded from <source_dir>/tests/fuzz/corpus/fuzz_<name>/. |
+| `fuzz_seconds` | string | no | `""` | Seconds of fuzzing per target. Empty: the level's (60, 120, 600). |
 | `max_ccn` | string | no | `""` | Maximum modified cyclomatic complexity per function. Empty: the level's (15, 15, 10). |
 | `max_length` | string | no | `""` | Maximum lines of code per function. Empty: the level's (80, 60, 60). |
 | `max_params` | string | no | `""` | Maximum parameters per function. Empty: the level's (7, 6, 6). |
