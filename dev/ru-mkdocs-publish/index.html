@@ -641,6 +641,8 @@
       
         
       
+        
+      
     
     
     
@@ -818,6 +820,34 @@
     
   
     ru-cross-build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ru-handbook-check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-handbook-check
   
 
     
@@ -1644,7 +1674,7 @@ a versioned site with <a href="https://github.com/jimporter/mike">mike</a>, with
 says what its pages contain.</p>
 <h2 id="where-the-theme-comes-from">Where the theme comes from<a class="headerlink" href="#where-the-theme-comes-from" title="Permanent link">&para;</a></h2>
 <p>The theme, the plugin, figkit and the pinned toolchain are the <code>kokeb-mkdocs-theme</code> package in
-<a href="https://github.com/kokeb-labs/ci-tools/blob/1092494b8ec3fd0d3645565344ab253859129878/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a>. Every job installs it with pip from
+<a href="https://github.com/kokeb-labs/ci-tools/blob/214ed42b0ff5b851fa7821a3b0810ca2f7b96568/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a>. Every job installs it with pip from
 <strong>the commit this workflow runs from</strong> (the <code>job</code> context's <code>workflow_repository</code> and <code>workflow_sha</code>), so a caller
 pinned to <code>@v1</code> builds with the theme released in <code>v1</code>, and a branch under review builds with that branch's theme.
 <code>theme_ref</code> overrides the ref. A repository's own <code>requirements-docs.txt</code>, if it has one, is installed afterwards
