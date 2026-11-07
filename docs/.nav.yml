@@ -20,6 +20,7 @@ nav:
       - ru-markdown-lint: ru-markdown-lint.md
       - ru-yaml-lint: ru-yaml-lint.md
       - ru-release: ru-release.md
+      - ru-attest-release: ru-attest-release.md
       - ru-docs-publish (legacy): ru-docs-publish.md
   - ESP-IDF:
       - ru-build: ru-build.md

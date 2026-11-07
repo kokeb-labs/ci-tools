@@ -18,6 +18,7 @@ read from the workflow files.
 | --- | --- | --- |
 | [`dco.yml`](dco.md) | `contents: read`, `pull-requests: read` | `dco`: `contents: read`, `pull-requests: read` |
 | [`org-standard-check.yml`](org-standard-check.md) | `contents: read` | `check`: `contents: read` |
+| [`ru-attest-release.yml`](ru-attest-release.md) | `attestations: write`, `contents: read`, `id-token: write` | `attest`: `attestations: write`, `contents: read`, `id-token: write` |
 | [`ru-build.yml`](ru-build.md) | `contents: read`, `pull-requests: write` | `generate-matrix`: `contents: read`<br>`build`: `contents: read`<br>`size-report`: `pull-requests: write` |
 | [`ru-ci-gate.yml`](ru-ci-gate.md) | `contents: read` | `gate`: `contents: read` |
 | [`ru-cpp-analysis.yml`](ru-cpp-analysis.md) | `contents: read` | `cppcheck`: `contents: read` |

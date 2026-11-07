@@ -77,6 +77,7 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | [`ru-release.yml`](.github/workflows/ru-release.yml) | GitHub Release with generated notes ([guide](docs/ru-release.md)) |
 | [`ru-build.yml`](.github/workflows/ru-build.yml) | ESP-IDF: every app of `app_config.yml` across ESP-IDF versions and build types, `fw-*` artifacts, size report on PRs ([guide](docs/ru-build.md), [quickstart](docs/esp-idf-quickstart.md)) |
 | [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | ESP-IDF: GitHub Release with the firmware `ru-build` built for the tagged commit ([guide](docs/ru-release-with-artifacts.md)) |
+| [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | Signed build provenance (GitHub artifact attestation) for every file of a published release; public repositories ([guide](docs/ru-attest-release.md)) |
 | [`dco.yml`](.github/workflows/dco.yml) | Fails a pull request when a commit lacks a `Signed-off-by:` line matching its author ([guide](docs/dco.md)) |
 | [`org-standard-check.yml`](.github/workflows/org-standard-check.yml) | Fails when `README.md`, `LICENSE`, `CHANGELOG.md` or `.github/CODEOWNERS` is missing, or `LICENSE` is not MIT ([guide](docs/org-standard-check.md)) |
 
@@ -129,6 +130,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | `contents: write` | push to the deployment branch (publish job only; the build and quality jobs read) |
 | [`ru-release.yml`](.github/workflows/ru-release.yml) | `contents: write` | create the GitHub Release |
 | [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | `contents: write` | create the release and upload the firmware |
+| [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | `attestations: write`, `contents: read`, `id-token: write` | download the release files; sign the provenance through Sigstore; store the attestation |
 | [`ru-yaml-lint.yml`](.github/workflows/ru-yaml-lint.yml) | `contents: read` | checkout |
 <!-- permissions-table:end -->
 
@@ -552,6 +554,29 @@ jobs:
 | `prerelease` | boolean | no | `false` | Mark as pre-release |
 | `tag_name` | string | no | `""` | Tag name for release (defaults to github.ref_name) |
 <!-- inputs:ru-release.yml:end -->
+
+### ru-attest-release
+
+Runs after the release job; public repositories only.
+
+```yaml
+jobs:
+  attest:
+    needs: release
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-attest-release.yml@v1
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    with:
+      tag_name: ${{ github.ref_name }}
+```
+
+<!-- inputs:ru-attest-release.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `tag_name` | string | no | `""` | Tag of the published release to attest (defaults to github.ref_name) |
+<!-- inputs:ru-attest-release.yml:end -->
 
 ### ru-build
 
