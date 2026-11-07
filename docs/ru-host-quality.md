@@ -35,6 +35,11 @@ Every limit can be overridden with an input (`max_ccn`, `max_length`, `max_param
 - **Every C and C++ file, header-only implementations included.** The complexity job lists `.c`, `.cc`, `.cpp`,
   `.cxx`, `.h`, `.hh`, `.hpp`, `.hxx`, `.ipp`, `.tpp` and `.inl` files under `library_paths` itself: lizard alone
   skips `.ipp`, `.tpp` and `.inl` files in a directory, which is where a header-only driver keeps its code.
+- **Per source line, all template instances together.** A header-only driver is a class template, compiled once
+  for every port type a test or example uses. gcovr's `--merge-lines` counts a line, branch or condition as covered
+  when any instance ran it: coverage measures the source, as a structural-coverage objective does, not how many
+  copies the compiler made. Without it, an example that instantiates the driver with its own port and runs only the
+  happy path would count every failure path a second time, as uncovered.
 - **Only code that ran.** Coverage reads the data of test binaries that executed. A compile-only target (for
   example an optimised build that exists to prove the code compiles at `-O2`) has no data and would otherwise count
   every line as missed.

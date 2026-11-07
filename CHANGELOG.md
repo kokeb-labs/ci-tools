@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-11-07
+
+### Fixed
+
+- `ru-host-quality`: coverage merges the instances of a template (`gcovr --merge-lines`), so a line, branch or
+  condition counts as covered when any instance ran it. A header-only driver is compiled once per port type, and an
+  example's instance that runs only the happy path counted every failure path again, as uncovered: the AS5047U
+  driver measured 73.8 % of branches instead of 94.5 %.
+
 ## [1.5.1] - 2026-11-07
 
 ### Fixed
