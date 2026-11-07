@@ -4,6 +4,8 @@
 #   coverage    GCC --coverage build, ctest, gcovr over the library sources: lines, branches and, at the safety
 #               level, MC/DC (GCC condition coverage); floors per level
 #   sanitizers  clang build with AddressSanitizer and UndefinedBehaviorSanitizer, ctest
+#   fuzz        libFuzzer (clang, ASan, UBSan) on every fuzz_* target, from the committed seeds plus a cached
+#               corpus; seconds per target by level (60, 120, 600). Runs when fuzz_cmake_args is set.
 # Each job fails on its limits when `enforce` is true. The limits default to the level's; any can be overridden.
 # Python tools are installed from pinned versions with their SHA-256 hashes.
 name: 🧮 [RU] Host quality gates
@@ -53,6 +55,18 @@ on:
         type: boolean
         required: false
         default: true
+      fuzz_cmake_args:
+        description: >-
+          CMake arguments that turn the libFuzzer targets on, e.g. -DMYCHIP_BUILD_FUZZERS=ON. Empty: no fuzz job.
+          Every executable named fuzz_<name> in the build is fuzzed, seeded from <source_dir>/tests/fuzz/corpus/fuzz_<name>/.
+        type: string
+        required: false
+        default: ""
+      fuzz_seconds:
+        description: "Seconds of fuzzing per target. Empty: the level's (60, 120, 600)."
+        type: string
+        required: false
+        default: ""
       max_ccn:
         description: "Maximum modified cyclomatic complexity per function. Empty: the level's (15, 15, 10)."
         type: string
@@ -122,6 +136,7 @@ jobs:
       line: ${{ steps.l.outputs.line }}
       branch: ${{ steps.l.outputs.branch }}
       condition: ${{ steps.l.outputs.condition }}
+      fuzz_seconds: ${{ steps.l.outputs.fuzz_seconds }}
     steps:
       - name: Resolve the limits (ADR-0020 defaults, then overrides)
         id: l
@@ -133,12 +148,13 @@ jobs:
           LINE: ${{ inputs.min_line }}
           BRANCH: ${{ inputs.min_branch }}
           CONDITION: ${{ inputs.min_condition }}
+          FUZZ_SECONDS: ${{ inputs.fuzz_seconds }}
         run: |
           set -euo pipefail
           case "$LEVEL" in
-            standard) d=(15 80 7 0 0 off) ;;
-            high)     d=(15 60 6 85 75 report) ;;
-            safety)   d=(10 60 6 100 100 100) ;;
+            standard) d=(15 80 7 0 0 off 60) ;;
+            high)     d=(15 60 6 85 75 report 120) ;;
+            safety)   d=(10 60 6 100 100 100 600) ;;
             *) echo "::error::level must be standard, high or safety, not '$LEVEL'"; exit 1 ;;
           esac
           {
@@ -148,6 +164,7 @@ jobs:
             echo "line=${LINE:-${d[3]}}"
             echo "branch=${BRANCH:-${d[4]}}"
             echo "condition=${CONDITION:-${d[5]}}"
+            echo "fuzz_seconds=${FUZZ_SECONDS:-${d[6]}}"
           } | tee -a "$GITHUB_OUTPUT"
 
   complexity:
@@ -407,3 +424,95 @@ jobs:
           set -euo pipefail
           read -r -a extra <<< "$CTEST_ARGS"
           ctest --test-dir build-sanitizers --output-on-failure --parallel "$(nproc)" "${extra[@]}"
+
+  fuzz:
+    name: fuzz (libFuzzer, ASan, UBSan)
+    if: ${{ inputs.fuzz_cmake_args != '' }}
+    needs: limits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install clang 18 and libFuzzer
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends clang-18 libclang-rt-18-dev cmake ninja-build; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
+            sleep 10
+          done
+          clang++-18 --version | head -1
+      - name: Build the fuzz targets
+        env:
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          CMAKE_ARGS: ${{ inputs.cmake_args }} ${{ inputs.fuzz_cmake_args }}
+        run: |
+          set -euo pipefail
+          read -r -a extra <<< "$CMAKE_ARGS"
+          cmake -S "$SOURCE_DIR" -B build-fuzz -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=clang-18 -DCMAKE_CXX_COMPILER=clang++-18 "${extra[@]}"
+          cmake --build build-fuzz --parallel
+          find build-fuzz -type f -perm -u+x -name 'fuzz_*' ! -name 'fuzz_replay_*' | sort > fuzz-targets.txt
+          if [ ! -s fuzz-targets.txt ]; then
+            echo "::error::fuzz_cmake_args is set but the build has no fuzz_<name> executable"; exit 1
+          fi
+          cat fuzz-targets.txt
+      - name: Restore the corpus
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: fuzz-corpus
+          key: fuzz-corpus-${{ github.repository }}-${{ github.run_id }}
+          restore-keys: fuzz-corpus-${{ github.repository }}-
+      - name: Fuzz
+        env:
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          SECONDS_PER_TARGET: ${{ needs.limits.outputs.fuzz_seconds }}
+          ASAN_OPTIONS: "detect_leaks=1:abort_on_error=1"
+          UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+        run: |
+          set -euo pipefail
+          mkdir -p fuzz-crashes
+          status=0
+          {
+            echo "### Fuzzing, ${SECONDS_PER_TARGET} s per target (${{ inputs.level }} level)"
+            echo
+            echo "| Target | Runs | Coverage edges | Corpus | Result |"
+            echo "| --- | ---: | ---: | ---: | --- |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          while read -r bin; do
+            name=$(basename "$bin")
+            corpus="fuzz-corpus/$name"
+            mkdir -p "$corpus"
+            seeds="$SOURCE_DIR/tests/fuzz/corpus/$name"
+            [ -d "$seeds" ] || seeds=""
+            log="fuzz-crashes/$name.log"
+            result=pass
+            if ! "$bin" -max_total_time="$SECONDS_PER_TARGET" -print_final_stats=1 -artifact_prefix="fuzz-crashes/$name-" \
+                "$corpus" ${seeds:+"$seeds"} > "$log" 2>&1; then
+              result="**fail**"
+              status=1
+              echo "::error::$name found a failing input: see the fuzz-crashes artifact"
+              tail -n 40 "$log"
+            fi
+            runs=$(sed -n 's/^stat::number_of_executed_units: *//p' "$log" | tail -1)
+            edges=$(grep -o 'cov: [0-9]*' "$log" | tail -1 | cut -d' ' -f2)
+            echo "| \`$name\` | ${runs:-?} | ${edges:-?} | $(find "$corpus" -type f | wc -l) | $result |" >> "$GITHUB_STEP_SUMMARY"
+          done < fuzz-targets.txt
+          if [ "$status" -ne 0 ]; then
+            echo >> "$GITHUB_STEP_SUMMARY"
+            echo "Add each crash input to tests/fuzz/corpus/<target>/ with the fix, so it replays as a CTest." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
+      - name: Upload failing inputs
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-fuzz-crashes
+          path: fuzz-crashes/
+          retention-days: 30

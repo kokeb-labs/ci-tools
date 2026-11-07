@@ -15,6 +15,16 @@ that heading.
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-07
+
+### Added
+
+- `ru-host-quality`: a `fuzz` job. With `fuzz_cmake_args` set (for example `-DMYCHIP_BUILD_FUZZERS=ON`), it builds
+  with clang 18 and libFuzzer, ASan and UBSan, and fuzzes every `fuzz_<name>` executable for `fuzz_seconds` (by
+  level: 60, 120, 600 s). Each target starts from its committed seeds in `tests/fuzz/corpus/fuzz_<name>/` plus a
+  corpus cached between runs. The step summary has runs, coverage edges and corpus size per target, and a failing
+  input is uploaded as `<artifact_name>-fuzz-crashes`. Without `fuzz_cmake_args` nothing changes.
+
 ## [1.5.3] - 2026-11-07
 
 ### Changed
