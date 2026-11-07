@@ -35,11 +35,38 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      # Create basic release (source code only, no build artifacts)
+      # The asset script at the commit of this workflow, so @v1 callers get the matching version. Trust: this is
+      # kokeb-labs/ci-tools' own code at the commit the caller pinned, the same trust as this workflow file.
+      - name: Checkout the release asset script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .release-assets
+          sparse-checkout: tools/release_assets
+          persist-credentials: false
+
+      # Source archive with a stable checksum, SPDX 2.3 SBOM and SHA256SUMS (tools/release_assets).
+      - name: Build source archive, SBOM and checksums
+        env:
+          TAG: ${{ inputs.tag_name || github.ref_name }}
+        run: |
+          set -euo pipefail
+          python3 -I .release-assets/tools/release_assets/release_assets.py --tag "$TAG" --out "$RUNNER_TEMP/dist"
+          {
+            echo '### Release files'
+            echo '```text'
+            cat "$RUNNER_TEMP/dist/SHA256SUMS"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Create the release: source archive, SBOM and checksums, no build artifacts
       - name: Create Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64  # v3.0.3
         with:
           tag_name: ${{ inputs.tag_name || github.ref_name }}
           draft: ${{ inputs.draft }}
           prerelease: ${{ inputs.prerelease }}
+          files: ${{ runner.temp }}/dist/*
+          fail_on_unmatched_files: true
           generate_release_notes: true

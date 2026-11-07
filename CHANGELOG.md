@@ -15,6 +15,24 @@ that heading.
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-11-07
+
+### Added
+
+- `ru-release` and `ru-release-with-artifacts` attach supply-chain files to every release: a source archive with a
+  stable checksum (`<name>-<version>.tar.gz`), an SPDX 2.3 SBOM (`<name>-<version>.spdx.json`: the repository,
+  its licence and tagged commit, each git submodule at its pinned commit, each firmware zip) and `SHA256SUMS`.
+  Built by the new `tools/release_assets/release_assets.py` (standard library only, unit-tested in the self-CI);
+  the checksums also go to the run summary. Signed provenance waits for public repositories
+  (`docs/ru-release-with-artifacts.md#provenance`).
+
+### Changed
+
+- `ru-release-with-artifacts` attaches one zip per firmware artifact, holding what flashes and debugs each ESP-IDF
+  build (`flasher_args.json`, `flash_args`, the files they flash, the app `.elf` and `.map`), instead of every file
+  of the build folders. The old upload sent about 2,900 files for a driver with a Debug and a Release build, past
+  GitHub's limit of 1,000 per release, and files of the same name in Debug and Release overwrote each other.
+
 ## [1.6.0] - 2026-11-07
 
 ### Added
