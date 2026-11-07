@@ -1050,6 +1050,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#160---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.6.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.6.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#153---2026-11-07" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1146,7 +1174,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#added_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1185,7 +1213,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_1" class="md-nav__link">
+  <a href="#added_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1213,7 +1241,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_2" class="md-nav__link">
+  <a href="#added_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1302,7 +1330,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_3" class="md-nav__link">
+  <a href="#added_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1509,7 +1537,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_4" class="md-nav__link">
+  <a href="#added_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1589,6 +1617,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#160---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.6.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.6.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#153---2026-11-07" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1685,7 +1741,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
+  <a href="#added_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1724,7 +1780,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_1" class="md-nav__link">
+  <a href="#added_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1752,7 +1808,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_2" class="md-nav__link">
+  <a href="#added_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -1841,7 +1897,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_3" class="md-nav__link">
+  <a href="#added_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -2048,7 +2104,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#added_4" class="md-nav__link">
+  <a href="#added_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         Added
@@ -2102,6 +2158,15 @@
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <p>Every change to the reusable workflows, the theme package and the tools, newest first, from <code>CHANGELOG.md</code>.</p>
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="160---2026-11-07">[1.6.0] - 2026-11-07<a class="headerlink" href="#160---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-host-quality</code>: a <code>fuzz</code> job. With <code>fuzz_cmake_args</code> set (for example <code>-DMYCHIP_BUILD_FUZZERS=ON</code>), it builds
+  with clang 18 and libFuzzer, ASan and UBSan, and fuzzes every <code>fuzz_&lt;name&gt;</code> executable for <code>fuzz_seconds</code> (by
+  level: 60, 120, 600 s). Each target starts from its committed seeds in <code>tests/fuzz/corpus/fuzz_&lt;name&gt;/</code> plus a
+  corpus cached between runs. The step summary has runs, coverage edges and corpus size per target, and a failing
+  input is uploaded as <code>&lt;artifact_name&gt;-fuzz-crashes</code>. Without <code>fuzz_cmake_args</code> nothing changes.</li>
+</ul>
 <h2 id="153---2026-11-07">[1.5.3] - 2026-11-07<a class="headerlink" href="#153---2026-11-07" title="Permanent link">&para;</a></h2>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2128,7 +2193,7 @@
   sources that include them, as before. Callers that set <code>extensions</code> add <code>ipp</code> themselves.</li>
 </ul>
 <h2 id="150---2026-11-06">[1.5.0] - 2026-11-06<a class="headerlink" href="#150---2026-11-06" title="Permanent link">&para;</a></h2>
-<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ru-handbook-check</code>: checks a repository against the Kokeb Labs handbook rules a script can decide. It reads the
   <code>.kokeb/handbook.yml</code> declaration (handbook version, kind, assurance level, waivers) and checks the root layout,
@@ -2144,14 +2209,14 @@
 <li><code>tools/docs-migrate.py</code>: a character range listed twice in the emoji pattern (CodeQL <code>py/overly-large-range</code>).</li>
 </ul>
 <h2 id="140---2026-11-06">[1.4.0] - 2026-11-06<a class="headerlink" href="#140---2026-11-06" title="Permanent link">&para;</a></h2>
-<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ru-cross-build</code>: builds one CMake target for Cortex-M0+, M3, M4F, M7F and M33F cores with Arm's GNU toolchain
   14.3.rel1 (pinned, SHA-256 checked; an Ubuntu mirror hung one install for 20 minutes), one job per core, with the caller's own warning and language flags, and reports
   the objects' code and data size. A driver proves its code compiles for a microcontroller, not only on the host.</li>
 </ul>
 <h2 id="130---2026-11-06">[1.3.0] - 2026-11-06<a class="headerlink" href="#130---2026-11-06" title="Permanent link">&para;</a></h2>
-<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
+<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ru-release-with-artifacts</code> takes a <code>commit</code> input: the commit whose CI artifacts are released, for callers that
   release from a finished CI run (<code>workflow_run</code>), where <code>github.sha</code> is the default branch's head. It also checks
@@ -2187,7 +2252,7 @@
   organisation's allow-list.</li>
 </ul>
 <h2 id="120---2026-11-06">[1.2.0] - 2026-11-06<a class="headerlink" href="#120---2026-11-06" title="Permanent link">&para;</a></h2>
-<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
+<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ru-host-quality</code>: complexity (lizard, modified cyclomatic complexity, length, parameters), coverage (GCC 14 and
   gcovr: lines, branches and MC/DC from <code>-fcondition-coverage</code>) and AddressSanitizer/UndefinedBehaviorSanitizer
@@ -2261,7 +2326,7 @@
 </ul>
 <h2 id="100---2026-11-05">[1.0.0] - 2026-11-05<a class="headerlink" href="#100---2026-11-05" title="Permanent link">&para;</a></h2>
 <p>First release of <code>kokeb-labs/ci-tools</code>.</p>
-<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
+<h3 id="added_5">Added<a class="headerlink" href="#added_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Reusable workflows for C/C++ (<code>ru-host-ci</code>, <code>ru-cpp-lint</code>, <code>ru-cpp-analysis</code>), documentation
   (<code>ru-mkdocs-publish</code>, <code>ru-docs-publish</code>, <code>ru-docs-linkcheck</code>), Markdown and YAML lint (<code>ru-markdown-lint</code>,
