@@ -15,6 +15,14 @@ that heading.
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-11-07
+
+### Fixed
+
+- `ru-mkdocs-publish`: a pre-release tag (`vX.Y.Z-rc.N`) no longer takes the `latest` alias, and with
+  `release_version: minor` no longer overwrites the docs of its minor; it publishes under its own tag. The first
+  release candidate of driver-pcal9555 moved `latest` off `dev`, against the release standard.
+
 ## [1.8.0] - 2026-11-07
 
 ### Added
