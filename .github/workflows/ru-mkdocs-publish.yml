@@ -5,7 +5,8 @@
 #   pull request        strict build + figure / generated-table drift checks + offline link check + Lighthouse budget
 #                       + phone / desktop screenshots (artifacts); no deploy
 #   push to main        the same, then publish as version `dev` (also aliased `latest` until the first release)
-#   push of a v* tag    the same, then publish as version `vX.Y.Z` (the tag) and move the `latest` alias to it
+#   push of a v* tag    the same, then publish as version `vX.Y.Z` (the tag) and move the `latest` alias to it;
+#                       a pre-release tag (`vX.Y.Z-rc.N`) publishes under its tag and leaves `latest` where it is
 #
 # With `versioning: false` (the organisation portal, kokeb-labs.github.io) there are no versions: a push to the default
 # branch publishes the built site as the whole content of the deployment branch, at its root, in one ordinary commit.
@@ -474,7 +475,11 @@ jobs:
           RELEASE_VERSION: ${{ inputs.release_version }}
         run: |
           set -euo pipefail
-          if [ "$REF_TYPE" = tag ] && [[ "$REF_NAME" =~ ^v([0-9]+)\.([0-9]+) ]]; then
+          if [ "$REF_TYPE" = tag ] && [[ "$REF_NAME" =~ ^v[0-9]+\.[0-9]+.*- ]]; then
+            # A pre-release (vX.Y.Z-rc.N) publishes under its own tag and never takes `latest`, nor overwrites the
+            # docs of the minor it leads up to.
+            { echo "version=$REF_NAME"; echo "aliases="; } >> "$GITHUB_OUTPUT"
+          elif [ "$REF_TYPE" = tag ] && [[ "$REF_NAME" =~ ^v([0-9]+)\.([0-9]+) ]]; then
             if [ "$RELEASE_VERSION" = minor ]; then
               version="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
             else

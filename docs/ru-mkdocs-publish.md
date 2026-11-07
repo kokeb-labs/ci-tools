@@ -23,6 +23,7 @@ for extra plugins.
 | Pull request | Yes | Yes | Never, whatever `deploy` says |
 | Push to the default branch | Yes | Yes | Version `dev` (when `deploy` is true); `dev` also holds `latest` until the first release |
 | Push of a `vX.Y.Z` tag | Yes | Yes | Version `vX.Y.Z` (`release_version: minor`: `X.Y`), and `latest` moves to it |
+| Push of a `vX.Y.Z-rc.N` tag (any tag with `-`) | Yes | Yes | Version `vX.Y.Z-rc.N`; `latest` stays where it is |
 
 With `versioning: false` (the organisation portal) there are no versions: see
 [Unversioned sites](#unversioned-sites).
