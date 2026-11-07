@@ -1616,6 +1616,11 @@ least three weeks old when it was pinned.</p>
 <li><strong>Every C and C++ file, header-only implementations included.</strong> The complexity job lists <code>.c</code>, <code>.cc</code>, <code>.cpp</code>,
   <code>.cxx</code>, <code>.h</code>, <code>.hh</code>, <code>.hpp</code>, <code>.hxx</code>, <code>.ipp</code>, <code>.tpp</code> and <code>.inl</code> files under <code>library_paths</code> itself: lizard alone
   skips <code>.ipp</code>, <code>.tpp</code> and <code>.inl</code> files in a directory, which is where a header-only driver keeps its code.</li>
+<li><strong>Per source line, all template instances together.</strong> A header-only driver is a class template, compiled once
+  for every port type a test or example uses. gcovr's <code>--merge-lines</code> counts a line, branch or condition as covered
+  when any instance ran it: coverage measures the source, as a structural-coverage objective does, not how many
+  copies the compiler made. Without it, an example that instantiates the driver with its own port and runs only the
+  happy path would count every failure path a second time, as uncovered.</li>
 <li><strong>Only code that ran.</strong> Coverage reads the data of test binaries that executed. A compile-only target (for
   example an optimised build that exists to prove the code compiles at <code>-O2</code>) has no data and would otherwise count
   every line as missed.</li>
