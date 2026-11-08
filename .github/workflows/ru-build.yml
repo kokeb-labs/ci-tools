@@ -30,6 +30,14 @@ on:
           build type.
         type: boolean
         default: true
+      idf_install:
+        description: >
+          How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the
+          matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes
+          seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf
+          image through espressif/esp-idf-ci-action, as before.
+        type: string
+        default: native
       max_dec_total:
         description: "Maximum total dec size in bytes for size budget enforcement (0 to disable)"
         type: string
@@ -187,6 +195,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml jq
 
+      - name: Check idf_install
+        env:
+          IDF_INSTALL: ${{ inputs.idf_install }}
+        run: |
+          case "$IDF_INSTALL" in
+            native|docker) ;;
+            *) echo "::error::idf_install must be native or docker, not '$IDF_INSTALL'"; exit 1 ;;
+          esac
+
       - name: Generate matrix
         id: gen
         env:
@@ -224,6 +241,7 @@ jobs:
       # The SDKs are removed in parallel, and only when the disk is short: one rm of the Android SDK alone
       # took most of the two minutes this step used to take.
       - name: Free runner disk space
+        if: ${{ inputs.idf_install == 'docker' }}
         run: |
           df -h /
           avail_gb=$(df --output=avail -BG / | tail -1 | tr -dc '0-9')
@@ -280,11 +298,93 @@ jobs:
           restore-keys: |
             espidf-ccache-${{ matrix.idf_version_docker }}-${{ matrix.target }}-${{ matrix.app_name }}-
 
+      # Native install: the commit the IDF version names today keys the cache, so a moved release branch installs
+      # afresh once and every later run restores it.
+      - name: Resolve the ESP-IDF commit
+        id: idf
+        if: ${{ inputs.idf_install == 'native' }}
+        env:
+          IDF_VERSION: ${{ matrix.idf_version }}
+        run: |
+          set -euo pipefail
+          case "$IDF_VERSION" in
+            v[0-9]*) ref="refs/tags/$IDF_VERSION" ;;
+            *) ref="refs/heads/$IDF_VERSION" ;;
+          esac
+          sha=""
+          for attempt in 1 2 3; do
+            sha=$(git ls-remote https://github.com/espressif/esp-idf "$ref" | cut -c1-40) && [ -n "$sha" ] && break
+            sleep $((attempt * 10))
+          done
+          if [ -z "$sha" ]; then echo "::error::ESP-IDF $IDF_VERSION not found"; exit 1; fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "python=$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])')" >> "$GITHUB_OUTPUT"
+          echo "ESP-IDF $IDF_VERSION is $sha"
+
+      - name: Restore ESP-IDF
+        id: idf_cache
+        if: ${{ inputs.idf_install == 'native' && !inputs.clean_build }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: |
+            ~/esp-idf
+            ~/.espressif
+          key: >-
+            espidf-native-${{ runner.os }}-py${{ steps.idf.outputs.python }}-${{ matrix.target }}-${{ steps.idf.outputs.sha }}
+
+      - name: Install ESP-IDF (${{ matrix.target }} tools only)
+        if: ${{ inputs.idf_install == 'native' && steps.idf_cache.outputs.cache-hit != 'true' }}
+        env:
+          IDF_VERSION: ${{ matrix.idf_version }}
+          IDF_SHA: ${{ steps.idf.outputs.sha }}
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          rm -rf ~/esp-idf ~/.espressif
+          for attempt in 1 2 3; do
+            if git clone -q --depth 1 -b "$IDF_VERSION" --recursive --shallow-submodules -j 8 \
+                https://github.com/espressif/esp-idf ~/esp-idf; then break; fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::could not clone ESP-IDF $IDF_VERSION"; exit 1; fi
+            rm -rf ~/esp-idf; sleep $((attempt * 15))
+          done
+          got=$(git -C ~/esp-idf rev-parse HEAD)
+          if [ "$got" != "$IDF_SHA" ]; then
+            echo "::error::ESP-IDF $IDF_VERSION moved during the job ($IDF_SHA, cloned $got); re-run"
+            exit 1
+          fi
+          ~/esp-idf/install.sh "$TARGET"
+          du -sh ~/esp-idf ~/.espressif
+
+      - name: Build (native ESP-IDF)
+        if: ${{ inputs.idf_install == 'native' }}
+        env:
+          ESP32_PROJECT_PATH: ${{ env.ESP32_PROJECT_PATH }}
+          IDF_TARGET: ${{ matrix.target }}
+          BUILD_TYPES: ${{ matrix.build_type }}
+          APP_TYPE: ${{ matrix.app_name }}
+          IDF_VERSION: ${{ matrix.idf_version }}
+          TOOLS_PATH: ${{ needs.generate-matrix.outputs.project_tools_path }}
+          IDF_CCACHE_ENABLE: "1"
+          CCACHE_MAXSIZE: 400M
+        run: |
+          set -euo pipefail
+          export CCACHE_DIR="$GITHUB_WORKSPACE/.ccache" CCACHE_BASEDIR="$GITHUB_WORKSPACE"
+          # shellcheck disable=SC1090
+          . ~/esp-idf/export.sh >/dev/null
+          idf.py --version
+          for build_type in ${BUILD_TYPES}; do
+            export BUILD_TYPE="$build_type"
+            "${TOOLS_PATH}/build_app.sh" --project-path "${ESP32_PROJECT_PATH}" \
+              "${APP_TYPE}" "${build_type}" "${IDF_VERSION}"
+          done
+          ccache -s || true
+
       # esp-idf-ci-action runs `docker run espressif/idf:<tag>`, which pulls the
       # image once with no retry; a transient Docker Hub error mid-pull fails
       # the build (exit 125). Pull it here with retries so the action finds
       # the image locally.
       - name: Pre-pull ESP-IDF image (with retries)
+        if: ${{ inputs.idf_install == 'docker' }}
         env:
           IDF_IMAGE: espressif/idf:${{ matrix.idf_version_docker }}
         run: |
@@ -305,6 +405,7 @@ jobs:
 
       - name: Build (espressif/esp-idf-ci-action)
         id: build
+        if: ${{ inputs.idf_install == 'docker' }}
         uses: espressif/esp-idf-ci-action@e6f5c74232b1ccd4c97ed641f1e48553853f1fd5  # v1.2.0
         with:
           esp_idf_version: ${{ matrix.idf_version_docker }}
