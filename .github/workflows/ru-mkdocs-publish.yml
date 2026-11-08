@@ -314,6 +314,17 @@ jobs:
         with:
           python-version: ${{ inputs.python_version }}
 
+      # This job has no checkout, so setup-python's pip cache (keyed on a file in it) cannot be used: pip's
+      # wheels, the npm download of @lhci/cli and Playwright's Chromium are cached here by what decides them.
+      - name: Cache the tool downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.npm
+            ~/.cache/ms-playwright
+          key: docs-quality-${{ runner.os }}-py${{ inputs.python_version }}-lhci0.15.1
+
       - name: Install the theme tools
         env:
           THEME_REPO: ${{ fromJSON(toJSON(job)).workflow_repository }}  # the repository of this workflow

@@ -15,6 +15,22 @@ that heading.
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-11-08
+
+### Added
+
+- `ru-build`: input `group_build_types` (default `true`) builds every build type of an app and IDF version in one
+  job, so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. The job
+  name and artifact name list the build types together (`Debug Release`).
+
+### Changed
+
+- `ru-build`: ccache's directory is now kept between runs (`actions/cache`, skipped with `clean_build`). Before,
+  `IDF_CCACHE_ENABLE` left it inside the container and every build started cold.
+- `ru-build`: the runner's unused SDKs are removed in parallel, and only when less than 30 GB is free.
+- `ru-mkdocs-publish`: the Lighthouse and screenshots job caches pip's wheels, the `@lhci/cli` download and
+  Playwright's Chromium.
+
 ## [1.9.1] - 2026-11-08
 
 ### Fixed

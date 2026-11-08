@@ -23,6 +23,13 @@ on:
         description: "Auto-clone tools repo if project_tools_dir is missing"
         type: boolean
         default: true
+      group_build_types:
+        description: >
+          Build every build type of an app and IDF version in one job (default), so the runner is prepared
+          and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per
+          build type.
+        type: boolean
+        default: true
       max_dec_total:
         description: "Maximum total dec size in bytes for size budget enforcement (0 to disable)"
         type: string
@@ -184,10 +191,17 @@ jobs:
         id: gen
         env:
           TOOLS_PATH: ${{ steps.validate.outputs.project_tools_path }}
+          GROUP_BUILD_TYPES: ${{ inputs.group_build_types }}
         run: |
           set -e
           # Scripts directory and generate_matrix.py already validated
           MATRIX=$(python3 "${TOOLS_PATH}/generate_matrix.py")
+          if [ "${GROUP_BUILD_TYPES}" = "true" ]; then
+            # One entry per app, IDF version and target; build_type holds every build type, space-separated.
+            MATRIX=$(echo "$MATRIX" | jq -c '{include: (.include
+              | group_by([.app_name, .idf_version, .target, .config_source])
+              | map(.[0] + {build_type: (map(.build_type) | unique | join(" "))}))}')
+          fi
           echo "matrix=${MATRIX}" >> "$GITHUB_OUTPUT"
           echo "$MATRIX" | python3 -m json.tool
 
@@ -207,11 +221,20 @@ jobs:
     steps:
       # The ESP-IDF image plus one build needs more disk than the smaller
       # private-repo runners leave free. None of these SDKs are used here.
+      # The SDKs are removed in parallel, and only when the disk is short: one rm of the Android SDK alone
+      # took most of the two minutes this step used to take.
       - name: Free runner disk space
         run: |
           df -h /
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
-            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          avail_gb=$(df --output=avail -BG / | tail -1 | tr -dc '0-9')
+          if [ "${avail_gb}" -ge 30 ]; then
+            echo "${avail_gb} GB free: nothing to remove"
+            exit 0
+          fi
+          for d in /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL; do
+            sudo rm -rf "$d" &
+          done
+          wait
           df -h /
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -245,6 +268,18 @@ jobs:
             pip install -r "${TOOLS_PATH}/requirements.txt"
           fi
 
+      # IDF_CCACHE_ENABLE alone left ccache's directory inside the container, so every build started cold. The
+      # directory now lives in the workspace (the action mounts it at /app/<repository>) and is kept between runs.
+      - name: Restore the compiler cache
+        if: ${{ !inputs.clean_build }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: .ccache
+          key: >-
+            espidf-ccache-${{ matrix.idf_version_docker }}-${{ matrix.target }}-${{ matrix.app_name }}-${{ github.sha }}
+          restore-keys: |
+            espidf-ccache-${{ matrix.idf_version_docker }}-${{ matrix.target }}-${{ matrix.app_name }}-
+
       # esp-idf-ci-action runs `docker run espressif/idf:<tag>`, which pulls the
       # image once with no retry; a transient Docker Hub error mid-pull fails
       # the build (exit 125). Pull it here with retries so the action finds
@@ -277,6 +312,9 @@ jobs:
           path: .
           extra_docker_args: >-
             -e IDF_CCACHE_ENABLE=1
+            -e CCACHE_DIR=/app/${{ github.repository }}/.ccache
+            -e CCACHE_MAXSIZE=400M
+            -e CCACHE_BASEDIR=/app/${{ github.repository }}
           command: |
             set -e
             export ESP32_PROJECT_PATH="${{ env.ESP32_PROJECT_PATH }}"
@@ -327,10 +365,13 @@ jobs:
             echo "======================================================"
             echo ""
             # Project tools directory already validated in generate-matrix job
-            # Run build script with correct paths
-            "${{ needs.generate-matrix.outputs.project_tools_path }}/build_app.sh" \
-              --project-path "${ESP32_PROJECT_PATH}" \
-              "${APP_TYPE}" "${BUILD_TYPE}" "${{ matrix.idf_version }}"
+            # Run build script with correct paths, once per build type of this job
+            for build_type in ${BUILD_TYPE}; do
+              "${{ needs.generate-matrix.outputs.project_tools_path }}/build_app.sh" \
+                --project-path "${ESP32_PROJECT_PATH}" \
+                "${APP_TYPE}" "${build_type}" "${{ matrix.idf_version }}"
+            done
+            ccache -s 2>/dev/null || true
             # Find build directory - try multiple patterns
             echo "Looking for build directory..."
             echo "Changing to ESP-IDF project directory: ${ESP32_PROJECT_PATH}"
