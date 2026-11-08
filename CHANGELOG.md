@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-11-08
+
+### Added
+
+- `ru-template-drift`: compares the files driver-template manages (workflows, `_config/`, skills, CMake helpers)
+  with what the template makes today from the caller's `.kokeb/template.yml`, using the template's own
+  `scaffold.py --check-drift`. It warns by default; `enforce: true` fails on drift. The signed-release job had
+  already drifted: two drivers had it and the template did not.
+
 ## [1.8.1] - 2026-11-07
 
 ### Fixed
