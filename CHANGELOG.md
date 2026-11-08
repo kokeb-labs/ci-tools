@@ -28,8 +28,16 @@ that heading.
 - `ru-cross-build`: input `per_core_jobs` (default `false`) keeps one job per core.
 - `ru-host-quality`: input `separate_jobs` (default `false`) keeps one job per check.
 
+- Trigger policy ([docs/triggers.md](docs/triggers.md)), enforced by the self-CI (`check_triggers.py`): workflows
+  start only from `push`, `pull_request`, `merge_group` and `workflow_call`, with `release.yml`'s `workflow_run` as
+  the one exception.
+
 ### Changed
 
+- The self-test callers (`ci-*.yml`) and the mkdocs-site template no longer have a `workflow_dispatch` trigger: a
+  manual run is a re-run. A dispatched run executes in the default branch's context and can write the cache that
+  runs on `main` restore, which made every checkout of a pinned ci-tools or driver-template commit a CodeQL
+  `actions/cache-poisoning/poisonable-step` finding. The examples in the docs drop it too.
 - `ru-cross-build`: every core is built in one job, one after the other, each in its own build directory and log
   group; a core that fails does not stop the others. The toolchain is downloaded once, and a private repository
   is billed one rounded-up job instead of four (the plan job and one per core).

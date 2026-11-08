@@ -6,6 +6,7 @@ nav:
       - ESP-IDF quickstart: esp-idf-quickstart.md
       - Versioning: VERSIONING.md
       - Permissions contract: permissions.md
+      - Trigger policy: triggers.md
   - Workflows:
       - Catalogue: workflows.md
       - ru-ci-gate (CI gate): ru-ci-gate.md

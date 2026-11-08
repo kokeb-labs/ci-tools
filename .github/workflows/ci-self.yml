@@ -7,7 +7,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -90,6 +89,9 @@ jobs:
 
       - name: Install PyYAML
         run: python -m pip install --quiet 'PyYAML==6.0.2'
+
+      - name: Workflows start only from allowed triggers (docs/triggers.md)
+        run: python .github/scripts/check_triggers.py .github/workflows/*.yml templates/*/.github/workflows/*.yml
 
       - name: No run block ends with a bare `cond && cmd`
         run: python .github/scripts/check_run_tails.py .github/workflows/*.yml .github/actions/*/action.yml

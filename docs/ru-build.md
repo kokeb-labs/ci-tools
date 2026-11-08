@@ -14,11 +14,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:
-    inputs:
-      clean_build:
-        type: boolean
-        default: false
 
 jobs:
   build:
@@ -29,7 +24,6 @@ jobs:
     with:
       project_dir: examples/esp32
       project_tools_dir: examples/esp32/scripts
-      clean_build: ${{ inputs.clean_build || false }}
       max_dec_total: "0"
 ```
 

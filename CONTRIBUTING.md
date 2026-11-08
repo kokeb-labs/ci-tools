@@ -189,7 +189,6 @@ on:
     branches: [main, 'release/*']
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   test-workflow:
