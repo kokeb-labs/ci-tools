@@ -1309,7 +1309,7 @@
 <h1 id="ru-build">ru-build<a class="headerlink" href="#ru-build" title="Permanent link">&para;</a></h1>
 <p>Build every ESP32 example app of a repository across ESP-IDF versions and build types, upload the firmware and
 report its size on pull requests.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/a1a2eb430519f5b5de01c7375ca4f537aeb006d1/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/9c14eeb00af667636c347aa3d0a61de766148187/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">---</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ESP32 examples build</span>
@@ -1370,6 +1370,12 @@ report its size on pull requests.</p>
 <td>boolean</td>
 <td><code>true</code></td>
 <td>Auto-clone tools repo if project_tools_dir is missing</td>
+</tr>
+<tr>
+<td><code>group_build_types</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type.</td>
 </tr>
 <tr>
 <td><code>max_dec_total</code></td>
