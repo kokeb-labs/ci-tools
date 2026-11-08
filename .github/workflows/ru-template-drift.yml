@@ -45,14 +45,14 @@ jobs:
         run: |
           set -uo pipefail
           set +e  # run: steps use bash -e; the status is decided below
-          python3 .driver-template/tools/scaffold.py --check-drift . | tee "$RUNNER_TEMP/drift.txt"
+          python3 .driver-template/tools/scaffold.py --check-drift . 2>&1 | tee "$RUNNER_TEMP/drift.txt"
           status=${PIPESTATUS[0]}
           set -e
           {
             echo "## Template drift"
             echo
             echo '```text'
-            grep -v '^::' "$RUNNER_TEMP/drift.txt" | head -400
+            grep -v '^::' "$RUNNER_TEMP/drift.txt" | head -400 || true
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
           if [ "$status" -ne 0 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi

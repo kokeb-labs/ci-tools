@@ -15,6 +15,13 @@ that heading.
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-11-08
+
+### Fixed
+
+- `ru-template-drift`: with `enforce: false` the job failed instead of warning when the scaffold printed only to
+  stderr (an empty report made the summary's `grep` fail). The scaffold's errors now reach the log and the summary.
+
 ## [1.9.0] - 2026-11-08
 
 ### Added
