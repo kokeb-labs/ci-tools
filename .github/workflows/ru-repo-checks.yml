@@ -1,0 +1,778 @@
+---
+# The small repository checks of a Kokeb Labs repository as steps of one job, so a private repository is billed one
+# rounded-up job for all of them instead of one each:
+#
+#   DCO              every commit of a pull request is signed off by its author             (as dco.yml)
+#   org standard     README.md, LICENSE (MIT), CHANGELOG.md, .github/CODEOWNERS             (as org-standard-check.yml)
+#   Markdown lint    markdownlint-cli2                                                      (as ru-markdown-lint.yml)
+#   handbook rules   the handbook rules a script can decide, against .kokeb/handbook.yml   (as ru-handbook-check.yml)
+#   template drift   the files driver-template manages, against a fresh scaffold            (as ru-template-drift.yml)
+#   cppcheck         static analysis of the source directories                              (as ru-cpp-analysis.yml)
+#   YAML lint        yamllint                                                               (as ru-yaml-lint.yml)
+#
+# Each check runs the same commands, pinned actions and pinned tools as its own workflow, keeps its failure rule and
+# its summary, and runs whether or not an earlier one failed; the job fails if any check failed, and its summary
+# ends with one line per check. Each can be turned off (run_* inputs). The single workflows stay for other callers.
+#
+# Trust and order:
+#   - DCO runs first, before anything is checked out: it reads the commits through the API (pull-requests: read),
+#     so no code of the pull request has run in the job when the sign-off verdict is made. On any other event it
+#     has nothing to check and passes with a notice.
+#   - The handbook checker is kokeb-labs/ci-tools' own code at the commit of this workflow (the same trust as this
+#     file), and the drift check runs kokeb-labs/driver-template's scaffold. Both are checked out into the
+#     workspace after the Markdown lint, so they are never linted as the caller's files, and removed before the
+#     YAML lint.
+#   - The job has contents: read and pull-requests: read only, no secrets and no cache, so nothing it runs can write
+#     to the caller's repository, its pull requests, its caches or its releases.
+name: 🧾 [RU] Repository checks
+
+on:
+  workflow_call:
+    inputs:
+      run_dco:
+        description: "Run the DCO sign-off check (pull requests; on other events it passes with nothing to check)"
+        type: boolean
+        required: false
+        default: true
+      dco_allow_bots:
+        description: >-
+          Accept commits whose GitHub author is a bot account (type Bot, or a login ending in [bot]), such as
+          Dependabot or github-actions, without a sign-off.
+        type: boolean
+        required: false
+        default: true
+      dco_skip_merge_commits:
+        description: >-
+          Accept merge commits (more than one parent) without a sign-off; they add no authored change of their own.
+        type: boolean
+        required: false
+        default: true
+      run_org_standard:
+        description: "Run the organisation-standard check (required root files, MIT licence)"
+        type: boolean
+        required: false
+        default: true
+      org_standard_extra_files:
+        description: >-
+          More files that must exist, as paths relative to the repository root separated by spaces or newlines
+          (for example `SECURITY.md docs/index.md`). The organisation's own list is always checked.
+        type: string
+        required: false
+        default: ""
+      run_markdown_lint:
+        description: "Run markdownlint-cli2"
+        type: boolean
+        required: false
+        default: true
+      markdown_globs:
+        description: "Space-separated glob patterns of the Markdown files to check"
+        type: string
+        required: false
+        default: "**/*.md"
+      markdown_config_file:
+        description: "Path of the markdownlint configuration file"
+        type: string
+        required: false
+        default: "_config/.markdownlint.json"
+      markdown_fix:
+        description: "Fix fixable issues (markdownlint --fix); the runner's fix is not committed"
+        type: boolean
+        required: false
+        default: false
+      markdown_separator:
+        description: "Separator between the glob patterns. Empty: a space."
+        type: string
+        required: false
+        default: ""
+      run_handbook:
+        description: "Run the handbook check"
+        type: boolean
+        required: false
+        default: true
+      handbook_path:
+        description: "Directory of the repository the handbook check reads, relative to the checkout root"
+        type: string
+        required: false
+        default: "."
+      handbook_enforce:
+        description: "Fail on a handbook error. False reports only (the counts are in the outputs)."
+        type: boolean
+        required: false
+        default: true
+      run_template_drift:
+        description: "Run the template drift check (a repository without .kokeb/template.yml gets a warning)"
+        type: boolean
+        required: false
+        default: true
+      template_drift_ref:
+        description: "Branch, tag or commit of kokeb-labs/driver-template to compare against"
+        type: string
+        required: false
+        default: "main"
+      template_drift_enforce:
+        description: "Fail on template drift. False reports only, as warnings on the drifted files."
+        type: boolean
+        required: false
+        default: false
+      run_cppcheck:
+        description: "Run cppcheck"
+        type: boolean
+        required: false
+        default: true
+      cppcheck_paths:
+        description: "Directories cppcheck analyses (space-separated)"
+        type: string
+        required: false
+        default: "src inc examples"
+      cppcheck_std:
+        description: "C++ standard"
+        type: string
+        required: false
+        default: "c++20"
+      cppcheck_strict:
+        description: "Fail when cppcheck reports a finding (severity other than information)"
+        type: boolean
+        required: false
+        default: false
+      cppcheck_exclude:
+        description: "Paths cppcheck leaves out (space-separated)"
+        type: string
+        required: false
+        default: ""
+      cppcheck_enable:
+        description: >
+          Checks to enable (comma-separated: all,warning,style,performance,
+          portability,information,unusedFunction,missingInclude)
+        type: string
+        required: false
+        default: "warning,style,performance,portability,information"
+      cppcheck_force:
+        description: "Force checking even with incomplete analysis"
+        type: boolean
+        required: false
+        default: false
+      cppcheck_max_configs:
+        description: >
+          Maximum configs to check (for template-heavy code, 0=unlimited)
+        type: number
+        required: false
+        default: 0
+      cppcheck_artifact_name:
+        description: "Name of the uploaded cppcheck report artifact (unique per call when a run calls this more than once)"
+        type: string
+        required: false
+        default: "cppcheck-report"
+      run_yaml_lint:
+        description: "Run yamllint"
+        type: boolean
+        required: false
+        default: true
+      yaml_paths:
+        description: "Comma-separated paths or glob patterns of the YAML files to check"
+        type: string
+        required: false
+        default: "**/*.yml,**/*.yaml"
+      yaml_config_file:
+        description: "Path of the yamllint configuration file"
+        type: string
+        required: false
+        default: "_config/.yamllint"
+      yaml_strict_mode:
+        description: "Fail on yamllint warnings too (--strict)"
+        type: boolean
+        required: false
+        default: false
+      yaml_exclude_patterns:
+        description: "Comma-separated patterns of files the YAML lint leaves out"
+        type: string
+        required: false
+        default: ".git/**,node_modules/**,venv/**,.venv/**,**/espidf-tools/**"
+    outputs:
+      failed:
+        description: "The checks that failed, separated by commas; empty when every check passed"
+        value: ${{ jobs.checks.outputs.failed }}
+      handbook_errors:
+        description: "Number of handbook findings that fail the check"
+        value: ${{ jobs.checks.outputs.handbook_errors }}
+      handbook_warnings:
+        description: "Number of handbook findings in a rule's warning period, or of a should rule"
+        value: ${{ jobs.checks.outputs.handbook_warnings }}
+      cppcheck_findings:
+        description: "Number of cppcheck findings (severity other than information)"
+        value: ${{ jobs.checks.outputs.cppcheck_findings }}
+      markdown_result:
+        description: "Markdown lint result (success/failure)"
+        value: ${{ jobs.checks.outputs.markdown_result }}
+      yaml_result:
+        description: "YAML lint result (success/failure)"
+        value: ${{ jobs.checks.outputs.yaml_result }}
+      yaml_issues_found:
+        description: "Number of YAML files with yamllint issues"
+        value: ${{ jobs.checks.outputs.yaml_issues_found }}
+
+permissions: {}
+
+jobs:
+  checks:
+    name: repository checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read        # checkout; read the commits
+      pull-requests: read   # DCO: list the pull request's commits
+    outputs:
+      failed: ${{ steps.summary.outputs.failed }}
+      handbook_errors: ${{ steps.handbook.outputs.errors }}
+      handbook_warnings: ${{ steps.handbook.outputs.warnings }}
+      cppcheck_findings: ${{ steps.cppcheck.outputs.findings }}
+      markdown_result: ${{ steps.markdown.outputs.result }}
+      yaml_result: ${{ steps.yaml.outputs.result }}
+      yaml_issues_found: ${{ steps.yaml.outputs.issues_found }}
+    steps:
+      # --- DCO: first, before any checkout -----------------------------------------------------------------------
+      - name: "DCO: check the sign-off of every commit"
+        id: dco
+        if: ${{ inputs.run_dco }}
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+        env:
+          ALLOW_BOTS: ${{ inputs.dco_allow_bots }}
+          SKIP_MERGE_COMMITS: ${{ inputs.dco_skip_merge_commits }}
+        with:
+          script: |
+            // Every commit needs a Signed-off-by trailer naming its author (name and email, case-insensitive).
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.notice(`DCO: event ${context.eventName} has no pull request; nothing to check`);
+              return;
+            }
+            const allowBots = process.env.ALLOW_BOTS === "true";
+            const skipMerges = process.env.SKIP_MERGE_COMMITS === "true";
+            const norm = (s) => String(s || "").trim().replace(/\s+/g, " ").toLowerCase();
+            const SIGNOFF = /^\s*Signed-off-by:\s*(.+?)\s*<([^<>\s]+)>\s*$/gim;
+
+            const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            if (typeof pr.commits === "number" && commits.length < pr.commits) {
+              core.setFailed(`DCO: the API listed ${commits.length} of ${pr.commits} commits (it stops at 250); ` +
+                "split the pull request so every commit can be checked");
+              return;
+            }
+
+            const bad = [];
+            let checked = 0;
+            for (const c of commits) {
+              const sha = c.sha.slice(0, 12);
+              const subject = (c.commit.message || "").split("\n")[0];
+              if (skipMerges && (c.parents || []).length > 1) {
+                core.info(`${sha} merge commit: skipped`);
+                continue;
+              }
+              const user = c.author || {};
+              if (allowBots && (user.type === "Bot" || /\[bot\]$/.test(user.login || ""))) {
+                core.info(`${sha} bot author ${user.login}: skipped`);
+                continue;
+              }
+              checked += 1;
+              const name = norm(c.commit.author && c.commit.author.name);
+              const email = norm(c.commit.author && c.commit.author.email);
+              const found = [...(c.commit.message || "").matchAll(SIGNOFF)].map((m) => [norm(m[1]), norm(m[2])]);
+              if (found.some(([n, e]) => n === name && e === email)) {
+                core.info(`${sha} signed off by its author`);
+                continue;
+              }
+              const why = found.length
+                ? `sign-off is ${found.map(([n, e]) => `${n} <${e}>`).join(", ")}, author is ${name} <${email}>`
+                : "no Signed-off-by line";
+              bad.push({ sha, subject, why });
+            }
+
+            const rows = bad.map((b) => `| \`${b.sha}\` | ${b.subject.replace(/\|/g, "\\|")} | ${b.why} |`);
+            if (bad.length) {
+              await core.summary
+                .addHeading("DCO: commits without a matching sign-off", 3)
+                .addRaw(["| Commit | Subject | Problem |", "| --- | --- | --- |", ...rows].join("\n") + "\n\n")
+                .addRaw("Add a sign-off to each commit with `git commit --amend -s` (last commit) or " +
+                        "`git rebase --signoff <base>` (all commits), then force-push the branch.\n")
+                .write();
+              for (const b of bad) core.error(`${b.sha} ${b.subject}: ${b.why}`);
+              core.setFailed(`DCO: ${bad.length} of ${checked} commit(s) lack a Signed-off-by line matching the author`);
+              return;
+            }
+            core.info(`DCO: all ${checked} checked commit(s) are signed off by their authors`);
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        id: checkout
+        if: ${{ !cancelled() }}
+        with:
+          persist-credentials: false
+
+      # --- organisation standard ---------------------------------------------------------------------------------
+      - name: "Org standard: required files and the MIT licence"
+        id: org_standard
+        if: ${{ !cancelled() && inputs.run_org_standard && steps.checkout.outcome == 'success' }}
+        env:
+          EXTRA_FILES: ${{ inputs.org_standard_extra_files }}
+        run: |
+          set -euo pipefail
+          required=(README.md LICENSE CHANGELOG.md .github/CODEOWNERS)
+          for f in $EXTRA_FILES; do required+=("$f"); done
+          missing=0
+          for f in "${required[@]}"; do
+            if [ -f "$f" ] && [ -s "$f" ]; then
+              echo "ok: $f"
+            else
+              echo "::error file=$f::required file $f is missing or empty"
+              missing=$((missing + 1))
+            fi
+          done
+
+          licence_ok=0
+          if [ -f LICENSE ]; then
+            # Compare with whitespace collapsed, so line wrapping does not matter.
+            text="$(tr -s '[:space:]' ' ' < LICENSE)"
+            grant="Permission is hereby granted, free of charge, to any person obtaining a copy of this software"
+            grant="$grant and associated documentation files (the \"Software\"), to deal in the Software without"
+            grant="$grant restriction"
+            notice="The above copyright notice and this permission notice shall be included in all copies or"
+            notice="$notice substantial portions of the Software."
+            warranty="THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND"
+            if [[ "$text" != *"$grant"* ]] || [[ "$text" != *"$notice"* ]] || [[ "$text" != *"$warranty"* ]]; then
+              echo "::error file=LICENSE::LICENSE is not the MIT licence (its grant, notice or warranty text is missing)"
+            elif ! printf '%s\n' "$text" | grep -qiE 'copyright (\(c\) |© )?[0-9]{4}'; then
+              echo "::error file=LICENSE::LICENSE has no 'Copyright (c) <year> <holder>' line"
+            else
+              echo "ok: LICENSE is MIT"
+              licence_ok=1
+            fi
+          fi
+
+          {
+            echo "### Organisation standard"
+            echo ""
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            for f in "${required[@]}"; do
+              if [ -f "$f" ] && [ -s "$f" ]; then echo "| \`$f\` | present |"; else echo "| \`$f\` | **missing** |"; fi
+            done
+            if [ "$licence_ok" = 1 ]; then echo "| MIT licence | yes |"; else echo "| MIT licence | **no** |"; fi
+          } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+
+          if [ "$missing" -gt 0 ] || [ "$licence_ok" != 1 ]; then
+            echo "::error::the repository does not meet the organisation standard (see the job summary)"
+            exit 1
+          fi
+          echo "the repository meets the organisation standard"
+
+      # --- Markdown lint (before the tool checkouts below, so it lints the caller's files only) ------------------
+      - name: "Markdown lint: markdownlint-cli2"
+        id: markdown_run
+        if: ${{ !cancelled() && inputs.run_markdown_lint && steps.checkout.outcome == 'success' }}
+        uses: DavidAnson/markdownlint-cli2-action@696eb3f2509270d7b882d2aa68347bc676e7af34  # v25.0.0
+        with:
+          globs: ${{ inputs.markdown_globs }}
+          config: ${{ inputs.markdown_config_file }}
+          fix: ${{ inputs.markdown_fix }}
+          separator: ${{ inputs.markdown_separator != '' && inputs.markdown_separator || ' ' }}
+        continue-on-error: true
+      - name: "Markdown lint: result"
+        id: markdown
+        if: ${{ !cancelled() && inputs.run_markdown_lint && steps.checkout.outcome == 'success' }}
+        env:
+          LINT_OUTCOME: ${{ steps.markdown_run.outcome }}
+        run: |
+          # The official action doesn't provide detailed outputs
+          # Set basic outputs based on step outcome
+          FILES=$(git ls-files -- '*.md' | wc -l)
+          if [ "${LINT_OUTCOME}" = "success" ]; then
+            {
+              echo "result=success"
+              echo "issues_found=0"
+              echo "files_checked=$FILES"
+            } >> "$GITHUB_OUTPUT"
+            echo "✅ Markdown linting passed"
+          else
+            {
+              echo "result=failure"
+              echo "issues_found=1"
+              echo "files_checked=$FILES"
+            } >> "$GITHUB_OUTPUT"
+            echo "❌ Markdown linting failed"
+            exit 1
+          fi
+
+      # --- handbook rules ----------------------------------------------------------------------------------------
+      # The checker and its rules snapshot at the commit of this workflow, so @v1 callers get the matching pair.
+      - name: "Handbook: check out the checker"
+        id: handbook_checkout
+        if: ${{ !cancelled() && inputs.run_handbook && steps.checkout.outcome == 'success' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .handbook-check
+          sparse-checkout: tools/handbook_check
+          persist-credentials: false
+      - name: "Handbook: install PyYAML (pinned, hash-checked)"
+        id: handbook_install
+        if: ${{ !cancelled() && steps.handbook_checkout.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          PyYAML==6.0.3 \
+            --hash=sha256:ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc \
+            --hash=sha256:0f29edc409a6392443abf94b9cf89ce99889a1dd5376d94316ae5145dfedd5d6 \
+            --hash=sha256:c458b6d084f9b935061bc36216e8a69a7e293a2f1e68bf956dcd9e6cbcd143f5
+          REQ
+          python3 -m venv "$RUNNER_TEMP/h"
+          "$RUNNER_TEMP/h/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
+      - name: "Handbook: check"
+        id: handbook
+        if: ${{ !cancelled() && steps.handbook_install.outcome == 'success' }}
+        env:
+          ENFORCE: ${{ inputs.handbook_enforce }}
+          CHECK_PATH: ${{ inputs.handbook_path }}
+        run: |
+          set -uo pipefail
+          set +e  # run: steps use bash -e; the checker's status is decided below
+          "$RUNNER_TEMP/h/bin/python" .handbook-check/tools/handbook_check/handbook_check.py --repo "$CHECK_PATH" \
+            --report "$RUNNER_TEMP/handbook-report.json"
+          status=$?
+          set -e
+          if [ "$status" -eq 2 ]; then exit 1; fi
+          if [ "$status" -ne 0 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi
+          exit 0
+
+      # --- template drift ----------------------------------------------------------------------------------------
+      - name: "Template drift: check out driver-template"
+        id: drift_checkout
+        if: ${{ !cancelled() && inputs.run_template_drift && steps.checkout.outcome == 'success' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/driver-template
+          ref: ${{ inputs.template_drift_ref }}
+          path: .driver-template
+          persist-credentials: false
+      - name: "Template drift: compare with the template"
+        id: drift
+        if: ${{ !cancelled() && steps.drift_checkout.outcome == 'success' }}
+        env:
+          ENFORCE: ${{ inputs.template_drift_enforce }}
+        run: |
+          set -uo pipefail
+          set +e  # run: steps use bash -e; the status is decided below
+          python3 .driver-template/tools/scaffold.py --check-drift . 2>&1 | tee "$RUNNER_TEMP/drift.txt"
+          status=${PIPESTATUS[0]}
+          set -e
+          {
+            echo "## Template drift"
+            echo
+            echo '```text'
+            grep -v '^::' "$RUNNER_TEMP/drift.txt" | head -400 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi
+          if [ "$status" -ne 0 ]; then
+            echo "::warning::template drift: see the job summary (scaffold.py --check-drift --fix takes the template's version)"
+          fi
+
+      # --- cppcheck ----------------------------------------------------------------------------------------------
+      # cppcheck from Ubuntu's archive (signed, versioned with the runner image), not a third-party container.
+      - name: "cppcheck: install"
+        id: cppcheck_install
+        if: ${{ !cancelled() && inputs.run_cppcheck && steps.checkout.outcome == 'success' }}
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends cppcheck
+          cppcheck --version
+      - name: "cppcheck: run"
+        id: cppcheck
+        if: ${{ !cancelled() && steps.cppcheck_install.outcome == 'success' }}
+        shell: bash
+        env:
+          CPPCHECK_PATHS: ${{ inputs.cppcheck_paths }}
+          CPPCHECK_EXCLUDE: ${{ inputs.cppcheck_exclude }}
+          CPPCHECK_ENABLE: ${{ inputs.cppcheck_enable }}
+          CPPCHECK_FORCE: ${{ inputs.cppcheck_force }}
+          CPPCHECK_MAX_CONFIGS: ${{ inputs.cppcheck_max_configs }}
+          CPPCHECK_STD: ${{ inputs.cppcheck_std }}
+        run: |
+          set -euo pipefail
+
+          # Suppress missingIncludeSystem (system headers are not analysed) and
+          # unmatchedSuppression (inline suppressions that match nothing).
+          args=(
+            "--enable=${CPPCHECK_ENABLE}"
+            --suppress=missingIncludeSystem
+            --suppress=unmatchedSuppression
+            --inline-suppr
+            "--std=${CPPCHECK_STD}"
+          )
+          if [ "${CPPCHECK_FORCE}" = "true" ]; then
+            args+=(--force)
+          fi
+          if [ -n "${CPPCHECK_MAX_CONFIGS}" ] && [ "${CPPCHECK_MAX_CONFIGS}" != "0" ]; then
+            args+=("--max-configs=${CPPCHECK_MAX_CONFIGS}")
+          fi
+          args+=(--xml --output-file=cppcheck_report.xml)
+
+          # cppcheck ignores paths with -i (there is no --exclude).
+          read -r -a excludes <<< "${CPPCHECK_EXCLUDE}"
+          for ex in "${excludes[@]}"; do
+            args+=(-i "${ex}")
+          done
+          read -r -a paths <<< "${CPPCHECK_PATHS}"
+          for p in "${paths[@]}"; do
+            if [ -e "$p" ]; then args+=("$p"); else echo "::warning::cppcheck path '$p' does not exist"; fi
+          done
+
+          # A non-zero exit here is cppcheck itself failing (bad arguments, crash), not a finding.
+          cppcheck "${args[@]}" 2>&1 | tee cppcheck_output.txt
+
+          # Findings are the <error> elements, except the informational ones (checker reports, include notes).
+          findings="$(python3 -c 'import sys, xml.etree.ElementTree as ET
+          errs = ET.parse(sys.argv[1]).getroot().iter("error")
+          print(sum(1 for e in errs if e.get("severity") != "information"))' cppcheck_report.xml)"
+          echo "findings=$findings" >> "$GITHUB_OUTPUT"
+          echo "cppcheck findings: $findings" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: "cppcheck: upload the report"
+        id: cppcheck_upload
+        if: ${{ always() && inputs.run_cppcheck && steps.checkout.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.cppcheck_artifact_name }}
+          path: |
+            cppcheck_report.xml
+            cppcheck_output.txt
+          retention-days: 14
+      - name: "cppcheck: fail on findings (strict)"
+        id: cppcheck_strict
+        if: ${{ !cancelled() && inputs.cppcheck_strict && steps.cppcheck.outcome == 'success' && steps.cppcheck.outputs.findings != '0' }}
+        env:
+          FINDINGS: ${{ steps.cppcheck.outputs.findings }}
+        run: |
+          echo "::error::cppcheck reported ${FINDINGS} finding(s) (strict); see the report artifact"
+          exit 1
+
+      # --- YAML lint (last: its install puts yamllint's venv on PATH) --------------------------------------------
+      - name: Remove the checked-out tools
+        if: ${{ always() }}
+        run: rm -rf .handbook-check .driver-template
+      # Pinned and checked against SHA-256; PyYAML lists the wheel of each CPython the runners carry.
+      - name: "YAML lint: install yamllint (pinned, hash-checked)"
+        id: yaml_install
+        if: ${{ !cancelled() && inputs.run_yaml_lint && steps.checkout.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          yamllint==1.38.0 --hash=sha256:fc394a5b3be980a4062607b8fdddc0843f4fa394152b6da21722f5d59013c220
+          pathspec==1.1.1 --hash=sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189
+          PyYAML==6.0.3 \
+            --hash=sha256:ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc \
+            --hash=sha256:0f29edc409a6392443abf94b9cf89ce99889a1dd5376d94316ae5145dfedd5d6 \
+            --hash=sha256:c458b6d084f9b935061bc36216e8a69a7e293a2f1e68bf956dcd9e6cbcd143f5
+          REQ
+          python3 -m venv "$RUNNER_TEMP/y"
+          "$RUNNER_TEMP/y/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
+          echo "$RUNNER_TEMP/y/bin" >> "$GITHUB_PATH"
+          yamllint --version 2>/dev/null || "$RUNNER_TEMP/y/bin/yamllint" --version
+      - name: "YAML lint: yamllint"
+        id: yaml
+        if: ${{ !cancelled() && steps.yaml_install.outcome == 'success' }}
+        env:
+          PATHS: ${{ inputs.yaml_paths }}
+          CONFIG_FILE: ${{ inputs.yaml_config_file }}
+          STRICT_MODE: ${{ inputs.yaml_strict_mode }}
+          EXCLUDE_PATTERNS: ${{ inputs.yaml_exclude_patterns }}
+        run: |
+
+          # Convert comma-separated paths to array for processing
+          IFS=',' read -ra PATH_ARRAY <<< "$PATHS"
+          IFS=',' read -ra EXCLUDE_ARRAY <<< "$EXCLUDE_PATTERNS"
+
+          # Build yamllint command for execution
+          YAMLLINT_CMD=(yamllint)
+
+          # Add config file if it exists
+          if [ -f "$CONFIG_FILE" ]; then
+            echo "✅ Using yamllint config: $CONFIG_FILE"
+            YAMLLINT_CMD+=(--config-file "$CONFIG_FILE")
+          else
+            echo "⚠️  No config file found at $CONFIG_FILE, using defaults"
+          fi
+
+          # Add strict mode if enabled
+          if [ "$STRICT_MODE" = "true" ]; then
+            echo "🔍 Strict mode enabled"
+            YAMLLINT_CMD+=(--strict)
+          fi
+
+          # Initialize counters
+          FILES_CHECKED=0
+          ISSUES_FOUND=0
+
+          # Check each path
+          for path in "${PATH_ARRAY[@]}"; do
+            # Trim whitespace
+            path=$(echo "$path" | xargs)
+
+            if [ -z "$path" ]; then
+              continue
+            fi
+
+            echo "🔍 Checking path: $path"
+
+            # Find files matching the pattern
+            if [ -f "$path" ]; then
+              # Single file
+              files=("$path")
+            else
+              # Pattern - use proper glob expansion
+              # Enable globstar for ** patterns
+              shopt -s globstar nullglob
+
+              # Expand glob patterns
+              files=()
+              for expanded_path in $path; do
+                if [ -f "$expanded_path" ]; then
+                  files+=("$expanded_path")
+                fi
+              done
+
+              # If no files found with glob, try find as fallback
+              if [ ${#files[@]} -eq 0 ]; then
+                mapfile -t files < <(find . -path "$path" -type f 2>/dev/null || true)
+              fi
+            fi
+
+            # Debug: Show found files before filtering
+            if [ ${#files[@]} -gt 0 ]; then
+              echo "  📁 Found ${#files[@]} files matching pattern:"
+              for file in "${files[@]}"; do
+                echo "    - $file"
+              done
+            else
+              echo "  ⚠️  No files found matching pattern: $path"
+            fi
+
+            # Filter out excluded patterns
+            filtered_files=()
+            for file in "${files[@]}"; do
+              skip=false
+              for exclude in "${EXCLUDE_ARRAY[@]}"; do
+                exclude=$(echo "$exclude" | xargs)
+                if [[ "$file" == *"$exclude"* ]]; then
+                  echo "  🚫 Excluding: $file (matches: $exclude)"
+                  skip=true
+                  break
+                fi
+              done
+              if [ "$skip" = false ]; then
+                filtered_files+=("$file")
+              fi
+            done
+
+            # Debug: Show filtered files
+            if [ ${#filtered_files[@]} -gt 0 ]; then
+              echo "  ✅ ${#filtered_files[@]} files after filtering:"
+              for file in "${filtered_files[@]}"; do
+                echo "    - $file"
+              done
+            else
+              echo "  ⚠️  No files remaining after filtering"
+            fi
+
+            # Run yamllint on filtered files
+            for file in "${filtered_files[@]}"; do
+              if [ -f "$file" ]; then
+                echo "  📄 Checking: $file"
+                FILES_CHECKED=$((FILES_CHECKED + 1))
+
+                # Run yamllint and capture output
+                if ! "${YAMLLINT_CMD[@]}" "$file" 2>&1; then
+                  ISSUES_FOUND=$((ISSUES_FOUND + 1))
+                fi
+              fi
+            done
+          done
+
+          # Set outputs
+          if [ "$ISSUES_FOUND" -eq 0 ]; then RESULT=success; else RESULT=failure; fi
+          {
+            echo "result=$RESULT"
+            echo "files_checked=$FILES_CHECKED"
+            echo "issues_found=$ISSUES_FOUND"
+          } >> "$GITHUB_OUTPUT"
+
+          # Summary
+          echo "📊 Summary:"
+          echo "  Files checked: $FILES_CHECKED"
+          echo "  Issues found: $ISSUES_FOUND"
+          echo "  Result: $RESULT"
+
+          # Always fail on errors (yamllint returns non-zero for errors even without --strict)
+          # Strict mode controls whether warnings also cause failures
+          # Without --strict: only errors are reported (should always fail)
+          # With --strict: both errors and warnings are reported (should always fail)
+          if [ $ISSUES_FOUND -gt 0 ]; then
+            if [ "$STRICT_MODE" = "true" ]; then
+              echo "❌ Strict mode enabled - failing due to $ISSUES_FOUND issues (errors and/or warnings)"
+            else
+              echo "❌ Failing due to $ISSUES_FOUND error(s) found"
+            fi
+            exit 1
+          fi
+
+      # --- one line per check ------------------------------------------------------------------------------------
+      - name: Summary
+        id: summary
+        if: ${{ always() }}
+        env:
+          STEPS_JSON: ${{ toJSON(steps) }}
+          INPUTS_JSON: ${{ toJSON(inputs) }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          steps = json.loads(os.environ["STEPS_JSON"] or "{}")
+          inputs = json.loads(os.environ["INPUTS_JSON"] or "{}")
+          checks = [
+              ("DCO", "run_dco", ["dco"]),
+              ("Org standard", "run_org_standard", ["org_standard"]),
+              ("Markdown lint", "run_markdown_lint", ["markdown"]),
+              ("Handbook rules", "run_handbook", ["handbook_checkout", "handbook_install", "handbook"]),
+              ("Template drift", "run_template_drift", ["drift_checkout", "drift"]),
+              ("cppcheck", "run_cppcheck", ["cppcheck_install", "cppcheck", "cppcheck_upload", "cppcheck_strict"]),
+              ("YAML lint", "run_yaml_lint", ["yaml_install", "yaml"]),
+          ]
+          checkout = (steps.get("checkout") or {}).get("outcome", "")
+          rows, failed = [], []
+          for name, flag, ids in checks:
+              outcomes = [(steps.get(i) or {}).get("outcome", "skipped") for i in ids]
+              if not inputs.get(flag, True):
+                  result = "off"
+              elif any(o in ("failure", "cancelled") for o in outcomes):
+                  result = "**failed**"
+                  failed.append(name)
+              elif name != "DCO" and checkout != "success":
+                  result = "**not run** (checkout failed)"
+                  failed.append(name)
+              elif all(o == "skipped" for o in outcomes):
+                  result = "skipped"
+              elif name == "DCO" and os.environ.get("EVENT_NAME") != "pull_request":
+                  result = "passed (not a pull request: nothing to check)"
+              else:
+                  result = "passed"
+              rows.append(f"| {name} | {result} |")
+          text = "\n".join(["### Repository checks", "", "| Check | Result |", "| --- | --- |", *rows]) + "\n"
+          print(text)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+              fh.write(text)
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write(f"failed={','.join(failed)}\n")
+          PY

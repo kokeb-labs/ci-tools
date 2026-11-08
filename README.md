@@ -79,6 +79,7 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | ESP-IDF: GitHub Release with the firmware `ru-build` built for the tagged commit ([guide](docs/ru-release-with-artifacts.md)) |
 | [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | Signed build provenance (GitHub artifact attestation) for every file of a published release; public repositories ([guide](docs/ru-attest-release.md)) |
 | [`ru-template-drift.yml`](.github/workflows/ru-template-drift.yml) | Compares the files driver-template manages with what the template makes today from `.kokeb/template.yml` ([guide](docs/ru-template-drift.md)) |
+| [`ru-repo-checks.yml`](.github/workflows/ru-repo-checks.yml) | DCO, org standard, Markdown lint, handbook rules, template drift, cppcheck and YAML lint as steps of one job ([guide](docs/ru-repo-checks.md)) |
 | [`dco.yml`](.github/workflows/dco.yml) | Fails a pull request when a commit lacks a `Signed-off-by:` line matching its author ([guide](docs/dco.md)) |
 | [`org-standard-check.yml`](.github/workflows/org-standard-check.yml) | Fails when `README.md`, `LICENSE`, `CHANGELOG.md` or `.github/CODEOWNERS` is missing, or `LICENSE` is not MIT ([guide](docs/org-standard-check.md)) |
 
@@ -134,6 +135,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | `attestations: write`, `contents: read`, `id-token: write` | download the release files; sign the provenance through Sigstore; store the attestation |
 | [`ru-template-drift.yml`](.github/workflows/ru-template-drift.yml) | `contents: read` | checkout of the caller and of driver-template |
 | [`ru-yaml-lint.yml`](.github/workflows/ru-yaml-lint.yml) | `contents: read` | checkout |
+| [`ru-repo-checks.yml`](.github/workflows/ru-repo-checks.yml) | `contents: read`, `pull-requests: read` | checkout of the caller, driver-template and the handbook checker; DCO lists the pull request's commits |
 <!-- permissions-table:end -->
 
 ## One required check: the CI gate
@@ -213,7 +215,8 @@ jobs:
 | `build_target` | string | yes | - | The CMake target to build for each core: a library or object library that instantiates the code (for a Kokeb driver, `<chip>_optimised_build`, which compiles every test source with the strict flags). |
 | `cmake_args` | string | no | `""` | Extra CMake configure arguments, e.g. -DMYCHIP_BUILD_TESTS=ON |
 | `source_dir` | string | no | `.` | CMake source directory, relative to the repository root |
-| `cores` | string | no | `cortex-m0plus cortex-m4f cortex-m7f` | Space-separated cores: cortex-m0plus, cortex-m3, cortex-m4f, cortex-m7f, cortex-m33f. Each is built in its own job. |
+| `cores` | string | no | `cortex-m0plus cortex-m4f cortex-m7f` | Space-separated cores: cortex-m0plus, cortex-m3, cortex-m4f, cortex-m7f, cortex-m33f. All are built in one job unless per_core_jobs is true. |
+| `per_core_jobs` | boolean | no | `false` | Build each core in its own job (the behaviour before 1.11.0). False (default) builds every core in one job: the toolchain is downloaded once, and a private repository is billed one rounded-up job instead of one per core plus the plan job. |
 <!-- inputs:ru-cross-build.yml:end -->
 
 ### ru-host-quality
@@ -250,6 +253,7 @@ jobs:
 | `min_condition` | string | no | `""` | Minimum MC/DC (GCC condition) coverage, percent. Empty: the level's (off, report, 100). |
 | `enforce` | boolean | no | `true` | Fail a job when a limit is exceeded. False reports only (the counts are in the outputs). |
 | `artifact_name` | string | no | `host-quality-reports` | Name of the uploaded reports artifact |
+| `separate_jobs` | boolean | no | `false` | Run complexity, coverage and sanitizers each in its own job (the behaviour before 1.11.0). False (default) runs them as steps of one job, with the same limits, failures, summaries and artifacts: a private repository is billed one rounded-up job instead of four. Fuzzing is always its own job. |
 <!-- inputs:ru-host-quality.yml:end -->
 
 ### ru-host-ci
@@ -656,6 +660,60 @@ jobs:
 | `commit` | string | no | `""` | Commit whose CI artifacts are released, and that the release tag must point to. Empty: github.sha. A caller triggered by workflow_run passes github.event.workflow_run.head_sha, because github.sha is then the default branch's head, not the tagged commit. |
 <!-- inputs:ru-release-with-artifacts.yml:end -->
 
+### ru-repo-checks
+
+The small checks of a repository in one job, so a private repository is billed one rounded-up job for all of them:
+`dco`, `org-standard-check`, `ru-markdown-lint`, `ru-handbook-check`, `ru-template-drift`, `ru-cpp-analysis` and
+`ru-yaml-lint`, with the same scripts, pinned actions and failure rules. DCO runs first, before any checkout, and
+passes with nothing to check on an event that is not a pull request, so the gate needs no `allow_skipped` for it.
+
+```yaml
+jobs:
+  checks:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-repo-checks.yml@v1
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      cppcheck_paths: "inc src"
+      cppcheck_strict: true
+```
+
+<!-- inputs:ru-repo-checks.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `run_dco` | boolean | no | `true` | Run the DCO sign-off check (pull requests; on other events it passes with nothing to check) |
+| `dco_allow_bots` | boolean | no | `true` | Accept commits whose GitHub author is a bot account (type Bot, or a login ending in [bot]), such as Dependabot or github-actions, without a sign-off. |
+| `dco_skip_merge_commits` | boolean | no | `true` | Accept merge commits (more than one parent) without a sign-off; they add no authored change of their own. |
+| `run_org_standard` | boolean | no | `true` | Run the organisation-standard check (required root files, MIT licence) |
+| `org_standard_extra_files` | string | no | `""` | More files that must exist, as paths relative to the repository root separated by spaces or newlines (for example `SECURITY.md docs/index.md`). The organisation's own list is always checked. |
+| `run_markdown_lint` | boolean | no | `true` | Run markdownlint-cli2 |
+| `markdown_globs` | string | no | `**/*.md` | Space-separated glob patterns of the Markdown files to check |
+| `markdown_config_file` | string | no | `_config/.markdownlint.json` | Path of the markdownlint configuration file |
+| `markdown_fix` | boolean | no | `false` | Fix fixable issues (markdownlint --fix); the runner's fix is not committed |
+| `markdown_separator` | string | no | `""` | Separator between the glob patterns. Empty: a space. |
+| `run_handbook` | boolean | no | `true` | Run the handbook check |
+| `handbook_path` | string | no | `.` | Directory of the repository the handbook check reads, relative to the checkout root |
+| `handbook_enforce` | boolean | no | `true` | Fail on a handbook error. False reports only (the counts are in the outputs). |
+| `run_template_drift` | boolean | no | `true` | Run the template drift check (a repository without .kokeb/template.yml gets a warning) |
+| `template_drift_ref` | string | no | `main` | Branch, tag or commit of kokeb-labs/driver-template to compare against |
+| `template_drift_enforce` | boolean | no | `false` | Fail on template drift. False reports only, as warnings on the drifted files. |
+| `run_cppcheck` | boolean | no | `true` | Run cppcheck |
+| `cppcheck_paths` | string | no | `src inc examples` | Directories cppcheck analyses (space-separated) |
+| `cppcheck_std` | string | no | `c++20` | C++ standard |
+| `cppcheck_strict` | boolean | no | `false` | Fail when cppcheck reports a finding (severity other than information) |
+| `cppcheck_exclude` | string | no | `""` | Paths cppcheck leaves out (space-separated) |
+| `cppcheck_enable` | string | no | `warning,style,performance,portability,information` | Checks to enable (comma-separated: all,warning,style,performance, portability,information,unusedFunction,missingInclude) |
+| `cppcheck_force` | boolean | no | `false` | Force checking even with incomplete analysis |
+| `cppcheck_max_configs` | number | no | `0` | Maximum configs to check (for template-heavy code, 0=unlimited) |
+| `cppcheck_artifact_name` | string | no | `cppcheck-report` | Name of the uploaded cppcheck report artifact (unique per call when a run calls this more than once) |
+| `run_yaml_lint` | boolean | no | `true` | Run yamllint |
+| `yaml_paths` | string | no | `**/*.yml,**/*.yaml` | Comma-separated paths or glob patterns of the YAML files to check |
+| `yaml_config_file` | string | no | `_config/.yamllint` | Path of the yamllint configuration file |
+| `yaml_strict_mode` | boolean | no | `false` | Fail on yamllint warnings too (--strict) |
+| `yaml_exclude_patterns` | string | no | `.git/**,node_modules/**,venv/**,.venv/**,**/espidf-tools/**` | Comma-separated patterns of files the YAML lint leaves out |
+<!-- inputs:ru-repo-checks.yml:end -->
+
 ### dco
 
 Every commit of a pull request needs a `Signed-off-by: Name <email>` trailer (`git commit -s`) whose name and email
@@ -704,10 +762,12 @@ jobs:
 
 | Workflow | What it checks |
 | --- | --- |
-| [`ci-self.yml`](.github/workflows/ci-self.yml) | Runs actionlint with shellcheck (pinned, any finding fails) and shellcheck on the composite action. Fails any `run:` block ending in a bare `cond && cmd`. Checks the permissions contract against the table above, the README inputs tables, `ru-build`'s copy of the composite action's script, and breaking changes against the PR base. Runs unit tests for these checks (the CI gate, DCO and organisation-standard scripts included), runs `dco` and `org-standard-check` on itself, and ends with the CI gate |
+| [`ci-self.yml`](.github/workflows/ci-self.yml) | Runs actionlint with shellcheck (pinned, any finding fails) and shellcheck on the composite action. Fails any `run:` block ending in a bare `cond && cmd`. Checks the permissions contract against the table above, the README inputs tables, `ru-build`'s copy of the composite action's script, `ru-repo-checks`' copies of the single checks' steps, and breaking changes against the PR base. Runs unit tests for these checks (the CI gate, DCO and organisation-standard scripts included), runs `dco` and `org-standard-check` on itself, and ends with the CI gate |
 | [`ci-docs-publish.yml`](.github/workflows/ci-docs-publish.yml) | Builds and publishes this repository's site with `ru-mkdocs-publish` at the same commit; runs it unversioned on a fixture; runs the legacy Jekyll workflow on a fixture site in a subdirectory |
 | [`ci-host-ci.yml`](.github/workflows/ci-host-ci.yml) | Runs `ru-host-ci` on a fixture: preset path on clean code must pass; `-S/-B` path with seeded defects must report findings |
 | `ci-cpp-lint.yml`, `ci-cpp-analysis.yml`, `ci-docs-linkcheck.yml`, `ci-markdown-lint.yml`, `ci-yaml-lint.yml` | Each runs its workflow on this repository |
+| [`ci-repo-checks.yml`](.github/workflows/ci-repo-checks.yml) | Runs `ru-repo-checks` on this repository (every check passes) and on the known-bad handbook and cppcheck fixtures (the findings are counted) |
+| `ci-host-quality.yml`, `ci-cross-build.yml` | Run `ru-host-quality` and `ru-cross-build` in one job and with `separate_jobs` / `per_core_jobs`, and compare the figures |
 
 Third-party actions are pinned to commit SHAs with a `# vX.Y.Z` comment, and
 Dependabot keeps them current. Contributions follow

@@ -6,7 +6,9 @@
 #   sanitizers  clang build with AddressSanitizer and UndefinedBehaviorSanitizer, ctest
 #   fuzz        libFuzzer (clang, ASan, UBSan) on every fuzz_* target, from the committed seeds plus a cached
 #               corpus; seconds per target by level (60, 120, 600). Runs when fuzz_cmake_args is set.
-# Each job fails on its limits when `enforce` is true. The limits default to the level's; any can be overridden.
+# Complexity, coverage and sanitizers run as steps of one job (separate_jobs: true gives one job each); fuzzing is
+# its own job. Each check fails on its limits when `enforce` is true, and a failing check does not stop the others.
+# The limits default to the level's; any can be overridden.
 # Python tools are installed from pinned versions with their SHA-256 hashes.
 name: 🧮 [RU] Host quality gates
 
@@ -107,38 +109,48 @@ on:
         type: string
         required: false
         default: "host-quality-reports"
+      separate_jobs:
+        description: >-
+          Run complexity, coverage and sanitizers each in its own job (the behaviour before 1.11.0). False (default)
+          runs them as steps of one job, with the same limits, failures, summaries and artifacts: a private repository
+          is billed one rounded-up job instead of four. Fuzzing is always its own job.
+        type: boolean
+        required: false
+        default: false
     outputs:
       complexity_findings:
         description: "Number of functions over a complexity, length or parameter limit"
-        value: ${{ jobs.complexity.outputs.findings }}
+        value: ${{ jobs.gates.outputs.findings || jobs.complexity.outputs.findings }}
       line_coverage:
         description: "Line coverage of the library code, percent"
-        value: ${{ jobs.coverage.outputs.line }}
+        value: ${{ jobs.gates.outputs.line || jobs.coverage.outputs.line }}
       branch_coverage:
         description: "Branch coverage of the library code, percent"
-        value: ${{ jobs.coverage.outputs.branch }}
+        value: ${{ jobs.gates.outputs.branch || jobs.coverage.outputs.branch }}
       condition_coverage:
         description: "MC/DC (condition) coverage of the library code, percent; empty when not measured"
-        value: ${{ jobs.coverage.outputs.condition }}
+        value: ${{ jobs.gates.outputs.condition || jobs.coverage.outputs.condition }}
 
 permissions: {}
 
 jobs:
-  limits:
-    name: limits for the level
+  # Default: complexity, coverage and sanitizers as steps of this one job. Each check still runs when another one
+  # failed, each fails the job on its own limits, and each uploads its own report artifact, as the separate jobs do.
+  gates:
+    name: complexity, coverage, sanitizers
+    if: ${{ !inputs.separate_jobs }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions: {}
+    timeout-minutes: 70
+    permissions:
+      contents: read
     outputs:
-      ccn: ${{ steps.l.outputs.ccn }}
-      length: ${{ steps.l.outputs.length }}
-      params: ${{ steps.l.outputs.params }}
-      line: ${{ steps.l.outputs.line }}
-      branch: ${{ steps.l.outputs.branch }}
-      condition: ${{ steps.l.outputs.condition }}
-      fuzz_seconds: ${{ steps.l.outputs.fuzz_seconds }}
+      findings: ${{ steps.lizard.outputs.findings }}
+      line: ${{ steps.gcovr.outputs.line }}
+      branch: ${{ steps.gcovr.outputs.branch }}
+      condition: ${{ steps.gcovr.outputs.condition }}
     steps:
-      - name: Resolve the limits (ADR-0020 defaults, then overrides)
+      - &limits
+        name: Resolve the limits (ADR-0020 defaults, then overrides)
         id: l
         env:
           LEVEL: ${{ inputs.level }}
@@ -166,38 +178,38 @@ jobs:
             echo "condition=${CONDITION:-${d[5]}}"
             echo "fuzz_seconds=${FUZZ_SECONDS:-${d[6]}}"
           } | tee -a "$GITHUB_OUTPUT"
-
-  complexity:
-    name: complexity (lizard)
-    if: ${{ inputs.run_complexity }}
-    needs: limits
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    permissions:
-      contents: read
-    outputs:
-      findings: ${{ steps.lizard.outputs.findings }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      # The sanitizers need no limits, so the checkout runs even when the level is invalid.
+      - &checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        id: checkout
+        if: ${{ !cancelled() }}
         with:
           persist-credentials: false
-      - name: Install lizard (pinned, hash-checked)
+
+      # --- complexity ------------------------------------------------------------------------------------------
+      - &lizard-install
+        name: Install lizard (pinned, hash-checked)
+        id: lizard_install
+        if: ${{ !cancelled() && inputs.run_complexity && steps.l.outcome == 'success' && steps.checkout.outcome == 'success' }}
         run: |
           set -euo pipefail
-          cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          cat > "$RUNNER_TEMP/req-lizard.txt" <<'REQ'
           lizard==1.24.1 --hash=sha256:746060a3e9a375af7340b2d4c6aab307b8a8b4199339c36ddc7afc4188b53d1c
           pathspec==1.1.1 --hash=sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189
           Pygments==2.21.0 --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9
           REQ
-          python3 -m venv "$RUNNER_TEMP/q"
-          "$RUNNER_TEMP/q/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
-      - name: Measure (modified cyclomatic complexity, length, parameters)
+          python3 -m venv "$RUNNER_TEMP/q-lizard"
+          "$RUNNER_TEMP/q-lizard/bin/pip" install --disable-pip-version-check --require-hashes --no-deps \
+            -r "$RUNNER_TEMP/req-lizard.txt"
+      - &lizard
+        name: Measure (modified cyclomatic complexity, length, parameters)
         id: lizard
+        if: ${{ !cancelled() && steps.lizard_install.outcome == 'success' }}
         env:
           PATHS: ${{ inputs.library_paths }}
-          CCN: ${{ needs.limits.outputs.ccn }}
-          LENGTH: ${{ needs.limits.outputs.length }}
-          PARAMS: ${{ needs.limits.outputs.params }}
+          CCN: ${{ steps.l.outputs.ccn }}
+          LENGTH: ${{ steps.l.outputs.length }}
+          PARAMS: ${{ steps.l.outputs.params }}
           ENFORCE: ${{ inputs.enforce }}
         run: |
           set -uo pipefail
@@ -222,12 +234,12 @@ jobs:
           echo "measuring ${#files[@]} file(s)"
           # -m: modified CCN (a switch counts once); -w: one line per function over a limit.
           # lizard exits 1 when a function is over a limit; the count below decides (run: steps use bash -e).
-          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m -w -C "$CCN" -L "$LENGTH" -a "$PARAMS" "${files[@]}" \
+          "$RUNNER_TEMP/q-lizard/bin/lizard" -l cpp -l c -m -w -C "$CCN" -L "$LENGTH" -a "$PARAMS" "${files[@]}" \
             > "$RUNNER_TEMP/over.txt" || true
-          "$RUNNER_TEMP/q/bin/lizard" -l cpp -l c -m "${files[@]}" > "$RUNNER_TEMP/complexity.txt" || true
+          "$RUNNER_TEMP/q-lizard/bin/lizard" -l cpp -l c -m "${files[@]}" > "$RUNNER_TEMP/complexity.txt" || true
           n=$(grep -c ': warning: ' "$RUNNER_TEMP/over.txt" || true)
           echo "findings=$n" >> "$GITHUB_OUTPUT"
-          mkdir -p reports && cp "$RUNNER_TEMP/complexity.txt" "$RUNNER_TEMP/over.txt" reports/
+          mkdir -p reports/complexity && cp "$RUNNER_TEMP/complexity.txt" "$RUNNER_TEMP/over.txt" reports/complexity/
           {
             echo "### Complexity (limits: CCN $CCN, $LENGTH lines, $PARAMS parameters)"
             echo
@@ -243,32 +255,21 @@ jobs:
             exit 1
           fi
           exit 0
-      - name: Upload the complexity report
-        if: ${{ always() }}
+      - &lizard-upload
+        name: Upload the complexity report
+        if: ${{ always() && inputs.run_complexity && steps.l.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: ${{ inputs.artifact_name }}-complexity
-          path: reports/
+          path: reports/complexity/
           if-no-files-found: ignore
           retention-days: 30
 
-  coverage:
-    name: coverage (GCC, gcovr)
-    if: ${{ inputs.run_coverage }}
-    needs: limits
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    permissions:
-      contents: read
-    outputs:
-      line: ${{ steps.gcovr.outputs.line }}
-      branch: ${{ steps.gcovr.outputs.branch }}
-      condition: ${{ steps.gcovr.outputs.condition }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install GCC 14 and gcovr (pinned, hash-checked)
+      # --- coverage --------------------------------------------------------------------------------------------
+      - &gcovr-install
+        name: Install GCC 14 and gcovr (pinned, hash-checked)
+        id: gcovr_install
+        if: ${{ !cancelled() && inputs.run_coverage && steps.l.outcome == 'success' && steps.checkout.outcome == 'success' }}
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
@@ -278,7 +279,7 @@ jobs:
             if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
             sleep $((attempt * 15))
           done
-          cat > "$RUNNER_TEMP/req.txt" <<'REQ'
+          cat > "$RUNNER_TEMP/req-gcovr.txt" <<'REQ'
           gcovr==8.7 --hash=sha256:2a68612c5981c388537f2e236c231a5d788b8bd9e406d13ced662c97b17e9784
           Pygments==2.21.0 --hash=sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9
           colorlog==6.12.0 --hash=sha256:30d392604e9110045a2c2aeefc27d7a017abbab63f3a8aee594eac0801df784e
@@ -286,14 +287,18 @@ jobs:
           MarkupSafe==3.0.4 --hash=sha256:8e124f974786f831d6043728e38296969d3579db8896fe004682f5758e613581
           lxml==6.1.3 --hash=sha256:909f4e927bb051f7740d6367285fc60cdcfdaf0258c2dba4ff5ba7eadadc250c
           REQ
-          python3 -m venv "$RUNNER_TEMP/q"
-          "$RUNNER_TEMP/q/bin/pip" install --disable-pip-version-check --require-hashes --no-deps -r "$RUNNER_TEMP/req.txt"
+          python3 -m venv "$RUNNER_TEMP/q-gcovr"
+          "$RUNNER_TEMP/q-gcovr/bin/pip" install --disable-pip-version-check --require-hashes --no-deps \
+            -r "$RUNNER_TEMP/req-gcovr.txt"
           g++-14 --version | head -1
-      - name: Configure and build with coverage
+      - &gcovr-build
+        name: Configure and build with coverage
+        id: gcovr_build
+        if: ${{ !cancelled() && steps.gcovr_install.outcome == 'success' }}
         env:
           SOURCE_DIR: ${{ inputs.source_dir }}
           CMAKE_ARGS: ${{ inputs.cmake_args }}
-          CONDITION: ${{ needs.limits.outputs.condition }}
+          CONDITION: ${{ steps.l.outputs.condition }}
         run: |
           set -euo pipefail
           read -r -a extra <<< "$CMAKE_ARGS"
@@ -305,20 +310,25 @@ jobs:
             -DCMAKE_C_FLAGS="$flags" -DCMAKE_CXX_FLAGS="$flags" \
             -DCMAKE_EXE_LINKER_FLAGS="--coverage" "${extra[@]}"
           cmake --build build-coverage --parallel
-      - name: Test
+      - &gcovr-test
+        name: Test
+        id: gcovr_test
+        if: ${{ !cancelled() && steps.gcovr_build.outcome == 'success' }}
         env:
           CTEST_ARGS: ${{ inputs.ctest_args }}
         run: |
           set -euo pipefail
           read -r -a extra <<< "$CTEST_ARGS"
           ctest --test-dir build-coverage --output-on-failure --parallel "$(nproc)" "${extra[@]}"
-      - name: Measure (library code, test binaries that ran)
+      - &gcovr
+        name: Measure (library code, test binaries that ran)
         id: gcovr
+        if: ${{ !cancelled() && steps.gcovr_test.outcome == 'success' }}
         env:
           PATHS: ${{ inputs.library_paths }}
-          LINE: ${{ needs.limits.outputs.line }}
-          BRANCH: ${{ needs.limits.outputs.branch }}
-          CONDITION: ${{ needs.limits.outputs.condition }}
+          LINE: ${{ steps.l.outputs.line }}
+          BRANCH: ${{ steps.l.outputs.branch }}
+          CONDITION: ${{ steps.l.outputs.condition }}
           ENFORCE: ${{ inputs.enforce }}
         run: |
           set -uo pipefail
@@ -334,16 +344,17 @@ jobs:
             echo "::error::no coverage data: did any test run?"
             exit 1
           fi
-          mkdir -p reports
+          out=reports/coverage
+          mkdir -p "$out"
           # --merge-lines: a header-only driver is a template, compiled once per port type a test binary uses.
           # Coverage is of the source: a line, branch or condition counts as covered when any instance ran it.
           args=(--root . --gcov-executable gcov-14 "${filters[@]}" --exclude-unreachable-branches
-                --exclude-throw-branches --merge-lines --json-summary reports/coverage-summary.json --cobertura reports/coverage.xml
-                --html-details reports/coverage.html --txt reports/coverage.txt)
-          "$RUNNER_TEMP/q/bin/gcovr" "${args[@]}" "${dirs[@]}"
+                --exclude-throw-branches --merge-lines --json-summary "$out/coverage-summary.json"
+                --cobertura "$out/coverage.xml" --html-details "$out/coverage.html" --txt "$out/coverage.txt")
+          "$RUNNER_TEMP/q-gcovr/bin/gcovr" "${args[@]}" "${dirs[@]}"
           read -r line branch condition < <(python3 - <<'PY'
           import json
-          s = json.load(open("reports/coverage-summary.json"))
+          s = json.load(open("reports/coverage/coverage-summary.json"))
           def pct(k):
               v = s.get(k)
               return "" if v is None else f"{float(v):.1f}"
@@ -370,27 +381,21 @@ jobs:
           fi
           if [ "$fail" -eq 1 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi
           exit 0
-      - name: Upload the coverage report
-        if: ${{ always() }}
+      - &gcovr-upload
+        name: Upload the coverage report
+        if: ${{ always() && inputs.run_coverage && steps.l.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: ${{ inputs.artifact_name }}-coverage
-          path: reports/
+          path: reports/coverage/
           if-no-files-found: ignore
           retention-days: 30
 
-  sanitizers:
-    name: sanitizers (ASan, UBSan)
-    if: ${{ inputs.run_sanitizers }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install clang
+      # --- sanitizers ------------------------------------------------------------------------------------------
+      - &san-install
+        name: Install clang
+        id: san_install
+        if: ${{ !cancelled() && inputs.run_sanitizers && steps.checkout.outcome == 'success' }}
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
@@ -401,7 +406,10 @@ jobs:
             sleep $((attempt * 15))
           done
           clang++ --version | head -1
-      - name: Configure and build with AddressSanitizer and UndefinedBehaviorSanitizer
+      - &san-build
+        name: Configure and build with AddressSanitizer and UndefinedBehaviorSanitizer
+        id: san_build
+        if: ${{ !cancelled() && steps.san_install.outcome == 'success' }}
         env:
           SOURCE_DIR: ${{ inputs.source_dir }}
           CMAKE_ARGS: ${{ inputs.cmake_args }}
@@ -415,7 +423,9 @@ jobs:
             -DCMAKE_C_FLAGS="$flags" -DCMAKE_CXX_FLAGS="$flags" \
             -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" "${extra[@]}"
           cmake --build build-sanitizers --parallel
-      - name: Test under the sanitizers
+      - &san-test
+        name: Test under the sanitizers
+        if: ${{ !cancelled() && steps.san_build.outcome == 'success' }}
         env:
           CTEST_ARGS: ${{ inputs.ctest_args }}
           ASAN_OPTIONS: "detect_leaks=1:halt_on_error=1:abort_on_error=1"
@@ -425,15 +435,66 @@ jobs:
           read -r -a extra <<< "$CTEST_ARGS"
           ctest --test-dir build-sanitizers --output-on-failure --parallel "$(nproc)" "${extra[@]}"
 
+  # separate_jobs: true, one job per check as before 1.11.0. The steps are the ones above (YAML aliases).
+  complexity:
+    name: complexity (lizard)
+    if: ${{ inputs.separate_jobs && inputs.run_complexity }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      findings: ${{ steps.lizard.outputs.findings }}
+    steps:
+      - *limits
+      - *checkout
+      - *lizard-install
+      - *lizard
+      - *lizard-upload
+
+  coverage:
+    name: coverage (GCC, gcovr)
+    if: ${{ inputs.separate_jobs && inputs.run_coverage }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      line: ${{ steps.gcovr.outputs.line }}
+      branch: ${{ steps.gcovr.outputs.branch }}
+      condition: ${{ steps.gcovr.outputs.condition }}
+    steps:
+      - *limits
+      - *checkout
+      - *gcovr-install
+      - *gcovr-build
+      - *gcovr-test
+      - *gcovr
+      - *gcovr-upload
+
+  sanitizers:
+    name: sanitizers (ASan, UBSan)
+    if: ${{ inputs.separate_jobs && inputs.run_sanitizers }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - *checkout
+      - *san-install
+      - *san-build
+      - *san-test
+
+  # Fuzzing is long (60 to 600 s per target), so it stays a job of its own, in parallel with the others.
   fuzz:
     name: fuzz (libFuzzer, ASan, UBSan)
     if: ${{ inputs.fuzz_cmake_args != '' }}
-    needs: limits
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
       contents: read
     steps:
+      - *limits
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
@@ -472,7 +533,7 @@ jobs:
       - name: Fuzz
         env:
           SOURCE_DIR: ${{ inputs.source_dir }}
-          SECONDS_PER_TARGET: ${{ needs.limits.outputs.fuzz_seconds }}
+          SECONDS_PER_TARGET: ${{ steps.l.outputs.fuzz_seconds }}
           ASAN_OPTIONS: "detect_leaks=1:abort_on_error=1"
           UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
         run: |

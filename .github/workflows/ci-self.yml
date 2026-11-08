@@ -100,6 +100,10 @@ jobs:
       - name: README inputs tables match the workflows
         run: python .github/scripts/gen_readme_inputs.py --check
 
+      # ru-repo-checks runs the single checks' scripts and pinned actions as steps; the copies must not drift apart.
+      - name: ru-repo-checks' steps match the single-check workflows
+        run: python .github/scripts/check_repo_checks.py
+
       # The DCO script runs in the runner's Node against a fake GitHub API.
       - name: Unit tests for the check scripts (CI gate, DCO, organisation standard included)
         run: python .github/scripts/test_checks.py
@@ -285,6 +289,13 @@ jobs:
     permissions:
       contents: read
 
+  selftest-repo-checks:
+    name: Self-test repository checks
+    uses: ./.github/workflows/ci-repo-checks.yml
+    permissions:
+      contents: read
+      pull-requests: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
@@ -303,6 +314,7 @@ jobs:
       - selftest-host-quality
       - selftest-cross-build
       - selftest-handbook-check
+      - selftest-repo-checks
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:

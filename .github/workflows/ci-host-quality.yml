@@ -60,3 +60,49 @@ jobs:
         run: |
           echo "findings=${FINDINGS}"
           test "${FINDINGS:-0}" -ge 2
+
+  # separate_jobs: true, one job per check as before 1.11.0: the same fixture, the same figures.
+  fixture-standard-separate:
+    uses: ./.github/workflows/ru-host-quality.yml
+    permissions:
+      contents: read
+    with:
+      level: standard
+      source_dir: tests/fixtures/host-ci
+      library_paths: "tests/fixtures/host-ci/src/calc.cpp tests/fixtures/host-ci/include"
+      enforce: true
+      artifact_name: host-quality-fixture-separate
+      separate_jobs: true
+
+  too-complex-separate:
+    uses: ./.github/workflows/ru-host-quality.yml
+    permissions:
+      contents: read
+    with:
+      level: safety
+      library_paths: tests/fixtures/quality
+      run_coverage: false
+      run_sanitizers: false
+      enforce: false
+      artifact_name: host-quality-too-complex-separate
+      separate_jobs: true
+
+  separate-jobs-match:
+    needs: [fixture-standard, fixture-standard-separate, too-complex, too-complex-separate]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: One job and separate jobs give the same figures
+        env:
+          LINE: ${{ needs.fixture-standard.outputs.line_coverage }}
+          LINE_SEPARATE: ${{ needs.fixture-standard-separate.outputs.line_coverage }}
+          BRANCH: ${{ needs.fixture-standard.outputs.branch_coverage }}
+          BRANCH_SEPARATE: ${{ needs.fixture-standard-separate.outputs.branch_coverage }}
+          FINDINGS: ${{ needs.too-complex.outputs.complexity_findings }}
+          FINDINGS_SEPARATE: ${{ needs.too-complex-separate.outputs.complexity_findings }}
+        run: |
+          echo "lines ${LINE}% / ${LINE_SEPARATE}%, branches ${BRANCH}% / ${BRANCH_SEPARATE}%, findings ${FINDINGS} / ${FINDINGS_SEPARATE}"
+          test -n "$LINE_SEPARATE"
+          test "$LINE" = "$LINE_SEPARATE"
+          test "$BRANCH" = "$BRANCH_SEPARATE"
+          test "$FINDINGS" = "$FINDINGS_SEPARATE"

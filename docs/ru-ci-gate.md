@@ -82,3 +82,7 @@ A job that is skipped by design, for example a deploy job that runs only on
 `main`, goes in `allow_skipped`. A job that is skipped because something it
 needs failed is reported as `skipped` too. That case is still caught: the
 failed upstream job is itself in `needs`, so the gate fails on it.
+
+A job that calls [`dco.yml`](dco.md) only on pull requests (`if: github.event_name == 'pull_request'`) is skipped
+on every push, so it goes in `allow_skipped`. [`ru-repo-checks`](ru-repo-checks.md) runs DCO as a step that passes
+with nothing to check outside a pull request: its job always runs and needs no `allow_skipped` entry.

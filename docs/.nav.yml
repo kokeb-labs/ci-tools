@@ -30,6 +30,7 @@ nav:
       - dco (sign-off): dco.md
       - org-standard-check: org-standard-check.md
       - ru-template-drift: ru-template-drift.md
+      - ru-repo-checks (all in one job): ru-repo-checks.md
   - Docs platform:
       - Platform guide: docs-platform.md
       - Migrating to MkDocs: MIGRATING-TO-MKDOCS.md

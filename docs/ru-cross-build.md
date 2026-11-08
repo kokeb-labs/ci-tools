@@ -3,7 +3,8 @@
 Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, so code that claims to run on
 any MCU is shown to compile for one on every pull request.
 
-`ru-cross-build.yml` runs one job per core in `cores`:
+`ru-cross-build.yml` builds every core in `cores` in one job, one core after the other, each in its own build
+directory and log group (`per_core_jobs: true` gives one job per core instead):
 
 1. Installs Arm's GNU toolchain release 14.3.rel1 (GCC 14, newlib, libstdc++), checked against the SHA-256 Arm
    publishes with it, so every run uses the same identified compiler.
@@ -12,6 +13,10 @@ any MCU is shown to compile for one on every pull request.
 3. Configures with that toolchain at `MinSizeRel` and builds **only** `build_target`. The project's own flags
    still apply: a Kokeb driver's test flags are `-fno-exceptions -fno-rtti -Werror` and the full warning set.
 4. Writes the objects' `text`, `data` and `bss` sizes to the run summary.
+
+A core that fails to build does not stop the others; the job fails at the end and names every core that failed.
+The toolchain is downloaded once for all of them, and a private repository is billed one job, rounded up to a
+whole minute, instead of one per core and one for checking the list.
 
 | Core | Flags |
 | --- | --- |
