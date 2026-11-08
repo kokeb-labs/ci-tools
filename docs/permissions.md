@@ -33,6 +33,7 @@ read from the workflow files.
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`deploy`: `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-release.yml`](ru-release.md) | `contents: write` | `release`: `contents: write` |
+| [`ru-template-drift.yml`](ru-template-drift.md) | `contents: read` | `drift`: `contents: read` |
 | [`ru-yaml-lint.yml`](ru-yaml-lint.md) | `contents: read` | `yamllint`: `contents: read` |
 <!-- /generated -->
 

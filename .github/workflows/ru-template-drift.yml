@@ -1,0 +1,61 @@
+---
+# Compare the files kokeb-labs/driver-template manages (workflows, tool configuration, skills, CMake helpers) with
+# what the template makes today from the arguments in the caller's .kokeb/template.yml. A file that differs is
+# drift: take the template's version or record why it differs. Guide: docs/ru-template-drift.md.
+name: 🧬 [RU] Template drift
+
+on:
+  workflow_call:
+    inputs:
+      template_ref:
+        description: "Branch, tag or commit of kokeb-labs/driver-template to compare against"
+        type: string
+        required: false
+        default: "main"
+      enforce:
+        description: "Fail the job on drift. False reports only, as warnings on the drifted files."
+        type: boolean
+        required: false
+        default: false
+
+permissions: {}
+
+jobs:
+  drift:
+    name: template drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      # Trust: the scaffold is kokeb-labs/driver-template's own code. The job has contents: read only, no secrets
+      # and no cache, so nothing it runs can write to the caller's repository, its caches or its releases.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/driver-template
+          ref: ${{ inputs.template_ref }}
+          path: .driver-template
+          persist-credentials: false
+      - name: Compare with the template
+        env:
+          ENFORCE: ${{ inputs.enforce }}
+        run: |
+          set -uo pipefail
+          set +e  # run: steps use bash -e; the status is decided below
+          python3 .driver-template/tools/scaffold.py --check-drift . | tee "$RUNNER_TEMP/drift.txt"
+          status=${PIPESTATUS[0]}
+          set -e
+          {
+            echo "## Template drift"
+            echo
+            echo '```text'
+            grep -v '^::' "$RUNNER_TEMP/drift.txt" | head -400
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi
+          if [ "$status" -ne 0 ]; then
+            echo "::warning::template drift: see the job summary (scaffold.py --check-drift --fix takes the template's version)"
+          fi
