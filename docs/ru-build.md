@@ -42,6 +42,7 @@ jobs:
 | `project_tools_dir` | string | empty | Path to project tools directory (contains scripts directly). Leave empty to auto-detect. |
 | `clean_build` | boolean | `false` | Skip caches for a clean build. |
 | `auto_clone_tools` | boolean | `true` | Auto-clone tools repo if project_tools_dir is missing |
+| `group_build_types` | boolean | `true` | Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type. |
 | `max_dec_total` | string | `0` | Maximum total dec size in bytes for size budget enforcement (0 to disable) |
 <!-- /generated -->
 
