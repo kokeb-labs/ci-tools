@@ -355,6 +355,24 @@ jobs:
           ~/esp-idf/install.sh "$TARGET"
           du -sh ~/esp-idf ~/.espressif
 
+      # The espressif/idf image ships ccache; the runner does not. A pinned, hash-checked static build.
+      - name: Install ccache (pinned, hash-checked)
+        if: ${{ inputs.idf_install == 'native' }}
+        env:
+          CCACHE_VERSION: "4.14.2"
+          CCACHE_SHA256: b20ff6415151226ac5a10dfd6839700c694bd67d1871c8fddb266d366ff25bfb
+        run: |
+          set -euo pipefail
+          name="ccache-${CCACHE_VERSION}-linux-x86_64-musl-static"
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 -o ccache.tar.xz \
+            "https://github.com/ccache/ccache/releases/download/v${CCACHE_VERSION}/${name}.tar.xz"
+          echo "${CCACHE_SHA256}  ccache.tar.xz" | sha256sum -c -
+          tar -xJf ccache.tar.xz
+          mkdir -p "$RUNNER_TEMP/bin" && install -m 0755 "${name}/ccache" "$RUNNER_TEMP/bin/ccache"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/ccache" --version | head -1
+
       - name: Build (native ESP-IDF)
         if: ${{ inputs.idf_install == 'native' }}
         env:
@@ -377,7 +395,7 @@ jobs:
             "${TOOLS_PATH}/build_app.sh" --project-path "${ESP32_PROJECT_PATH}" \
               "${APP_TYPE}" "${build_type}" "${IDF_VERSION}"
           done
-          ccache -s || true
+          ccache -s
 
       # esp-idf-ci-action runs `docker run espressif/idf:<tag>`, which pulls the
       # image once with no retry; a transient Docker Hub error mid-pull fails
