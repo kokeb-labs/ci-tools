@@ -28,7 +28,7 @@ that heading.
 - `ru-cross-build`: input `per_core_jobs` (default `false`) keeps one job per core.
 - `ru-host-quality`: input `separate_jobs` (default `false`) keeps one job per check.
 
-- Trigger policy ([docs/triggers.md](docs/triggers.md)), enforced by the self-CI (`check_triggers.py`): workflows
+- Trigger policy (`docs/triggers.md`), enforced by the self-CI (`check_triggers.py`): workflows
   start only from `push`, `pull_request`, `merge_group` and `workflow_call`, with `release.yml`'s `workflow_run` as
   the one exception.
 
