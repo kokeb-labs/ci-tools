@@ -3,7 +3,7 @@
 
 namespace kv::rule_4_1_2_allocator_void::bad {
 
-using VoidAlloc = std::allocator<void>;
+using VoidAlloc = std::allocator<void>;  // seeded
 
 bool same(const VoidAlloc& a, const VoidAlloc& b) { return a == b; }
 

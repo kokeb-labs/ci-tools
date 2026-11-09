@@ -3,7 +3,7 @@
 
 namespace kv::rule_10_2_2::bad_untyped {
 
-enum Speed { kSlow, kFast };
+enum Speed { kSlow, kFast };  // seeded
 
 bool fast(Speed s) { return s == kFast; }
 

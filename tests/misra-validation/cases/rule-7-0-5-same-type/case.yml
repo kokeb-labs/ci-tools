@@ -1,0 +1,15 @@
+---
+guideline: Rule 7.0.5
+notes: Exception 3 of the guideline lets both operands of a comparison be promoted when they have the same type.
+codeql:
+  queries: [cpp/misra/no-signedness-change-from-promotion]
+known_misses:
+  - query: cpp/misra/no-signedness-change-from-promotion
+    kind: false-positive
+    why: >-
+      A comparison (relational or equality) of two operands of the same narrow unsigned type is reported as a
+      signedness change; the query implements Exceptions 1 and 2 only, not Exception 3.
+seeded:
+  - "std::uint8_t compared with std::uint16_t (different types, both promoted to int)"
+near_misses:
+  - "std::uint8_t < std::uint8_t constant, std::uint16_t <= std::uint16_t constant, std::uint8_t == std::uint8_t"

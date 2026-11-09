@@ -7,12 +7,16 @@ seeded:
   - relational comparison with an integer (bad_relational.cpp)
   - compound assignment with an enumerator operand (bad_compound.cpp)
   - bitwise or of two enumerators (bad_bitwise.cpp)
+  - static_cast to an unscoped enum without a fixed type (bad_cast.cpp)
 near_misses:
   - a scoped enum only compared (ok.hpp)
   - a scoped enum converted with an explicit static_cast to its fixed type (ok_near.hpp)
   - an untyped unscoped enum compared only with its own enumerators (ok_near.hpp)
+  - an untyped unscoped enum initialising an int32_t, wide enough for its values (ok_transfer.hpp)
 other_findings:
   - query: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type
-    why: 'true positive of Rule 10.2.1: the near miss needs an unscoped enum without a fixed type'
+    why: >-
+      misfire: the near misses' unscoped enums give no enumerator a value, so Rule 10.2.1 exception 1 waives the
+      fixed type
   - query: cpp/misra/unscoped-enumerations-should-not-be-declared
     why: 'true positive of Rule 10.2.2: the near miss needs an unscoped enum without a fixed type'

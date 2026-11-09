@@ -3,8 +3,8 @@
 
 namespace kv::rule_7_0_5::bad {
 
-std::uint32_t sum(std::uint8_t a, std::uint8_t b) { return a + b; }
+std::uint32_t sum(std::uint8_t a, std::uint8_t b) { return a + b; }  // seeded
 
-bool mixed(std::uint32_t u, std::int32_t s) { return u < s; }
+bool mixed(std::uint32_t u, std::int32_t s) { return u < s; }  // seeded
 
 }  // namespace kv::rule_7_0_5::bad

@@ -8,7 +8,7 @@ std::int32_t clamp(std::int32_t v) {
     return 0;
   }
   return v;
-  v = 1;  // never runs
+  v = 1;  // never runs  // seeded
 }
 
 }  // namespace kv::rule_0_0_1::bad

@@ -3,7 +3,7 @@
 
 using std::size_t;
 
-#include <cstdint>
+#include <cstdint>  // seeded
 
 namespace kv::rule_19_0_3_using::bad {
 

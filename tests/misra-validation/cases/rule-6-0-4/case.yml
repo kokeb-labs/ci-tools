@@ -9,6 +9,7 @@ seeded:
   - "a function named main in a named namespace"
   - "a member function named main"
   - "a function named main in a nested namespace"
+  - "the constructor of a struct named main (main followed by an opening parenthesis)"
 near_misses:
   - "the global int main(), the program entry point"
   - "functions named main_loop and run_main"

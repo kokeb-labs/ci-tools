@@ -5,7 +5,7 @@ constexpr int kEarly = 1;
 
 }  // namespace kv::rule_19_0_3::bad
 
-#include <cstdint>
+#include <cstdint>  // seeded
 
 namespace kv::rule_19_0_3::bad {
 

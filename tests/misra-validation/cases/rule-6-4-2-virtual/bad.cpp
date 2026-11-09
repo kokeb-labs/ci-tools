@@ -12,7 +12,7 @@ class Sink {
 
 class Logger : public Sink {
  public:
-  void put(std::int32_t value) override;
+  void put(std::int32_t value) override;  // seeded
 
  private:
   std::int32_t last_{0};

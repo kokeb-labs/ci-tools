@@ -3,7 +3,7 @@
 
 namespace kv::rule_15_0_1::bad {
 
-class Buffer {
+class Buffer {  // seeded
  public:
   Buffer() = default;
   Buffer(const Buffer& other) : size_(other.size_ + 0U) {}

@@ -5,7 +5,7 @@ namespace kv::rule_12_2_1::bad_unnamed {
 
 struct Reg {
   std::uint32_t low : 4;
-  std::uint32_t : 4;
+  std::uint32_t : 4;  // seeded
   std::uint32_t high : 8;
 };
 

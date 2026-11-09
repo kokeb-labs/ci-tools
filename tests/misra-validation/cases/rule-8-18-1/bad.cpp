@@ -5,7 +5,7 @@
 namespace kv::rule_8_18_1::bad {
 
 void shift(std::uint8_t (&data)[8]) {
-  std::memcpy(&data[1], &data[0], 4U);
+  std::memcpy(&data[1], &data[0], 4U);  // seeded
 }
 
 union Word {
@@ -16,7 +16,7 @@ union Word {
 std::uint32_t fold() {
   Word w{};
   w.value = 3;
-  w.whole = w.value;
+  w.whole = w.value;  // seeded
   return w.whole;
 }
 

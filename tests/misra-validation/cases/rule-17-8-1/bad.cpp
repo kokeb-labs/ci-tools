@@ -9,7 +9,7 @@ T clamp_low(T v) {
 }
 
 template <>
-std::int32_t clamp_low<std::int32_t>(std::int32_t v) {
+std::int32_t clamp_low<std::int32_t>(std::int32_t v) {  // seeded
   return (v < 0) ? 0 : v;
 }
 

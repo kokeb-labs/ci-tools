@@ -2,6 +2,6 @@
 
 namespace kv::rule_5_0_1_escaped::bad {
 
-const char* hash() { return "??="; }
+const char* hash() { return "??="; }  // seeded
 
 }  // namespace kv::rule_5_0_1_escaped::bad

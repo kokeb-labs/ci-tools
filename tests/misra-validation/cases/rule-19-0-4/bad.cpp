@@ -1,7 +1,7 @@
 // Seeded violation: #undef of a macro that this file never defined.
 #include <cstdint>
 
-#undef KV_RULE_19_0_4_FROM_ELSEWHERE
+#undef KV_RULE_19_0_4_FROM_ELSEWHERE  // seeded
 
 namespace kv::rule_19_0_4::bad {
 

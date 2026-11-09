@@ -8,10 +8,10 @@ class Root {
   std::int32_t tag = 0;
 };
 
-class A : public virtual Root {};
+class A : public virtual Root {};  // seeded: clang-tidy
 class B : public Root {};
 class C : public B {};
-class Mix : public A, public C {};
+class Mix : public A, public C {};  // seeded: codeql
 
 std::int32_t size_hint() { return static_cast<std::int32_t>(sizeof(Mix)); }
 

@@ -3,6 +3,6 @@
 
 namespace kv::rule_6_5_1::bad {
 
-std::int32_t exported_sum(std::int32_t a, std::int32_t b) { return (a > 100 || b > 100) ? 0 : a + b; }
+std::int32_t exported_sum(std::int32_t a, std::int32_t b) { return (a > 100 || b > 100) ? 0 : a + b; }  // seeded
 
 }  // namespace kv::rule_6_5_1::bad

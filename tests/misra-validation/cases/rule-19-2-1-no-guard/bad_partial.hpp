@@ -1,4 +1,4 @@
-// Seeded violation: code after the guard closes.
+// Seeded violation: code after the guard closes.  // seeded
 #ifndef KV_RULE_19_2_1_NO_GUARD_BAD_PARTIAL_HPP
 #define KV_RULE_19_2_1_NO_GUARD_BAD_PARTIAL_HPP
 

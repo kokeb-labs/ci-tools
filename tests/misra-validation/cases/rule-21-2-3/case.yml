@@ -1,5 +1,8 @@
 ---
 guideline: Rule 21.2.3
+notes: >-
+  cert-env33-c deliberately accepts system(nullptr), the availability probe that CERT allows, so that line is
+  held to CodeQL only; the guideline forbids every call of system.
 clang-tidy: {check: cert-env33-c}
 codeql:
   queries: [cpp/misra/banned-system-function]

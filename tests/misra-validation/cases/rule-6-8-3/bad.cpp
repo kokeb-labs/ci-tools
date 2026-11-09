@@ -9,12 +9,12 @@ struct Holder {
 
 void attach(Holder& holder) {
   std::int32_t local = 4;
-  holder.target = &local;
+  holder.target = &local;  // seeded
 }
 
 void publish(std::int32_t** out) {
   std::int32_t local = 5;
-  *out = &local;
+  *out = &local;  // seeded
 }
 
 }  // namespace kv::rule_6_8_3::bad

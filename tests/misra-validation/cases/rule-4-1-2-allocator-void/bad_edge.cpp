@@ -6,6 +6,6 @@ namespace kv::rule_4_1_2_allocator_void::bad_edge {
 template <typename A>
 bool equal(const A& a, const A& b) { return a == b; }
 
-bool via_template(const std::allocator<void>& a) { return equal(a, a); }
+bool via_template(const std::allocator<void>& a) { return equal(a, a); }  // seeded
 
 }  // namespace kv::rule_4_1_2_allocator_void::bad_edge

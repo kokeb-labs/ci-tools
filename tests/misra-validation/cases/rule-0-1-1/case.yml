@@ -2,11 +2,17 @@
 guideline: Rule 0.1.1
 codeql:
   queries: [cpp/misra/unnecessary-write-to-local-object]
+known_misses:
+  - query: cpp/misra/unnecessary-write-to-local-object
+    kind: false-negative
+    why: >-
+      A local inside a lambda body that is overwritten before its first value is read (bad_lambda.cpp) is not
+      reported; the same write in a function body is.
 seeded:
   - "a local overwritten before its first value is read"
-  - "the same inside a lambda body"
+  - "the same inside a lambda body (bad_lambda.cpp)"
   - "an initial value replaced before any read"
 near_misses:
   - "a value written on one path only, read on both"
   - "a write read by a compound assignment"
-  - "a local written through a reference parameter, then read"
+  - "a local whose initial value a callee reads and updates through a reference parameter, then read"

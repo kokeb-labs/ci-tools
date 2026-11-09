@@ -13,6 +13,8 @@ seeded:
   - "std::remove and std::unique results discarded"
   - "vector::empty result discarded"
   - "std::remove_if, unique_ptr::release and array::empty results discarded"
+  - "the non-member std::empty result discarded"
+  - "std::remove's result cast to void (not a use)"
 near_misses:
   - "std::remove's result used for the new end"
   - "std::fill (no result)"

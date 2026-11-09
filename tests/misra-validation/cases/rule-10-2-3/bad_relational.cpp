@@ -5,6 +5,6 @@ namespace kv::rule_10_2_3::bad_relational {
 
 enum Level { kLow, kHigh };
 
-bool above(Level l, std::int32_t v) { return l > v; }
+bool above(Level l, std::int32_t v) { return l > v; }  // seeded
 
 }  // namespace kv::rule_10_2_3::bad_relational

@@ -1,7 +1,7 @@
 // Seeded violation: a function-like macro where a constexpr function would do.
 #include <cstdint>
 
-#define KV_SQUARE(x) ((x) * (x))
+#define KV_SQUARE(x) ((x) * (x))  // seeded
 
 namespace kv::rule_19_0_2::bad {
 

@@ -4,7 +4,7 @@ clang-tidy: {check: google-build-namespaces}
 codeql:
   queries: [cpp/misra/unnamed-namespaces-in-header-files]
 seeded:
-  - an anonymous namespace in a header (bad.hpp)
+  - an anonymous namespace at the top level of a header (bad.hpp)
   - an anonymous namespace nested inside a named namespace in a header (bad_nested.hpp)
 near_misses:
   - a named detail namespace in a header (ok.hpp)

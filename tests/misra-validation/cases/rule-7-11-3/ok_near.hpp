@@ -14,6 +14,8 @@ inline std::int32_t call(Fn f) { return f(); }
 
 inline std::int32_t by_address() { return call(&two); }
 
+inline std::int32_t by_cast() { return call(static_cast<Fn>(two)); }
+
 inline std::int32_t local_lambda() {
   auto const f = []() -> std::int32_t { return 3; };
   return f();

@@ -5,7 +5,7 @@ namespace kv::rule_8_1_2::bad {
 
 std::uint32_t read(std::uint32_t start) {
   std::uint32_t base = start;
-  auto f = [=]() { return base; };
+  auto f = [=]() { return base; };  // seeded
   return f();
 }
 

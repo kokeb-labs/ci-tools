@@ -7,6 +7,9 @@ other_findings:
     why: >-
       true positive of Rule 19.0.2: the near miss needs a function-like macro
   - {query: cpp/misra/and-preprocessor-operators-should-not-be-used, why: "true positive of Rule 19.3.1: a mixed-use parameter needs #"}
+notes: >-
+  The query reports the definition of the macro whose mixed-use parameter is given a macro argument, not the
+  invocation, so the markers are on the #define lines.
 seeded:
   - 'mixed-use parameter (plain and #) given a macro as argument'
   - 'mixed-use parameter (plain and ##) given a macro as argument'

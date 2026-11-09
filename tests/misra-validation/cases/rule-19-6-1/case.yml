@@ -2,9 +2,14 @@
 guideline: Rule 19.6.1
 codeql:
   queries: [cpp/misra/disallowed-use-of-pragma]
+known_misses:
+  - query: cpp/misra/disallowed-use-of-pragma
+    kind: false-negative
+    why: >-
+      The _Pragma operator (bad_operator.cpp) is not reported; the #pragma directive and #pragma once are.
 seeded:
   - '#pragma GCC diagnostic'
-  - _Pragma operator
+  - _Pragma operator (bad_operator.cpp)
   - '#pragma once in a header'
 near_misses:
   - 'an include guard instead of #pragma once'

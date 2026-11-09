@@ -12,11 +12,11 @@ class Tracker {
   [[nodiscard]] std::size_t size() const { return seen_.size(); }
 
  private:
-  std::vector<bool> seen_;
+  std::vector<bool> seen_;  // seeded
 };
 
 std::size_t both() {
-  Flags flags(3U, true);
+  Flags flags(3U, true);  // seeded
   flags[1] = false;
   return flags.size() + Tracker{2U}.size();
 }

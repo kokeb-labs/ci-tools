@@ -1,12 +1,24 @@
 ---
 guideline: Rule 8.2.3
+notes: >-
+  The reference form (bad_edge.cpp) is marked for clang-tidy only: the CodeQL query does not report a cast of a
+  const or volatile object to a non-qualified reference, a false negative recorded in rule-8-2-3-reference. The
+  multi-level pointer form is in its own file: the pinned clang-tidy 20.1.0 (and 21) does not report a const_cast
+  that removes const below the first pointer level.
 clang-tidy: {check: cppcoreguidelines-pro-type-const-cast}
 codeql:
   queries: [cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference]
 seeded:
   - "const_cast removing const from a pointed-to object"
-  - "const_cast removing const below the first pointer level"
+  - "const_cast removing const below the first pointer level (bad_multilevel.cpp)"
   - "const_cast removing const from a reference"
 near_misses:
   - "a non-const object passed where const is expected (no cast)"
   - "static_cast adding const"
+known_misses:
+  - tool: clang-tidy
+    query: cppcoreguidelines-pro-type-const-cast
+    kind: false-negative
+    why: >-
+      a const_cast that removes const below the first pointer level (const int* const* to int**) is not reported
+      by the pinned clang-tidy (20.1.0; 21 also misses it), bad_multilevel.cpp

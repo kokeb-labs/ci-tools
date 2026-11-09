@@ -7,7 +7,7 @@ enum class Error : std::uint8_t { kNone, kBus };
 
 class Driver {
  public:
-  class Result {
+  class Result {  // seeded
    public:
     Error error{Error::kNone};
   };
@@ -20,7 +20,7 @@ struct [[nodiscard]] Result {
 };
 
 template <>
-struct Result<void> {
+struct Result<void> {  // seeded
   Error error{Error::kNone};
 };
 

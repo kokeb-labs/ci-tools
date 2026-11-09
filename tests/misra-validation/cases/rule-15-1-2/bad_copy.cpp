@@ -15,7 +15,7 @@ class Base {
 class Derived : public Base {
  public:
   Derived() = default;
-  Derived(const Derived& other) : width_(other.width_) {}
+  Derived(const Derived& other) : width_(other.width_) {}  // seeded
 
  private:
   std::uint32_t width_ = 0U;

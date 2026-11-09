@@ -12,3 +12,4 @@ near_misses:
   - "char used for characters"
   - "bool and std::size_t"
   - "auto deduced from a fixed-width value"
+  - "a type alias defined with unsigned short, and the int parameter of a postfix operator++ (exceptions)"

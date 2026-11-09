@@ -9,7 +9,7 @@ struct Config {
 
 class Amp {
  public:
-  std::int32_t scaled(Config& c) const { return c.gain * level_; }
+  std::int32_t scaled(Config& c) const { return c.gain * level_; }  // seeded
 
  private:
   std::int32_t level_ = 2;

@@ -3,7 +3,7 @@
 
 namespace kv::rule_6_2_1::bad {
 
-std::int32_t limit_a(std::int32_t v) { return (v > 10) ? 10 : v; }
+std::int32_t limit_a(std::int32_t v) { return (v > 10) ? 10 : v; }  // seeded
 
 }  // namespace kv::rule_6_2_1::bad
 

@@ -4,8 +4,9 @@
 namespace kv::dir_5_7_2::bad {
 
 std::uint32_t scale(std::uint32_t v) {
-  // const std::uint32_t old = v * 3U;
-  // return old;
+  // const std::uint32_t old = v * 3U;  // seeded
+  // const std::uint32_t twice = old << 1U;
+  // return twice;
   return v << 1U;
 }
 

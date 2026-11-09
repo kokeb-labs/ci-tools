@@ -9,7 +9,7 @@ std::int32_t last_seen(std::int32_t n) {
     const std::int32_t copy = i;
     p = &copy;
   }
-  return (p != nullptr) ? *p : 0;  // the loop body's local is gone
+  return (p != nullptr) ? *p : 0;  // the loop body's local is gone  // seeded
 }
 
 }  // namespace kv::rule_6_8_1_after::bad_edge

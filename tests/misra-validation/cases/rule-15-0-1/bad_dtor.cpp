@@ -3,7 +3,7 @@
 
 namespace kv::rule_15_0_1::bad_dtor {
 
-class Lock {
+class Lock {  // seeded
  public:
   explicit Lock(std::uint32_t id) : id_(id) {}
   ~Lock() { id_ = 0U; }

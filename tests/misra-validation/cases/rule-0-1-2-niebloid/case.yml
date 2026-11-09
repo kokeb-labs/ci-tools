@@ -1,0 +1,16 @@
+---
+guideline: Rule 0.1.2
+notes: Records a false negative of the pack. The main case rule-0-1-2 proves detection of plain calls.
+codeql:
+  queries: [cpp/misra/unused-return-value-misra-cpp]
+known_misses:
+  - query: cpp/misra/unused-return-value-misra-cpp
+    kind: false-negative
+    why: >-
+      The dropped result of std::ranges::fill(buf, 0U) is not reported. std::ranges::fill is a function object
+      (a niebloid), so the call goes through its operator() and returns an iterator; the guideline covers every
+      call written with function call syntax, but the query skips calls of function objects.
+seeded:
+  - "the result of std::ranges::fill dropped"
+near_misses:
+  - "std::fill, which returns void (ok.hpp)"

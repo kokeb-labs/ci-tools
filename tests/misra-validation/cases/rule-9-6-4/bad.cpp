@@ -3,7 +3,7 @@
 
 namespace kv::rule_9_6_4::bad {
 
-[[noreturn]] void halt(std::int32_t code) {
+[[noreturn]] void halt(std::int32_t code) {  // seeded
   if (code == 0) {
     return;
   }

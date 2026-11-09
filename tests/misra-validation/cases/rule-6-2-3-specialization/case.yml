@@ -9,3 +9,4 @@ seeded:
 near_misses:
   - "explicit specialisation next to the primary template"
   - "explicit and partial specialisations in the primary's header"
+  - "an explicit specialisation in the file that defines its class argument, the primary elsewhere (ok_arg.hpp)"

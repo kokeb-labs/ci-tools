@@ -7,6 +7,7 @@ seeded:
   - "a function in the global namespace"
   - "an enumeration in the global namespace"
   - "a type alias in the global namespace"
+  - "a const object in the global namespace"
 near_misses:
   - "a struct and function in a named namespace"
   - "an enumeration, alias and namespace alias in a named namespace"

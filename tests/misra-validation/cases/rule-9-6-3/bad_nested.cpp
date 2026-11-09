@@ -9,7 +9,7 @@ top:
   ++rounds;
   if (rounds < 3) {
     if (v > 0) {
-      goto top;
+      goto top;  // seeded
     }
   }
   return rounds;

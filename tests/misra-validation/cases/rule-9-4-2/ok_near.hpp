@@ -34,15 +34,33 @@ inline std::uint32_t code_of(std::uint32_t k) {
   }
 }
 
-enum class Mode : std::uint8_t { kIdle, kRun };
+// An explicit [[fallthrough]] terminates a branch.
+inline std::uint32_t ramp(std::uint32_t code) {
+  std::uint32_t w = 0U;
+  switch (code) {
+    case 1U:
+      w = 1U;
+      [[fallthrough]];
+    case 2U:
+      w = w + 2U;
+      break;
+    default:
+      break;
+  }
+  return w;
+}
+
+// The one exception to the default label: an unscoped enumeration without a fixed underlying type, every
+// enumerator listed.
+enum Mode { kIdle, kRun };
 
 inline std::uint32_t cost(Mode m) {
   std::uint32_t c = 0U;
   switch (m) {
-    case Mode::kIdle:
+    case kIdle:
       c = 1U;
       break;
-    case Mode::kRun:
+    case kRun:
       c = 2U;
       break;
   }

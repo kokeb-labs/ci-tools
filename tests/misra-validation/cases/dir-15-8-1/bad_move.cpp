@@ -9,7 +9,7 @@ class Frame {
   Frame(const Frame&) = default;
   Frame(Frame&&) noexcept = default;
   Frame& operator=(const Frame&) = default;
-  Frame& operator=(Frame&& other) noexcept {
+  Frame& operator=(Frame&& other) noexcept {  // seeded
     length_ = other.length_;
     other.length_ = 0U;
     return *this;

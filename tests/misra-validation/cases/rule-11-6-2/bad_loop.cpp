@@ -10,7 +10,7 @@ std::int32_t last_positive(const std::int32_t* values, std::int32_t n) {
       last = values[i];
     }
   }
-  return last;
+  return last;  // seeded
 }
 
 }  // namespace kv::rule_11_6_2::bad_loop

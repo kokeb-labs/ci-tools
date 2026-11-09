@@ -1,0 +1,14 @@
+---
+guideline: Rule 5.13.4
+codeql:
+  queries: [cpp/misra/unsigned-integer-literals-not-appropriately-suffixed]
+known_misses:
+  - query: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    kind: false-positive
+    why: >-
+      Timing{} (value-initialisation of a class whose members have default member initialisers 0U and 0) is
+      reported as an unsuffixed octal literal of unsigned type; no such literal is in the source (as AN-067).
+seeded:
+  - "0x80000000 without U"
+near_misses:
+  - "Timing{} with members std::uint32_t clock_hz{0U} and std::uint16_t raw{0}"

@@ -4,10 +4,10 @@
 
 namespace kv::rule_6_5_2::bad {
 
-static std::int32_t twice(std::int32_t v) { return v * 2; }
+static std::int32_t twice(std::int32_t v) { return v * 2; }  // seeded
 
 namespace {
-static std::int32_t thrice(std::int32_t v) { return v * 3; }
+static std::int32_t thrice(std::int32_t v) { return v * 3; }  // seeded
 }  // namespace
 
 std::int32_t use(std::int32_t v) { return twice(v) + thrice(v); }

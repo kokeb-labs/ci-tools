@@ -4,7 +4,7 @@
 namespace kv::rule_11_3_2::bad_member {
 
 struct Graph {
-  std::int32_t*** edges = nullptr;
+  std::int32_t*** edges = nullptr;  // seeded
 };
 
 bool empty(const Graph& g) { return g.edges == nullptr; }

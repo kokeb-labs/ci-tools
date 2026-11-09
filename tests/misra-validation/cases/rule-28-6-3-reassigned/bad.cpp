@@ -8,7 +8,7 @@ namespace kv::rule_28_6_3_reassigned::bad {
 std::size_t total_length() {
   std::string first{"sensor"};
   const std::string second = std::move(first);
-  const std::size_t stale = first.size();
+  const std::size_t stale = first.size();  // seeded
   first = "probe";
   return stale + second.size();
 }

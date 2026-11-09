@@ -4,7 +4,7 @@
 namespace kv::rule_8_2_5::bad {
 
 std::uint32_t bits_of(const float& value) {
-  return *reinterpret_cast<const std::uint32_t*>(&value);
+  return *reinterpret_cast<const std::uint32_t*>(&value);  // seeded
 }
 
 }  // namespace kv::rule_8_2_5::bad

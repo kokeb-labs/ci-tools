@@ -10,6 +10,9 @@ seeded:
   - an overrider marked only virtual (bad.cpp)
   - an overrider marked virtual and override (bad_both.cpp)
   - an overrider with no specifier (bad_bare.cpp)
+  - a user-declared overriding destructor with no specifier (bad_specifiers.cpp)
+  - an overrider marked both override and final (bad_specifiers.cpp)
+  - a function that overrides nothing marked virtual and final (bad_specifiers.cpp)
 near_misses:
   - override on the overrider and the destructor (ok.hpp)
   - final alone on an overrider (ok_near.hpp)

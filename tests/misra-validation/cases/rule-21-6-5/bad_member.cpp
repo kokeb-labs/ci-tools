@@ -12,7 +12,7 @@ class Handle {
 };
 
 void Handle::close() {
-  delete impl_;
+  delete impl_;  // seeded
   impl_ = nullptr;
 }
 

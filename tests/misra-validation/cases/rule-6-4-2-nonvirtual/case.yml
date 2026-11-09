@@ -8,3 +8,5 @@ seeded:
 near_misses:
   - "a using-declaration bringing the base overloads into scope"
   - "a derived member with a different name"
+  - "a CRTP base member concealed by the derived class (exception; ok_crtp.hpp)"
+  - "a function of a privately inherited base concealed (ok_private.hpp)"

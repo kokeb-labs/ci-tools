@@ -5,6 +5,7 @@ codeql:
 seeded:
   - "a forwarding reference passed on as an lvalue"
   - "a forwarding reference passed on with std::move"
+  - "std::forward<T> applied to a T& parameter (not a forwarding reference)"
 near_misses:
   - "std::forward<T> of the forwarding reference"
   - "a const T& template parameter"

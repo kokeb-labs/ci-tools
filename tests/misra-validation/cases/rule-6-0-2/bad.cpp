@@ -3,7 +3,7 @@
 
 namespace kv::rule_6_0_2::bad {
 
-extern std::int32_t const kTable[];
+extern std::int32_t const kTable[];  // seeded
 
 std::int32_t first() { return kTable[0]; }
 

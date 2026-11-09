@@ -4,8 +4,8 @@
 namespace kv::rule_22_4_1::bad_compound {
 
 void report(int code) {
-  errno = code;
-  errno += 1;
+  errno = code;  // seeded
+  errno += 1;  // seeded
 }
 
 }  // namespace kv::rule_22_4_1::bad_compound

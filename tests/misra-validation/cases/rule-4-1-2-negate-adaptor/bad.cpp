@@ -10,7 +10,7 @@ struct IsZero {
 };
 
 bool nonzero(std::uint32_t v) {
-  std::unary_negate<IsZero> not_zero = std::not1(IsZero{});
+  std::unary_negate<IsZero> not_zero = std::not1(IsZero{});  // seeded
   return not_zero(v);
 }
 

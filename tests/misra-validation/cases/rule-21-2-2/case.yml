@@ -12,7 +12,7 @@ seeded:
   - "wcslen and wcstoul (the wide forms)"
   - "strncmp and strtoul unqualified through the C headers"
   - "strchr inside a lambda passed to a template"
-  - "the address of std::strlen taken into a function pointer"
+  - "the address of std::strlen taken into a function pointer (no call)"
   - "std::strcmp called through a using-declaration"
 near_misses:
   - "std::string_view::size and starts_with"

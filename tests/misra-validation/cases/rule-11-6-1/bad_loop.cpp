@@ -6,7 +6,7 @@ namespace kv::rule_11_6_1::bad_loop {
 std::int32_t sum(std::int32_t n) {
   std::int32_t total = 0;
   for (std::int32_t i = 0; i < n; ++i) {
-    std::int32_t step;
+    std::int32_t step;  // seeded
     step = i;
     total += step;
   }

@@ -9,7 +9,7 @@ class Store {
   void touch() {
     char c{};
     file_ >> c;
-    file_ << c;
+    file_ << c;  // seeded
   }
 
  private:

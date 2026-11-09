@@ -10,7 +10,11 @@ known_misses:
       std::int8_t (a typedef of signed char) is not reported. False negative for fixed-width aliases.
 other_findings:
   - {query: cpp/misra/bit-fields-should-not-be-declared-misra-cpp, why: "true positive of Rule 12.2.1: the case needs a bit-field to exist"}
-  - {query: cpp/misra/bit-field-shall-have-an-appropriate-type, why: "misfire: std::uint8_t is an unsigned integer type; reported only because g++-14 is not recognised as GCC (see the rule-12-2-2 notes)"}
+  - query: cpp/misra/bit-field-shall-have-an-appropriate-type
+    why: >-
+      misfire: std::uint8_t (unsigned char) is an unsigned integer type. The host --mimic argument (g++-14) is not
+      recognised as GCC, so the Rule 12.2.2 query runs in its strict mode, which accepts only int written explicitly
+      signed or unsigned, and bool (see the rule-12-2-2 notes).
 seeded:
   - a named one-bit bit-field of std::int8_t (bad.cpp)
 near_misses:

@@ -1,5 +1,5 @@
 // Seeded violation: a deprecated C compatibility header.
-#include <cstdbool>
+#include <cstdbool>  // seeded
 #include <cstdint>
 
 namespace kv::rule_4_1_2_c_headers::bad {

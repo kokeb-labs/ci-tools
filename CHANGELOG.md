@@ -44,6 +44,11 @@ that heading.
   `all`, such as a compile-fail test, or one the Cortex-M target does not build) and lists it as not analysed.
 - `ru-misra` reads the tool validation's anomaly log: at the high level, findings of a rule with a recorded false
   positive are listed for review (with the anomaly ids) instead of failing the job; validated rules still fail.
+- Tool validation: every seeded violation is marked (`// seeded`) and every claimed tool must report on that line,
+  so a bad file that seeds several forms proves each detection; an independent review of all cases against the
+  guidelines corrected the cases that tested the wrong thing and added the missing forms. New cases record the
+  misreadings of class-template code found by the first driver scans. The CodeQL databases are traced with
+  `-fno-exceptions -fno-rtti`, as the scans build; clang-tidy claims accept `known_misses`.
 
 ## [1.12.1] - 2026-11-08
 

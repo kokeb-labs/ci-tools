@@ -1,5 +1,5 @@
 // Seeded violation: #pragma once instead of an include guard.
-#pragma once
+#pragma once  // seeded
 
 namespace kv::rule_19_6_1::bad_once {
 

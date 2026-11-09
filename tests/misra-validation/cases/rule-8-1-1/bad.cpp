@@ -6,7 +6,7 @@ namespace kv::rule_8_1_1::bad {
 class Counter {
  public:
   std::uint32_t read() {
-    auto f = [&]() { return count_; };
+    auto f = [&]() { return count_; };  // seeded
     return f();
   }
 

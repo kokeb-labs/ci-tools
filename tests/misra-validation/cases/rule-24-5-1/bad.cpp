@@ -4,8 +4,8 @@
 
 namespace kv::rule_24_5_1::bad {
 
-bool is_digit(char c) { return std::isdigit(static_cast<unsigned char>(c)) != 0; }
+bool is_digit(char c) { return std::isdigit(static_cast<unsigned char>(c)) != 0; }  // seeded
 
-std::wint_t upper(std::wint_t c) { return std::towupper(c); }
+std::wint_t upper(std::wint_t c) { return std::towupper(c); }  // seeded
 
 }  // namespace kv::rule_24_5_1::bad

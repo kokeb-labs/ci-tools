@@ -6,7 +6,7 @@
 namespace kv::rule_19_3_5::bad {
 
 std::uint32_t pick() {
-  return KV_PICK(
+  return KV_PICK(  // seeded
 #ifdef KV_FAST
       1U
 #else

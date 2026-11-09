@@ -6,7 +6,7 @@ namespace kv::rule_8_1_1::bad_edge {
 class Gauge {
  public:
   std::uint32_t peek() {
-    auto f = [=]() { return level_; };
+    auto f = [=]() { return level_; };  // seeded
     return f();
   }
 

@@ -8,7 +8,7 @@ namespace kv::rule_15_1_5::bad_size {
 class Samples {
  public:
   Samples(std::initializer_list<std::uint16_t> values) : count_(values.size()) {}
-  explicit Samples(std::size_t count) : count_(count) {}
+  explicit Samples(std::size_t count) : count_(count) {}  // seeded
 
   [[nodiscard]] std::size_t count() const { return count_; }
 

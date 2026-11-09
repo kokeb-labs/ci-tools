@@ -8,7 +8,7 @@ class Node {
   std::int32_t id = 0;
 };
 
-class Sensor : public virtual Node {
+class Sensor : public virtual Node {  // seeded
  public:
   std::int32_t value = 0;
 };

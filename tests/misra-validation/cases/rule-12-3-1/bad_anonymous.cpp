@@ -5,7 +5,7 @@ namespace kv::rule_12_3_1::bad_anonymous {
 
 struct Value {
   bool is_int = true;
-  union {
+  union {  // seeded
     std::int32_t i;
     float f;
   };

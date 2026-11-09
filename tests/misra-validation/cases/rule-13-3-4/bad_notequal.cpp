@@ -12,6 +12,6 @@ class Device {
 
 using Action = std::int32_t (Device::*)();
 
-bool not_stop(Action a) { return a != &Device::stop; }
+bool not_stop(Action a) { return a != &Device::stop; }  // seeded
 
 }  // namespace kv::rule_13_3_4::bad_notequal

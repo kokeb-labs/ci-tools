@@ -1,16 +1,17 @@
 #ifndef KV_RULE_6_2_4_BAD_HPP
 #define KV_RULE_6_2_4_BAD_HPP
 
-// Seeded violation: a header defines a non-inline function and a non-inline object.
+// Seeded violation: a header defines non-inline functions with external linkage.
 #include <cstdint>
 
 namespace kv::rule_6_2_4::bad {
 
-std::int32_t twice(std::int32_t v) { return v * 2; }
+std::int32_t twice(std::int32_t v) { return v * 2; }  // seeded
 
-std::int32_t const kOffset = 3;
-extern std::int32_t const kScale;
-std::int32_t const kScale = 4;
+struct Scaler {
+  std::int32_t apply(std::int32_t v) const;
+};
+std::int32_t Scaler::apply(std::int32_t v) const { return v * 3; }  // seeded
 
 }  // namespace kv::rule_6_2_4::bad
 

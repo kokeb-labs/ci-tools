@@ -11,7 +11,7 @@ union Word {
 std::uint32_t fold() {
   Word w{};
   w.half = 3U;
-  w.whole = w.half;
+  w.whole = w.half;  // seeded
   return w.whole;
 }
 

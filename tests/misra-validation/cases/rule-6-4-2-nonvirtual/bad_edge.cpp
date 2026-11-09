@@ -10,7 +10,7 @@ class Device {
 };
 class Sensor : public Device {
  public:
-  void reset(std::int32_t, std::int32_t) {}  // hides both inherited overloads
+  void reset(std::int32_t, std::int32_t) {}  // hides both inherited overloads  // seeded
 };
 void use(Sensor& s) { s.reset(1, 2); }
 

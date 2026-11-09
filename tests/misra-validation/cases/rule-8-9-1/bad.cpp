@@ -8,7 +8,7 @@ bool before() {
   std::uint8_t second[4] = {};
   std::uint8_t* a = &first[1];
   std::uint8_t* b = &second[2];
-  return a < b;
+  return a < b;  // seeded
 }
 
 }  // namespace kv::rule_8_9_1::bad

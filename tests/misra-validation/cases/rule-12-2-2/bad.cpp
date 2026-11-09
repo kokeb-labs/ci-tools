@@ -1,11 +1,11 @@
-// Seeded violation: bit-fields of plain int and plain char, whose signedness is implementation-defined.
+// Seeded violation: bit-fields of wchar_t and plain char, which are not signed or unsigned integer types.
 namespace kv::rule_12_2_2::bad {
 
 struct Packed {
-  int level : 4;
-  char tag : 3;
+  wchar_t wide : 4;  // seeded
+  char tag : 3;      // seeded
 };
 
-int level_of(const Packed& p) { return p.level; }
+bool tagged(const Packed& p) { return (p.tag != 0) || (p.wide != 0); }
 
 }  // namespace kv::rule_12_2_2::bad

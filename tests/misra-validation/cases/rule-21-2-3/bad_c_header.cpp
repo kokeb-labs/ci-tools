@@ -3,8 +3,8 @@
 
 namespace kv::rule_21_2_3::bad_c_header {
 
-int run(const char* command) { return ::system(command); }
+int run(const char* command) { return ::system(command); }  // seeded
 
-bool shell_available() { return system(nullptr) != 0; }
+bool shell_available() { return system(nullptr) != 0; }  // seeded: codeql
 
 }  // namespace kv::rule_21_2_3::bad_c_header

@@ -1,9 +1,14 @@
 ---
 guideline: Rule 6.8.1
+notes: >-
+  bad_union.cpp is the guideline's own "before its lifetime" form: reading a union member that is not the active
+  one. bad.cpp dereferences an uninitialised pointer; that is mainly a read of an indeterminate value (Rule 11.6.2),
+  kept as a second form because the query models it as an access before lifetime.
 codeql:
   queries: [cpp/misra/object-accessed-before-lifetime-misra]
 seeded:
   - "an uninitialised pointer dereferenced"
+  - "a read of a union member that is not the active member (bad_union.cpp)"
 near_misses:
   - "a pointer initialised to a live object"
   - "a pointer initialised from a conditional choosing between two live objects"

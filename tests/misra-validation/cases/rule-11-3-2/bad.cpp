@@ -3,7 +3,7 @@
 
 namespace kv::rule_11_3_2::bad {
 
-std::int32_t deref3(std::int32_t*** p) {
+std::int32_t deref3(std::int32_t*** p) {  // seeded
   return ***p;
 }
 

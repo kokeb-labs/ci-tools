@@ -7,9 +7,9 @@ struct Base {
   std::int32_t tag = 0;
 };
 
-struct Left : virtual Base {};
+struct Left : virtual Base {};  // seeded: clang-tidy
 struct Right : Base {};
-struct Both : Left, Right {};
+struct Both : Left, Right {};  // seeded: codeql
 
 std::int32_t size_hint() { return static_cast<std::int32_t>(sizeof(Both)); }
 

@@ -10,3 +10,4 @@ near_misses:
   - a scoped enum (ok.hpp)
   - enum struct, the other spelling of a scoped enum (ok_near.hpp)
   - inline constexpr constants instead of an anonymous enum (ok_near.hpp)
+  - an unscoped enum declared as a class member, permitted by the exception (ok_member.hpp)

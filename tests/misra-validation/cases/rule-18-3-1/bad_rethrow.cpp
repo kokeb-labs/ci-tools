@@ -8,8 +8,8 @@ inline void work() {}
 int main() {
   try {
     kv::rule_18_3_1::bad_rethrow::work();
-  } catch (...) {
-    throw;
+  } catch (...) {  // seeded: gcc
+    throw;  // seeded: clang
   }
   return 0;
 }

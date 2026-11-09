@@ -10,7 +10,7 @@ class Base {
 
 class Derived : public Base {
  public:
-  std::int32_t level(std::int32_t bias) const { return bias; }
+  std::int32_t level(std::int32_t bias) const { return bias; }  // seeded
 };
 
 std::int32_t use(Derived const& d) { return d.level(2); }

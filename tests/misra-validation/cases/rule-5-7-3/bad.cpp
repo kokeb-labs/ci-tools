@@ -4,7 +4,7 @@
 namespace kv::rule_5_7_3::bad {
 
 // a line comment that ends with a backslash \
-std::uint32_t hidden() { return 1U; }
+std::uint32_t hidden() { return 1U; }  // seeded@-1
 std::uint32_t two() { return 2U; }
 
 }  // namespace kv::rule_5_7_3::bad

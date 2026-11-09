@@ -1,6 +1,6 @@
 // Seeded violation: the stringising and token-pasting operators.
-#define KV_NAME(x) #x
-#define KV_JOIN(a, b) a##b
+#define KV_NAME(x) #x  // seeded
+#define KV_JOIN(a, b) a##b  // seeded
 
 namespace kv::rule_19_3_1::bad {
 

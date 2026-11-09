@@ -3,7 +3,7 @@
 
 namespace kv::rule_12_3_1::bad {
 
-union Word {
+union Word {  // seeded
   std::uint32_t value;
   std::uint8_t bytes[4];
 };

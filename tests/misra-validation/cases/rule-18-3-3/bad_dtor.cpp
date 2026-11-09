@@ -3,8 +3,8 @@ namespace kv::rule_18_3_3::bad_dtor {
 
 class Port {
  public:
-  ~Port() try {
-  } catch (...) {
+  ~Port() try {  // seeded: clang
+  } catch (...) {  // seeded: gcc
     last_ = id_;
   }
 

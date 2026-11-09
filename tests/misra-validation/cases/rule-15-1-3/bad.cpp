@@ -5,8 +5,8 @@ namespace kv::rule_15_1_3::bad {
 
 class Millivolts {
  public:
-  Millivolts(std::int32_t mv) : mv_(mv) {}
-  operator std::int32_t() const { return mv_; }
+  Millivolts(std::int32_t mv) : mv_(mv) {}  // seeded
+  operator std::int32_t() const { return mv_; }  // seeded
 
  private:
   std::int32_t mv_;

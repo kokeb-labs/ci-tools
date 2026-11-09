@@ -1,0 +1,17 @@
+---
+guideline: Rule 0.2.1
+notes: Records a false positive of the pack on data members. The main case rule-0-2-1 proves detection.
+codeql:
+  queries: [cpp/misra/unused-limited-visibility-variable]
+known_misses:
+  - query: cpp/misra/unused-limited-visibility-variable
+    kind: false-positive
+    why: >-
+      Private non-static data members of a class template (mask_, seen_) are reported as unused variables with
+      limited visibility. The guideline is about variables, and a non-static data member is not one; these
+      members are also read and written by the public members. The query counts the members as variables and
+      misses their uses in the uninstantiated template.
+seeded:
+  - "a block-scope local never referenced"
+near_misses:
+  - "private non-static data members of a class template, written and read by public members (ok.hpp)"

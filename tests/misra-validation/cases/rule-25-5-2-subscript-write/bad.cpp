@@ -6,7 +6,7 @@ namespace kv::rule_25_5_2_subscript_write::bad {
 void scribble() {
   char* home = std::getenv("HOME");
   if (home != nullptr) {
-    home[0] = '/';
+    home[0] = '/';  // seeded
   }
 }
 

@@ -2,6 +2,13 @@
 guideline: Rule 11.6.1
 codeql:
   queries: [cpp/misra/uninitialized-variable]
+other_findings:
+  - query: cpp/misra/local-variable-static-storage-duration
+    why: 'true positive of Rule 6.7.1: the near miss needs a local variable with static storage duration'
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the pack's Rule 8.20.1 query reports unsigned arithmetic on run-time operands; the guideline covers
+      operations whose operands are constant expressions.
 seeded:
   - a local assigned on both branches after an uninitialised declaration (bad.cpp)
   - an uninitialised local in a loop body (bad_loop.cpp)
@@ -11,3 +18,4 @@ near_misses:
   - value-initialised with {} (ok_near.hpp)
   - a class object initialised by its default constructor (ok_near.hpp)
   - std::array value-initialised with {} (ok_near.hpp)
+  - a function-local static without an initializer, zero-initialised (ok_static.hpp)

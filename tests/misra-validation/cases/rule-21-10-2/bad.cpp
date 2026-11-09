@@ -5,10 +5,10 @@ namespace kv::rule_21_10_2::bad {
 
 int jump_back() {
   std::jmp_buf context;
-  if (setjmp(context) != 0) {
+  if (setjmp(context) != 0) {  // seeded
     return 1;
   }
-  std::longjmp(context, 1);
+  std::longjmp(context, 1);  // seeded
 }
 
 }  // namespace kv::rule_21_10_2::bad

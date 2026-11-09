@@ -1,4 +1,4 @@
-// Seeded violation (lambda): a static_cast to a class type as a statement inside a lambda body.
+// Seeded violation (lambda): a functional-notation conversion to a class type as a statement inside a lambda body.
 #include <cstdint>
 
 namespace kv::rule_9_2_1::bad_lambda {
@@ -14,7 +14,7 @@ class Lock {
 
 std::int32_t run(std::int32_t id) {
   const auto body = [id]() {
-    static_cast<Lock>(id);
+    Lock{id};  // seeded
     return id;
   };
   return body();

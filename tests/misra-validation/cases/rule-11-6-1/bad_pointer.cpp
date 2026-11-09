@@ -4,7 +4,7 @@
 namespace kv::rule_11_6_1::bad_pointer {
 
 std::int32_t deref(std::int32_t& v) {
-  std::int32_t* p;
+  std::int32_t* p;  // seeded
   p = &v;
   return *p;
 }

@@ -8,7 +8,7 @@ struct Port {
 };
 
 bool ready(Port& port, bool enabled) {
-  return enabled && (++port.reads > 3U);
+  return enabled && (++port.reads > 3U);  // seeded
 }
 
 }  // namespace kv::rule_8_14_1::bad

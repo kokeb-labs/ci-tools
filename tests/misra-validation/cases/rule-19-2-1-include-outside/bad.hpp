@@ -1,5 +1,5 @@
 // Seeded violation: an #include placed before the include guard opens.
-#include <cstdint>
+#include <cstdint>  // seeded
 
 #ifndef KV_RULE_19_2_1_INCLUDE_OUTSIDE_BAD_HPP
 #define KV_RULE_19_2_1_INCLUDE_OUTSIDE_BAD_HPP

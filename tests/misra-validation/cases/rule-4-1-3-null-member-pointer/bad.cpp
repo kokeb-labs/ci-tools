@@ -9,7 +9,7 @@ struct Point {
 
 std::uint32_t read(const Point& p) {
   std::uint32_t Point::*pm = nullptr;
-  return p.*pm;
+  return p.*pm;  // seeded
 }
 
 }  // namespace kv::rule_4_1_3_null_member_pointer::bad

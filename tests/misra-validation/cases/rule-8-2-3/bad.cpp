@@ -4,7 +4,7 @@
 namespace kv::rule_8_2_3::bad {
 
 void reset(const std::uint32_t* reg) {
-  std::uint32_t* writable = const_cast<std::uint32_t*>(reg);
+  std::uint32_t* writable = const_cast<std::uint32_t*>(reg);  // seeded
   *writable = 0U;
 }
 

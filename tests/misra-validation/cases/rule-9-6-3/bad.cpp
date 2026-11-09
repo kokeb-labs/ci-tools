@@ -9,7 +9,7 @@ again:
   if (n > 0) {
     --n;
     ++steps;
-    goto again;
+    goto again;  // seeded
   }
   return steps;
 }

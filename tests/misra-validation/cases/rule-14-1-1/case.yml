@@ -2,6 +2,7 @@
 guideline: Rule 14.1.1
 codeql:
   queries: [cpp/misra/private-and-public-data-members-mixed]
+notes: The query reports each data member of a mixed class; the markers are on the member whose access differs.
 seeded:
   - class with a public and a private data member
   - struct with a public data member next to a protected one

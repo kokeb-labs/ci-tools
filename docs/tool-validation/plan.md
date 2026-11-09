@@ -129,14 +129,19 @@ the profile pack. A new matrix claim is a new requirement, and it fails until a 
 
 A test case is a directory under `tests/misra-validation/cases/` (or `codeql/<pack>/validation/`) with:
 
-- **Seeded violations** (`bad*`): true positives, including the edge cases the guideline targets.
+- **Seeded violations** (`bad*`): true positives, including the edge cases the guideline targets. Each seeded
+  violation ends its line with `// seeded`, and every claimed tool must report on that line: a file that seeds
+  three forms proves three detections, not one. `// seeded: codeql` (or another list of tools) limits a marker to
+  the tools that report the form on that line. A bad file without a marker is a malformed case.
 - **Compliant code** (`ok*`): true negatives, including near misses that must not be flagged. Every compliant file
   must build without a warning with the org flags on GCC and Clang. For the Cortex-M target it must also build with
   the cross GCC.
 - **The exact rule id** in `case.yml`. That is the warning option, or the clang-tidy check name, or the CodeQL
   query id. A query's result must also carry the guideline's tag (`external/misra/id/rule-x-y-z`).
 
-The snippets are our own. None is copied from the MISRA documents, whose text and examples are licensed. A CodeQL
+The snippets are our own. None is copied from the MISRA documents, whose text and examples are licensed. Each case was reviewed
+against the guideline by a reviewer who did not write it (bad files violate in every seeded form, ok files comply,
+near misses sit at the boundary); the review findings were fixed before the suite's first release. A CodeQL
 query is shown on two databases per target, one of all seeded violations and one of all compliant files. Each is
 built by a traced compile of each file. Both are analysed with the full default suites, so every result of every
 query on compliant code is seen. A result of another query on a compliant file must be listed in the case's
@@ -148,7 +153,7 @@ with `tests/misra-validation/validate.py local`.
 
 | Status | Meaning | Accepted when |
 | --- | --- | --- |
-| `pass` | On every target of every case of the requirement, the tool reports the rule id on every seeded file and nothing on every compliant file, except recorded false positives (listed with the requirement) | Always |
+| `pass` | On every target of every case of the requirement, the tool reports the rule id on every marked line of every seeded file and nothing on every compliant file, except recorded false positives (listed with the requirement) | Always |
 | `anomaly` | A recorded false negative of the rule id in any case (or only recorded anomalies), with a log entry and a disposition. The rule id is then partial for the guideline | Only for pack and profile queries; the guideline keeps the mitigation the disposition names |
 | `fail` | A test does not hold, or did not run on a target | Never |
 | `no test` | No case for the requirement | Never |

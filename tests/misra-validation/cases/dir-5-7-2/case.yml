@@ -2,9 +2,13 @@
 guideline: Dir 5.7.2
 codeql:
   queries: [cpp/misra/sections-of-code-should-not-be-commented-out]
+notes: >-
+  The query reports a run of // comments at its first line when more than half of its lines look like code. The
+  `// seeded` marker is part of the first comment line and stops that line looking like code, so each // run is
+  written with enough further code lines to stay above the threshold.
 seeded:
-  - "statements left in consecutive // comments"
+  - "declarations and a return left in a run of three // comment lines"
   - "an if statement left in a block comment"
-  - "a single assignment left in a // comment between live statements"
+  - "assignments left in a run of // comment lines between live statements"
 near_misses:
   - "prose comments that mention a mask, a shift and a section number without being code"

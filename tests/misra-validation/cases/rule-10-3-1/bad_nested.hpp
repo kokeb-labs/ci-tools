@@ -6,7 +6,7 @@
 
 namespace kv::rule_10_3_1::bad_nested {
 
-namespace {
+namespace {  // seeded
 
 inline std::uint32_t twice(std::uint32_t v) { return v << 1U; }
 

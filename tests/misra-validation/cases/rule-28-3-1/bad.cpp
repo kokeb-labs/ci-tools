@@ -22,8 +22,8 @@ bool positive_and_counted(std::int32_t value) {
 }
 
 std::ptrdiff_t count_positive(const std::array<std::int32_t, 4U>& values) {
-  return std::count_if(values.begin(), values.end(), CountingPositive{}) +
-         std::count_if(values.begin(), values.end(), positive_and_counted);
+  return std::count_if(values.begin(), values.end(), CountingPositive{}) +  // seeded
+         std::count_if(values.begin(), values.end(), positive_and_counted);  // seeded
 }
 
 }  // namespace kv::rule_28_3_1::bad

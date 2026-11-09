@@ -13,7 +13,7 @@ class Buffer {
   std::uint32_t n_;
 };
 std::uint32_t clone_size(const Buffer& b) {
-  const Buffer c(b);
+  const Buffer c(b);  // seeded
   return c.size();
 }
 

@@ -8,7 +8,7 @@ std::int32_t scan(const std::int32_t* codes, std::int32_t n) {
   for (; i < n; ++i) {
     switch (codes[i]) {
       case 0:
-        goto out;
+        goto out;  // seeded
       default:
         break;
     }

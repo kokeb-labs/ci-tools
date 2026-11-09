@@ -5,7 +5,7 @@ namespace kv::rule_10_4_1::bad_operands {
 
 std::int32_t pass(std::int32_t v) {
   std::int32_t r = v;
-  asm volatile("" : "+r"(r));
+  asm volatile("" : "+r"(r));  // seeded
   return r;
 }
 

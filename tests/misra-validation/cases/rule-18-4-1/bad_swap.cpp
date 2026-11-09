@@ -10,9 +10,9 @@ class Block {
   Block(Block&&) noexcept = default;
   Block& operator=(const Block&) = default;
   Block& operator=(Block&&) noexcept = default;
-  ~Block() noexcept(false) {}
+  ~Block() noexcept(false) {}  // seeded
 
-  void swap(Block& other) {
+  void swap(Block& other) {  // seeded
     const std::uint32_t t = size_;
     size_ = other.size_;
     other.size_ = t;

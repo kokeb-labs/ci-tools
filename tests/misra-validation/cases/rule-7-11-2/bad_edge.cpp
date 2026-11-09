@@ -9,7 +9,7 @@ struct Frame {
   std::int32_t words[2]{};
 };
 
-std::int32_t from_member(Frame const& f) { return first(f.words); }
+std::int32_t from_member(Frame const& f) { return first(f.words); }  // seeded
 
 template <typename T>
 T head(T const* p) {
@@ -18,7 +18,7 @@ T head(T const* p) {
 
 std::int32_t from_template() {
   std::int32_t const local[2] = {4, 5};
-  return head(local);
+  return head(local);  // seeded
 }
 
 }  // namespace kv::rule_7_11_2::bad_edge

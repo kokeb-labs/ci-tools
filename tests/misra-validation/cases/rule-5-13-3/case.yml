@@ -6,6 +6,7 @@ seeded:
   - "a three-digit octal literal"
   - "an octal literal in a case label"
   - "a single-digit octal literal"
+  - "000U (a multi-digit zero, outside the single-digit exception)"
 near_misses:
   - "hex 0x1ED for the same value"
   - "plain zero"

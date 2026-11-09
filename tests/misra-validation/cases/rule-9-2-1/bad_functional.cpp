@@ -13,7 +13,7 @@ class Guard {
 };
 
 std::int32_t enter(std::int32_t level) {
-  Guard{level};
+  Guard{level};  // seeded
   return level;
 }
 

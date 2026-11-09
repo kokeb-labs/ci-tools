@@ -1,16 +1,18 @@
 ---
 guideline: Rule 21.6.3
-notes: CodeQL only - the <memory> functions that manage raw storage (construct_at, destroy_at, uninitialized_*).
+notes: >-
+  CodeQL only - the <memory> functions of the guideline's list that manage raw storage (destroy_at,
+  uninitialized_*). std::construct_at is not on the list, so it is neither seeded nor used.
 codeql:
   queries: [cpp/misra/advanced-memory-management-used]
 known_misses:
   - query: cpp/misra/advanced-memory-management-used
     why: "UninitializedMemoryManagementFunction requires the function to be declared in a file named memory;
-      libstdc++ declares std::construct_at, std::destroy_at and the uninitialized_* algorithms in internal
+      libstdc++ declares std::destroy_at and the uninitialized_* algorithms in internal
       headers (bits/stl_construct.h, bits/stl_uninitialized.h) and libc++ in __memory/*.h, so their calls are
       not reported. Placement new and explicit destructor calls (rule-21-6-3) are reported."
 seeded:
-  - "std::construct_at into raw storage and std::destroy_at"
+  - "std::uninitialized_value_construct_n into raw storage and std::destroy_at"
   - "std::uninitialized_fill_n on raw storage"
 near_misses:
   - "std::optional::value_or and reset"

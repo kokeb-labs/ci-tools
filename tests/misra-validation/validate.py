@@ -12,7 +12,7 @@ A case is a directory under cases/ (or under codeql/<pack>/validation/ for the o
     guideline: Rule 0.2.2            # Dir 5.7.2, or KB-CPP-046 for an own-profile rule
     gcc:   {flag: unused-parameter}  # diagnostic names [-Wunused-parameter] (GCC [-Werror=...], Clang [-Werror,-W...])
     clang: {flag: unused-parameter}  # or message: <regex> (no option name), or error: <regex> (a hard error)
-    clang-tidy: {check: readability-braces-around-statements, options: {}, config: {}}
+    clang-tidy: {check: readability-braces-around-statements, options: {}, config: {}, message: <regex>}
     codeql: {queries: [cpp/misra/unused-parameter-misra-cpp]}
     seeded: [...]                    # each violating form the bad files seed, edge cases included (one line each)
     near_misses: [...]               # each compliant form in the ok files that resembles a violation
@@ -23,6 +23,12 @@ A case is a directory under cases/ (or under codeql/<pack>/validation/ for the o
 
 Files: `bad*` and `ok*` with .cpp (a translation unit) or .hpp/.ipp (compiled through a generated one-line unit).
 Anything else in the directory (e.g. a .inc included by a bad file) is a support file.
+
+Each seeded violation in a bad file ends its line with `// seeded` (`// seeded@-1` on the next line when the line
+cannot end in a comment, e.g. one spliced by a backslash): every tool the case claims must report on that
+line (a CodeQL claim: at least one of its queries). `// seeded: codeql` or `// seeded: gcc,clang-tidy` names the
+tools that report there when the others report the same form on another marked line. So a bad file that seeds
+three forms proves three detections, not one; a bad file without a marker is a malformed case.
 
 Commands (each writes a results JSON; `record` turns them into requirements, traceability and the report):
 
@@ -68,11 +74,46 @@ TRACE_DOC = os.path.join(REPO, "docs", "tool-validation", "traceability.md")
 # compiler-decided guidelines of the matrix rely on exactly these (ru-misra checks the caller's build uses them).
 ORG_FLAGS = ["-std=c++20", "-Wall", "-Wextra", "-Wpedantic", "-Wshadow", "-Wundef", "-Werror",
              "-fno-exceptions", "-fno-rtti"]
-CODEQL_FLAGS = ["-std=c++20", "-w"]
+# The CodeQL databases are traced with the language flags the scans build with (-fno-exceptions changes what the
+# extractor records, e.g. noexcept), warnings off so a bad file's diagnostics do not stop the trace.
+CODEQL_FLAGS = ["-std=c++20", "-fno-exceptions", "-fno-rtti", "-w"]
 TARGETS = ("host", "cortex-m")
+NO_EH = ("-fno-exceptions", "-fno-rtti")
+EH_RE = re.compile(r"\b(try|catch|throw|typeid|dynamic_cast)\b")
 HEADER_EXT = (".hpp", ".ipp")
 SOURCE_EXT = (".cpp",) + HEADER_EXT
 TOOLS = ("gcc", "clang", "clang-tidy", "codeql")
+SEEDED_RE = re.compile(r"//\s*seeded(?:@(-[1-9]))?(?::\s*([a-z-]+(?:\s*,\s*[a-z-]+)*))?\s*$")
+# GCC prints some preprocessor errors without a column (`f.cpp:2: error: unterminated #if`).
+DIAG_RE = re.compile(r"^(.*?):(\d+):(?:\d+:)? (?:fatal )?(?:warning|error): (.*)$", re.M)
+
+
+def seeded_lines(path: str) -> dict[int, set[str] | None]:
+    """The marked lines of a bad file: line -> the tools that must report there (None: every claimed tool)."""
+    marks = {}
+    with open(path, encoding="utf-8") as fh:
+        for n, text in enumerate(fh, 1):
+            m = SEEDED_RE.search(text.rstrip("\n"))
+            if m:
+                tools = {t.strip() for t in m.group(2).split(",")} if m.group(2) else None
+                if tools and tools - set(TOOLS):
+                    raise CaseError(f"{rel(path)}:{n}: unknown tool in the seeded marker: {sorted(tools - set(TOOLS))}")
+                # `// seeded@-1`: the violation is reported on the line above, which cannot end in a comment
+                # (a line spliced by a backslash).
+                marks[n + int(m.group(1) or 0)] = tools
+    return marks
+
+
+def lines_for(marks: dict[int, set[str] | None], tool: str) -> list[int]:
+    """The marked lines a tool must report on (the cross GCC is held to the gcc markers)."""
+    tool = "gcc" if tool == "gcc-arm" else tool
+    return sorted(n for n, tools in marks.items() if tools is None or tool in tools)
+
+
+def diag_lines(out: str, path: str, match) -> set[int]:
+    """Lines of `path` where a diagnostic whose text satisfies `match` is reported."""
+    return {int(m.group(2)) for m in DIAG_RE.finditer(out)
+            if os.path.abspath(m.group(1)) == os.path.abspath(path) and match(m.group(3))}
 CASE_KEYS = {"guideline", "gcc", "clang", "clang-tidy", "codeql", "other_findings", "compiles", "notes",
              "known_misses", "targets", "seeded", "near_misses"}
 
@@ -129,6 +170,14 @@ def load_cases(only: str | None = None) -> list[dict]:
                 raise CaseError(f"{rel(path)}: needs at least one bad* and one ok* .cpp/.hpp/.ipp file")
             if not any(t in spec for t in TOOLS):
                 raise CaseError(f"{rel(path)}: names no tool")
+            spec["marks"] = {f: seeded_lines(f) for f in spec["bad"]}
+            for f, marks in spec["marks"].items():
+                if not marks:
+                    raise CaseError(f"{rel(f)}: no `// seeded` marker: mark the line of each seeded violation")
+                for tools in marks.values():
+                    if tools and not tools & set(spec) - {"other_findings"}:
+                        raise CaseError(f"{rel(f)}: a seeded marker names {sorted(tools)}, which the case does "
+                                        "not claim")
             for m in spec.get("known_misses") or []:
                 m.setdefault("tool", "codeql")
                 m.setdefault("kind", "false-negative")
@@ -158,16 +207,28 @@ def compile_one(cxx: str, path: str, flags: list[str], tmp: str) -> tuple[int, s
     return r.returncode, r.stdout + r.stderr
 
 
-def compiler_claim_holds(spec: dict, rc: int, out: str) -> tuple[bool, str]:
+def compiler_matcher(spec: dict):
+    """A test of one diagnostic's text for the claim, and the claim's name."""
     if "flag" in spec:
         flag = re.escape(spec["flag"])
-        ok = re.search(rf"\[(?:-Werror,)?-W(?:error=)?{flag}\]", out) is not None
-        return ok, f"-W{spec['flag']}"
+        return (lambda t: re.search(rf"\[(?:-Werror,)?-W(?:error=)?{flag}\]", t) is not None), f"-W{spec['flag']}"
     if "message" in spec:
-        return re.search(spec["message"], out) is not None, f"message /{spec['message']}/"
+        return (lambda t: re.search(spec["message"], t) is not None), f"message /{spec['message']}/"
     if "error" in spec:
-        return rc != 0 and re.search(spec["error"], out) is not None, f"error /{spec['error']}/"
+        return (lambda t: re.search(spec["error"], t) is not None), f"error /{spec['error']}/"
     raise CaseError("a compiler entry needs flag, message or error")
+
+
+def compiler_claim_holds(spec: dict, rc: int, out: str, path: str, lines: list[int]) -> tuple[bool, str]:
+    """The claim holds on a bad file when the diagnostic is reported on every marked line (an error claim also
+    needs the compile to fail)."""
+    match, what = compiler_matcher(spec)
+    if "error" in spec and rc == 0:
+        return False, what
+    missing = sorted(set(lines) - diag_lines(out, path, match))
+    if missing:
+        return False, f"{what} on line(s) {', '.join(map(str, missing))}"
+    return True, what
 
 
 def cmd_compilers(args) -> int:
@@ -195,7 +256,7 @@ def cmd_compilers(args) -> int:
         claim = c.get("gcc" if tool == "gcc-arm" else tool)
         e = per.setdefault((c["name"], tool), {
             "case": c["name"], "guideline": c["guideline"], "tool": tool, "claimed": bool(claim),
-            "id": compiler_claim_holds(claim, 0, "")[1] if claim else "", "target": "cortex-m" if extra else "host",
+            "id": compiler_matcher(claim)[1] if claim else "", "target": "cortex-m" if extra else "host",
             "proven": False, "problems": [], "files": []})
         e["files"].append(rel(f))
         if side == "ok":
@@ -203,7 +264,7 @@ def cmd_compilers(args) -> int:
                 e["problems"].append(f"{rel(f)} must build cleanly with {' '.join(ORG_FLAGS + extra)}:\n"
                                      f"{out.strip()}")
         else:
-            ok, what = compiler_claim_holds(claim, rc, out)
+            ok, what = compiler_claim_holds(claim, rc, out, f, lines_for(c["marks"][f], tool))
             if not ok:
                 e["problems"].append(f"{rel(f)}: expected {what}, got:\n{out.strip() or '(no output)'}")
     results = list(per.values())
@@ -228,16 +289,21 @@ def darwin_sysroot() -> list[str]:
     return ["-isysroot", sdk, "-isystem", f"{sdk}/usr/include/c++/v1"] if sdk else []
 
 
-def tidy_one(binary: str, spec: dict, path: str) -> tuple[set[str], str]:
+def tidy_one(binary: str, spec: dict, path: str) -> tuple[dict[str, set[int]], str]:
     lang = "c++-header" if path.endswith(HEADER_EXT) else "c++"
     r = subprocess.run([binary, "--quiet", f"--config={tidy_config(spec)}", path, "--", "-x", lang,
                         *[f for f in ORG_FLAGS if f != "-Werror"], *darwin_sysroot(), "-I", os.path.dirname(path)],
                        capture_output=True, text=True)
     out = r.stdout + r.stderr
-    checks = set()
-    for m in re.finditer(r"^([^\n:]+):\d+:\d+: (?:warning|error): .*?\[([^\]\n]+)\]$", out, re.M):
+    checks: dict[str, set[int]] = {}
+    for m in re.finditer(r"^([^\n:]+):(\d+):\d+: (?:warning|error): (.*?) \[([^\]\n]+)\]$", out, re.M):
+        # A claim with `message` counts only the diagnostics whose text matches: the check reports more than the
+        # guideline covers (ru-misra applies the same filter).
+        if spec.get("message") and not re.search(spec["message"], m.group(3)):
+            continue
         if os.path.abspath(m.group(1)) == os.path.abspath(path):
-            checks.update(x.strip() for x in m.group(2).split(","))
+            for x in m.group(4).split(","):
+                checks.setdefault(x.strip(), set()).add(int(m.group(2)))
     return checks, out
 
 
@@ -253,13 +319,31 @@ def cmd_tidy(args) -> int:
                                        "claimed": True, "id": check, "target": "host", "proven": False,
                                        "problems": [], "files": []})
         e["files"].append(rel(f))
-        if side == "bad" and check not in checks:
-            e["problems"].append(f"{rel(f)}: expected [{check}], got:\n{out.strip() or '(no output)'}")
+        if side == "bad":
+            missing = sorted(set(lines_for(c["marks"][f], "clang-tidy")) - checks.get(check, set()))
+            if missing:
+                e["problems"].append(f"{rel(f)}: expected [{check}] on line(s) {', '.join(map(str, missing))}, "
+                                     f"got:\n{out.strip() or '(no output)'}")
         if side == "ok" and check in checks:
             e["problems"].append(f"{rel(f)}: [{check}] reported on compliant code:\n{out.strip()}")
     results = list(per.values())
+    by_name = {c["name"]: c for c in cases}
     for e in results:
-        e["proven"] = not e["problems"]
+        a = next((m for m in by_name[e["case"]].get("known_misses") or []
+                  if m["tool"] == "clang-tidy" and m["query"] == e["id"]), None)
+        if a:
+            # A recorded anomaly of the check: reported, not failed, as long as it is what the log says.
+            fn = any("expected [" in p for p in e["problems"])
+            fp = any("reported on compliant code" in p for p in e["problems"])
+            observed = "false-negative" if fn else "false-positive" if fp else ""
+            e["anomaly"] = {"kind": a["kind"], "why": a.get("why", "")}
+            if observed != a["kind"]:
+                e["problems"] = [f"recorded {a['kind']} of {e['id']} no longer occurs: remove it from known_misses "
+                                 "and from the anomaly log"] if not observed else [
+                                 f"recorded as {a['kind']} but observed {observed}", *e["problems"]]
+            else:
+                e["problems"] = []
+        e["proven"] = not e["problems"] and not a
     return finish(results, [e for e in results if e["problems"]], args.results, "clang-tidy")
 
 
@@ -303,8 +387,12 @@ def cmd_build(args) -> int:
     files = [f for c in cases for f in c[args.side]]
     bad = 0
     for f in files:
-        # Sequential and in the open: the CodeQL tracer follows each compiler process.
-        rc, text = compile_one(args.cxx, f, flags, out)
+        # Sequential and in the open: the CodeQL tracer follows each compiler process. A file that exercises
+        # exceptions or RTTI (cases of the exception guidelines) cannot build with -fno-exceptions -fno-rtti;
+        # every other file is traced with them, as the scans build.
+        with open(f, encoding="utf-8") as fh:
+            needs_eh = EH_RE.search(fh.read()) is not None
+        rc, text = compile_one(args.cxx, f, [x for x in flags if x not in NO_EH] if needs_eh else flags, out)
         if rc != 0:
             bad += 1
             print(f"::error file={rel(f)}::does not compile for the {args.target} CodeQL database:\n{text}")
@@ -327,7 +415,8 @@ def sarif_results(path: str) -> list[dict]:
             loc = (res.get("locations") or [{}])[0].get("physicalLocation", {})
             out.append({"query": rid, "tag": rules.get(rid, ""),
                         "file": loc.get("artifactLocation", {}).get("uri", "").lstrip("./"),
-                        "line": loc.get("region", {}).get("startLine", 0),
+                        # A result about a whole file (no region, e.g. a header without a guard) is on line 1.
+                        "line": loc.get("region", {}).get("startLine", 0) or 1,
                         "message": (res.get("message") or {}).get("text", "")})
     return out
 
@@ -366,13 +455,25 @@ def cmd_codeql(args) -> int:
                 else:
                     e["problems"].append("bad files do not compile, so CodeQL cannot be shown to detect them")
             else:
+                # Every marked line is reported by some claimed query, and each claimed query reports a marked
+                # line somewhere in the case (so each claim is exercised). Extra results in a bad file are not
+                # failures: a bad file may break other guidelines on the way.
+                own = 0
                 for f in c["bad"]:
-                    hits = [r for r in lookup(bad_f, f) if r["query"] == q]
-                    if not hits:
-                        e["fn"].append(f"{rel(f)}: no result of {q} (got "
-                                       f"{sorted({r['query'] for r in lookup(bad_f, f)}) or 'none'})")
-                    elif any(r["tag"] != tag for r in hits):
+                    results_f = lookup(bad_f, f)
+                    hits = [r for r in results_f if r["query"] == q]
+                    if any(r["tag"] != tag for r in hits):
                         e["problems"].append(f"{rel(f)}: {q} is tagged {hits[0]['tag'] or 'nothing'}, not {tag}")
+                    want = lines_for(c["marks"][f], "codeql")
+                    own += len({r["line"] for r in hits} & set(want))
+                    claimed_lines = {r["line"] for r in results_f if r["query"] in queries}
+                    for n in want:
+                        if n not in claimed_lines:
+                            e["fn"].append(f"{rel(f)}:{n}: seeded, but no claimed query reports this line (got "
+                                           f"{sorted({r['query'] for r in results_f if r['line'] == n}) or 'none'})")
+                if not own:
+                    e["fn"].append(f"{q} reports no marked line of any bad file (got "
+                                   f"{sorted({r['query'] for f in c['bad'] for r in lookup(bad_f, f)}) or 'none'})")
             for f in c["ok"]:
                 e["fp"] += [f"{rel(f)}:{r['line']}: {r['message']}" for r in lookup(ok_f, f) if r["query"] == q]
             a = anomalies.get(q)

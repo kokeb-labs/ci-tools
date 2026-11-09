@@ -12,4 +12,4 @@ known_misses:
 seeded:
   - "a pointer to member function initialised to nullptr and called"
 near_misses:
-  - "a member pointer checked against nullptr before use"
+  - "a pointer to member function checked against nullptr before the call"

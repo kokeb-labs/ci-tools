@@ -9,7 +9,7 @@ struct Point {
 
 static std::uint32_t Point::*g_member;  // zero-initialised: null
 
-std::uint32_t read(const Point& p) { return p.*g_member; }
+std::uint32_t read(const Point& p) { return p.*g_member; }  // seeded
 
 }  // namespace kv::rule_4_1_3_static_member_pointer::bad
 

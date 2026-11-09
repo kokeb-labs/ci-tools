@@ -8,7 +8,7 @@ namespace kv::rule_6_2_2_function::ok {
 
 std::int32_t kv_rule_6_2_2_ok_reading(std::int32_t channel);
 
-inline std::int32_t sample() { return kv_rule_6_2_2_ok_reading(1); }
+inline std::int32_t sample() { return kv_rule_6_2_2_ok_reading(std::int32_t{1}); }
 
 }  // namespace kv::rule_6_2_2_function::ok
 

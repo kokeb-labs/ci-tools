@@ -10,9 +10,9 @@ struct Timeout {
 };
 
 int guard() {
-  try {
+  try {  // seeded: clang
     return 0;
-  } catch (const Fault& f) {
+  } catch (const Fault& f) {  // seeded: gcc
     return f.code;
   } catch (Timeout t) {
     return t.ms;

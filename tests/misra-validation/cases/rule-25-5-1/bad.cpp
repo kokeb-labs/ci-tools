@@ -5,8 +5,8 @@
 namespace kv::rule_25_5_1::bad {
 
 void use_c_locale() {
-  static_cast<void>(std::setlocale(LC_ALL, "C"));
-  static_cast<void>(std::locale::global(std::locale::classic()));
+  static_cast<void>(std::setlocale(LC_ALL, "C"));  // seeded
+  static_cast<void>(std::locale::global(std::locale::classic()));  // seeded
 }
 
 }  // namespace kv::rule_25_5_1::bad

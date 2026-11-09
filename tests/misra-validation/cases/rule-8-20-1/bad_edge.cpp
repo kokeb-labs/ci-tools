@@ -3,13 +3,13 @@
 
 namespace kv::rule_8_20_1::bad_edge {
 
-std::uint32_t below_zero() { return 0U - 1U; }
+std::uint32_t below_zero() { return 0U - 1U; }  // seeded
 
-std::uint32_t product() { return 0x10000U * 0x10000U; }
+std::uint32_t product() { return 0x10000U * 0x10000U; }  // seeded
 
 constexpr std::uint32_t kTop = 0xFFFFFFFFU;
 constexpr std::uint32_t kStep = 1U;
 
-std::uint32_t named() { return kTop + kStep; }
+std::uint32_t named() { return kTop + kStep; }  // seeded
 
 }  // namespace kv::rule_8_20_1::bad_edge

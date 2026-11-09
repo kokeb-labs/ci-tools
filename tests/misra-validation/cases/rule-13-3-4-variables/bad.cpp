@@ -12,7 +12,7 @@ class Device {
 
 using Action = std::int32_t (Device::*)();
 
-bool differ(Action a, Action b) { return a != b; }
+bool differ(Action a, Action b) { return a != b; }  // seeded
 
 bool differs_from_stop(Action a) { return differ(a, &Device::stop); }
 

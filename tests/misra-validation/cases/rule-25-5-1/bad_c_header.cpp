@@ -3,6 +3,6 @@
 
 namespace kv::rule_25_5_1::bad_c_header {
 
-void use_native_numbers() { static_cast<void>(setlocale(LC_NUMERIC, "")); }
+void use_native_numbers() { static_cast<void>(setlocale(LC_NUMERIC, "")); }  // seeded
 
 }  // namespace kv::rule_25_5_1::bad_c_header

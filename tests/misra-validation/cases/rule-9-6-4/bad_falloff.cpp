@@ -3,7 +3,7 @@
 
 namespace kv::rule_9_6_4::bad_falloff {
 
-[[noreturn]] void wait(const volatile bool& ready) {
+[[noreturn]] void wait(const volatile bool& ready) {  // seeded
   while (!ready) {
   }
 }

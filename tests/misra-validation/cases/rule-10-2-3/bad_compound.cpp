@@ -7,7 +7,7 @@ enum Step { kOne = 1, kTwo = 2 };
 
 std::int32_t advance(std::int32_t v) {
   std::int32_t r = v;
-  r += kTwo;
+  r += kTwo;  // seeded
   return r;
 }
 

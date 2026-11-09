@@ -1,0 +1,17 @@
+---
+guideline: Rule 0.2.4
+notes: Records a false positive of the pack in class templates. The main case rule-0-2-4 proves detection.
+codeql:
+  queries: [cpp/misra/unused-limited-visibility-function]
+known_misses:
+  - query: cpp/misra/unused-limited-visibility-function
+    kind: false-positive
+    why: >-
+      Private members of a class template, a plain member function and a member function template, are
+      reported as never used although the public member Read calls both, and Read is called. The query does not
+      link the calls in the uninstantiated template body to the members they name.
+seeded:
+  - "an uncalled private member function"
+near_misses:
+  - "a private member function of a class template called by a public member (ok.hpp)"
+  - "a private member function template of a class template called by a public member (ok.hpp)"

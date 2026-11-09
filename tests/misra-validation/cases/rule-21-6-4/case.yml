@@ -1,10 +1,32 @@
 ---
 guideline: Rule 21.6.4
-notes: The unsized global operator delete replaced alone; the ok file replaces neither.
+notes: >-
+  The unsized global operator delete (and operator delete[]) replaced alone. The ok side replaces a corresponding
+  global pair (ok_pair.cpp) and declares a class-specific unsized operator delete, which the guideline does not
+  cover (ok_class_specific.hpp). The claimed query reports the compliant pair (see rule-21-6-4-sized-only), so the
+  claim is recorded as a false-positive anomaly rather than as passing.
 codeql:
   queries: [cpp/misra/global-sized-operator-delete-shall-be-defined]
+known_misses:
+  - query: cpp/misra/global-sized-operator-delete-shall-be-defined
+    kind: false-positive
+    why: "reports both operators of a compliant sized-and-unsized pair as unsized without a sized version;
+      isSizeDelete() compares getParameter(1).getType().getUnderlyingType() with Size_t, a type named size_t;
+      getUnderlyingType() strips the typedef, so no replacement is ever recognised as the sized form."
+other_findings:
+  - query: cpp/misra/advanced-memory-management-used
+    why: "true positive of Rule 21.6.3: every user-declared operator new or operator delete, global or
+      class-specific, is advanced memory management; Rule 21.6.4 only arises for a project that replaces one."
+  - query: cpp/misra/global-namespace-declarations
+    why: "reported by the Rule 6.0.3 query: a replacement allocation function can only be declared in the
+      global namespace, so any compliant pair is reported; not decided here whether 6.0.3 exempts it."
+  - query: cpp/misra/dynamic-memory-managed-manually
+    why: "true positive of Rule 21.6.2: the replacement releases memory with std::free."
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1: a replacement operator delete releases heap memory by definition."
 seeded:
   - "the unsized global operator delete replaced without the sized one"
+  - "the unsized global operator delete[] replaced without the sized one"
 near_misses:
-  - "no replacement of any global allocation function"
-  - "a plain struct handled by value"
+  - "the unsized and sized global operator delete replaced together in one file"
+  - "a class-specific unsized operator delete (not a global one)"

@@ -14,7 +14,7 @@ class Buffer {
 };
 
 std::uint32_t clone_size(const Buffer& b) {
-  const Buffer c(b);  // uses the deprecated implicit copy constructor
+  const Buffer c(b);  // uses the deprecated implicit copy constructor  // seeded
   return c.size();
 }
 

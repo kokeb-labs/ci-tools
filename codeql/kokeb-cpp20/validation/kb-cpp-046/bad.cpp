@@ -6,7 +6,7 @@ namespace kv::kb_cpp_046::bad {
 enum class Error : std::uint8_t { kNone, kBus };
 
 template <typename T>
-struct Result {
+struct Result {  // seeded
   T value{};
   Error error{Error::kNone};
 };
@@ -15,7 +15,7 @@ struct Result {
 
 namespace kv::kb_cpp_046::bad_plain {
 
-struct Result {
+struct Result {  // seeded
   bool ok{true};
 };
 

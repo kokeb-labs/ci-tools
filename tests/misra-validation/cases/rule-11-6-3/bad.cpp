@@ -3,7 +3,7 @@
 
 namespace kv::rule_11_6_3::bad {
 
-enum class Code : std::uint8_t { kA = 1, kB, kC = 2 };
+enum class Code : std::uint8_t { kA = 1, kB, kC = 2 };  // seeded
 
 bool same(Code x) { return x == Code::kB; }
 

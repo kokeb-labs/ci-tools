@@ -1,0 +1,18 @@
+---
+guideline: Rule 7.0.6
+notes: >-
+  An unqualified call naming a non-static member is transformed into (*this).f(...) ([class.mfct.non-static]),
+  a class member access, so it is a non-extensible call like this->f(x); with no other overload of that arity
+  the argument is overload-independent and the integer-constant form of the guideline applies.
+codeql:
+  queries: [cpp/misra/numeric-assignment-type-mismatch]
+known_misses:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    why: >-
+      An integer constant that fits, passed to a member function without overloads through an implicit this, is
+      held to the same-type requirement; the query treats only an explicit qualifier as non-extensible.
+seeded:
+  - "int constant passed to a std::uint32_t parameter of a free function (extensible call)"
+near_misses:
+  - "int constant 0 passed to a std::uint32_t parameter of a non-overloaded member through implicit this"

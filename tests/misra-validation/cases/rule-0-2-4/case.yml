@@ -10,3 +10,4 @@ seeded:
 near_misses:
   - "a private member called by a public member"
   - "a private static member called only from a lambda"
+  - "an uncalled private overload whose overload set is used (ok_overload.hpp)"

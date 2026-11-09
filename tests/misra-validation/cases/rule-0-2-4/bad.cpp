@@ -8,7 +8,7 @@ class Counter {
   std::uint32_t value() const { return count_; }
 
  private:
-  std::uint32_t twice() const { return count_ << 1U; }  // never called
+  std::uint32_t twice() const { return count_ << 1U; }  // never called  // seeded
   std::uint32_t count_{0U};
 };
 

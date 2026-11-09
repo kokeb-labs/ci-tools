@@ -11,7 +11,7 @@ struct Buffer {
 
 class Holder {
  public:
-  [[nodiscard]] Buffer take() const { return std::move(buffer_); }
+  [[nodiscard]] Buffer take() const { return std::move(buffer_); }  // seeded
 
  private:
   Buffer buffer_{};
@@ -19,7 +19,7 @@ class Holder {
 
 template <typename T>
 T duplicate(const T& value) {
-  return std::move(value);
+  return std::move(value);  // seeded
 }
 
 Buffer both(const Holder& h, const Buffer& b) {

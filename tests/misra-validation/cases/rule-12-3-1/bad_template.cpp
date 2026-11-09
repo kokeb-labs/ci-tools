@@ -4,7 +4,7 @@
 namespace kv::rule_12_3_1::bad_template {
 
 template <typename T>
-union Storage {
+union Storage {  // seeded
   T value;
   std::uint8_t raw;
 };

@@ -10,3 +10,5 @@ seeded:
 near_misses:
   - "static_assert for the compile-time fact"
   - "a run-time check function of our own named assert_channel"
+  - "assert on a run-time value (the channel parameter)"
+  - "assert(false && \"string literal\"), compliant by the guideline's exception"

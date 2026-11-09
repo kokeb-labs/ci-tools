@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <new>
 
-void operator delete(void* block, std::size_t size) noexcept {
+void operator delete(void* block, std::size_t size) noexcept {  // seeded
   static_cast<void>(size);
   std::free(block);
 }

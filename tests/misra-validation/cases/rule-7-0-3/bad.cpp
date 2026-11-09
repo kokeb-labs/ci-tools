@@ -3,8 +3,8 @@
 
 namespace kv::rule_7_0_3::bad {
 
-std::int32_t digit(char c) { return c - '0'; }
+std::int32_t digit(char c) { return c - '0'; }  // seeded
 
-char upper(char c) { return static_cast<char>(c - 32); }
+char upper(char c) { return static_cast<char>(c - 32); }  // seeded
 
 }  // namespace kv::rule_7_0_3::bad

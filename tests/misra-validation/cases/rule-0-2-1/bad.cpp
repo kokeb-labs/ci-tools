@@ -4,7 +4,7 @@
 namespace kv::rule_0_2_1::bad {
 
 std::uint32_t mask(std::uint32_t v) {
-  std::uint32_t spare = 3U;  // never referenced
+  std::uint32_t spare = 3U;  // never referenced  // seeded
   return v & 0xFFU;
 }
 

@@ -1,4 +1,4 @@
-// Seeded violation: a function and a lambda silently turned into function pointers.
+// Seeded violation: a function compared with nullptr, and a lambda turned into a function pointer by unary plus.
 #include <cstdint>
 
 namespace kv::rule_7_11_3::bad {
@@ -7,10 +7,8 @@ std::int32_t one() { return 1; }
 
 using Fn = std::int32_t (*)();
 
-std::int32_t call(Fn f) { return f(); }
+bool present() { return one != nullptr; }  // seeded
 
-bool present() { return one != nullptr; }
-
-std::int32_t use() { return call([]() -> std::int32_t { return 2; }); }
+Fn as_pointer() { return +[]() -> std::int32_t { return 2; }; }  // seeded
 
 }  // namespace kv::rule_7_11_3::bad

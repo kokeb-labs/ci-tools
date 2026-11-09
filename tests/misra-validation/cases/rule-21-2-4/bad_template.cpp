@@ -11,10 +11,10 @@ struct Header {
 
 template <typename T>
 std::size_t second_field() {
-  return offsetof(T, length);
+  return offsetof(T, length);  // seeded
 }
 
-constexpr std::size_t kLengthAt = offsetof(Header, length);
+constexpr std::size_t kLengthAt = offsetof(Header, length);  // seeded
 
 std::size_t both() { return second_field<Header>() + kLengthAt; }
 

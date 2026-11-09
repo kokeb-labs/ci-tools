@@ -13,7 +13,7 @@ struct Derived : Base {
 
 void release() {
   Base* items = new Derived[2];
-  delete[] items;  // array of Derived deleted through Base*
+  delete[] items;  // array of Derived deleted through Base*  // seeded
 }
 
 }  // namespace kv::rule_4_1_3_array_delete_type::bad

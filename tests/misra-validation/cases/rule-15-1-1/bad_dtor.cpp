@@ -8,7 +8,7 @@ class Sensor {
   Sensor(Sensor&&) = delete;
   Sensor& operator=(const Sensor&) = delete;
   Sensor& operator=(Sensor&&) = delete;
-  virtual ~Sensor() { shutdown(); }
+  virtual ~Sensor() { shutdown(); }  // seeded
   virtual void shutdown() {}
 };
 

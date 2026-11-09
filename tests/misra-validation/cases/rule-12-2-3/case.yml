@@ -11,6 +11,8 @@ other_findings:
 seeded:
   - a named one-bit signed int bit-field (bad.cpp)
   - a named one-bit signed char bit-field (bad_signedchar.cpp)
+  - a named one-bit plain int bit-field (bad_int.cpp)
 near_misses:
   - a one-bit unsigned field (ok.hpp)
   - an unsigned one-bit field next to a wider unsigned field (ok.hpp)
+  - an unnamed signed one-bit padding field (ok_unnamed.hpp)

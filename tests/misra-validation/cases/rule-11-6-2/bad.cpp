@@ -8,7 +8,7 @@ std::int32_t maybe(bool set) {
   if (set) {
     v = 3;
   }
-  return v;
+  return v;  // seeded
 }
 
 }  // namespace kv::rule_11_6_2::bad

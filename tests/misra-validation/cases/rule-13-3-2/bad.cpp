@@ -11,7 +11,7 @@ class Filter {
 
 class Strong : public Filter {
  public:
-  std::int32_t apply(std::int32_t gain = 4) const override { return gain; }
+  std::int32_t apply(std::int32_t gain = 4) const override { return gain; }  // seeded
 };
 
 std::int32_t run(const Filter& f) { return f.apply(); }

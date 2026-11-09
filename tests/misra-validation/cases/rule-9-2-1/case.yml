@@ -1,11 +1,15 @@
 ---
 guideline: Rule 9.2.1
+notes: >-
+  The guideline only applies to explicit type conversions in functional notation (a type name followed by
+  parentheses or braces). A static_cast to a class type as a statement is outside it, but it cannot be an ok file:
+  Clang rejects it with -Wunused-value under the org flags (the query also reports any cast statement).
 codeql:
   queries: [cpp/misra/no-standalone-type-cast-expression]
 seeded:
-  - static_cast to a class type as an expression statement (bad.cpp)
+  - functional-notation conversion with parentheses, Guard(level * 2);, as an expression statement (bad.cpp)
   - functional-notation brace conversion Guard{level}; as a statement (bad_functional.cpp)
-  - the same cast statement inside a lambda body (bad_lambda.cpp)
+  - a brace conversion Lock{id}; as a statement inside a lambda body (bad_lambda.cpp)
 near_misses:
   - the object is named, so it lives for its scope (ok.hpp)
   - a discarded result cast to void (ok_near.hpp)

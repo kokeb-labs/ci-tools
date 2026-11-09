@@ -5,7 +5,7 @@ namespace kv::rule_16_5_2::bad {
 
 class Register {
  public:
-  std::uint32_t* operator&() { return &value_; }
+  std::uint32_t* operator&() { return &value_; }  // seeded
 
  private:
   std::uint32_t value_ = 0U;

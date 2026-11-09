@@ -4,7 +4,7 @@
 namespace kv::rule_12_2_3_alias::bad {
 
 struct Bits {
-  std::int8_t enabled : 1;
+  std::int8_t enabled : 1;  // seeded
 };
 
 bool on(const Bits& b) { return b.enabled != 0; }

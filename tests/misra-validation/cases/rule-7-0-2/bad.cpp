@@ -1,16 +1,18 @@
-// Seeded violation: a number and a pointer used directly as conditions.
+// Seeded violation: a number used directly as a condition, and a pointer converted to a bool object.
 #include <cstdint>
 
 namespace kv::rule_7_0_2::bad {
 
-std::int32_t pick(std::int32_t flags, std::int32_t const* p) {
-  if (flags) {
+std::int32_t pick(std::int32_t flags) {
+  if (flags) {  // seeded
     return 1;
   }
-  if (p) {
-    return *p;
-  }
   return 0;
+}
+
+bool present(std::int32_t const* p) {
+  bool const has = p;  // seeded
+  return has;
 }
 
 }  // namespace kv::rule_7_0_2::bad

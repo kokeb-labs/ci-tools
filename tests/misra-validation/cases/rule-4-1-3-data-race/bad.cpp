@@ -6,7 +6,7 @@ namespace kv::rule_4_1_3_data_race::bad {
 
 std::uint32_t counter = 0U;
 
-void writer() { counter = 5U; }
+void writer() { counter = 5U; }  // seeded
 
 void reader() {
   const std::uint32_t seen = counter;

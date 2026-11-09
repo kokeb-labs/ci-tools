@@ -1,6 +1,9 @@
 ---
 guideline: Rule 25.5.3
-notes: The clang-tidy claim bans every call of these functions, so the ok file calls none of them.
+notes: >-
+  The clang-tidy claim bans every call of these functions, so it is held to the call lines and the ok file calls
+  none of them; CodeQL is held to the line that uses the first result after the second call. Storing a result in an
+  object is not itself a violation; bad_stored.cpp reads the stored pointer after the next call.
 clang-tidy:
   check: bugprone-unsafe-functions
   options:
@@ -11,6 +14,6 @@ codeql:
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
 seeded:
   - "the first getenv result compared after a second getenv call"
-  - "a getenv result stored in an object"
+  - "a getenv result kept in a struct member and read after a second getenv call"
 near_misses:
   - "the values passed as parameters (no function with a static result buffer is called)"

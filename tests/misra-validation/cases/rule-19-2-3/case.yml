@@ -5,6 +5,7 @@ codeql:
 seeded:
   - quoted header name containing an apostrophe
   - bracketed header name containing an apostrophe
+  - quoted header name containing the // sequence (bad_slashes.cpp)
 near_misses:
   - header names of letters, digits, underscores and dots
   - header names with dashes and a version dot (kv-plain.v2.hpp)

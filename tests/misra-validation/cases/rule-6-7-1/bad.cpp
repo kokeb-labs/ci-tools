@@ -4,7 +4,7 @@
 namespace kv::rule_6_7_1::bad {
 
 std::int32_t next_id() {
-  static std::int32_t counter = 0;
+  static std::int32_t counter = 0;  // seeded
   ++counter;
   return counter;
 }

@@ -5,9 +5,9 @@ namespace kv::rule_9_3_1::bad_while {
 
 std::int32_t drain(std::int32_t n, std::int32_t mode) {
   std::int32_t steps = 0;
-  while (n > steps)
+  while (n > steps)  // seeded
     ++steps;
-  switch (mode)
+  switch (mode)  // seeded: codeql
     default:
       steps = 0;
   return steps;

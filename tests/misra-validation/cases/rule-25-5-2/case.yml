@@ -1,6 +1,8 @@
 ---
 guideline: Rule 25.5.2
-notes: The clang-tidy claim bans every call of these functions, so the ok file calls none of them.
+notes: >-
+  The clang-tidy claim bans every call of these functions, so it is held to the call lines and the ok files call
+  none of them; CodeQL is held to the line that writes through the returned pointer.
 clang-tidy:
   check: bugprone-unsafe-functions
   options:
@@ -10,6 +12,7 @@ codeql:
 seeded:
   - "the result of getenv and of strerror written through *p"
   - "the result of setlocale written through *p"
+  - "a write through a char* member of localeconv's result held through a pointer to const"
 near_misses:
   - "configuration passed as a parameter"
   - "a function of our own named getenv whose buffer we own"

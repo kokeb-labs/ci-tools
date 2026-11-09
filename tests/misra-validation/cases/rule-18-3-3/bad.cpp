@@ -3,8 +3,8 @@ namespace kv::rule_18_3_3::bad {
 
 class Port {
  public:
-  Port() try : id_(1) {
-  } catch (...) {
+  Port() try : id_(1) {  // seeded: clang
+  } catch (...) {  // seeded: gcc
     id_ = 0;
   }
 

@@ -7,8 +7,8 @@ namespace kv::rule_4_1_2_temporary_buffer::bad_edge {
 
 template <typename T>
 std::ptrdiff_t room() {
-  const auto buf = std::get_temporary_buffer<T>(2);
-  std::return_temporary_buffer(buf.first);
+  const auto buf = std::get_temporary_buffer<T>(2);  // seeded
+  std::return_temporary_buffer(buf.first);  // seeded
   return buf.second;
 }
 std::ptrdiff_t room_bytes() { return room<std::uint8_t>(); }

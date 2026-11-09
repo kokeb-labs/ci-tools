@@ -1,9 +1,15 @@
 ---
 guideline: Rule 6.4.2
+notes: >-
+  The using-declaration form of Rule 6.4.2: a using-declaration in a derived class does not introduce a base
+  overload whose signature the derived class itself declares, so that overload is concealed. This case used to claim
+  cpp/misra/definition-shall-be-considered-for-unqualified-lookup with a namespace-scope using-declaration before a
+  later overload; that query only looks at namespace-scope functions (the old MISRA 2008 7-3-5 / AUTOSAR A7-3-1
+  check), which is not a Rule 6.4.2 form, so the claim was dropped. The non-virtual hiding query is claimed instead.
 codeql:
-  queries: [cpp/misra/definition-shall-be-considered-for-unqualified-lookup]
+  queries: [cpp/misra/inherited-non-overridable-member-function]
 seeded:
-  - "a using-declaration that precedes a later overload, which a call then misses"
+  - "a derived redeclaration of a base overload's signature next to a using-declaration of the base overload set"
 near_misses:
-  - "the using-declaration after every overload"
-  - "a second overload set completed before its using-declaration"
+  - "a using-declaration of the base overloads plus a derived overload with a new signature"
+  - "a using-declaration of a single base function plus a derived overload"

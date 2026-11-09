@@ -10,7 +10,7 @@ std::int32_t first(std::int32_t count, ...);
 
 inline std::int32_t use() {
   const std::int32_t value = 7;
-  return first(1, value);
+  return first(std::int32_t{1}, value);
 }
 
 }  // namespace kv::rule_8_2_11_trivial::ok

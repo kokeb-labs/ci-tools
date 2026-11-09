@@ -7,7 +7,7 @@ enum class Mode : std::uint8_t { kIdle, kRun, kStop };
 
 std::int32_t cost(Mode m) {
   std::int32_t c = 0;
-  switch (m) {
+  switch (m) {  // seeded
     case Mode::kIdle:
       c = 1;
       break;

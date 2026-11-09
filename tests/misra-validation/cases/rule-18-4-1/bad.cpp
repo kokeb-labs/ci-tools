@@ -7,9 +7,9 @@ class Block {
  public:
   Block() = default;
   Block(const Block&) = default;
-  Block(Block&& other) : size_(other.size_) {}
+  Block(Block&& other) : size_(other.size_) {}  // seeded
   Block& operator=(const Block&) = default;
-  Block& operator=(Block&& other) {
+  Block& operator=(Block&& other) {  // seeded
     size_ = other.size_;
     return *this;
   }

@@ -1,13 +1,17 @@
-// Compliant near miss: the global allocation functions are untouched; objects come from a static pool.
+// Compliant near miss: a class-specific (member) operator delete in the unsized form only. Rule 21.6.4 is about
+// the global operator delete, so a member form without its sized partner is outside it.
 #ifndef KV_RULE_21_6_4_OK_CLASS_SPECIFIC_HPP
 #define KV_RULE_21_6_4_OK_CLASS_SPECIFIC_HPP
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 
 namespace kv::rule_21_6_4::ok_class_specific {
 
 struct Block {
+  static void* operator new(std::size_t size);
+  static void operator delete(void* block) noexcept;
   std::array<std::uint32_t, 4U> words;
 };
 

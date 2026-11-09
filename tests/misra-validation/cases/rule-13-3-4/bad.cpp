@@ -12,6 +12,6 @@ class Device {
 
 using Action = std::int32_t (Device::*)();
 
-bool is_start(Action a) { return a == &Device::start; }
+bool is_start(Action a) { return a == &Device::start; }  // seeded
 
 }  // namespace kv::rule_13_3_4::bad

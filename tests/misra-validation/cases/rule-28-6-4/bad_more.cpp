@@ -7,11 +7,11 @@
 namespace kv::rule_28_6_4::bad_more {
 
 void drop_negatives(std::array<std::int32_t, 4U>& values) {
-  std::remove_if(values.begin(), values.end(), [](std::int32_t v) { return v < 0; });
+  std::remove_if(values.begin(), values.end(), [](std::int32_t v) { return v < 0; });  // seeded
 }
 
-void forget(std::unique_ptr<std::int32_t>& owner) { owner.release(); }
+void forget(std::unique_ptr<std::int32_t>& owner) { owner.release(); }  // seeded
 
-void probe(const std::array<std::int32_t, 4U>& values) { values.empty(); }
+void probe(const std::array<std::int32_t, 4U>& values) { values.empty(); }  // seeded
 
 }  // namespace kv::rule_28_6_4::bad_more

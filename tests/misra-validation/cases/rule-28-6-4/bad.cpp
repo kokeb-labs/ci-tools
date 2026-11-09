@@ -7,10 +7,10 @@
 namespace kv::rule_28_6_4::bad {
 
 void tidy(std::array<std::int32_t, 6U>& values) {
-  std::remove(values.begin(), values.end(), 0);
-  std::unique(values.begin(), values.end());
+  std::remove(values.begin(), values.end(), 0);  // seeded
+  std::unique(values.begin(), values.end());  // seeded
 }
 
-void check(const std::vector<std::int32_t>& values) { values.empty(); }
+void check(const std::vector<std::int32_t>& values) { values.empty(); }  // seeded
 
 }  // namespace kv::rule_28_6_4::bad

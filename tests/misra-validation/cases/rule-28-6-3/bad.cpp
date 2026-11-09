@@ -8,7 +8,7 @@ namespace kv::rule_28_6_3::bad {
 std::size_t total_length() {
   std::string first{"sensor"};
   const std::string second = std::move(first);
-  return first.size() + second.size();
+  return first.size() + second.size();  // seeded
 }
 
 }  // namespace kv::rule_28_6_3::bad

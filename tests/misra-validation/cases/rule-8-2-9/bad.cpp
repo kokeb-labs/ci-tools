@@ -8,7 +8,7 @@ struct Shape {
 };
 
 bool same_kind(const Shape& a, const Shape& b) {
-  return typeid(a) == typeid(b);
+  return typeid(a) == typeid(b);  // seeded
 }
 
 }  // namespace kv::rule_8_2_9::bad

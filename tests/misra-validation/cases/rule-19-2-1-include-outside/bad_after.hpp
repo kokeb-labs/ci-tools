@@ -10,4 +10,4 @@ inline unsigned char one() { return 1U; }
 
 #endif  // KV_RULE_19_2_1_INCLUDE_OUTSIDE_BAD_AFTER_HPP
 
-#include <cstdint>
+#include <cstdint>  // seeded

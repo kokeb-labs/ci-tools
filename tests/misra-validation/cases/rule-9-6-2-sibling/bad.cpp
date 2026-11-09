@@ -8,7 +8,7 @@ std::int32_t hop(std::int32_t n) {
   std::int32_t j = 0;
   for (std::int32_t i = 0; i < n; ++i) {
     if (i == 2) {
-      goto inside;
+      goto inside;  // seeded
     }
   }
   while (j < n) {

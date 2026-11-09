@@ -9,7 +9,7 @@ std::uint32_t first_odd(std::uint32_t n) {
     if ((i & 1U) != 0U) {
       found = i;
       break;
-      found = 0U;  // after break: never runs
+      found = 0U;  // after break: never runs  // seeded
     }
   }
   return found;
@@ -18,7 +18,7 @@ std::uint32_t first_odd(std::uint32_t n) {
 std::uint32_t via_lambda(std::uint32_t v) {
   const auto f = [](std::uint32_t x) {
     return x | 1U;
-    x = 0U;  // after return inside the lambda
+    x = 0U;  // after return inside the lambda  // seeded
   };
   return f(v);
 }

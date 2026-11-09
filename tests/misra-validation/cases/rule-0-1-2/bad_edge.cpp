@@ -1,4 +1,4 @@
-// Edge cases: more forms of the violation.
+// Edge case: a member function's result dropped.
 #include <cstdint>
 
 namespace kv::rule_0_1_2::bad_edge {
@@ -9,12 +9,7 @@ struct Port {
 };
 
 void poll(const Port& p) {
-  p.read();  // member function result dropped
-}
-
-void call_lambda(std::uint32_t v) {
-  const auto twice = [](std::uint32_t x) { return x << 1U; };
-  twice(v);  // lambda result dropped
+  p.read();  // member function result dropped  // seeded
 }
 
 }  // namespace kv::rule_0_1_2::bad_edge

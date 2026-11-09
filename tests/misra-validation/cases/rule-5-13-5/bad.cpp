@@ -3,6 +3,6 @@
 
 namespace kv::rule_5_13_5::bad {
 
-std::int64_t big() { return 5l; }
+std::int64_t big() { return 5l; }  // seeded
 
 }  // namespace kv::rule_5_13_5::bad

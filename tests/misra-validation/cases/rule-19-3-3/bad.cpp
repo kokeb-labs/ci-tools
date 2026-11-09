@@ -2,7 +2,7 @@
 #include <cstdint>
 
 #define KV_LIMIT 7U
-#define KV_SHOW(x) kv::rule_19_3_3::bad::Entry{#x, (x)}
+#define KV_SHOW(x) kv::rule_19_3_3::bad::Entry{#x, (x)}  // seeded
 
 namespace kv::rule_19_3_3::bad {
 

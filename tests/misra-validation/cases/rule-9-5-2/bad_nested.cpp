@@ -13,7 +13,7 @@ const std::array<std::int32_t, 3>& source() {
 
 std::int32_t total() {
   std::int32_t sum = 0;
-  for (const std::int32_t v : pick(source())) {
+  for (const std::int32_t v : pick(source())) {  // seeded
     sum += v;
   }
   return sum;

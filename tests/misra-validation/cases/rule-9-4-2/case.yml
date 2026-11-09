@@ -1,5 +1,10 @@
 ---
 guideline: Rule 9.4.2
+notes: >-
+  A default label may only be left out for an unscoped enumeration without a fixed underlying type whose
+  enumerators are all listed. A scoped enumeration, or one with a fixed underlying type, still needs a default even
+  when every enumerator is listed; the query treats every enum switch that lists all enumerators as complete, so
+  that form is a known false negative kept in its own case.
 codeql:
   queries: [cpp/misra/appropriate-structure-of-switch-statement]
 seeded:
@@ -14,4 +19,5 @@ near_misses:
   - default first (ok_near.hpp)
   - a clause body in its own braced block ending in break (ok_near.hpp)
   - clauses that end in return instead of break (ok_near.hpp)
-  - an enum switch covering every enumerator, with no default (ok_near.hpp)
+  - a branch ended by [[fallthrough]]; (ok_near.hpp)
+  - a switch over an unscoped enumeration without a fixed underlying type covering every enumerator, with no default (ok_near.hpp)

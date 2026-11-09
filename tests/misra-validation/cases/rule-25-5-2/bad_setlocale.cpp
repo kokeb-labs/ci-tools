@@ -4,9 +4,9 @@
 namespace kv::rule_25_5_2::bad_setlocale {
 
 void scribble() {
-  char* name = std::setlocale(LC_ALL, nullptr);
+  char* name = std::setlocale(LC_ALL, nullptr);  // seeded: clang-tidy
   if (name != nullptr) {
-    *name = 'C';
+    *name = 'C';  // seeded: codeql
   }
 }
 

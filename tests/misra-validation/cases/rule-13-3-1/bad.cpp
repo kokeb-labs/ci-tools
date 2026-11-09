@@ -11,7 +11,7 @@ class Port {
 
 class Fake : public Port {
  public:
-  virtual std::int32_t read() const { return 1; }
+  virtual std::int32_t read() const { return 1; }  // seeded
 };
 
 std::int32_t sample(const Port& p) { return p.read(); }

@@ -11,7 +11,7 @@ struct Codec {
 };
 
 template <>
-std::uint8_t Codec::decode<std::uint8_t>(std::uint8_t v) {
+std::uint8_t Codec::decode<std::uint8_t>(std::uint8_t v) {  // seeded
   return static_cast<std::uint8_t>(v & 0x7FU);
 }
 

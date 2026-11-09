@@ -3,7 +3,7 @@
 
 namespace kv::rule_11_6_3::bad_later {
 
-enum class Reg : std::uint8_t { kCtrl = 3, kStat = 2, kData };
+enum class Reg : std::uint8_t { kCtrl = 3, kStat = 2, kData };  // seeded
 
 bool is_data(Reg r) { return r == Reg::kData; }
 

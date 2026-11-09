@@ -7,12 +7,10 @@ std::int32_t two() { return 2; }
 
 using Fn = std::int32_t (*)();
 
-std::int32_t call(Fn f) { return f(); }
-
-std::int32_t by_name() { return call(two); }
+Fn decayed() { return +two; }  // seeded
 
 bool exists() {
-  if (two) {
+  if (two) {  // seeded
     return true;
   }
   return false;

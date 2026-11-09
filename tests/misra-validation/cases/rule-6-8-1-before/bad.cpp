@@ -5,7 +5,7 @@ namespace kv::rule_6_8_1_before::bad {
 
 std::int32_t early() {
   std::int32_t const* p;
-  return *p;
+  return *p;  // seeded
 }
 
 }  // namespace kv::rule_6_8_1_before::bad

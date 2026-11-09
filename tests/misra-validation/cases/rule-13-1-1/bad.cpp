@@ -7,7 +7,7 @@ struct Node {
   std::int32_t id = 0;
 };
 
-struct Sensor : virtual Node {
+struct Sensor : virtual Node {  // seeded
   std::int32_t value = 0;
 };
 

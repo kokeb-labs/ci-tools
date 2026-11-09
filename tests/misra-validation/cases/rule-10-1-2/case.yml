@@ -2,11 +2,19 @@
 guideline: Rule 10.1.2
 codeql:
   queries: [cpp/misra/volatile-qualifier-not-used-appropriately]
+known_misses:
+  - query: cpp/misra/volatile-qualifier-not-used-appropriately
+    kind: false-negative
+    why: >-
+      A volatile-qualified member function (bad_member.cpp) is not reported; locals, parameters (by value and
+      volatile pointers) and return types are.
 seeded:
   - volatile local, parameter and return type together (bad.cpp)
   - a volatile local alone (bad_local.cpp)
-  - a volatile by-value parameter alone (bad_param.cpp)
+  - a volatile by-value parameter and a volatile pointer parameter (bad_param.cpp)
+  - a volatile-qualified member function (bad_member.cpp)
 near_misses:
   - a volatile member of a register block (ok.hpp)
-  - a reference to a volatile register parameter (ok_near.hpp)
+  - a reference to a register block with volatile members (ok_near.hpp)
+  - a parameter of type reference to volatile (ok_near.hpp)
   - a non-volatile local copy of a register value (ok_near.hpp)

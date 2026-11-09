@@ -8,6 +8,7 @@ other_findings:
 seeded:
   - "a string read after it was moved from"
   - "a string moved on one branch and read after the branches join"
+  - "an lvalue reference parameter moved from and not reassigned before return"
 near_misses:
   - "the moved-from object not used again"
   - "the size taken before a conditional move"

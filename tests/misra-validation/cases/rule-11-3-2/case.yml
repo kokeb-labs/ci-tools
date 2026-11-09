@@ -6,6 +6,7 @@ seeded:
   - a three-level pointer parameter (bad.cpp)
   - a three-level pointer local (bad_local.cpp)
   - a three-level pointer member (bad_member.cpp)
+  - a third level hidden behind a type alias (bad_typedef.cpp)
 near_misses:
   - a reference instead of a pointer (ok.hpp)
   - exactly two levels of pointer (ok_near.hpp)

@@ -3,7 +3,7 @@ namespace kv::rule_15_1_1::bad {
 
 class Sensor {
  public:
-  Sensor() { init(); }
+  Sensor() { init(); }  // seeded
   Sensor(const Sensor&) = delete;
   Sensor(Sensor&&) = delete;
   Sensor& operator=(const Sensor&) = delete;

@@ -1,0 +1,16 @@
+---
+guideline: Rule 9.4.2
+notes: Records a false negative of the pack.
+codeql:
+  queries: [cpp/misra/appropriate-structure-of-switch-statement]
+known_misses:
+  - query: cpp/misra/appropriate-structure-of-switch-statement
+    kind: false-negative
+    why: >-
+      a switch over a scoped enumeration (or one with a fixed underlying type) that lists every enumerator but has
+      no default label is not reported: the query exempts every enum switch that covers all enumerators, while the
+      guideline's exception only covers unscoped enumerations without a fixed underlying type
+seeded:
+  - "a scoped-enum switch listing every enumerator, with no default label"
+near_misses:
+  - "the same switch with a default label"

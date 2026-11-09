@@ -4,8 +4,8 @@
 
 namespace kv::rule_21_2_1::bad {
 
-std::int32_t parse_int(const char* text) { return std::atoi(text); }
+std::int32_t parse_int(const char* text) { return std::atoi(text); }  // seeded
 
-double parse_real(const char* text) { return std::atof(text); }
+double parse_real(const char* text) { return std::atof(text); }  // seeded
 
 }  // namespace kv::rule_21_2_1::bad

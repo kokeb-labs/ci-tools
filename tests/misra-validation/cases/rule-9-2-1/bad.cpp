@@ -1,4 +1,5 @@
-// Seeded violation: a cast to a class type used as a whole statement; the temporary dies at once.
+// Seeded violation: a functional-notation conversion to a class type (parentheses) used as a whole statement; the
+// temporary dies at once. (Guard(level); alone would declare a variable named level.)
 #include <cstdint>
 
 namespace kv::rule_9_2_1::bad {
@@ -13,7 +14,7 @@ class Guard {
 };
 
 std::int32_t enter(std::int32_t level) {
-  static_cast<Guard>(level);
+  Guard(level * 2);  // seeded
   return level;
 }
 

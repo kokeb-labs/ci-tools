@@ -12,7 +12,7 @@ struct Derived : Base {
 
 std::uint32_t peek(Base* b) {
   std::uint32_t Base::*pm = static_cast<std::uint32_t Base::*>(&Derived::extra);
-  return b->*pm;  // the object is a Base: it has no extra
+  return b->*pm;  // the object is a Base: it has no extra  // seeded
 }
 
 std::uint32_t run() {

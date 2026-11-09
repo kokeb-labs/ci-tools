@@ -4,11 +4,11 @@
 namespace kv::rule_10_0_1::bad {
 
 struct Point {
-  std::int32_t x, y;
+  std::int32_t x, y;  // seeded
 };
 
 std::int32_t manhattan(const Point& p) {
-  std::int32_t dx = p.x, dy = p.y;
+  std::int32_t dx = p.x, dy = p.y;  // seeded
   return dx + dy;
 }
 

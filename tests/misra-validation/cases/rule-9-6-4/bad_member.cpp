@@ -5,7 +5,7 @@ namespace kv::rule_9_6_4::bad_member {
 
 class Fault {
  public:
-  [[noreturn]] void raise(std::int32_t code) {
+  [[noreturn]] void raise(std::int32_t code) {  // seeded
     code_ = code;
     if (code_ != 0) {
       for (;;) {

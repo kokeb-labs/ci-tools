@@ -5,7 +5,7 @@
 namespace kv::rule_21_2_2::bad_address {
 
 std::size_t measure(const char* text) {
-  std::size_t (*const length)(const char*) = &std::strlen;
+  std::size_t (*const length)(const char*) = &std::strlen;  // seeded
   return length(text);
 }
 

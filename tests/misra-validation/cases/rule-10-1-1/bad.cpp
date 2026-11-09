@@ -7,7 +7,7 @@ struct Sample {
   std::int32_t raw;
 };
 
-std::int32_t read_raw(Sample& s) {
+std::int32_t read_raw(Sample& s) {  // seeded
   return s.raw;
 }
 

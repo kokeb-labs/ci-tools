@@ -6,8 +6,8 @@ void step();
 void run() noexcept {
   try {
     step();
-  } catch (...) {
-    throw;
+  } catch (...) {  // seeded: gcc
+    throw;  // seeded: clang
   }
 }
 

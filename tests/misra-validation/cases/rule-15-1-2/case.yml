@@ -2,8 +2,15 @@
 guideline: Rule 15.1.2
 codeql:
   queries: [cpp/misra/initialize-all-virtual-base-classes]
+known_misses:
+  - query: cpp/misra/initialize-all-virtual-base-classes
+    kind: false-positive
+    why: >-
+      A constructor that leaves an empty base class (no data members, no virtual functions) out of its initializer
+      list (ok_empty.hpp) is reported; the guideline's exception says an empty base need not be initialised.
 seeded:
   - converting constructor that leaves its base out of the initializer list
   - copy constructor that default-initialises the base instead of copying it
 near_misses:
   - constructor naming its base in the initializer list
+  - constructor leaving out an empty base class, permitted by the exception (ok_empty.hpp)

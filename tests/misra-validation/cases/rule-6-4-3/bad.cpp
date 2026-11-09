@@ -14,7 +14,7 @@ struct Base {
 
 template <typename T>
 struct Channel : Base<T> {
-  std::int32_t scaled() const { return gain(); }
+  std::int32_t scaled() const { return gain(); }  // seeded
 };
 
 std::int32_t use() { return Channel<std::int32_t>{}.scaled(); }

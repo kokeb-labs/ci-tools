@@ -8,7 +8,7 @@ struct Base {
 };
 
 template <typename T>
-struct Holder : virtual Base {
+struct Holder : virtual Base {  // seeded
   T item{};
 };
 

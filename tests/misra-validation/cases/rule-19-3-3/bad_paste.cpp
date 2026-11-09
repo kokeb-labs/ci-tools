@@ -2,7 +2,7 @@
 #include <cstdint>
 
 #define KV_BANK 2U
-#define KV_REG(x) (x + kv::rule_19_3_3::bad_paste::k##x)
+#define KV_REG(x) (x + kv::rule_19_3_3::bad_paste::k##x)  // seeded
 
 namespace kv::rule_19_3_3::bad_paste {
 

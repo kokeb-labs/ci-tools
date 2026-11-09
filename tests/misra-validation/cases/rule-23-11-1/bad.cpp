@@ -8,8 +8,8 @@ struct Sensor {
   std::int32_t id;
 };
 
-std::unique_ptr<Sensor> make_unique_sensor() { return std::unique_ptr<Sensor>(new Sensor{1}); }
+std::unique_ptr<Sensor> make_unique_sensor() { return std::unique_ptr<Sensor>(new Sensor{1}); }  // seeded
 
-std::shared_ptr<Sensor> make_shared_sensor() { return std::shared_ptr<Sensor>(new Sensor{2}); }
+std::shared_ptr<Sensor> make_shared_sensor() { return std::shared_ptr<Sensor>(new Sensor{2}); }  // seeded
 
 }  // namespace kv::rule_23_11_1::bad

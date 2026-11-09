@@ -1,13 +1,19 @@
 ---
 guideline: Rule 4.1.2
+notes: >-
+  Not exercisable in C++20: every std::allocator member deprecated by C++17 (pointer, reference, address,
+  max_size, construct, destroy, rebind and the hinted allocate) is removed in C++20, so code that uses one does
+  not compile (compiles: false) and CodeQL cannot be shown to detect it. The requirement is recorded as an
+  anomaly, not as passing. The non-deprecated members (value_type, size_type) are no substitute.
 codeql:
   queries: [cpp/misra/use-of-deprecated-std-allocator-member]
+compiles: false
 known_misses:
   - query: cpp/misra/use-of-deprecated-std-allocator-member
     why: >-
       not exercisable in C++20: the deprecated std::allocator members (address, max_size, construct, destroy, rebind, pointer, reference and the two-argument allocate) are removed from libstdc++ and libc++ in C++20 mode, so code that uses them does not compile. The query also matches only alias-declaration members, while both libraries declare value_type, size_type and difference_type with typedef.
 seeded:
-  - "a reference type formed from std::allocator's value_type (the removed reference member is not usable in C++20)"
+  - "std::allocator<T>::reference used as a type (a compile error in C++20)"
 near_misses:
   - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
   - "a user class with members named max_size and address"

@@ -2,4 +2,4 @@
 #include <cstdlib>
 #include <new>
 
-void operator delete(void* block) noexcept { std::free(block); }
+void operator delete(void* block) noexcept { std::free(block); }  // seeded

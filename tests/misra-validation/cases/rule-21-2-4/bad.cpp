@@ -9,6 +9,6 @@ struct Frame {
   std::uint32_t payload;
 };
 
-std::size_t payload_offset() { return offsetof(Frame, payload); }
+std::size_t payload_offset() { return offsetof(Frame, payload); }  // seeded
 
 }  // namespace kv::rule_21_2_4::bad

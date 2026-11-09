@@ -2,6 +2,6 @@
 
 namespace kv::rule_5_13_1_raw_string::bad {
 
-const char* path() { return "dir\qfile"; }
+const char* path() { return "dir\qfile"; }  // seeded
 
 }  // namespace kv::rule_5_13_1_raw_string::bad

@@ -3,11 +3,17 @@ guideline: Rule 6.4.1
 gcc: {flag: shadow}
 codeql:
   queries: [cpp/misra/variable-declared-in-inner-scope-hides-outer-scope]
+notes: >-
+  -Wshadow is stricter than the guideline in two places, so neither compliant form can be an ok file (the org flags
+  include -Wshadow -Werror): a captureless lambda's parameter named like an enclosing local (compliant: the local
+  cannot be found inside the lambda body) and a constructor parameter named like the member it initialises
+  (compliant by the exception). GCC warns on both.
 seeded:
   - "a loop-body local hiding an outer local"
   - "a local hiding a data member"
   - "a nested-block local hiding a parameter"
-  - "a lambda parameter hiding an enclosing parameter"
+  - "a local hiding a namespace-scope variable"
+  - "a lambda-body local hiding a captured variable"
 near_misses:
   - "names that differ"
   - "the same loop counter name in two sibling loops"

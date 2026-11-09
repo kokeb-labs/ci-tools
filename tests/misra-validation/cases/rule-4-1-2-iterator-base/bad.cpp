@@ -4,7 +4,7 @@
 
 namespace kv::rule_4_1_2_iterator_base::bad {
 
-struct Counting : std::iterator<std::input_iterator_tag, std::uint32_t> {
+struct Counting : std::iterator<std::input_iterator_tag, std::uint32_t> {  // seeded
   std::uint32_t n{0U};
 };
 

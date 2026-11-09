@@ -1,0 +1,23 @@
+---
+guideline: Rule 18.4.1
+notes: >-
+  Records a false positive of the pack that appears only when the database is built with -fno-exceptions (the
+  org flags); a build with exceptions enabled does not show it. The main case rule-18-4-1 proves detection.
+codeql:
+  queries: [cpp/misra/exception-unfriendly-function-must-be-noexcept]
+known_misses:
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    why: >-
+      Under -fno-exceptions, constexpr noexcept functions that initialise namespace-scope variables (Defaults,
+      MakeTable) are reported as needing noexcept. They are declared noexcept; the extractor drops the
+      exception specification when exceptions are disabled, so the query sees them as potentially throwing.
+other_findings:
+  - query: cpp/misra/unused-limited-visibility-variable
+    why: >-
+      misfire: the Rule 0.2.1 query reports the non-static data member Config::value, which is not a variable
+      for that rule and is read by DefaultValue().
+seeded:
+  - "move constructor without noexcept"
+near_misses:
+  - "constexpr noexcept functions initialising inline constexpr namespace-scope variables (ok.hpp)"

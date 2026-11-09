@@ -1,5 +1,10 @@
 ---
 guideline: Rule 8.2.1
+notes: >-
+  fuchsia-virtual-inheritance reports the declaration of a virtual base, not the cast: it decides the guideline only
+  together with the policy of having no virtual bases at all, and it would also report the compliant dynamic_cast
+  from a virtual base (which cannot be an ok file here: -fno-rtti forbids dynamic_cast). So clang-tidy is marked
+  on the class lines and CodeQL on the cast lines.
 clang-tidy: {check: fuchsia-virtual-inheritance}
 codeql:
   queries: [cpp/misra/virtual-base-class-cast-to-derived]

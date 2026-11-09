@@ -23,6 +23,9 @@ struct Traits<std::int32_t> {
 struct Config {
   static constexpr std::int32_t kLevel{1};
 };
+// A namespace-scope const object has internal linkage, so the guideline does not apply.
+std::int32_t const kOffset = 3;
+inline std::int32_t offset_level() { return kOffset + Config::kLevel; }
 
 }  // namespace kv::rule_6_2_4::near
 

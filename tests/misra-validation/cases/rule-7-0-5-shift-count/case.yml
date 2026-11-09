@@ -1,0 +1,18 @@
+---
+guideline: Rule 7.0.5
+notes: >-
+  The guideline's own 7.0.4 example marks 1u << u8 compliant without noting another violation, while it marks
+  u8 << 2 as violating another rule: promotion of the shift count is not treated as a 7.0.5 change.
+codeql:
+  queries: [cpp/misra/no-signedness-change-from-promotion]
+known_misses:
+  - query: cpp/misra/no-signedness-change-from-promotion
+    kind: false-positive
+    why: >-
+      The integral promotion of a narrow unsigned right operand of a shift (the count) is reported; the left
+      operand is std::uint32_t and the result type does not depend on the count.
+seeded:
+  - "a std::uint8_t left operand shifted (promoted to int)"
+near_misses:
+  - "std::uint32_t shifted by a std::uint16_t constant count"
+  - "1U shifted by a range-checked std::uint8_t count"

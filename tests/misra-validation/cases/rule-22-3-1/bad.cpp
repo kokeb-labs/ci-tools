@@ -5,7 +5,7 @@
 namespace kv::rule_22_3_1::bad {
 
 std::int32_t widen(std::int16_t value) {
-  assert(sizeof(std::int32_t) == 4U);
+  assert(sizeof(std::int32_t) == 4U);  // seeded
   return value;
 }
 

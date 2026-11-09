@@ -11,9 +11,9 @@ struct Item {
 
 std::int32_t build_in_place() {
   alignas(Item) std::byte storage[sizeof(Item)];
-  Item* item = new (storage) Item{5};
+  Item* item = new (storage) Item{5};  // seeded
   const std::int32_t result = item->value;
-  item->~Item();
+  item->~Item();  // seeded
   return result;
 }
 

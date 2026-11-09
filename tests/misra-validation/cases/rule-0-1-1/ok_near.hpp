@@ -13,11 +13,11 @@ inline std::uint32_t mix(std::uint32_t a) {
   return r;
 }
 
-// The value written is read through the reference by the callee.
-inline void set_low(std::uint32_t& out, std::uint32_t v) { out = v & 0xFFU; }
+// The initial value is read through the reference by the callee, which merges into it.
+inline void merge_low(std::uint32_t& out, std::uint32_t v) { out = out | (v & 0xFFU); }
 inline std::uint32_t low_of(std::uint32_t v) {
-  std::uint32_t r = 0U;
-  set_low(r, v);
+  std::uint32_t r = 0x100U;
+  merge_low(r, v);
   return r;
 }
 

@@ -3,10 +3,10 @@
 
 namespace kv::rule_30_0_1::bad_buffer {
 
-int render(std::FILE* sink, int value) {
-  char text[BUFSIZ];
-  const int n = std::snprintf(text, sizeof(text), "%d", value);
-  return (sink == nullptr) ? n : std::fputs(text, sink);
+int render(std::FILE* sink, int value) {  // seeded: codeql
+  char text[BUFSIZ];  // seeded: codeql
+  const int n = std::snprintf(text, sizeof(text), "%d", value);  // seeded
+  return (sink == nullptr) ? n : std::fputs(text, sink);  // seeded
 }
 
 }  // namespace kv::rule_30_0_1::bad_buffer

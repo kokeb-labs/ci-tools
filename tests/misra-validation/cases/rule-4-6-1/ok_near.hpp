@@ -1,4 +1,4 @@
-// Near misses: compliant code that resembles a violation.
+// Near misses: a read and a write of the same object split into separate statements, and distinct objects.
 #ifndef KV_RULE_4_6_1_OK_NEAR_HPP
 #define KV_RULE_4_6_1_OK_NEAR_HPP
 
@@ -6,12 +6,12 @@
 
 namespace kv::rule_4_6_1::near {
 
-// Increments of different objects in one expression, and a read then write in separate statements.
 inline std::uint32_t pair(std::uint32_t x, std::uint32_t y) { return x ^ y; }
 inline std::uint32_t args(std::uint32_t i, std::uint32_t j) {
-  const std::uint32_t first = i;
-  const std::uint32_t second = j | 1U;
-  return pair(first, second);
+  std::uint32_t k = i;
+  const std::uint32_t first = k;
+  ++k;
+  return pair(first, k) ^ j;
 }
 
 }  // namespace kv::rule_4_6_1::near

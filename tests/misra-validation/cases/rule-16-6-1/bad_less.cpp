@@ -6,8 +6,8 @@ namespace kv::rule_16_6_1::bad_less {
 class Level {
  public:
   explicit Level(std::int32_t v) : v_(v) {}
-  Level operator-(const Level& other) const { return Level(v_ - other.v_); }
-  bool operator<(const Level& other) const { return v_ < other.v_; }
+  Level operator-(const Level& other) const { return Level(v_ - other.v_); }  // seeded
+  bool operator<(const Level& other) const { return v_ < other.v_; }  // seeded
 
  private:
   std::int32_t v_;

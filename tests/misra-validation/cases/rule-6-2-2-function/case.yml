@@ -12,9 +12,3 @@ near_misses:
   - "one declaration in one header"
   - "overloads with different parameter types"
   - "a repeated identical declaration"
-other_findings:
-  - query: cpp/misra/numeric-assignment-type-mismatch
-    why: >-
-      misfire (cortex-m only): on arm-none-eabi std::int32_t and std::uint32_t are long and unsigned long, so the
-      query reports an int (or unsigned int) value assigned to them; both types have the same size and signedness
-      on that target, so the conversion cannot change the value.

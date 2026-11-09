@@ -6,9 +6,9 @@ namespace kv::rule_9_3_1::bad_rangefor {
 
 std::int32_t sum(const std::array<std::int32_t, 3>& values, std::int32_t mode) {
   std::int32_t total = 0;
-  for (const std::int32_t v : values)
+  for (const std::int32_t v : values)  // seeded
     total += v;
-  switch (mode)
+  switch (mode)  // seeded: codeql
     case 0:
       total = 0;
   return total;

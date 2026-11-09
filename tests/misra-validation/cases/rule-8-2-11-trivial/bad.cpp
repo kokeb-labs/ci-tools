@@ -12,7 +12,7 @@ std::int32_t first(std::int32_t count, ...);
 
 std::int32_t use() {
   Probe p;
-  return first(1, p);
+  return first(1, p);  // seeded
 }
 
 }  // namespace kv::rule_8_2_11_trivial::bad

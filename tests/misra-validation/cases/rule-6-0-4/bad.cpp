@@ -3,6 +3,6 @@
 
 namespace kv::rule_6_0_4::bad {
 
-std::int32_t main() { return 0; }
+std::int32_t main() { return 0; }  // seeded
 
 }  // namespace kv::rule_6_0_4::bad

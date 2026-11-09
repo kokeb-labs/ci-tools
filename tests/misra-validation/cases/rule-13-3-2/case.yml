@@ -6,7 +6,8 @@ codeql:
   queries: [cpp/misra/overriding-shall-specify-different-default-arguments]
 seeded:
   - an overrider with a different default for the same parameter (bad.cpp)
-  - an overrider that keeps one default and changes the second (bad_added.cpp)
+  - an overrider that adds a default the base parameter does not have (bad_added.cpp)
+  - an overrider that keeps one default and changes the second (bad_second.cpp)
 near_misses:
   - no default arguments on virtual functions; a non-virtual wrapper (ok.hpp)
   - a default argument on a non-virtual member function (ok_near.hpp)

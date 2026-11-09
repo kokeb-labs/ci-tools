@@ -5,6 +5,7 @@ codeql:
 seeded:
   - constructor that leaves a scalar member uninitialised
   - second constructor that forgets a member the first one initialises
+  - defaulted default constructor that leaves a scalar member uninitialised (bad_default.cpp)
 near_misses:
   - every member initialised in the initializer list or by a default member initializer
   - member initialised only through a delegating constructor

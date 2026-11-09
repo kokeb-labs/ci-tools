@@ -7,7 +7,7 @@ std::int32_t enter(std::int32_t n) {
   std::int32_t r = 0;
   std::int32_t i = 0;
   if (n > 3) {
-    goto body;
+    goto body;  // seeded
   }
   while (i < n) {
   body:

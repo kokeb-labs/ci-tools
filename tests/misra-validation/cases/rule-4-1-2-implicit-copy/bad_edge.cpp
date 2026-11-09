@@ -17,7 +17,7 @@ class Cell {
   std::uint32_t v_;
 };
 std::uint32_t copy_cell(const Cell& c) {
-  const Cell d(c);
+  const Cell d(c);  // seeded
   return d.get();
 }
 

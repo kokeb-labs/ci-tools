@@ -3,6 +3,6 @@
 
 namespace kv::rule_22_4_1::bad {
 
-void report_busy() { errno = EBUSY; }
+void report_busy() { errno = EBUSY; }  // seeded
 
 }  // namespace kv::rule_22_4_1::bad

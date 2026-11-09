@@ -1,4 +1,4 @@
-// Seeded violation: a header without an include guard.
+// Seeded violation: a header without an include guard.  // seeded
 #include <cstdint>
 
 namespace kv::rule_19_2_1_no_guard::bad {

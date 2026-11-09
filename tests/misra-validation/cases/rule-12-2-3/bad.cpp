@@ -2,7 +2,7 @@
 namespace kv::rule_12_2_3::bad {
 
 struct Bits {
-  signed int enabled : 1;
+  signed int enabled : 1;  // seeded
 };
 
 bool on(const Bits& b) { return b.enabled != 0; }

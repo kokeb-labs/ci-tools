@@ -16,7 +16,7 @@ const Table& table() {
 
 std::int32_t total() {
   std::int32_t sum = 0;
-  for (const std::int32_t v : table().values()) {
+  for (const std::int32_t v : table().values()) {  // seeded
     sum += v;
   }
   return sum;

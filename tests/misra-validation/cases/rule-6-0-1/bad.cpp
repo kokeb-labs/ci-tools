@@ -8,8 +8,8 @@ struct Counter {
 };
 
 std::int32_t first() {
-  Counter counter();  // declares a function, not an object
-  std::int32_t helper(std::int32_t);
+  Counter counter();  // declares a function, not an object  // seeded
+  std::int32_t helper(std::int32_t);  // seeded
   return 0;
 }
 

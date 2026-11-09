@@ -4,7 +4,7 @@
 
 namespace kv::rule_4_1_2_raw_storage_iterator::bad {
 
-using It = std::raw_storage_iterator<std::uint32_t*, std::uint32_t>;
+using It = std::raw_storage_iterator<std::uint32_t*, std::uint32_t>;  // seeded
 
 It make(std::uint32_t* p) { return It(p); }
 

@@ -13,7 +13,7 @@ std::int32_t first(std::int32_t count, ...);
 
 std::int32_t use() {
   Sample s;
-  return first(1, s);
+  return first(1, s);  // seeded
 }
 
 }  // namespace kv::rule_8_2_11::bad

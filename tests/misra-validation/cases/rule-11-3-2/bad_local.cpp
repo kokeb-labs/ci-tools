@@ -4,7 +4,7 @@
 namespace kv::rule_11_3_2::bad_local {
 
 std::int32_t chase(std::int32_t** pp) {
-  std::int32_t*** ppp = &pp;
+  std::int32_t*** ppp = &pp;  // seeded
   return ***ppp;
 }
 

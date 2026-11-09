@@ -1,18 +1,21 @@
-// Seeded violation: an overload declared after the using-declaration is not found through it.
+// Seeded violation: a using-declaration does not bring in a base overload whose signature the derived class
+// redeclares, so that base overload stays concealed.
 #include <cstdint>
 
 namespace kv::rule_6_4_2_using::bad {
 
-namespace lib {
-std::int32_t convert(std::int32_t v);
-}  // namespace lib
+class Base {
+ public:
+  std::int32_t convert(std::int32_t v) const { return v; }
+  std::int32_t convert(std::int16_t v) const { return static_cast<std::int32_t>(v); }
+};
 
-using lib::convert;
+class Derived : public Base {
+ public:
+  using Base::convert;  // introduces convert(std::int16_t) only
+  std::int32_t convert(std::int32_t v) const { return v + 1; }  // seeded
+};
 
-namespace lib {
-std::int32_t convert(std::int64_t v);
-}  // namespace lib
-
-std::int32_t use() { return convert(std::int64_t{5}); }
+std::int32_t use(Derived const& d) { return d.convert(std::int32_t{5}); }
 
 }  // namespace kv::rule_6_4_2_using::bad

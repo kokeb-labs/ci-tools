@@ -5,7 +5,7 @@ namespace kv::rule_25_5_2_const_use::bad {
 
 void clear_decimal_point() {
   std::lconv* conventions = std::localeconv();
-  conventions->decimal_point = nullptr;
+  conventions->decimal_point = nullptr;  // seeded
 }
 
 }  // namespace kv::rule_25_5_2_const_use::bad

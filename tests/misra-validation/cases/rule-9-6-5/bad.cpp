@@ -7,9 +7,9 @@ std::int32_t sign(std::int32_t v) {
   if (v > 0) {
     return 1;
   }
-  if (v < 0) {
+  if (v < 0) {  // seeded: codeql
     return -1;
   }
-}
+}  // seeded: gcc,clang
 
 }  // namespace kv::rule_9_6_5::bad

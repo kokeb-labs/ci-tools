@@ -8,7 +8,7 @@ std::int32_t retry(std::int32_t tries) {
 again:
   if (left > 0) {
     --left;
-    goto again;
+    goto again;  // seeded
   }
   return left;
 }

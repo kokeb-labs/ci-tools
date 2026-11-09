@@ -3,10 +3,10 @@
 
 namespace kv::rule_8_3_2::bad_edge {
 
-std::int32_t same(std::int32_t v) { return +v; }
+std::int32_t same(std::int32_t v) { return +v; }  // seeded
 
 using Fn = std::int32_t (*)();
 
-Fn to_pointer() { return +[]() -> std::int32_t { return 1; }; }
+Fn to_pointer() { return +[]() -> std::int32_t { return 1; }; }  // seeded
 
 }  // namespace kv::rule_8_3_2::bad_edge

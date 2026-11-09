@@ -6,12 +6,12 @@ struct Node {
   int id{0};
 };
 
-struct Leaf : virtual Node {
+struct Leaf : virtual Node {  // seeded: clang-tidy
   int weight{0};
 };
 
 int weight_of(Node* node) {
-  Leaf* leaf = reinterpret_cast<Leaf*>(node);
+  Leaf* leaf = reinterpret_cast<Leaf*>(node);  // seeded: codeql
   return leaf->weight;
 }
 

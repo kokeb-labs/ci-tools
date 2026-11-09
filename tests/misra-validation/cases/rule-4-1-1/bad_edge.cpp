@@ -5,14 +5,14 @@ namespace kv::rule_4_1_1::bad_edge {
 
 // A GNU statement expression.
 std::uint32_t twice_plus(std::uint32_t v) {
-  return ({
+  return ({  // seeded
     const std::uint32_t t = v << 1U;
     t | 1U;
   });
 }
 
 // A GNU type attribute on a struct.
-struct __attribute__((packed)) Frame {
+struct __attribute__((packed)) Frame {  // seeded
   std::uint8_t tag;
   std::uint32_t value;
 };

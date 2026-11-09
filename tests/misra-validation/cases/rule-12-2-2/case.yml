@@ -1,25 +1,35 @@
 ---
 guideline: Rule 12.2.2
 notes: >-
-  The query decides the allowed types from the compiler the extractor saw (its --mimic argument, matched against
-  %gcc, %g++, %clang and %clang++). Under the names the suite and ru-misra use (g++ on the host, arm-none-eabi-g++
-  for Cortex-M) it is in its GCC mode. On the host that mode accepts std::uint32_t (unsigned int); on arm-none-eabi,
-  where std::uint32_t is unsigned long, it reports it: a false positive recorded for cortex-m only.
+  The query decides the allowed types from the extractor's --mimic argument (codingstandards/cpp/Compiler.qll):
+  an argument ending in gcc, g++, clang or clang++ selects a permissive mode that accepts every integral or
+  enumeration type (char included); anything else, such as /usr/bin/g++-14 on the host, selects a strict mode that
+  accepts only int types written explicitly signed or unsigned, and bool. The host results are strict-mode
+  results. Rule 12.2.2 allows every signed and unsigned integer type, so plain int and std::int32_t fields are
+  compliant (ok_signed.hpp); the strict mode reports them.
 codeql:
   queries: [cpp/misra/bit-field-shall-have-an-appropriate-type]
 other_findings:
+  - {query: cpp/misra/avoid-standard-integer-type-names, why: "true positive of Rule 6.9.2: the near miss needs a plain int bit-field"}
   - {query: cpp/misra/bit-fields-should-not-be-declared-misra-cpp, why: "true positive of Rule 12.2.1: the case needs a bit-field to exist"}
-# Also seen: a bit-field of std::int32_t (int) is reported in the strict mode, because plain int is not
-# "explicitly signed"; our matrix allows only unsigned types and bool, so that report agrees with our profile.
 seeded:
-  - plain int and plain char bit-fields (bad.cpp)
+  - wchar_t and plain char bit-fields (bad.cpp)
   - a plain char bit-field alone (bad_char.cpp)
+  - a bit-field of an unscoped enumeration without a fixed underlying type (bad_enum.cpp)
 near_misses:
   - unsigned int and bool bit-fields (ok.hpp)
+  - plain int and std::int32_t bit-fields, signed integer types (ok_signed.hpp)
 known_misses:
+  - query: cpp/misra/bit-field-shall-have-an-appropriate-type
+    kind: false-positive
+    targets: [host]
+    why: >-
+      Plain int and std::int32_t bit-fields (ok_signed.hpp) are reported: the query's strict mode, selected because
+      the host --mimic argument (g++-14) is not recognised, accepts only int written explicitly signed or unsigned.
+      Rule 12.2.2 allows every signed integer type.
   - query: cpp/misra/bit-field-shall-have-an-appropriate-type
     kind: false-positive
     targets: [cortex-m]
     why: >-
       A std::uint32_t bit-field (unsigned long on arm-none-eabi) is reported on the Cortex-M database; it is an unsigned
-      integer type, which the guideline allows. The seeded plain int and char bit-fields are reported on both targets.
+      integer type, which the guideline allows.

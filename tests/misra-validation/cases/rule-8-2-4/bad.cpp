@@ -6,7 +6,7 @@ int handler(int code) {
 }
 
 void* as_object() {
-  return reinterpret_cast<void*>(&handler);
+  return reinterpret_cast<void*>(&handler);  // seeded
 }
 
 }  // namespace kv::rule_8_2_4::bad

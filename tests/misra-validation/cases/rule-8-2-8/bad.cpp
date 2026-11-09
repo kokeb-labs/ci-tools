@@ -4,7 +4,7 @@
 namespace kv::rule_8_2_8::bad {
 
 std::uint64_t address_of(const std::uint32_t* word) {
-  return reinterpret_cast<std::uint64_t>(word);
+  return reinterpret_cast<std::uint64_t>(word);  // seeded
 }
 
 }  // namespace kv::rule_8_2_8::bad

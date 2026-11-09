@@ -4,7 +4,7 @@
 namespace kv::rule_11_6_1::bad {
 
 std::int32_t pick(bool high) {
-  std::int32_t v;
+  std::int32_t v;  // seeded
   if (high) {
     v = 10;
   } else {

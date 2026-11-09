@@ -13,7 +13,7 @@ seeded:
   - "pointer arithmetic beyond one past the end"
   - "memcpy writing past the end of the destination"
   - "pointer arithmetic before the start of an array"
-  - "strcpy into a destination that is too small"
+  - "strncpy writing past the end of a destination that is too small"
 near_misses:
   - "a pointer to one past the end (allowed)"
   - "a pointer to the last element"

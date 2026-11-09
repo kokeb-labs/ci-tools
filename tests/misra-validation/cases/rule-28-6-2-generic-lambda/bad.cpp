@@ -13,7 +13,7 @@ std::int32_t sink(const Payload& p) { return p.value; }
 std::int32_t sink(Payload&& p) { return p.value + 1; }
 
 std::int32_t use() {
-  const auto relay = [](auto&& p) { return sink(p); };
+  const auto relay = [](auto&& p) { return sink(p); };  // seeded
   Payload local{1};
   return relay(local) + relay(Payload{2});
 }

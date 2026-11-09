@@ -3,6 +3,6 @@ namespace kv::rule_21_6_5::bad {
 
 struct Opaque;
 
-void destroy(Opaque* handle) { delete handle; }
+void destroy(Opaque* handle) { delete handle; }  // seeded
 
 }  // namespace kv::rule_21_6_5::bad

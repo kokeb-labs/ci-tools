@@ -7,6 +7,6 @@ struct Shape {
   virtual ~Shape() = default;
 };
 
-bool is_shape(Shape const* p) { return typeid(*p) == typeid(Shape); }
+bool is_shape(Shape const* p) { return typeid(*p) == typeid(Shape); }  // seeded
 
 }  // namespace kv::rule_8_2_9::bad_edge

@@ -3,8 +3,8 @@
 
 namespace kv::rule_24_5_1::bad_c_header {
 
-bool letter(int c) { return isalpha(c) != 0; }
+bool letter(int c) { return isalpha(c) != 0; }  // seeded
 
-int lower(int c) { return ::tolower(c); }
+int lower(int c) { return ::tolower(c); }  // seeded
 
 }  // namespace kv::rule_24_5_1::bad_c_header

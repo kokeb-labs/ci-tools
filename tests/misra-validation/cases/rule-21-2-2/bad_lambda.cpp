@@ -9,7 +9,7 @@ bool apply(F f, const char* text) {
 }
 
 bool has_colon(const char* text) {
-  return apply([](const char* t) { return std::strchr(t, ':') != nullptr; }, text);
+  return apply([](const char* t) { return std::strchr(t, ':') != nullptr; }, text);  // seeded
 }
 
 }  // namespace kv::rule_21_2_2::bad_lambda

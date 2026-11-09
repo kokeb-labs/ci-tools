@@ -3,7 +3,7 @@
 
 namespace kv::rule_10_2_2::bad_anonymous {
 
-enum : std::uint8_t { kMaxRetries = 3 };
+enum : std::uint8_t { kMaxRetries = 3 };  // seeded
 
 std::int32_t retries() { return kMaxRetries; }
 

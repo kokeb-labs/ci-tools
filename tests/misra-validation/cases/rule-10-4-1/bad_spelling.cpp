@@ -4,7 +4,7 @@
 namespace kv::rule_10_4_1::bad_spelling {
 
 void fence() {
-  __asm__ __volatile__("" ::: "memory");
+  __asm__ __volatile__("" ::: "memory");  // seeded
 }
 
 }  // namespace kv::rule_10_4_1::bad_spelling

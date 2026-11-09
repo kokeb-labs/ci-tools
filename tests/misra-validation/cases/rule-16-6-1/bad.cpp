@@ -6,8 +6,8 @@ namespace kv::rule_16_6_1::bad {
 class Ticks {
  public:
   explicit Ticks(std::uint32_t t) : t_(t) {}
-  Ticks operator+(const Ticks& other) const { return Ticks(t_ + other.t_); }
-  bool operator==(const Ticks& other) const { return t_ == other.t_; }
+  Ticks operator+(const Ticks& other) const { return Ticks(t_ + other.t_); }  // seeded
+  bool operator==(const Ticks& other) const { return t_ == other.t_; }  // seeded
 
  private:
   std::uint32_t t_;

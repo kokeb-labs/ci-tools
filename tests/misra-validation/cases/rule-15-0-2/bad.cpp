@@ -8,11 +8,11 @@ class Counter {
   Counter() = default;
   Counter(const Counter&) = default;
   Counter(Counter&&) noexcept = default;
-  Counter operator=(Counter& other) {
+  Counter operator=(Counter& other) {  // seeded
     count_ = other.count_;
     return *this;
   }
-  Counter& operator=(Counter&&) noexcept = default;
+  Counter& operator=(Counter&&) & noexcept = default;
   ~Counter() = default;
 
  private:

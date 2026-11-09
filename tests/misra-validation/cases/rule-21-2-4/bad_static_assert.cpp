@@ -9,6 +9,6 @@ struct Frame {
   std::uint8_t length;
 };
 
-static_assert(offsetof(Frame, length) == 1U, "the wire frame layout");
+static_assert(offsetof(Frame, length) == 1U, "the wire frame layout");  // seeded
 
 }  // namespace kv::rule_21_2_4::bad_static_assert

@@ -6,14 +6,14 @@ namespace kv::rule_6_7_1::bad_edge {
 class Sampler {
  public:
   std::int32_t next() {
-    static std::int32_t calls = 0;  // a mutable static local in a member function
+    static std::int32_t calls = 0;  // a mutable static local in a member function  // seeded
     ++calls;
     return calls;
   }
 };
 std::int32_t via_lambda() {
   const auto f = []() {
-    static std::int32_t hits = 0;  // a mutable static local in a lambda
+    static std::int32_t hits = 0;  // a mutable static local in a lambda  // seeded
     ++hits;
     return hits;
   };

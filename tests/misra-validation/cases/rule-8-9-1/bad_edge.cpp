@@ -8,14 +8,14 @@ struct Pair {
   std::uint8_t right[4]{};
 };
 
-bool after(Pair& p) { return &p.right[0] > &p.left[0]; }
+bool after(Pair& p) { return &p.right[0] > &p.left[0]; }  // seeded
 
 bool not_before() {
   std::uint8_t one[2] = {};
   std::uint8_t two[2] = {};
   std::uint8_t* a = &one[0];
   std::uint8_t* b = &two[0];
-  return a >= b;
+  return a >= b;  // seeded
 }
 
 }  // namespace kv::rule_8_9_1::bad_edge

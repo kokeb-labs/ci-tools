@@ -5,7 +5,7 @@ namespace kv::rule_9_5_1::bad_twocounters {
 
 std::int32_t meet(std::int32_t n) {
   std::int32_t hits = 0;
-  for (std::int32_t i = 0, j = n; i < j; ++i, --j) {
+  for (std::int32_t i = 0, j = n; i < j; ++i, --j) {  // seeded
     ++hits;
   }
   return hits;

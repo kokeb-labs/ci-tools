@@ -11,3 +11,7 @@ near_misses:
   - "a plain // comment"
   - "backslashes in the middle of a // comment"
   - "a // comment ending with a slash"
+notes: >-
+  The marker sits on the spliced line after each comment, because a marker cannot end a line that must end with
+  the backslash. The compilers and CodeQL report the comment on the line where it starts (the line above the
+  marker), so this case needs the validator to accept a marker on a line spliced into the preceding comment.

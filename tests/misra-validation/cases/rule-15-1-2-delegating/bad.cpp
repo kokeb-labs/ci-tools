@@ -14,7 +14,7 @@ class Base {
 
 class Derived : public Base {
  public:
-  explicit Derived(std::uint32_t w) : width_(w) {}
+  explicit Derived(std::uint32_t w) : width_(w) {}  // seeded
 
  private:
   std::uint32_t width_;

@@ -1,0 +1,26 @@
+---
+guideline: Rule 0.0.1
+notes: >-
+  Records a false positive of the pack on templates instantiated with test ports. The main case rule-0-0-1
+  proves detection. rule-0-0-2-hook holds the same compliant header for Rule 0.0.2.
+codeql:
+  queries: [cpp/misra/unreachable-statement]
+known_misses:
+  - query: cpp/misra/unreachable-statement
+    kind: false-positive
+    why: >-
+      The statement guarded by a call to an optional port hook in a function template is reported as
+      unreachable, because one test port's hook always returns false. Reachability is judged on the template:
+      the condition is a run-time call, not a constant expression, so the guarded statement is reachable; what
+      a particular port answers is that port's business. The query judges each instantiation after it has
+      followed the trivial hook body.
+other_findings:
+  - query: cpp/misra/invariant-condition
+    why: >-
+      misfire: the Rule 0.0.2 query reports the same hook condition as invariant for the same reason; the
+      condition depends on the port and is not invariant in the template (recorded in rule-0-0-2-hook).
+seeded:
+  - "a statement after an unconditional return"
+near_misses:
+  - "an if in a function template whose condition calls an optional port hook, instantiated with ports whose hook
+    always answers true, always answers false, or is absent (ok.hpp)"

@@ -3,13 +3,13 @@
 
 namespace kv::rule_21_10_3::bad_c_header {
 
-volatile sig_atomic_t stop_requested = 0;
+volatile sig_atomic_t stop_requested = 0;  // seeded: codeql
 
 void on_term(int number) { stop_requested = number; }
 
 int arm() {
-  static_cast<void>(::signal(SIGTERM, on_term));
-  return raise(SIGTERM);
+  static_cast<void>(::signal(SIGTERM, on_term));  // seeded
+  return raise(SIGTERM);  // seeded
 }
 
 }  // namespace kv::rule_21_10_3::bad_c_header

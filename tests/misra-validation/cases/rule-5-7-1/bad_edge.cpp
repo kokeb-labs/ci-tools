@@ -4,7 +4,7 @@
 namespace kv::rule_5_7_1::bad_edge {
 
 /**
- * A documentation block that opens /* another comment on its second line.
+ * A documentation block that opens /* another comment on its second line.  // seeded
  */
 std::uint32_t two() { return 2U; }
 

@@ -15,6 +15,6 @@ other_findings:
       call order of Rule 25.5.3 (getenv, the other function of the order queries, is covered by rule-25-5-3)."
 seeded:
   - "strerror's first result used after a second call"
-  - "a strerror result stored in a struct member"
+  - "a strerror result kept in a struct member and read after a second call"
 near_misses:
   - "two strerror calls whose results are each used before the next call"

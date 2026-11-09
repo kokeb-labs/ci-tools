@@ -1,7 +1,7 @@
 // Seeded violation: a rethrow in a helper, outside the handler that calls it.
 namespace kv::rule_18_1_2::bad_helper {
 
-void rethrow() { throw; }
+void rethrow() { throw; }  // seeded
 
 int guard() {
   try {

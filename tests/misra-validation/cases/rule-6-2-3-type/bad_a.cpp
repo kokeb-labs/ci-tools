@@ -3,7 +3,7 @@
 
 namespace kv::rule_6_2_3_type::bad {
 
-struct SampleA {
+struct SampleA {  // seeded
   std::int32_t raw{0};
 };
 

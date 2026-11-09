@@ -5,7 +5,7 @@
 namespace kv::rule_26_3_1::bad {
 
 std::size_t count_flags() {
-  std::vector<bool> flags(8U, false);
+  std::vector<bool> flags(8U, false);  // seeded
   flags[0] = true;
   return flags.size();
 }

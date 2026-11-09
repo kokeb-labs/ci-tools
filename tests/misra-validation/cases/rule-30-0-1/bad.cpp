@@ -4,12 +4,12 @@
 namespace kv::rule_30_0_1::bad {
 
 int log_line(const char* text) {
-  static_cast<void>(std::printf("%s\n", text));
-  std::FILE* file = std::fopen("/tmp/log.txt", "a");
+  static_cast<void>(std::printf("%s\n", text));  // seeded
+  std::FILE* file = std::fopen("/tmp/log.txt", "a");  // seeded
   if (file == nullptr) {
-    return EOF;
+    return EOF;  // seeded: codeql
   }
-  return std::fclose(file);
+  return std::fclose(file);  // seeded
 }
 
 }  // namespace kv::rule_30_0_1::bad

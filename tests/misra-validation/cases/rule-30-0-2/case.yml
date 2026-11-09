@@ -4,6 +4,7 @@ codeql:
   queries: [cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning]
 seeded:
   - "a read then a write with no positioning call (parameter and local stream)"
+  - "a write, std::flush, then a read with no positioning call"
 near_misses:
   - "seekp between the read and the write"
   - "seekg between a write and the following read"

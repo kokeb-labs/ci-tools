@@ -8,10 +8,12 @@ other_findings:
       misfire: the Rule 15.1.3 query reports the conversion-to-function-pointer operator that the compiler gives every captureless lambda's closure type; no conversion member was written.
 seeded:
   - "a function name compared with nullptr"
-  - "a lambda converted implicitly to a function pointer argument"
-  - "a function name passed as a function pointer argument without &"
+  - "a captureless lambda converted by unary plus"
+  - "a function name converted by unary plus"
   - "a function name used directly as a condition"
 near_misses:
   - "the address taken explicitly with & and passed"
+  - "an explicit static_cast to the function pointer type"
   - "a function pointer object initialised from &function"
   - "a lambda stored with auto and called"
+  - "a function name and a captureless lambda passed to a function-pointer parameter (ok_transfer.hpp)"

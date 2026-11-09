@@ -1,5 +1,8 @@
 ---
 guideline: Rule 23.11.1
+notes: >-
+  Only the constructors that take ownership of a raw pointer are covered; unique_ptr::reset(new ...) is not a
+  constructor (it is a Rule 21.6.2 matter) and is not seeded.
 codeql:
   queries: [cpp/misra/use-smart-ptr-factory-functions]
 other_findings:
@@ -8,8 +11,9 @@ other_findings:
       how the owner is created."
 seeded:
   - "unique_ptr and shared_ptr constructed from a new-expression"
-  - "unique_ptr::reset(new ...)"
   - "unique_ptr<T[]> constructed from new[]"
+  - "two shared_ptr constructed from new-expressions as arguments of one call"
 near_misses:
   - "std::make_unique and std::make_shared"
   - "empty owners and an owner assigned from make_unique"
+  - "the shared_ptr aliasing constructor (an existing owner and a member pointer; no ownership taken)"

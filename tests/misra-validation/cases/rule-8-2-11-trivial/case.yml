@@ -1,20 +1,17 @@
 ---
 guideline: Rule 8.2.11
 notes: >-
-  CodeQL only: a trivially copyable argument through an ellipsis is compliant, so the query must stay silent;
-  clang-tidy reports every variadic call (a superset) and is not claimed here.
+  CodeQL only: the compliant ellipsis calls in the ok files must leave the query silent, and clang-tidy reports
+  every variadic call (a superset), so it is not claimed here. The guideline's test is not "trivially copyable":
+  only virtual member functions, a non-trivial copy or move constructor, or a non-trivial destructor make a class
+  inappropriate, so a class whose only user-provided member is a copy assignment is compliant (ok_near.hpp).
 codeql:
   queries: [cpp/misra/inappropriate-argument-type-passed-via-ellipsis]
 seeded:
   - "a polymorphic object passed through an ellipsis"
-  - "an object with a user-provided copy assignment passed through an ellipsis"
+  - "an object with a user-provided move constructor passed through an ellipsis"
 near_misses:
   - "a trivially copyable integer through an ellipsis"
   - "a pointer through an ellipsis"
   - "an enumerator through an ellipsis"
-other_findings:
-  - query: cpp/misra/numeric-assignment-type-mismatch
-    why: >-
-      misfire (cortex-m only): on arm-none-eabi std::int32_t and std::uint32_t are long and unsigned long, so the
-      query reports an int (or unsigned int) value assigned to them; both types have the same size and signedness
-      on that target, so the conversion cannot change the value.
+  - "a class whose only user-provided member is a copy assignment, through an ellipsis"

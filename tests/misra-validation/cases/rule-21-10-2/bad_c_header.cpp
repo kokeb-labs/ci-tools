@@ -5,10 +5,10 @@ namespace kv::rule_21_10_2::bad_c_header {
 
 static jmp_buf recovery;
 
-void fail() { longjmp(recovery, 2); }
+void fail() { longjmp(recovery, 2); }  // seeded
 
 int guarded() {
-  if (setjmp(recovery) != 0) {
+  if (setjmp(recovery) != 0) {  // seeded
     return 1;
   }
   fail();

@@ -4,10 +4,10 @@
 
 namespace kv::rule_26_3_1_const::bad {
 
-std::size_t count_flags(const std::vector<bool>& flags) { return flags.size(); }
+std::size_t count_flags(const std::vector<bool>& flags) { return flags.size(); }  // seeded
 
 std::size_t make_and_count() {
-  const std::vector<bool> flags(4U, true);
+  const std::vector<bool> flags(4U, true);  // seeded
   return count_flags(flags);
 }
 

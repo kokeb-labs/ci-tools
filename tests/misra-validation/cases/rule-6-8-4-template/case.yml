@@ -1,0 +1,17 @@
+---
+guideline: Rule 6.8.4
+notes: Records a false positive of the pack in class templates. The main case rule-6-8-4 proves detection.
+codeql:
+  queries: [cpp/misra/member-functions-refqualified]
+known_misses:
+  - query: cpp/misra/member-functions-refqualified
+    kind: false-positive
+    why: >-
+      A member of a class template that returns a reference into *this, declared const& with its const&&
+      overload deleted, is reported once the template is instantiated. That pair is the compliant form (the
+      same pair in a non-template class is accepted by the main case); the query loses the ref-qualifier on the
+      instantiated member.
+seeded:
+  - "a const reference to a member returned without ref-qualifier"
+near_misses:
+  - "const& and deleted const&& overloads in a class template, instantiated (ok.hpp)"

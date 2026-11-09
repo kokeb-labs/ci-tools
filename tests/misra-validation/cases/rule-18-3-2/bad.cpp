@@ -6,9 +6,9 @@ struct Fault {
 };
 
 int guard() {
-  try {
+  try {  // seeded: clang
     return 0;
-  } catch (Fault f) {
+  } catch (Fault f) {  // seeded: gcc
     return f.code;
   }
 }

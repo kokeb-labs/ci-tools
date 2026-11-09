@@ -9,7 +9,7 @@ std::int32_t stale() {
     std::int32_t local = 7;
     p = &local;
   }
-  return *p;
+  return *p;  // seeded
 }
 
 }  // namespace kv::rule_6_8_1_after::bad

@@ -5,7 +5,7 @@ namespace kv::rule_6_9_1::bad {
 
 using Millis = std::uint32_t;
 
-Millis elapsed(Millis start);
+Millis elapsed(Millis start);  // seeded
 
 std::uint32_t elapsed(std::uint32_t start) { return start + 1U; }
 

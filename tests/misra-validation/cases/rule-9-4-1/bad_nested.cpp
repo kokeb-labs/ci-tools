@@ -6,9 +6,9 @@ namespace kv::rule_9_4_1::bad_nested {
 std::int32_t count(std::int32_t n) {
   std::int32_t pos = 0;
   for (std::int32_t i = -n; i < n; ++i) {
-    if (i < 0) {
+    if (i < 0) {  // seeded: codeql
       pos -= 1;
-    } else if (i > 0) {
+    } else if (i > 0) {  // seeded: clang-tidy
       pos += 1;
     }
   }
