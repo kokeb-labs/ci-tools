@@ -558,6 +558,8 @@
       
         
       
+        
+      
     
     
     
@@ -758,6 +760,8 @@
   
     
     
+      
+        
       
         
       
@@ -1219,7 +1223,7 @@
 <tr>
 <td></td>
 <td><code>workflow-checks</code></td>
-<td>The <a href="../permissions/#the-no-bare--tail-rule"><code>&amp;&amp;</code> tail rule</a>, the <a href="../permissions/">permissions contract</a>, the README inputs tables, unit tests of these scripts and of the CI gate, DCO and organisation-standard scripts, <code>ru-build</code>'s copy of the <a href="../ensure-tools-directory/"><code>ensure-tools-directory</code></a> script, and, on pull requests, breaking changes against the base branch</td>
+<td>The <a href="../permissions/#the-no-bare--tail-rule"><code>&amp;&amp;</code> tail rule</a>, the <a href="../permissions/">permissions contract</a>, the README inputs tables, unit tests of these scripts and of the CI gate, DCO and organisation-standard scripts, <code>ru-build</code>'s copy of the <a href="../ensure-tools-directory/"><code>ensure-tools-directory</code></a> script, <a href="../ru-repo-checks/"><code>ru-repo-checks</code></a>' copies of the single checks' steps, and, on pull requests, breaking changes against the base branch</td>
 </tr>
 <tr>
 <td></td>
@@ -1266,6 +1270,16 @@
 <td></td>
 <td>Each reusable lint workflow on this repository</td>
 </tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-repo-checks.yml"><code>ci-repo-checks.yml</code></a></td>
+<td><code>this-repository</code>, <code>findings</code></td>
+<td><a href="../ru-repo-checks/"><code>ru-repo-checks</code></a> on this repository (every check passes), then on the known-bad handbook and cppcheck fixtures (the findings are counted)</td>
+</tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-host-quality.yml"><code>ci-host-quality.yml</code></a>, <a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-cross-build.yml"><code>ci-cross-build.yml</code></a></td>
+<td></td>
+<td><a href="../ru-host-quality/"><code>ru-host-quality</code></a> and <a href="../ru-cross-build/"><code>ru-cross-build</code></a> on fixtures, in one job and with <code>separate_jobs</code> / <code>per_core_jobs</code>; the figures must agree</td>
+</tr>
 </tbody>
 </table>
 <h2 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h2>
@@ -1299,6 +1313,11 @@
 <td>A breaking change has no <code>### Breaking</code> entry</td>
 </tr>
 <tr>
+<td><code>.github/scripts/check_repo_checks.py</code></td>
+<td><code>workflow-checks</code></td>
+<td>A step of <code>ru-repo-checks.yml</code> differs from the step of the single workflow it copies</td>
+</tr>
+<tr>
 <td><code>.github/scripts/shellcheck_actions.py</code></td>
 <td><code>actionlint</code></td>
 <td>shellcheck reports a finding in a composite action's <code>run:</code> step</td>
@@ -1324,9 +1343,10 @@ and to the theme package's pinned toolchain.</p>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>python3<span class="w"> </span>.github/scripts/shellcheck_actions.py<span class="w"> </span>.github/actions/*/action.yml
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>python3<span class="w"> </span>.github/scripts/check_permissions.py
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>python3<span class="w"> </span>.github/scripts/gen_readme_inputs.py<span class="w"> </span>--check
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>python3<span class="w"> </span>.github/scripts/test_checks.py
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>packages/kokeb-mkdocs-theme<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>unittest<span class="w"> </span>discover<span class="w"> </span>-s<span class="w"> </span>tests<span class="o">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>kokeb-docs<span class="w"> </span>check<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>python3<span class="w"> </span>.github/scripts/check_repo_checks.py
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>python3<span class="w"> </span>.github/scripts/test_checks.py
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>packages/kokeb-mkdocs-theme<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>unittest<span class="w"> </span>discover<span class="w"> </span>-s<span class="w"> </span>tests<span class="o">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>kokeb-docs<span class="w"> </span>check<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict
 </span></code></pre></div>
 
 

@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://kokeb-labs.github.io/ci-tools/latest/workflows/">
       
       
-        <link rel="prev" href="../permissions/">
+        <link rel="prev" href="../triggers/">
       
       
         <link rel="next" href="../ru-ci-gate/">
@@ -549,6 +549,8 @@
   
     
     
+      
+        
       
         
       
@@ -1256,6 +1258,8 @@
       
         
       
+        
+      
     
     
     
@@ -1589,6 +1593,11 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 <td><code>contents: write</code></td>
 </tr>
 <tr>
+<td><a href="../ru-repo-checks/"><code>ru-repo-checks.yml</code></a></td>
+<td>The small checks of a repository (sign-off, organisation standard, Markdown and YAML lint, handbook rules, template drift and cppcheck) as steps of one job, with the same scripts and failure rules as their single workflows.</td>
+<td><code>contents: read</code>, <code>pull-requests: read</code></td>
+</tr>
+<tr>
 <td><a href="../ru-template-drift/"><code>ru-template-drift.yml</code></a></td>
 <td>Find the files a driver or library has let drift from <a href="https://github.com/kokeb-labs/driver-template">driver-template</a>.</td>
 <td><code>contents: read</code></td>
@@ -1687,7 +1696,7 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../permissions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Permissions contract">
+          <a href="../triggers/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Trigger policy">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1697,7 +1706,7 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Permissions contract
+                Trigger policy
               </div>
             </div>
           </a>

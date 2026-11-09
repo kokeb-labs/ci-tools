@@ -558,6 +558,8 @@
       
         
       
+        
+      
     
     
     
@@ -1267,6 +1269,8 @@
       
         
       
+        
+      
     
     
     
@@ -1513,7 +1517,8 @@
 <h1 id="ru-cross-build">ru-cross-build<a class="headerlink" href="#ru-cross-build" title="Permanent link">&para;</a></h1>
 <p>Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, so code that claims to run on
 any MCU is shown to compile for one on every pull request.</p>
-<p><code>ru-cross-build.yml</code> runs one job per core in <code>cores</code>:</p>
+<p><code>ru-cross-build.yml</code> builds every core in <code>cores</code> in one job, one core after the other, each in its own build
+directory and log group (<code>per_core_jobs: true</code> gives one job per core instead):</p>
 <ol>
 <li>Installs Arm's GNU toolchain release 14.3.rel1 (GCC 14, newlib, libstdc++), checked against the SHA-256 Arm
    publishes with it, so every run uses the same identified compiler.</li>
@@ -1523,6 +1528,9 @@ any MCU is shown to compile for one on every pull request.</p>
    still apply: a Kokeb driver's test flags are <code>-fno-exceptions -fno-rtti -Werror</code> and the full warning set.</li>
 <li>Writes the objects' <code>text</code>, <code>data</code> and <code>bss</code> sizes to the run summary.</li>
 </ol>
+<p>A core that fails to build does not stop the others; the job fails at the end and names every core that failed.
+The toolchain is downloaded once for all of them, and a private repository is billed one job, rounded up to a
+whole minute, instead of one per core and one for checking the list.</p>
 <table>
 <thead>
 <tr>

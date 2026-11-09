@@ -558,6 +558,8 @@
       
         
       
+        
+      
     
     
     
@@ -1300,6 +1302,8 @@
       
         
       
+        
+      
     
     
     
@@ -1682,6 +1686,9 @@ and an unlisted <code>skipped</code> all fail it.</p>
 <code>main</code>, goes in <code>allow_skipped</code>. A job that is skipped because something it
 needs failed is reported as <code>skipped</code> too. That case is still caught: the
 failed upstream job is itself in <code>needs</code>, so the gate fails on it.</p>
+<p>A job that calls <a href="../dco/"><code>dco.yml</code></a> only on pull requests (<code>if: github.event_name == 'pull_request'</code>) is skipped
+on every push, so it goes in <code>allow_skipped</code>. <a href="../ru-repo-checks/"><code>ru-repo-checks</code></a> runs DCO as a step that passes
+with nothing to check outside a pull request: its job always runs and needs no <code>allow_skipped</code> entry.</p>
 
 
 

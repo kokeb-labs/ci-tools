@@ -558,6 +558,8 @@
       
         
       
+        
+      
     
     
     
@@ -1289,6 +1291,8 @@
       
         
       
+        
+      
     
     
     
@@ -1557,11 +1561,11 @@
 <h1 id="ru-host-quality">ru-host-quality<a class="headerlink" href="#ru-host-quality" title="Permanent link">&para;</a></h1>
 <p>Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets
 for each assurance level (ADR-0020).</p>
-<p><code>ru-host-quality.yml</code> runs three independent jobs:</p>
+<p><code>ru-host-quality.yml</code> runs three independent checks:</p>
 <table>
 <thead>
 <tr>
-<th>Job</th>
+<th>Check</th>
 <th>Tool</th>
 <th>Measures</th>
 <th>Fails when</th>
@@ -1588,6 +1592,13 @@ for each assurance level (ADR-0020).</p>
 </tr>
 </tbody>
 </table>
+<p>They run as steps of one job. Each check runs whether or not an earlier one failed, fails the job on its own
+limits, writes its own summary and uploads its own report artifact (<code>&lt;artifact_name&gt;-complexity</code>,
+<code>&lt;artifact_name&gt;-coverage</code>), as separate jobs would; a private repository is billed one job, rounded up to a whole
+minute, instead of four. <code>separate_jobs: true</code> runs each check in a job of its own, with the same steps.</p>
+<p>With <code>fuzz_cmake_args</code> set, libFuzzer (clang 18, ASan, UBSan) runs every <code>fuzz_&lt;name&gt;</code> target for the level's
+seconds (60, 120, 600), seeded from <code>tests/fuzz/corpus/fuzz_&lt;name&gt;/</code> and a cached corpus. Fuzzing is long, so it is
+always a job of its own, in parallel with the checks above.</p>
 <p>Python tools are installed from pinned versions checked against their SHA-256 hashes, and each version was at
 least three weeks old when it was pinned.</p>
 <h2 id="limits-by-level">Limits by level<a class="headerlink" href="#limits-by-level" title="Permanent link">&para;</a></h2>

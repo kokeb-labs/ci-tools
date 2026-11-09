@@ -627,6 +627,8 @@
       
         
       
+        
+      
     
     
     
@@ -827,6 +829,8 @@
   
     
     
+      
+        
       
         
       
@@ -1207,6 +1211,11 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
 <td><a href="ru-release/"><code>ru-release.yml</code></a></td>
 <td>Create a GitHub Release with generated notes for a tag.</td>
 <td><code>contents: write</code></td>
+</tr>
+<tr>
+<td><a href="ru-repo-checks/"><code>ru-repo-checks.yml</code></a></td>
+<td>The small checks of a repository (sign-off, organisation standard, Markdown and YAML lint, handbook rules, template drift and cppcheck) as steps of one job, with the same scripts and failure rules as their single workflows.</td>
+<td><code>contents: read</code>, <code>pull-requests: read</code></td>
 </tr>
 <tr>
 <td><a href="ru-template-drift/"><code>ru-template-drift.yml</code></a></td>

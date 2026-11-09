@@ -16,7 +16,7 @@
         <link rel="prev" href="../VERSIONING/">
       
       
-        <link rel="next" href="../workflows/">
+        <link rel="next" href="../triggers/">
       
       
         
@@ -560,6 +560,8 @@
       
         
       
+        
+      
     
     
     
@@ -813,6 +815,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../triggers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trigger policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -974,6 +1004,8 @@
   
     
     
+      
+        
       
         
       
@@ -1303,7 +1335,7 @@ read from the workflow files.</p>
 <tr>
 <td><a href="../ru-cross-build/"><code>ru-cross-build.yml</code></a></td>
 <td><code>contents: read</code></td>
-<td><code>plan</code>: none<br><code>build</code>: <code>contents: read</code></td>
+<td><code>build-cores</code>: <code>contents: read</code><br><code>plan</code>: none<br><code>build</code>: <code>contents: read</code></td>
 </tr>
 <tr>
 <td><a href="../ru-docs-linkcheck/"><code>ru-docs-linkcheck.yml</code></a></td>
@@ -1328,7 +1360,7 @@ read from the workflow files.</p>
 <tr>
 <td><a href="../ru-host-quality/"><code>ru-host-quality.yml</code></a></td>
 <td><code>contents: read</code></td>
-<td><code>limits</code>: none<br><code>complexity</code>: <code>contents: read</code><br><code>coverage</code>: <code>contents: read</code><br><code>sanitizers</code>: <code>contents: read</code><br><code>fuzz</code>: <code>contents: read</code></td>
+<td><code>gates</code>: <code>contents: read</code><br><code>complexity</code>: <code>contents: read</code><br><code>coverage</code>: <code>contents: read</code><br><code>sanitizers</code>: <code>contents: read</code><br><code>fuzz</code>: <code>contents: read</code></td>
 </tr>
 <tr>
 <td><a href="../ru-markdown-lint/"><code>ru-markdown-lint.yml</code></a></td>
@@ -1349,6 +1381,11 @@ read from the workflow files.</p>
 <td><a href="../ru-release/"><code>ru-release.yml</code></a></td>
 <td><code>contents: write</code></td>
 <td><code>release</code>: <code>contents: write</code></td>
+</tr>
+<tr>
+<td><a href="../ru-repo-checks/"><code>ru-repo-checks.yml</code></a></td>
+<td><code>contents: read</code>, <code>pull-requests: read</code></td>
+<td><code>checks</code>: <code>contents: read</code>, <code>pull-requests: read</code></td>
 </tr>
 <tr>
 <td><a href="../ru-template-drift/"><code>ru-template-drift.yml</code></a></td>
@@ -1457,13 +1494,13 @@ anywhere else. <code>check_run_tails.py</code> fails any <code>run:</code> block
         
         
           
-          <a href="../workflows/" class="md-footer__link md-footer__link--next" aria-label="Next: Catalogue">
+          <a href="../triggers/" class="md-footer__link md-footer__link--next" aria-label="Next: Trigger policy">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Catalogue
+                Trigger policy
               </div>
             </div>
             <div class="md-footer__button md-icon">
