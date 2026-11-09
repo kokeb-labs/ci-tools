@@ -12,7 +12,7 @@ class Store {
   void touch() {
     char c{};
     file_ >> c;
-    file_.seekp(0, std::ios::cur);
+    static_cast<void>(file_.seekp(0, std::ios::cur));
     file_ << c;
   }
 

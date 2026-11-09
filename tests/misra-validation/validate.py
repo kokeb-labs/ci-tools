@@ -141,8 +141,9 @@ def load_cases(only: str | None = None) -> list[dict]:
 def tu_for(path: str, tmp: str) -> str:
     """The file to hand to the compiler: a header goes through a one-line translation unit."""
     if path.endswith(HEADER_EXT):
-        tu = os.path.join(tmp, re.sub(r"[^A-Za-z0-9]+", "_", rel(path)) + ".cpp")
-        with open(tu, "w", encoding="utf-8") as fh:
+        # One unit per call: jobs for several compilers compile the same header in parallel.
+        fd, tu = tempfile.mkstemp(prefix=re.sub(r"[^A-Za-z0-9]+", "_", rel(path)) + "_", suffix=".cpp", dir=tmp)
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
             fh.write(f'#include "{os.path.abspath(path)}"\n')
         return tu
     return path
