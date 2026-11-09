@@ -15,6 +15,16 @@ that heading.
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-11-08
+
+### Added
+
+- `ru-build`: input `idf_install` (default `native`). The job installs ESP-IDF for the matrix target only (a shallow
+  clone and `install.sh <target>`, about 1.1 GB) and keeps it in the Actions cache keyed by the commit the IDF
+  version names, with a pinned, hash-checked ccache. A warm restore takes about 20 s, against 70 to 160 s to pull
+  the 9.4 GB `espressif/idf` image; a Debug and Release build of one app dropped from 175 s to 93 s.
+  `idf_install: docker` keeps the image and `espressif/esp-idf-ci-action`.
+
 ## [1.11.0] - 2026-11-08
 
 ### Added
