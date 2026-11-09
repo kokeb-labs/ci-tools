@@ -23,6 +23,8 @@ that heading.
   the Actions cache by version; a download retries on every error with a delay, and one that still fails falls back
   to the runner's ccache package with a warning. GitHub release downloads returning HTTP 504 had failed whole
   ESP32 jobs.
+- Self-CI caches its pinned shellcheck and actionlint by version and hash and retries their download on any
+  error; `ru-cross-build` and `ru-docs-publish` retry their release downloads on any error (HTTP 5xx included).
 
 ## [1.12.0] - 2026-11-08
 

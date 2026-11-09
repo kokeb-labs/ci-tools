@@ -854,7 +854,7 @@ jobs:
         run: |
           set -euo pipefail
           tarball="doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
-          curl -sSLf -o "$RUNNER_TEMP/$tarball" \
+          curl -sSLf --retry 6 --retry-all-errors --retry-delay 10 -o "$RUNNER_TEMP/$tarball" \
             "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/$tarball"
           echo "${DOXYGEN_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum -c -
           tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP"
