@@ -387,7 +387,7 @@ jobs:
 | `cross_build_target` | string | no | `""` | Target of the Cortex-M build (for example the driver's <chip>_optimised_build); empty builds all |
 | `profile_pack` | boolean | no | `true` | Also run the Kokeb C++20 profile pack (codeql/kokeb-cpp20) of this workflow's commit |
 | `repo_deviations` | string | no | `docs/deviations.yml` | The repository's own deviation records; entries with check: misra/<guideline> become code identifiers like the project-wide MD-CPP records |
-| `handbook_ref` | string | no | `c31400c3414e1d3cf77d7a4b1287efda8b76251e` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
+| `handbook_ref` | string | no | `daec60fa62c5e418eb72a1bfb28c0937f536a751` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
 | `advanced_security` | boolean | no | `false` | Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this repository. Without it, CodeQL may run only on a public repository under an OSI-approved licence. |
 | `enforce` | boolean | no | `true` | Fail the job by the level's policy. False reports only (the counts are in the outputs). |
 | `artifact_name` | string | no | `misra-report` | Name of the report artifact (unique per call when a run calls this more than once) |
