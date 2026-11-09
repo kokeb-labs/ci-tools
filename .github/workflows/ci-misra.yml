@@ -197,6 +197,8 @@ jobs:
     with:
       paths: "tests/fixtures/misra-driver/inc tests/fixtures/misra-driver/src"
       cmake_source_dir: tests/fixtures/misra-driver
+      # A value that starts with -D, as every driver passes: it must reach CMake as the value of --cmake-args.
+      cmake_args: "-DMISRA_FIXTURE_TESTS=ON"
       level: high
       enforce: false
       artifact_name: misra-fixture

@@ -244,7 +244,7 @@ jobs:
             --codeql "$CODEQL" --misra-pack "$MISRA_PACK" --cs-script "$CS_SCRIPT" \
             --records .ru-misra/handbook/compliance/misra-cpp-2023-deviations.yml "${repo_records[@]}" \
             --matrix .ru-misra/handbook/compliance/misra-cpp-2023.yml \
-            --source-dir "$SOURCE_DIR" --cmake-args "$CMAKE_ARGS" --build-target "$BUILD_TARGET" --paths "$PATHS" \
+            --source-dir "$SOURCE_DIR" --cmake-args="$CMAKE_ARGS" --build-target "$BUILD_TARGET" --paths="$PATHS" \
             "${own[@]}" --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" --tidy-configs .ru-misra/out/tidy-configs.json \
             --arm-bin "${ARM_BIN:-}"
           cp .ru-misra/out/versions.json ".ru-misra/out/$CONFIG/"

@@ -32,6 +32,8 @@ that heading.
   file, and is to be published, run the analysis; the job prints the declaration as a warning.
 - Code scanning of ci-tools moves to an advanced setup (`.github/workflows/codeql.yml`, `security-and-quality`) that
   leaves out the test fixtures, which break rules on purpose and whose findings the self-CI asserts.
+- `ru-misra` passes `cmake_args` and `paths` to its scanner as `--option=value`, so a value that starts with `-D`
+  is not read as an option; the fixture self-test now passes one.
 
 ## [1.12.1] - 2026-11-08
 
