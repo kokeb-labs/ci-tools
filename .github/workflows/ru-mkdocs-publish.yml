@@ -275,17 +275,50 @@ jobs:
           cp -a "$HTML_DIR/." "$RUNNER_TEMP/site/$API_DIR/"
           echo "API reference: $(find "$RUNNER_TEMP/site/$API_DIR" -name '*.html' | wc -l) pages"
 
+      # lychee is installed here, pinned and hash-checked, and kept in the Actions cache; lychee-action downloaded
+      # it from GitHub releases on every run, so a release outage (HTTP 5xx) failed the job.
+      - name: Restore lychee
+        if: ${{ inputs.link_check }}
+        id: lychee_bin
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/kokeb-tools/lychee-0.24.2
+          key: lychee-bin-${{ runner.os }}-0.24.2-1f4e0ef7
+
+      - name: Install lychee (pinned, hash-checked)
+        if: ${{ inputs.link_check }}
+        env:
+          LYCHEE_VERSION: "0.24.2"
+          LYCHEE_SHA256: 1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+          CACHED: ${{ steps.lychee_bin.outputs.cache-hit }}
+        run: |
+          set -euo pipefail
+          dir="$HOME/.cache/kokeb-tools/lychee-${LYCHEE_VERSION}"
+          if [ "${CACHED}" != "true" ] || [ ! -x "$dir/lychee" ]; then
+            name="lychee-x86_64-unknown-linux-gnu"
+            cd "$RUNNER_TEMP"
+            curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 20 -o lychee.tar.gz \
+              "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/${name}.tar.gz"
+            echo "${LYCHEE_SHA256}  lychee.tar.gz" | sha256sum -c -
+            tar -xzf lychee.tar.gz
+            mkdir -p "$dir" && install -m 0755 "${name}/lychee" "$dir/lychee"
+          fi
+          echo "$dir" >> "$GITHUB_PATH"
+          "$dir/lychee" --version
+
       - name: Check links on the built site (offline)
         if: ${{ inputs.link_check }}
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
-        with:
-          fail: true
-          args: >-
-            --offline --no-progress --include-fragments --index-files index.html
-            --root-dir ${{ runner.temp }}/site
-            --exclude-path '404\.html$'
-            ${{ inputs.link_check_args }}
-            '${{ runner.temp }}/site/**/*.html'
+        env:
+          SITE: ${{ runner.temp }}/site
+          EXTRA: ${{ inputs.link_check_args }}
+        run: |
+          set -euo pipefail
+          # EXTRA holds the caller's extra lychee arguments; it is split as a shell word list.
+          extra=()
+          if [ -n "${EXTRA}" ]; then eval "extra=(${EXTRA})"; fi
+          # lychee expands the quoted glob itself.
+          lychee --offline --no-progress --include-fragments --index-files index.html \
+            --root-dir "$SITE" --exclude-path '404\.html$' "${extra[@]}" "$SITE/**/*.html"
 
       - name: Keep the built site
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2

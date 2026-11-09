@@ -33,7 +33,7 @@ jobs:
 <!-- generated: jobs-ru-docs-linkcheck -->
 | Job | Permissions | Steps |
 | --- | --- | --- |
-| `link-check` | `contents: read` | Checkout repository; Own documentation site; Link check with Lychee |
+| `link-check` | `contents: read` | Checkout repository; Own documentation site; Restore lychee; Install lychee (pinned, hash-checked); Link check with Lychee |
 <!-- /generated -->
 
 ## Inputs

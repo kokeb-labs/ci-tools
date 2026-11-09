@@ -25,6 +25,9 @@ that heading.
   ESP32 jobs.
 - Self-CI caches its pinned shellcheck and actionlint by version and hash and retries their download on any
   error; `ru-cross-build` and `ru-docs-publish` retry their release downloads on any error (HTTP 5xx included).
+- `ru-docs-linkcheck` and `ru-mkdocs-publish` run lychee 0.24.2 installed by the job (pinned, SHA-256-checked,
+  kept in the Actions cache) instead of `lycheeverse/lychee-action`, which downloaded it from GitHub releases on every
+  run. Same arguments, same failure rule; the link report goes to the step summary.
 
 ## [1.12.0] - 2026-11-08
 
