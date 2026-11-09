@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-11-09
+
 ### Added
 
 - `ru-misra`: MISRA C++:2023 analysis with the CodeQL coding-standards pack (2.62.0, CLI 2.21.4) and the Kokeb C++20
