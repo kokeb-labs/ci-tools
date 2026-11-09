@@ -36,8 +36,9 @@ inline std::uint32_t twice(std::uint32_t v) { return v ^ (v << 1U); }  // codeql
 // A marker of a real record that deviates nothing on its line: a suppression error.
 inline std::uint32_t mask(std::uint32_t v) { return v & 0xFFU; }  // codeql::misra_deviation(MD-CPP-005)
 
-// A clang-tidy suppression without a record id: a suppression error.
-inline std::uint32_t low(std::uint32_t v) { return v & 0x0FU; }  // NOLINT(readability-magic-numbers)
+// A bare clang-tidy suppression (it silences every check, the matrix's included) without a record id: a
+// suppression error. A NOLINT naming only a check the matrix does not rely on needs no record.
+inline std::uint32_t low(std::uint32_t v) { return v & 0x0FU; }  // NOLINT
 
 }  // namespace fixture
 

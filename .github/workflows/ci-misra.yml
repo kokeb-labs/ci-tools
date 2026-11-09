@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 env:
-  HANDBOOK_REF: daec60fa62c5e418eb72a1bfb28c0937f536a751
+  HANDBOOK_REF: 64060f5517467e577865e6909022eefc8b20a763
 
 jobs:
   validate-compilers:
@@ -212,7 +212,7 @@ jobs:
     steps:
       # Seeded: Rule 9.3.1 twice (CodeQL and clang-tidy) and Rule 6.5.1 (advisory), Rules 8.2.5 and 8.2.6 deviated
       # by MD-CPP-003 and MD-CPP-004, and three bad suppressions (an unknown record, a marker that deviates nothing,
-      # a NOLINT without a record). The canary and the extraction checks must pass on both configurations.
+      # a bare NOLINT without a record). The canary and the extraction checks must pass on both configurations.
       - name: Expect the seeded counts
         env:
           VIOLATIONS: ${{ needs.ru-misra-fixture.outputs.violations }}

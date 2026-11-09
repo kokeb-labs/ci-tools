@@ -73,7 +73,7 @@ on:
         description: "Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply"
         type: string
         required: false
-        default: "daec60fa62c5e418eb72a1bfb28c0937f536a751"
+        default: "64060f5517467e577865e6909022eefc8b20a763"
       advanced_security:
         description: >-
           Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this
