@@ -28,6 +28,8 @@ that heading.
 - `ru-docs-linkcheck` and `ru-mkdocs-publish` run lychee 0.24.2 installed by the job (pinned, SHA-256-checked,
   kept in the Actions cache) instead of `lycheeverse/lychee-action`, which downloaded it from GitHub releases on every
   run. Same arguments, same failure rule; the link report goes to the step summary.
+- `ru-docs-publish` (legacy): Doxygen 1.10.0 is kept in the Actions cache by version (falling back to the runner's
+  package with a warning when GitHub releases fail), and its link check runs the same cached lychee.
 
 ## [1.12.0] - 2026-11-08
 
