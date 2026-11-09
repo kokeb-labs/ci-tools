@@ -40,6 +40,8 @@ that heading.
   cppcheck suppression, a bare `NOLINT`, or one naming a validated clang-tidy check); `NOLINTEND` never needs one.
 - A validated clang-tidy claim can carry `message:`, a regex the diagnostic must match to count: a check that
   reports more than its guideline (cppcoreguidelines-macro-usage and object-like macros) decides only that part.
+- `ru-misra`'s extraction check skips a unit the build defines but never compiles (no object file: a target outside
+  `all`, such as a compile-fail test, or one the Cortex-M target does not build) and lists it as not analysed.
 
 ## [1.12.1] - 2026-11-08
 

@@ -279,8 +279,9 @@ def compdb_units(path: str, paths: list[str], canary: str | None) -> list[dict]:
     for e in db:
         f = os.path.normpath(os.path.join(e.get("directory", ""), e["file"]))
         args = e.get("arguments") or shlex.split(e.get("command", ""))
-        units.append({"file": f, "args": args, "canary": bool(canary) and os.path.normpath(f) == os.path.normpath(
-            os.path.abspath(canary))})
+        out = os.path.join(e.get("directory", ""), e["output"]) if e.get("output") else None
+        units.append({"file": f, "args": args, "output": out,
+                      "canary": bool(canary) and os.path.normpath(f) == os.path.normpath(os.path.abspath(canary))})
     return units
 
 
@@ -320,7 +321,17 @@ def cmd_extraction(a) -> int:
     problems = []
     if not units:
         problems.append("the compile database is empty: nothing was built")
+    # A unit the build defines but never compiles (a target excluded from `all`, such as a compile-fail test)
+    # has no object file. It is not analysed, and says so; anything the build compiled must be in the database.
+    # Only when the build left objects behind can their absence be told from a deleted build directory.
+    built = [u for u in units if u["output"] and os.path.isfile(u["output"])]
+    not_built = [u for u in units if built and u["output"] and not os.path.isfile(u["output"])]
+    if not_built:
+        print(f"{len(not_built)} unit(s) defined but not built by the traced build (not analysed): "
+              + ", ".join(os.path.relpath(u["file"], root) for u in not_built[:20]))
     for u in units:
+        if u in not_built:
+            continue
         if os.path.normpath(u["file"]) not in compiled_units:
             problems.append(f"translation unit {os.path.relpath(u['file'], root)} is in the build but not in the "
                             "CodeQL database")
