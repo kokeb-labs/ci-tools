@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import fnmatch
 import json
 import os
 import re
@@ -488,7 +487,6 @@ def cmd_report(a) -> int:
     with open(a.markers, encoding="utf-8") as fh:
         marks = json.load(fh)
     records = marks["records"]
-    by_guideline = {g["id"]: g for g in matrix}
     supported = {}
     if a.supported:
         with open(a.supported, encoding="utf-8") as fh:

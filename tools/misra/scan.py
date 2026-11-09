@@ -120,7 +120,7 @@ def main() -> int:
         p = os.path.join(out, f"step-{name}.sh")
         with open(p, "w", encoding="utf-8") as fh:
             fh.write(f"#!/bin/sh\nset -e\ncd {shlex.quote(root)}\n{cmd}\n")
-        os.chmod(p, 0o755)
+        os.chmod(p, 0o700)  # owner only: run by the CodeQL tracer as this user
         scripts.append(f"--command={p}")
     if run([a.codeql, "database", "create", db, "--language=cpp", f"--source-root={root}", *scripts]):
         print("::error::the CodeQL database could not be built: the build failed under the tracer")

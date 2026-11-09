@@ -389,6 +389,7 @@ jobs:
 | `repo_deviations` | string | no | `docs/deviations.yml` | The repository's own deviation records; entries with check: misra/<guideline> become code identifiers like the project-wide MD-CPP records |
 | `handbook_ref` | string | no | `daec60fa62c5e418eb72a1bfb28c0937f536a751` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
 | `advanced_security` | boolean | no | `false` | Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this repository. Without it, CodeQL may run only on a public repository under an OSI-approved licence. |
+| `open_source_prerelease` | boolean | no | `false` | Set true for a private repository whose code is released under the OSI-approved licence in its LICENSE file and is to be made public. CodeQL then runs and the job prints the declaration as a warning; the report stays in the run's artifact (nothing is uploaded to code scanning). |
 | `enforce` | boolean | no | `true` | Fail the job by the level's policy. False reports only (the counts are in the outputs). |
 | `artifact_name` | string | no | `misra-report` | Name of the report artifact (unique per call when a run calls this more than once) |
 <!-- inputs:ru-misra.yml:end -->
