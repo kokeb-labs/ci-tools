@@ -17,6 +17,7 @@ import glob
 import os
 import re
 import sys
+from pathlib import Path
 
 import yaml
 
@@ -63,7 +64,7 @@ def main() -> int:
     ap.add_argument("--workflows", default=".github/workflows")
     args = ap.parse_args()
 
-    text = open(args.readme, encoding="utf-8").read()
+    text = Path(args.readme).read_text(encoding="utf-8")
     new = text
     stale = []
     for path in sorted(glob.glob(os.path.join(args.workflows, "*.yml"))):

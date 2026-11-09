@@ -422,7 +422,7 @@ def site_identity(root: Path, name: str | None, description: str | None) -> tupl
         m = re.search(r"github\.com[:/]([^/]+/[^/]+?)(?:\.git)?$", url)
         repo = m.group(1) if m else ""
     except OSError:
-        pass
+        pass  # no git: fall back to the organisation's repository name below
     repo = repo or f"kokeb-labs/{root.name}"
     title = name or re.sub(r"^Kokeb Labs\s+", "", str(cfg.get("title") or root.name)).strip()
     desc = description or " ".join(str(cfg.get("description") or "").split()) or "TODO: one sentence on what this is."

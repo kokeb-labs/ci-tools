@@ -25,6 +25,7 @@ import datetime
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 HEAD_RE = re.compile(r"^## \[(?P<name>[^\]]+)\](?P<rest>[^\n]*)$", re.M)
 VER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
@@ -86,7 +87,7 @@ def breaking_allowed(text: str, base_text: str | None) -> bool:
 
 
 def cmd_bump(path: str, level: str, date: str) -> int:
-    text = open(path, encoding="utf-8").read()
+    text = Path(path).read_text(encoding="utf-8")
     top = top_version(text)
     if not top:
         print("no released version in the changelog; write the first section by hand", file=sys.stderr)
@@ -103,7 +104,7 @@ def cmd_bump(path: str, level: str, date: str) -> int:
     i = next(k for k, h in enumerate(heads) if h.group("name") == "Unreleased")
     start, end = heads[i].end(), heads[i + 1].start() if i + 1 < len(heads) else len(text)
     text = f"{text[:start]}\n\n## [{new}] - {date}\n\n{body.strip()}\n\n{text[end:]}"
-    open(path, "w", encoding="utf-8").write(text)
+    Path(path).write_text(text, encoding="utf-8")
     print(new)
     return 0
 
@@ -156,7 +157,7 @@ def main() -> int:
 
     if args.cmd == "bump":
         return cmd_bump(args.changelog, args.level, args.date)
-    text = open(args.changelog, encoding="utf-8").read()
+    text = Path(args.changelog).read_text(encoding="utf-8")
     if args.cmd == "check":
         errors = check(text, git_show(args.base_ref, args.changelog))
         for e in errors:
@@ -171,7 +172,7 @@ def main() -> int:
         found = top_version(text)
     print(f"version={found[0] if found else ''}")
     if found:
-        open(args.notes, "w", encoding="utf-8").write(found[2].strip("\n") + "\n")
+        Path(args.notes).write_text(found[2].strip("\n") + "\n", encoding="utf-8")
     return 0
 
 

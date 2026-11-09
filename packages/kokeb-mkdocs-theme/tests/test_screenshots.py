@@ -8,7 +8,7 @@ import sys
 import tempfile
 import types
 import unittest
-from unittest import mock
+import unittest.mock
 
 from kokeb_mkdocs_theme import screenshots
 
@@ -68,7 +68,7 @@ class ScreenshotsTest(unittest.TestCase):
     def test_main_without_page_uses_the_default_pages(self):
         log: list[str] = []
         out = pathlib.Path(self.tmp.name) / "out"
-        with mock.patch.dict(sys.modules, fake_playwright(log)):
+        with unittest.mock.patch.dict(sys.modules, fake_playwright(log)):
             self.assertEqual(screenshots.main([str(self.site), str(out)]), 0)
         self.assertEqual(len(list(out.glob("*.png"))), 3 * 4)  # three pages, phone/desktop x light/dark
         self.assertTrue(any(u.endswith("/quickstart/index.html") for u in log))

@@ -161,7 +161,7 @@ class CiGate(unittest.TestCase):
                 fh.write(caller)
             with open(os.path.join(bindir, "gh"), "w") as fh:
                 fh.write(f"#!/bin/sh\ncat '{os.path.join(d, 'caller.yml')}'\n")
-            os.chmod(os.path.join(bindir, "gh"), 0o755)
+            os.chmod(os.path.join(bindir, "gh"), 0o700)  # owner only: a test stub run by this user
             env["PATH"] = bindir + os.pathsep + env["PATH"]
         return subprocess.run(["bash", "-e", "-c", gate_script()], env=env, capture_output=True, text=True)
 

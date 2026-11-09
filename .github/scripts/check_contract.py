@@ -30,6 +30,7 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 import yaml
 
@@ -111,7 +112,7 @@ def breaking_recorded(changelog: str, base_ref: str) -> bool:
         return False
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from changelog import breaking_allowed  # noqa: E402  (sibling script)
-    text = open(changelog, encoding="utf-8").read()
+    text = Path(changelog).read_text(encoding="utf-8")
     return breaking_allowed(text, git_show(base_ref, changelog))
 
 

@@ -744,9 +744,9 @@ def render_summary(s: dict, level: str) -> str:
             out.append(f"| {row['guideline']} | {row['our_category']} | {row['violations']} | {row.get('review', 0)} | "
                        f"{row['deviated']} | {row['status']} |")
     if any(r.get("review") for r in s["guidelines"].values()):
-        out += ["", "*To review*: findings of a rule the tool validation found reporting compliant code (the anomaly "
-                "ids are in misra-findings.csv). Each is checked by the reviewer (review checklist R-FP); a real one "
-                "is fixed, a false one needs no record beyond the anomaly. They do not fail the high level."]
+        out += ["", ("*To review*: findings of a rule the tool validation found reporting compliant code (the anomaly "
+                     "ids are in misra-findings.csv). Each is checked by the reviewer (review checklist R-FP); a real "
+                     "one is fixed, a false one needs no record beyond the anomaly. They do not fail the high level.")]
     counts = {}
     for row in s["guidelines"].values():
         counts[row["status"]] = counts.get(row["status"], 0) + 1
