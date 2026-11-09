@@ -85,14 +85,15 @@ on:
 
 jobs:
   release:
-    uses: kokeb-labs/ci-tools/.github/workflows/ru-release-with-artifacts.yml@v1
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-release-firmware.yml@v1
     permissions:
-      contents: write
+      actions: read     # find the tagged commit's CI run; a private repository refuses it otherwise
+      contents: write   # create the release
     with:
       build_workflow: esp32-examples-build-ci.yml
 ```
 
 The build must have run on the tagged commit first; see
-[ru-release-with-artifacts](ru-release-with-artifacts.md#when-it-finds-no-firmware).
+[ru-release-firmware](ru-release-firmware.md#when-it-finds-no-firmware).
 
 Next: [ru-build](ru-build.md), every input and what can go wrong.

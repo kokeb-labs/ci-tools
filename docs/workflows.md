@@ -25,7 +25,8 @@ job starts ([Permissions contract](permissions.md)).
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | Lint Markdown with markdownlint-cli2 against the repository's own rules. | `contents: read` |
 | [`ru-misra.yml`](ru-misra.md) | Check C++ code against MISRA C++:2023 with the validated open-source toolchain, and get a per-guideline report. | `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | Build, check, audit and publish a Kokeb Labs documentation site with the shared theme, versioned or not. | `contents: write` |
-| [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit. | `contents: write` |
+| [`ru-release-firmware.yml`](ru-release-firmware.md) | Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit, in public and private repositories. | `actions: read`, `contents: write` |
+| [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Deprecated: use [`ru-release-firmware`](ru-release-firmware.md), which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that `ru-build` built for the same commit. | `contents: write` |
 | [`ru-release.yml`](ru-release.md) | Create a GitHub Release with generated notes for a tag. | `contents: write` |
 | [`ru-repo-checks.yml`](ru-repo-checks.md) | The small checks of a repository (sign-off, organisation standard, Markdown and YAML lint, handbook rules, template drift and cppcheck) as steps of one job, with the same scripts and failure rules as their single workflows. | `contents: read`, `pull-requests: read` |
 | [`ru-template-drift.yml`](ru-template-drift.md) | Find the files a driver or library has let drift from [driver-template](https://github.com/kokeb-labs/driver-template). | `contents: read` |
@@ -42,7 +43,7 @@ job starts ([Permissions contract](permissions.md)).
 | has documentation | [`ru-mkdocs-publish`](ru-mkdocs-publish.md) (the platform), [`ru-docs-linkcheck`](ru-docs-linkcheck.md) for links in Markdown outside the site |
 | keeps Markdown or YAML | [`ru-markdown-lint`](ru-markdown-lint.md), [`ru-yaml-lint`](ru-yaml-lint.md) |
 | tags releases | [`ru-release`](ru-release.md) |
-| builds ESP32 firmware with ESP-IDF | [`ru-build`](ru-build.md), and [`ru-release-with-artifacts`](ru-release-with-artifacts.md) to ship the tested firmware ([ESP-IDF quickstart](esp-idf-quickstart.md)) |
+| builds ESP32 firmware with ESP-IDF | [`ru-build`](ru-build.md), and [`ru-release-firmware`](ru-release-firmware.md) to ship the tested firmware ([ESP-IDF quickstart](esp-idf-quickstart.md)) |
 | takes pull requests | [`dco`](dco.md): every commit signed off by its author |
 | is a Kokeb Labs repository | [`org-standard-check`](org-standard-check.md): the required root files and the MIT licence |
 

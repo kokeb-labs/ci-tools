@@ -32,6 +32,7 @@ read from the workflow files.
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | `contents: read` | `markdownlint`: `contents: read` |
 | [`ru-misra.yml`](ru-misra.md) | `contents: read` | `plan`: `contents: read`<br>`scan`: `contents: read`<br>`report`: `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`deploy`: `contents: write` |
+| [`ru-release-firmware.yml`](ru-release-firmware.md) | `actions: read`, `contents: write` | `release`: `actions: read`, `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-release.yml`](ru-release.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-repo-checks.yml`](ru-repo-checks.md) | `contents: read`, `pull-requests: read` | `checks`: `contents: read`, `pull-requests: read` |

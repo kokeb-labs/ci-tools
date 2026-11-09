@@ -13,8 +13,8 @@ committed figure no longer matches the code. Each figure below lists the files i
   <source media="(prefers-color-scheme: dark)" srcset="workflow-flow.dark.svg">
   <img src="workflow-flow.svg"
     alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report
-    and uploads fw-* artifacts; on a version tag ru-release-with-artifacts downloads those same
-    artifacts and attaches them to a GitHub Release.">
+    and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and
+    attaches them to a GitHub Release.">
 </picture>
 <!-- /figure -->
 
@@ -23,4 +23,4 @@ Figure module: [`docs/diagrams/figures/workflow-flow.py`](../../docs/diagrams/fi
 Drawn from:
 
 - `jobs` in [`.github/workflows/ru-build.yml`](../../.github/workflows/ru-build.yml)
-- `jobs` in [`.github/workflows/ru-release-with-artifacts.yml`](../../.github/workflows/ru-release-with-artifacts.yml)
+- `jobs` in [`.github/workflows/ru-release-firmware.yml`](../../.github/workflows/ru-release-firmware.yml)

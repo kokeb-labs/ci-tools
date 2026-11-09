@@ -127,4 +127,4 @@ size is larger; `0` turns the check off.
 | Size budget exceeded | A build's `dec` total is above `max_dec_total` | Shrink the firmware or raise the budget |
 | A fix here does not apply | "Re-run failed jobs" reuses the workflow revision of the first run | Start a new run (see [Versioning](VERSIONING.md#re-runs-use-the-old-revision)) |
 
-Next: [ru-release-with-artifacts](ru-release-with-artifacts.md), which ships these artifacts.
+Next: [ru-release-firmware](ru-release-firmware.md), which ships these artifacts.

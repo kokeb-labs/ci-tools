@@ -43,7 +43,7 @@ flowchart LR
     text["ru-docs-linkcheck / ru-markdown-lint / ru-yaml-lint"]
     rel["ru-release"]
     build["ru-build"]
-    relart["ru-release-with-artifacts"]
+    relart["ru-release-firmware"]
     org["dco / org-standard-check"]
   end
 
@@ -76,7 +76,8 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | [`ru-yaml-lint.yml`](.github/workflows/ru-yaml-lint.yml) | yamllint ([guide](docs/ru-yaml-lint.md)) |
 | [`ru-release.yml`](.github/workflows/ru-release.yml) | GitHub Release with generated notes ([guide](docs/ru-release.md)) |
 | [`ru-build.yml`](.github/workflows/ru-build.yml) | ESP-IDF: every app of `app_config.yml` across ESP-IDF versions and build types, `fw-*` artifacts, size report on PRs ([guide](docs/ru-build.md), [quickstart](docs/esp-idf-quickstart.md)) |
-| [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | ESP-IDF: GitHub Release with the firmware `ru-build` built for the tagged commit ([guide](docs/ru-release-with-artifacts.md)) |
+| [`ru-release-firmware.yml`](.github/workflows/ru-release-firmware.yml) | ESP-IDF: GitHub Release with the firmware `ru-build` built for the tagged commit, in public and private repositories ([guide](docs/ru-release-firmware.md)) |
+| [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | Deprecated: use `ru-release-firmware.yml`. The same release without `actions: read`, so it fails in private repositories ([guide](docs/ru-release-with-artifacts.md)) |
 | [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | Signed build provenance (GitHub artifact attestation) for every file of a published release; public repositories ([guide](docs/ru-attest-release.md)) |
 | [`ru-template-drift.yml`](.github/workflows/ru-template-drift.yml) | Compares the files driver-template manages with what the template makes today from `.kokeb/template.yml` ([guide](docs/ru-template-drift.md)) |
 | [`ru-repo-checks.yml`](.github/workflows/ru-repo-checks.yml) | DCO, org standard, Markdown lint, handbook rules, template drift, cppcheck and YAML lint as steps of one job ([guide](docs/ru-repo-checks.md)) |
@@ -132,7 +133,8 @@ workflow's job permissions ever differ from this table.
 | [`ru-markdown-lint.yml`](.github/workflows/ru-markdown-lint.yml) | `contents: read` | checkout |
 | [`ru-mkdocs-publish.yml`](.github/workflows/ru-mkdocs-publish.yml) | `contents: write` | push to the deployment branch (publish job only; the build and quality jobs read) |
 | [`ru-release.yml`](.github/workflows/ru-release.yml) | `contents: write` | create the GitHub Release |
-| [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | `contents: write` | create the release and upload the firmware |
+| [`ru-release-firmware.yml`](.github/workflows/ru-release-firmware.yml) | `actions: read`, `contents: write` | find the tagged commit's CI run and download its firmware; create the release and upload the files |
+| [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | `contents: write` | Deprecated: create the release and upload the firmware (public repositories only; use `ru-release-firmware.yml`) |
 | [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | `attestations: write`, `contents: read`, `id-token: write` | download the release files; sign the provenance through Sigstore; store the attestation |
 | [`ru-template-drift.yml`](.github/workflows/ru-template-drift.yml) | `contents: read` | checkout of the caller and of driver-template |
 | [`ru-yaml-lint.yml`](.github/workflows/ru-yaml-lint.yml) | `contents: read` | checkout |
@@ -675,7 +677,45 @@ jobs:
 | `max_dec_total` | string | no | `0` | Maximum total dec size in bytes for size budget enforcement (0 to disable) |
 <!-- inputs:ru-build.yml:end -->
 
+### ru-release-firmware
+
+A GitHub Release with the firmware `ru-build` built and tested for the tagged commit. It replaces
+`ru-release-with-artifacts.yml`, with the same inputs; its job also asks for `actions: read`, which a private
+repository needs to find the build's workflow run ([guide](docs/ru-release-firmware.md)).
+
+```yaml
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-release-firmware.yml@v1
+    permissions:
+      actions: read
+      contents: write
+    with:
+      build_workflow: esp32-examples-build-ci.yml
+```
+
+<!-- inputs:ru-release-firmware.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `build_workflow` | string | no | `esp32-examples-build-ci.yml` | Name of the ESP32 build workflow |
+| `artifact_pattern` | string | no | `fw-.*` | Pattern for firmware artifacts |
+| `draft` | boolean | no | `false` | Create as draft release |
+| `prerelease` | boolean | no | `false` | Mark as pre-release |
+| `tag_name` | string | no | `""` | Tag name for release (defaults to github.ref_name) |
+| `fail_on_no_artifacts` | boolean | no | `false` | Fail if no firmware artifacts found |
+| `commit` | string | no | `""` | Commit whose CI artifacts are released, and that the release tag must point to. Empty: github.sha. A caller triggered by workflow_run passes github.event.workflow_run.head_sha, because github.sha is then the default branch's head, not the tagged commit. |
+<!-- inputs:ru-release-firmware.yml:end -->
+
 ### ru-release-with-artifacts
+
+Deprecated: use [`ru-release-firmware`](#ru-release-firmware). Without `actions: read` its token cannot list the
+build's workflow runs in a private repository, and the release fails with `Resource not accessible by integration`.
+It keeps working for existing callers until the next major. To move, change the file name in `uses:` and grant
+`actions: read` next to `contents: write`; the inputs are the same.
 
 ```yaml
 on:

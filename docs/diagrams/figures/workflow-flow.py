@@ -4,7 +4,7 @@ Reads: Two lanes, each read left to right. The top lane runs on every push and p
 esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns
 app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose
 size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The
-bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-with-artifacts, which
+bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which
 downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid
 arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.
 """
@@ -16,7 +16,7 @@ from kokeb_mkdocs_theme.paths import repo_root
 
 ROOT = repo_root()
 BUILD = ".github/workflows/ru-build.yml"
-RELEASE = ".github/workflows/ru-release-with-artifacts.yml"
+RELEASE = ".github/workflows/ru-release-firmware.yml"
 
 
 def _jobs(path):
@@ -44,7 +44,7 @@ def build(d):
         "workflow-flow",
         "From push to release",
         alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and "
-        "uploads fw-* artifacts; on a version tag ru-release-with-artifacts downloads those same artifacts and "
+        "uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and "
         "attaches them to a GitHub Release.",
         width=1200,
         kicker="Workflows",
@@ -77,7 +77,7 @@ def build(d):
     top2 = art.b + 64
     inner2 = f.region_inner_top(top2, sub_below=True)
     f.region(0, top2, W, inner2 - top2 + H + 20, "A version tag v*.*.*", tone="slate",
-             sub="your release.yml calls ru-release-with-artifacts.yml", sub_below=True)
+             sub="your release.yml calls ru-release-firmware.yml", sub_below=True)
     f.note(col[0], inner2, cw, "No rebuild: the release ships the firmware CI already built and tested.")
     rel = f.card(col[1], inner2, cw, d["release_jobs"][0], ["finds the fw-* artifacts", "of the tagged commit"],
                  tone="brand", accent=True, h=H)

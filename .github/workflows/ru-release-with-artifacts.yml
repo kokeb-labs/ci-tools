@@ -1,4 +1,7 @@
 ---
+# Deprecated: use ru-release-firmware.yml, which has the same inputs and behaviour and also works in private
+# repositories (its caller grants actions: read as well). Kept so that existing callers keep starting; it is
+# removed in the next major. Guide: docs/ru-release-with-artifacts.md.
 name: 📦 [RU] Release with Artifacts
 
 on:
@@ -49,10 +52,10 @@ jobs:
   release:
     name: Create Release with Artifacts
     runs-on: ubuntu-latest
-    # contents: write creates the release. Downloading artifacts from another
-    # workflow's run works with this token for the callers' repositories;
-    # actions: read is deliberately not requested, because existing callers
-    # grant only contents: write and would hit startup_failure.
+    # contents: write creates the release. Without actions: read the token can list workflow runs and download
+    # their artifacts only in a public repository; a private one fails with "Resource not accessible by
+    # integration". actions: read is not requested here, because existing callers grant only contents: write and
+    # would hit startup_failure; ru-release-firmware.yml requests it.
     permissions:
       contents: write
     steps:

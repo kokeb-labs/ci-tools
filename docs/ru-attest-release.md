@@ -3,7 +3,8 @@
 Sign build provenance for every file of a published release.
 
 `ru-attest-release.yml` runs after [`ru-release`](ru-release.md) or
-[`ru-release-with-artifacts`](ru-release-with-artifacts.md). It downloads the release's files, checks each against
+[`ru-release-firmware`](ru-release-firmware.md) (or the deprecated
+[`ru-release-with-artifacts`](ru-release-with-artifacts.md)). It downloads the release's files, checks each against
 the release's `SHA256SUMS`, and creates a
 [GitHub artifact attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations)
 for every file that `SHA256SUMS` lists: an [SLSA](https://slsa.dev/) build-provenance statement, signed through
@@ -23,7 +24,7 @@ Add a job after the release job, in the same workflow:
 ```yaml
 jobs:
   release:
-    # ... ru-release or ru-release-with-artifacts ...
+    # ... ru-release or ru-release-firmware ...
 
   attest:
     needs: release
@@ -65,7 +66,7 @@ gh attestation verify as5047u-1.2.0.tar.gz -R kokeb-labs/driver-as5047u \
 and prints the commit and the workflow run. Repeat it for each file you use.
 
 What it proves: the release workflow of the repository published these exact files at the tagged commit. The
-firmware zips are built by `ru-build` in CI and released by `ru-release-with-artifacts` only after that CI run
+firmware zips are built by `ru-build` in CI and released by `ru-release-firmware` only after that CI run
 passed on the tagged commit. The attestation is signed in the release job, not in the build job.
 
 ## When it fails

@@ -15,6 +15,23 @@ that heading.
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-11-09
+
+### Added
+
+- `ru-release-firmware`: the firmware release of `ru-release-with-artifacts`, with the same inputs and behaviour,
+  whose job asks for `actions: read` as well as `contents: write`. In a private repository the token without
+  `actions: read` cannot list the build workflow's runs, so the release failed in the download step with
+  `Resource not accessible by integration` (list workflow runs for a workflow). Callers grant
+  `actions: read` and `contents: write`.
+
+### Deprecated
+
+- `ru-release-with-artifacts`: use `ru-release-firmware`; change the file name in `uses:` and grant `actions: read`
+  next to `contents: write`. It keeps working for existing callers, in public repositories, until the next major.
+  Its guide no longer claims that the token reads another run's artifacts without `actions: read`; that holds only
+  for public repositories.
+
 ## [1.13.0] - 2026-11-09
 
 ### Added

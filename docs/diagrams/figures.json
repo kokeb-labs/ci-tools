@@ -1,14 +1,14 @@
 {
   "workflow-flow": {
     "title": "From push to release",
-    "alt": "Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-with-artifacts downloads those same artifacts and attaches them to a GitHub Release.",
-    "description": "Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-with-artifacts, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean \"runs next\", dashed arrows carry files. Job names are read from the workflow files.",
+    "alt": "Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release.",
+    "description": "Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean \"runs next\", dashed arrows carry files. Job names are read from the workflow files.",
     "profile": "overview",
     "width": 1200,
     "source": "docs/diagrams/figures/workflow-flow.py",
     "sources": [
       ".github/workflows/ru-build.yml:jobs",
-      ".github/workflows/ru-release-with-artifacts.yml:jobs"
+      ".github/workflows/ru-release-firmware.yml:jobs"
     ]
   }
 }

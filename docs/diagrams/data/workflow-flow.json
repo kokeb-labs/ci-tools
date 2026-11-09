@@ -9,6 +9,6 @@
   ],
   "sources": [
     ".github/workflows/ru-build.yml:jobs",
-    ".github/workflows/ru-release-with-artifacts.yml:jobs"
+    ".github/workflows/ru-release-firmware.yml:jobs"
   ]
 }
