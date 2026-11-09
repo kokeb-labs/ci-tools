@@ -28,6 +28,10 @@ that heading.
   traceability page, an anomaly log, and a validation report attached to each release. The self-CI fails when a
   tool-decided guideline has no passing test, or when the toolchain changes without re-validation.
 - `codeql/kokeb-cpp20`: the own C++20 profile query pack, with KB-CPP-046 (Result types are `[[nodiscard]]`).
+- `ru-misra`: `open_source_prerelease` lets a private repository whose code is under the OSI licence in its LICENSE
+  file, and is to be published, run the analysis; the job prints the declaration as a warning.
+- Code scanning of ci-tools moves to an advanced setup (`.github/workflows/codeql.yml`, `security-and-quality`) that
+  leaves out the test fixtures, which break rules on purpose and whose findings the self-CI asserts.
 
 ## [1.12.1] - 2026-11-08
 

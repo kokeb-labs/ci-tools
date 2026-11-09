@@ -81,6 +81,14 @@ on:
         type: boolean
         required: false
         default: false
+      open_source_prerelease:
+        description: >-
+          Set true for a private repository whose code is released under the OSI-approved licence in its LICENSE
+          file and is to be made public. CodeQL then runs and the job prints the declaration as a warning; the
+          report stays in the run's artifact (nothing is uploaded to code scanning).
+        type: boolean
+        required: false
+        default: false
       enforce:
         description: "Fail the job by the level's policy. False reports only (the counts are in the outputs)."
         type: boolean
@@ -139,9 +147,11 @@ jobs:
         env:
           PRIVATE: ${{ github.event.repository.private }}
           ADVANCED_SECURITY: ${{ inputs.advanced_security }}
+          PRERELEASE: ${{ inputs.open_source_prerelease }}
         run: |
           "$RUNNER_TEMP/venv/bin/python" .ru-misra/ci-tools/tools/misra/misra.py licence \
-            --private "${PRIVATE:-true}" --advanced-security "$ADVANCED_SECURITY" --repo .
+            --private "${PRIVATE:-true}" --advanced-security "$ADVANCED_SECURITY" \
+            --open-source-prerelease "$PRERELEASE" --repo .
       - name: Configurations
         id: configs
         env:

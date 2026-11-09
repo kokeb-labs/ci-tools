@@ -1,0 +1,14 @@
+# Code scanning configuration for ci-tools (advanced setup, .github/workflows/codeql.yml).
+#
+# The paths below are test fixtures: code written to break rules, so that the tools these workflows run can be shown
+# to detect what they claim (docs/tool-validation/plan.md). Their findings are the expected result and are asserted
+# by the self-CI (tests/misra-validation/validate.py, the cpp-analysis and quality self-tests), not code-scanning
+# alerts. Everything else in the repository is scanned.
+name: ci-tools
+paths-ignore:
+  - tests/misra-validation
+  - tests/fixtures
+  - codeql/kokeb-cpp20/validation
+  - tools/misra/canary
+queries:
+  - uses: security-and-quality

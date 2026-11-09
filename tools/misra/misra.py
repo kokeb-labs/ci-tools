@@ -97,29 +97,43 @@ def git_files(repo: str) -> list[str]:
 # --- licence -------------------------------------------------------------------------------------------------
 
 
+def osi_licence(repo: str) -> tuple[str | None, str | None]:
+    """The repository's licence file and an error, if it is missing or not an OSI-approved licence."""
+    lic = next((os.path.join(repo, n) for n in ("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING")
+                if os.path.isfile(os.path.join(repo, n))), None)
+    if not lic:
+        return None, "No LICENSE file: CodeQL may run only on code released under an OSI-approved licence."
+    with open(lic, encoding="utf-8", errors="replace") as fh:
+        if not OSI_LICENCE.search(fh.read(4000)):
+            return lic, f"{lic} does not look like an OSI-approved licence; CodeQL may not run."
+    return lic, None
+
+
 def cmd_licence(a) -> int:
     """The CodeQL Terms allow analysis of an Open Source Codebase (released under an OSI-approved licence) and, when
-    it is hosted on GitHub.com, CI use; any other codebase (their example: a private repository) needs a paid
-    Advanced Security licence."""
+    it is hosted on GitHub.com, CI use; any other codebase needs a paid Advanced Security licence. A private
+    repository may run it only when the caller declares it an open-source pre-release: its code is under the OSI
+    licence in its LICENSE file and is to be published. That declaration is the caller's, and is printed."""
     if a.advanced_security == "true":
         print("CodeQL may run: the caller states a paid GitHub Advanced Security / Code Security licence.")
         return 0
-    if a.private == "true":
+    if a.private == "true" and a.open_source_prerelease != "true":
         emit("error", "CodeQL may not run on a private repository without a paid GitHub Advanced Security / Code "
                       "Security licence (CodeQL Terms and Conditions, License Restrictions). Make the repository "
-                      "public under its OSI licence, or set advanced_security: true if the licence is held.")
+                      "public under its OSI licence; set open_source_prerelease: true if its code is released "
+                      "under that licence and is to be published; or set advanced_security: true if the licence "
+                      "is held.")
         return 1
-    lic = next((os.path.join(a.repo, n) for n in ("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING")
-                if os.path.isfile(os.path.join(a.repo, n))), None)
-    if not lic:
-        emit("error", "No LICENSE file: CodeQL may run on a public repository only if its code is released under an "
-                      "OSI-approved licence.")
+    lic, err = osi_licence(a.repo)
+    if err:
+        emit("error", err)
         return 1
-    with open(lic, encoding="utf-8", errors="replace") as fh:
-        if not OSI_LICENCE.search(fh.read(4000)):
-            emit("error", f"{lic} does not look like an OSI-approved licence; CodeQL may not run.")
-            return 1
-    print(f"CodeQL may run: public repository on GitHub.com, {os.path.basename(lic)} is an OSI-approved licence.")
+    name = os.path.basename(lic)
+    if a.private == "true":
+        emit("warning", f"CodeQL runs on a private repository declared an open-source pre-release ({name} is an "
+                        "OSI-approved licence). The declaration is the caller's; results stay in the run's artifact.")
+        return 0
+    print(f"CodeQL may run: public repository on GitHub.com, {name} is an OSI-approved licence.")
     return 0
 
 
@@ -670,6 +684,7 @@ def main() -> int:
     p = sub.add_parser("licence")
     p.add_argument("--private", required=True)
     p.add_argument("--advanced-security", default="false")
+    p.add_argument("--open-source-prerelease", default="false")
     p.add_argument("--repo", default=".")
     p = sub.add_parser("prepare")
     p.add_argument("--records", required=True)

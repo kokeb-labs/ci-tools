@@ -86,6 +86,16 @@ class Licence(unittest.TestCase):
         self.assertEqual(run("licence", "--private", "false", "--repo", d).returncode, 0)
 
 
+    def test_private_open_source_prerelease_needs_an_osi_licence(self):
+        d = git_repo({"README.md": "x"})
+        args = ("licence", "--private", "true", "--open-source-prerelease", "true", "--repo", d)
+        self.assertEqual(run(*args).returncode, 1)
+        d = git_repo({"LICENSE": "MIT License\n\nCopyright (c) 2026 The x authors\n"})
+        r = run("licence", "--private", "true", "--open-source-prerelease", "true", "--repo", d)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("open-source pre-release", r.stdout)
+
+
 class Prepare(unittest.TestCase):
     def prepare(self, files: dict[str, str], today="2026-11-08"):
         d = git_repo({"records.yml": RECORDS, **files})

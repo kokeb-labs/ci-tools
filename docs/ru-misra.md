@@ -9,12 +9,14 @@ databases. Every tool comes from `tools/misra/toolchain.json` at the workflow's 
 SHA-256. The [tool validation plan](tool-validation/plan.md) explains why each tool can be trusted for what it
 decides.
 
-!!! warning "Licence: public repositories only"
+!!! warning "Licence: open-source code only"
     The CodeQL Terms and Conditions license analysis of an *Open Source Codebase*, code released under an
-    OSI-approved licence, and CI use when it is hosted on GitHub.com. Any other codebase, for example a private
-    repository, needs a paid GitHub Advanced Security or Code Security licence. The first job checks the repository
-    is public and has an OSI licence, or that `advanced_security: true` states the licence is held, and fails
-    before CodeQL is downloaded otherwise. A private MIT-licensed driver cannot call this workflow until it is public.
+    OSI-approved licence, and CI use when it is hosted on GitHub.com. Any other codebase needs a paid GitHub
+    Advanced Security or Code Security licence. The first job passes a public repository with an OSI licence, a
+    caller that states the paid licence (`advanced_security: true`), or a private repository that the caller
+    declares an open-source pre-release (`open_source_prerelease: true`): its code is under the OSI licence in its
+    LICENSE file and is to be published. That declaration is the caller's responsibility; the job prints it as a
+    warning and the report stays in the run's artifact. Anything else fails before CodeQL is downloaded.
 
 ## Caller
 
@@ -124,6 +126,7 @@ keep their review step (MISRA Compliance:2020 §3.5), as the [plan](tool-validat
 | `repo_deviations` | string | `docs/deviations.yml` | The repository's own deviation records; entries with check: misra/<guideline> become code identifiers like the project-wide MD-CPP records |
 | `handbook_ref` | string | `daec60fa62c5e418eb72a1bfb28c0937f536a751` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
 | `advanced_security` | boolean | `false` | Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this repository. Without it, CodeQL may run only on a public repository under an OSI-approved licence. |
+| `open_source_prerelease` | boolean | `false` | Set true for a private repository whose code is released under the OSI-approved licence in its LICENSE file and is to be made public. CodeQL then runs and the job prints the declaration as a warning; the report stays in the run's artifact (nothing is uploaded to code scanning). |
 | `enforce` | boolean | `true` | Fail the job by the level's policy. False reports only (the counts are in the outputs). |
 | `artifact_name` | string | `misra-report` | Name of the report artifact (unique per call when a run calls this more than once) |
 <!-- /generated -->
@@ -132,7 +135,7 @@ keep their review step (MISRA Compliance:2020 §3.5), as the [plan](tool-validat
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| "CodeQL may not run on a private repository" | The repository is private and `advanced_security` is false | Make the repository public under its OSI licence, or hold the licence and set `advanced_security: true` |
+| "CodeQL may not run on a private repository" | The repository is private, and neither `advanced_security` nor `open_source_prerelease` is set | Make the repository public under its OSI licence, declare it an open-source pre-release, or hold the licence and set `advanced_security: true` |
 | "is under the analysed paths but no translation unit of this configuration includes it" | A header is not built by `cmake_args`, or not by the cross target | Build the host tests (`-D<CHIP>_BUILD_TESTS=ON`) and a cross target that includes every header |
 | "the canary was not detected" | The build was not traced, or a pack did not run | Check the scan log; the build must run a real compiler, not a cache |
 | "suppression marker deviates no finding" | The marker cites a record of another guideline, or the finding is gone | Remove the marker, or cite the record of the finding's guideline |
