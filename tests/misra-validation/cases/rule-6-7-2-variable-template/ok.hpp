@@ -32,7 +32,8 @@ struct Port {
 
 inline void Use() noexcept {
   Port port{};
-  DelayUs(port, std::uint32_t{1U});
+  constexpr std::uint32_t kOneUs = 1U;
+  DelayUs(port, kOneUs);
 }
 
 }  // namespace kv::rule_6_7_2::var_template

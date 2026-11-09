@@ -38,3 +38,8 @@ other_findings:
       misfire: the Rule 8.14.1 query reports the right-hand operands TransferError(b) == Error::Bus and
       TransferError(c) == Error::Bus; those calls only write the callee's local failure through the hook's reference
       parameter and read the ports, so they have no persistent side effect.
+seeded:
+  - "a statement after an unconditional return"
+near_misses:
+  - "an if in a function template whose condition calls an optional port hook, instantiated with ports whose hook
+    always answers true, always answers false, or is absent (ok.hpp)"
