@@ -91,7 +91,7 @@ jobs:
         run: |
           set -euo pipefail
           file="arm-gnu-toolchain-${VERSION}-x86_64-arm-none-eabi.tar.xz"
-          curl -fsSL --retry 5 --retry-delay 10 --connect-timeout 30 --max-time 600 \
+          curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 30 --max-time 600 \
             "https://developer.arm.com/-/media/Files/downloads/gnu/${VERSION}/binrel/${file}" -o "$RUNNER_TEMP/$file"
           echo "${SHA256}  $RUNNER_TEMP/$file" | sha256sum -c -
           mkdir -p "$RUNNER_TEMP/arm"

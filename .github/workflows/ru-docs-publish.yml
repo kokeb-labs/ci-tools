@@ -845,21 +845,40 @@ jobs:
       # =============================================================================
       # Doxygen Dependencies Installation
       # =============================================================================
+      # Doxygen's own release, checked against a pinned SHA-256, kept in the Actions cache by version; if GitHub
+      # releases still fail after retries, the runner's doxygen package is used with a warning.
+      - name: Restore Doxygen
+        if: steps.doxygen-check.outputs.doxygen_needed == 'true'
+        id: doxygen_bin
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/kokeb-tools/doxygen-1.10.0
+          key: doxygen-bin-${{ runner.os }}-1.10.0-dcfc9aa4
+
       - name: Install Doxygen (pinned version)
         if: steps.doxygen-check.outputs.doxygen_needed == 'true'
-        # Doxygen's own release, checked against a pinned SHA-256 (no third-party action in between).
         env:
           DOXYGEN_VERSION: '1.10.0'
           DOXYGEN_SHA256: dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747
+          CACHED: ${{ steps.doxygen_bin.outputs.cache-hit }}
         run: |
           set -euo pipefail
-          tarball="doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
-          curl -sSLf -o "$RUNNER_TEMP/$tarball" \
-            "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/$tarball"
-          echo "${DOXYGEN_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum -c -
-          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP"
-          sudo make -C "$RUNNER_TEMP/doxygen-${DOXYGEN_VERSION}" install
-          doxygen --version
+          dir="$HOME/.cache/kokeb-tools/doxygen-${DOXYGEN_VERSION}"
+          if [ "${CACHED}" != "true" ] || [ ! -x "$dir/doxygen" ]; then
+            tarball="doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
+            if curl -sSLf --retry 6 --retry-all-errors --retry-delay 10 -o "$RUNNER_TEMP/$tarball" \
+                "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/$tarball"; then
+              echo "${DOXYGEN_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum -c -
+              tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP"
+              mkdir -p "$dir" && install -m 0755 "$RUNNER_TEMP/doxygen-${DOXYGEN_VERSION}/bin/doxygen" "$dir/doxygen"
+            else
+              echo "::warning::could not download Doxygen ${DOXYGEN_VERSION}; using the runner's doxygen package"
+              sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends doxygen
+              mkdir -p "$dir" && ln -sf "$(command -v doxygen)" "$dir/doxygen"
+            fi
+          fi
+          echo "$dir" >> "$GITHUB_PATH"
+          "$dir/doxygen" --version
 
       - name: Check for pre-installed Graphviz
         if: steps.doxygen-check.outputs.doxygen_needed == 'true'
@@ -1967,11 +1986,39 @@ jobs:
       # =============================================================================
       # Link Validation
       # =============================================================================
+      - name: Restore lychee
+        if: ${{ inputs.run_link_check == true }}
+        id: lychee_bin
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/kokeb-tools/lychee-0.24.2
+          key: lychee-bin-${{ runner.os }}-0.24.2-1f4e0ef7
+
+      - name: Install lychee (pinned, hash-checked)
+        if: ${{ inputs.run_link_check == true }}
+        env:
+          LYCHEE_VERSION: "0.24.2"
+          LYCHEE_SHA256: 1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+          CACHED: ${{ steps.lychee_bin.outputs.cache-hit }}
+        run: |
+          set -euo pipefail
+          dir="$HOME/.cache/kokeb-tools/lychee-${LYCHEE_VERSION}"
+          if [ "${CACHED}" != "true" ] || [ ! -x "$dir/lychee" ]; then
+            name="lychee-x86_64-unknown-linux-gnu"
+            cd "$RUNNER_TEMP"
+            curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 20 -o lychee.tar.gz \
+              "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/${name}.tar.gz"
+            echo "${LYCHEE_SHA256}  lychee.tar.gz" | sha256sum -c -
+            tar -xzf lychee.tar.gz
+            mkdir -p "$dir" && install -m 0755 "${name}/lychee" "$dir/lychee"
+          fi
+          echo "$dir" >> "$GITHUB_PATH"
+
+      # Reports only (fail: false, as before); the report goes to the step summary.
       - name: Link check with Lychee
         if: ${{ inputs.run_link_check == true }}
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
-        with:
-          args: >-
+        env:
+          LYCHEE_ARGS: >-
             ${{ inputs.link_check_config != '' && format('--config {0}', inputs.link_check_config) || '' }}
             --no-progress
             ${{ inputs.verbose && '--verbose' || '' }}
@@ -1979,7 +2026,10 @@ jobs:
             --timeout 10
             --exclude-all-private
             ${{ inputs.link_check_paths }}
-          fail: false
+        run: |
+          set -uo pipefail
+          eval "lychee ${LYCHEE_ARGS}" 2>&1 | tee "$RUNNER_TEMP/lychee.txt" || true
+          { echo "## Link check"; echo; echo '```'; tail -n 200 "$RUNNER_TEMP/lychee.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
       # =============================================================================
       # Deployment Artifact Preparation

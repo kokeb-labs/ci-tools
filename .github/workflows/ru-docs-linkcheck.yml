@@ -112,13 +112,40 @@ jobs:
             echo "args=" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Link check with Lychee
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
+      # lychee is installed here, pinned and hash-checked, and kept in the Actions cache; lychee-action downloaded
+      # it from GitHub releases on every run, so a release outage (HTTP 5xx) failed the job.
+      - name: Restore lychee
+        id: lychee_bin
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
-          # `fail` is the action's own switch (default true); the inputs are
-          # booleans, so they are tested directly, not compared with 'true'.
-          fail: ${{ inputs.fail_on_errors }}
-          args: >-
+          path: ~/.cache/kokeb-tools/lychee-0.24.2
+          key: lychee-bin-${{ runner.os }}-0.24.2-1f4e0ef7
+
+      - name: Install lychee (pinned, hash-checked)
+        env:
+          LYCHEE_VERSION: "0.24.2"
+          LYCHEE_SHA256: 1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+          CACHED: ${{ steps.lychee_bin.outputs.cache-hit }}
+        run: |
+          set -euo pipefail
+          dir="$HOME/.cache/kokeb-tools/lychee-${LYCHEE_VERSION}"
+          if [ "${CACHED}" != "true" ] || [ ! -x "$dir/lychee" ]; then
+            name="lychee-x86_64-unknown-linux-gnu"
+            cd "$RUNNER_TEMP"
+            curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 20 -o lychee.tar.gz \
+              "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/${name}.tar.gz"
+            echo "${LYCHEE_SHA256}  lychee.tar.gz" | sha256sum -c -
+            tar -xzf lychee.tar.gz
+            mkdir -p "$dir" && install -m 0755 "${name}/lychee" "$dir/lychee"
+          fi
+          echo "$dir" >> "$GITHUB_PATH"
+          "$dir/lychee" --version
+
+      - name: Link check with Lychee
+        env:
+          FAIL: ${{ inputs.fail_on_errors }}
+          # The arguments are built from this workflow's inputs and evaluated as lychee-action did.
+          LYCHEE_ARGS: >-
             ${{ inputs.config_file != '' && format('--config {0}', inputs.config_file) || '' }}
             --no-progress
             ${{ inputs.verbose && '--verbose' || '' }}
@@ -130,3 +157,10 @@ jobs:
             ${{ !inputs.exclude_mail && '--include-mail' || '' }}
             ${{ steps.own_site.outputs.args }}
             ${{ inputs.paths }}
+        run: |
+          set -uo pipefail
+          status=0
+          eval "lychee ${LYCHEE_ARGS}" 2>&1 | tee "$RUNNER_TEMP/lychee.txt" || status=$?
+          { echo "## Link check"; echo; echo '```'; tail -n 200 "$RUNNER_TEMP/lychee.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ] && [ "$FAIL" = "true" ]; then exit "$status"; fi
+          exit 0

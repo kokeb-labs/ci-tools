@@ -35,25 +35,40 @@ jobs:
 
       # Pinned releases, verified against their published SHA-256, so a new
       # shellcheck or actionlint release cannot change the result on its own.
+      # Kept in the Actions cache by version and hash: a GitHub release outage
+      # (HTTP 5xx) no longer fails the job once the binaries are cached, and a
+      # download retries on every error.
+      - name: Restore pinned shellcheck and actionlint
+        id: lint_bins
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/kokeb-tools/lint-bin
+          key: lint-bin-${{ runner.os }}-sc${{ env.SHELLCHECK_VERSION }}-${{ env.SHELLCHECK_SHA256 }}-al${{ env.ACTIONLINT_VERSION }}-${{ env.ACTIONLINT_SHA256 }}
+
       - name: Install pinned shellcheck and actionlint
+        env:
+          CACHED: ${{ steps.lint_bins.outputs.cache-hit }}
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/bin"
-          cd "$RUNNER_TEMP"
+          bin="$HOME/.cache/kokeb-tools/lint-bin"
+          if [ "${CACHED}" != "true" ] || [ ! -x "$bin/shellcheck" ] || [ ! -x "$bin/actionlint" ]; then
+            mkdir -p "$bin"
+            cd "$RUNNER_TEMP"
+            fetch() { curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 20 -o "$1" "$2"; }
 
-          sc="shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz"
-          curl -fsSLO "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/${sc}"
-          echo "${SHELLCHECK_SHA256}  ${sc}" | sha256sum -c -
-          tar -xJf "${sc}"
-          install -m 0755 "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" "$RUNNER_TEMP/bin/shellcheck"
+            sc="shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz"
+            fetch "${sc}" "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/${sc}"
+            echo "${SHELLCHECK_SHA256}  ${sc}" | sha256sum -c -
+            tar -xJf "${sc}"
+            install -m 0755 "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" "$bin/shellcheck"
 
-          al="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
-          curl -fsSLO "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${al}"
-          echo "${ACTIONLINT_SHA256}  ${al}" | sha256sum -c -
-          tar -xzf "${al}" actionlint
-          install -m 0755 actionlint "$RUNNER_TEMP/bin/actionlint"
-
-          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+            al="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+            fetch "${al}" "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${al}"
+            echo "${ACTIONLINT_SHA256}  ${al}" | sha256sum -c -
+            tar -xzf "${al}" actionlint
+            install -m 0755 actionlint "$bin/actionlint"
+          fi
+          echo "$bin" >> "$GITHUB_PATH"
 
       - name: Run actionlint (fails on any finding, shellcheck included)
         run: |
