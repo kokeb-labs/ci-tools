@@ -1,0 +1,5153 @@
+{
+ "counts": {
+  "clang": {
+   "pass": 19
+  },
+  "clang-tidy": {
+   "pass": 35
+  },
+  "codeql": {
+   "anomaly": 26,
+   "pass": 186
+  },
+  "gcc": {
+   "pass": 20
+  },
+  "gcc-arm": {
+   "pass": 20
+  },
+  "handbook-check": {
+   "pass": 8
+  }
+ },
+ "matrix_sha256": "071219c956b4e3c3a6f5cb059fb5f2a48dfbee5d64047c555ca0a09dc15efe88",
+ "org_flags": [
+  "-std=c++20",
+  "-Wall",
+  "-Wextra",
+  "-Wpedantic",
+  "-Wshadow",
+  "-Wundef",
+  "-Werror",
+  "-fno-exceptions",
+  "-fno-rtti"
+ ],
+ "pack": "codeql/misra-cpp-coding-standards@2.62.0",
+ "requirements": [
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.0.1",
+   "id": "TV-CQL-RULE-0-0-1-01",
+   "rule_id": "cpp/misra/unreachable-statement",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-0-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.0.2",
+   "id": "TV-CQL-RULE-0-0-2-01",
+   "rule_id": "cpp/misra/invariant-condition",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-0-2@cortex-m",
+    "tests/misra-validation/cases/rule-0-0-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-0-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.1.1",
+   "id": "TV-CQL-RULE-0-1-1-01",
+   "rule_id": "cpp/misra/unnecessary-write-to-local-object",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-0-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.1.2",
+   "id": "TV-CQL-RULE-0-1-2-01",
+   "rule_id": "cpp/misra/unused-return-value-misra-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-1-2@cortex-m",
+    "tests/misra-validation/cases/rule-0-1-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-1-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.1",
+   "id": "TV-CQL-RULE-0-2-1-01",
+   "rule_id": "cpp/misra/unused-limited-visibility-variable",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-0-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.2",
+   "id": "TV-CLANG-RULE-0-2-2-01",
+   "rule_id": "-Wunused-parameter",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-2"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.2",
+   "id": "TV-GCC-RULE-0-2-2-01",
+   "rule_id": "-Wunused-parameter",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-2"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.2",
+   "id": "TV-GCCARM-RULE-0-2-2-01",
+   "rule_id": "-Wunused-parameter",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-2@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-2"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.2",
+   "id": "TV-CQL-RULE-0-2-2-01",
+   "rule_id": "cpp/misra/unused-parameter-misra-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-2@cortex-m",
+    "tests/misra-validation/cases/rule-0-2-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.3",
+   "id": "TV-CQL-RULE-0-2-3-01",
+   "rule_id": "cpp/misra/unused-type-with-limited-visibility",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-3@cortex-m",
+    "tests/misra-validation/cases/rule-0-2-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 0.2.4",
+   "id": "TV-CQL-RULE-0-2-4-01",
+   "rule_id": "cpp/misra/unused-limited-visibility-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-0-2-4@cortex-m",
+    "tests/misra-validation/cases/rule-0-2-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-0-2-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Dir 0.3.1",
+   "id": "TV-CQL-DIR-0-3-1-01",
+   "rule_id": "cpp/misra/possible-misuse-of-infinite-floating-point-value",
+   "runs": [
+    "tests/misra-validation/cases/dir-0-3-1-infinity@cortex-m",
+    "tests/misra-validation/cases/dir-0-3-1-infinity@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/dir-0-3-1-infinity"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Dir 0.3.1",
+   "id": "TV-CQL-DIR-0-3-1-02",
+   "rule_id": "cpp/misra/possible-misuse-of-nan-floating-point-value",
+   "runs": [
+    "tests/misra-validation/cases/dir-0-3-1-nan@cortex-m",
+    "tests/misra-validation/cases/dir-0-3-1-nan@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/dir-0-3-1-nan"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.1",
+   "id": "TV-CQL-RULE-4-1-1-01",
+   "rule_id": "cpp/misra/compiler-language-extensions-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-055"
+   ],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-01",
+   "rule_id": "cpp/misra/implicit-declaration-of-copy-constructor",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-implicit-copy-defaulted@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-implicit-copy-defaulted@host",
+    "tests/misra-validation/cases/rule-4-1-2-implicit-copy@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-implicit-copy@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-implicit-copy",
+    "tests/misra-validation/cases/rule-4-1-2-implicit-copy-defaulted"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-02",
+   "rule_id": "cpp/misra/noexcept-specifier-throw",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-throw-spec@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-throw-spec@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-throw-spec"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-03",
+   "rule_id": "cpp/misra/redeclaration-of-static-constexpr-data-member",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-constexpr-redecl@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-constexpr-redecl@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-constexpr-redecl"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-04",
+   "rule_id": "cpp/misra/use-of-deprecated-allocator-void",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-allocator-void@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-allocator-void@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-allocator-void"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-05",
+   "rule_id": "cpp/misra/use-of-deprecated-c-headers",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-c-headers@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-c-headers@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-c-headers"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-011"
+   ],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-06",
+   "rule_id": "cpp/misra/use-of-deprecated-function-binder-typedef-member",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-binder-typedef@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-binder-typedef@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-binder-typedef"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-07",
+   "rule_id": "cpp/misra/use-of-deprecated-is-literal-type-traits",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-is-literal-type@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-is-literal-type@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-is-literal-type"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-08",
+   "rule_id": "cpp/misra/use-of-deprecated-raw-storage-iterator",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-raw-storage-iterator@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-raw-storage-iterator@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-raw-storage-iterator"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-012"
+   ],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-09",
+   "rule_id": "cpp/misra/use-of-deprecated-shared-ptr-unique",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-shared-ptr-unique@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-shared-ptr-unique@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-shared-ptr-unique"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-013"
+   ],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-10",
+   "rule_id": "cpp/misra/use-of-deprecated-std-allocator-member",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-allocator-member@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-allocator-member@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-allocator-member"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-045"
+   ],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-11",
+   "rule_id": "cpp/misra/use-of-deprecated-std-iterator-base-class",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-iterator-base-template@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-iterator-base-template@host",
+    "tests/misra-validation/cases/rule-4-1-2-iterator-base@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-iterator-base@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-iterator-base",
+    "tests/misra-validation/cases/rule-4-1-2-iterator-base-template"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-12",
+   "rule_id": "cpp/misra/use-of-deprecated-str-stream-class",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-strstream@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-strstream@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-strstream"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-13",
+   "rule_id": "cpp/misra/use-of-deprecated-temporary-buffers",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-temporary-buffer@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-temporary-buffer@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-temporary-buffer"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-14",
+   "rule_id": "cpp/misra/use-of-deprecated-unary-or-binary-negate",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-negate-adaptor@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-negate-adaptor@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-negate-adaptor"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.2",
+   "id": "TV-CQL-RULE-4-1-2-15",
+   "rule_id": "cpp/misra/use-of-uncaught-exception",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-2-uncaught-exception@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-2-uncaught-exception@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-2-uncaught-exception"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-01",
+   "rule_id": "cpp/misra/array-deleted-through-pointer-of-incorrect-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-array-delete-type@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-array-delete-type@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-array-delete-type"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-02",
+   "rule_id": "cpp/misra/deallocation-type-mismatch",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-dealloc-mismatch@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-dealloc-mismatch@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-dealloc-mismatch"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-03",
+   "rule_id": "cpp/misra/division-by-zero-undefined-behavior",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-div-zero@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-div-zero@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-div-zero"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-04",
+   "rule_id": "cpp/misra/non-existent-member-access-undefined-behavior",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-member-pointer-wrong-type@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-member-pointer-wrong-type@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-member-pointer-wrong-type"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-042"
+   ],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-05",
+   "rule_id": "cpp/misra/null-pointer-to-member-access-undefined-behavior",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-null-member-function-pointer@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-null-member-function-pointer@host",
+    "tests/misra-validation/cases/rule-4-1-3-null-member-pointer@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-null-member-pointer@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-null-member-function-pointer",
+    "tests/misra-validation/cases/rule-4-1-3-null-member-pointer"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-06",
+   "rule_id": "cpp/misra/out-of-range-enum-cast-critical-unspecified-behavior",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-enum-out-of-range@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-enum-out-of-range@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-enum-out-of-range"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-07",
+   "rule_id": "cpp/misra/possible-data-race-between-threads",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-data-race@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-data-race"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-08",
+   "rule_id": "cpp/misra/signed-integer-overflow",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-signed-overflow@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-signed-overflow@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-signed-overflow"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.1.3",
+   "id": "TV-CQL-RULE-4-1-3-09",
+   "rule_id": "cpp/misra/uninitialized-static-pointer-to-member-undefined-behavior",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-1-3-static-member-pointer@cortex-m",
+    "tests/misra-validation/cases/rule-4-1-3-static-member-pointer@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-1-3-static-member-pointer"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 4.6.1",
+   "id": "TV-CQL-RULE-4-6-1-01",
+   "rule_id": "cpp/misra/memory-usage-not-sequenced",
+   "runs": [
+    "tests/misra-validation/cases/rule-4-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-4-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-4-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-066"
+   ],
+   "guideline": "Rule 5.0.1",
+   "id": "TV-CQL-RULE-5-0-1-01",
+   "rule_id": "cpp/misra/trigraph-like-sequences-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-0-1-escaped@cortex-m",
+    "tests/misra-validation/cases/rule-5-0-1-escaped@host",
+    "tests/misra-validation/cases/rule-5-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-5-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-0-1",
+    "tests/misra-validation/cases/rule-5-0-1-escaped"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.1",
+   "id": "TV-CLANG-RULE-5-7-1-01",
+   "rule_id": "-Wcomment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-1"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.1",
+   "id": "TV-GCC-RULE-5-7-1-01",
+   "rule_id": "-Wcomment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-1"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.1",
+   "id": "TV-GCCARM-RULE-5-7-1-01",
+   "rule_id": "-Wcomment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-1"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.1",
+   "id": "TV-CQL-RULE-5-7-1-01",
+   "rule_id": "cpp/misra/character-sequence-used-within-ac-style-comment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-1@cortex-m",
+    "tests/misra-validation/cases/rule-5-7-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Dir 5.7.2",
+   "id": "TV-CQL-DIR-5-7-2-01",
+   "rule_id": "cpp/misra/sections-of-code-should-not-be-commented-out",
+   "runs": [
+    "tests/misra-validation/cases/dir-5-7-2@cortex-m",
+    "tests/misra-validation/cases/dir-5-7-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/dir-5-7-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.3",
+   "id": "TV-CLANG-RULE-5-7-3-01",
+   "rule_id": "-Wcomment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-3"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.3",
+   "id": "TV-GCC-RULE-5-7-3-01",
+   "rule_id": "-Wcomment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-3"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.3",
+   "id": "TV-GCCARM-RULE-5-7-3-01",
+   "rule_id": "-Wcomment",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-3@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-3"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.7.3",
+   "id": "TV-CQL-RULE-5-7-3-01",
+   "rule_id": "cpp/misra/line-splicing-used-in-comments",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-7-3@cortex-m",
+    "tests/misra-validation/cases/rule-5-7-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-7-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.10.1",
+   "id": "TV-CQL-RULE-5-10-1-01",
+   "rule_id": "cpp/misra/poorly-formed-identifier",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-10-1@cortex-m",
+    "tests/misra-validation/cases/rule-5-10-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-10-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.1",
+   "id": "TV-CLANG-RULE-5-13-1-01",
+   "rule_id": "-Wunknown-escape-sequence",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-1"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.1",
+   "id": "TV-GCC-RULE-5-13-1-01",
+   "rule_id": "message /unknown escape sequence/",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-1"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.1",
+   "id": "TV-GCCARM-RULE-5-13-1-01",
+   "rule_id": "message /unknown escape sequence/",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-1"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [
+    "AN-047"
+   ],
+   "guideline": "Rule 5.13.1",
+   "id": "TV-CQL-RULE-5-13-1-01",
+   "rule_id": "cpp/misra/backslash-character-misuse",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-1-raw-string@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-1-raw-string@host",
+    "tests/misra-validation/cases/rule-5-13-1@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-1",
+    "tests/misra-validation/cases/rule-5-13-1-raw-string"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.2",
+   "id": "TV-CQL-RULE-5-13-2-01",
+   "rule_id": "cpp/misra/non-terminated-escape-sequences",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-2@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.3",
+   "id": "TV-CQL-RULE-5-13-3-01",
+   "rule_id": "cpp/misra/octal-constants-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-3@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.4",
+   "id": "TV-CQL-RULE-5-13-4-01",
+   "rule_id": "cpp/misra/unsigned-integer-literals-not-appropriately-suffixed",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-4@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.5",
+   "id": "TV-TIDY-RULE-5-13-5-01",
+   "rule_id": "readability-uppercase-literal-suffix",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-5@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-5"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 5.13.5",
+   "id": "TV-CQL-RULE-5-13-5-01",
+   "rule_id": "cpp/misra/lowercase-l-starts-in-literal-suffix",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-5@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-006"
+   ],
+   "guideline": "Rule 5.13.6",
+   "id": "TV-CQL-RULE-5-13-6-01",
+   "rule_id": "cpp/misra/long-long-literal-with-single-l-suffix",
+   "runs": [
+    "tests/misra-validation/cases/rule-5-13-6@cortex-m",
+    "tests/misra-validation/cases/rule-5-13-6@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-5-13-6"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.0.1",
+   "id": "TV-CQL-RULE-6-0-1-01",
+   "rule_id": "cpp/misra/block-scope-function-ambiguous",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-6-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.0.2",
+   "id": "TV-CQL-RULE-6-0-2-01",
+   "rule_id": "cpp/misra/external-linkage-array-without-explicit-size-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-0-2@cortex-m",
+    "tests/misra-validation/cases/rule-6-0-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-0-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.0.3",
+   "id": "TV-CQL-RULE-6-0-3-01",
+   "rule_id": "cpp/misra/global-namespace-declarations",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-0-3@cortex-m",
+    "tests/misra-validation/cases/rule-6-0-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-0-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.0.4",
+   "id": "TV-CQL-RULE-6-0-4-01",
+   "rule_id": "cpp/misra/non-global-function-main",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-0-4@cortex-m",
+    "tests/misra-validation/cases/rule-6-0-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-0-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.1",
+   "id": "TV-CQL-RULE-6-2-1-01",
+   "rule_id": "cpp/misra/one-definition-rule-violated",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.2",
+   "id": "TV-CQL-RULE-6-2-2-01",
+   "rule_id": "cpp/misra/incompatible-function-declarations-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-2-function@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-2-function@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-2-function"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.2",
+   "id": "TV-CQL-RULE-6-2-2-02",
+   "rule_id": "cpp/misra/incompatible-object-declarations-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-2-object@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-2-object@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-2-object"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.3",
+   "id": "TV-CQL-RULE-6-2-3-01",
+   "rule_id": "cpp/misra/duplicate-inline-function-definitions",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-3-inline@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-3-inline@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-3-inline"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.3",
+   "id": "TV-CQL-RULE-6-2-3-02",
+   "rule_id": "cpp/misra/duplicate-type-definitions",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-3-type@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-3-type@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-3-type"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.3",
+   "id": "TV-CQL-RULE-6-2-3-03",
+   "rule_id": "cpp/misra/template-specialization-wrong-location",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-3-specialization@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-3-specialization@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-3-specialization"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.4",
+   "id": "TV-TIDY-RULE-6-2-4-01",
+   "rule_id": "misc-definitions-in-headers",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-4@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-4"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.2.4",
+   "id": "TV-CQL-RULE-6-2-4-01",
+   "rule_id": "cpp/misra/violations-of-one-definition-rule-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-2-4@cortex-m",
+    "tests/misra-validation/cases/rule-6-2-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-2-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.1",
+   "id": "TV-GCC-RULE-6-4-1-01",
+   "rule_id": "-Wshadow",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-1"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.1",
+   "id": "TV-GCCARM-RULE-6-4-1-01",
+   "rule_id": "-Wshadow",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-1"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.1",
+   "id": "TV-CQL-RULE-6-4-1-01",
+   "rule_id": "cpp/misra/variable-declared-in-inner-scope-hides-outer-scope",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-1@cortex-m",
+    "tests/misra-validation/cases/rule-6-4-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.2",
+   "id": "TV-CQL-RULE-6-4-2-01",
+   "rule_id": "cpp/misra/definition-shall-be-considered-for-unqualified-lookup",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-2-using@cortex-m",
+    "tests/misra-validation/cases/rule-6-4-2-using@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-2-using"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.2",
+   "id": "TV-CQL-RULE-6-4-2-02",
+   "rule_id": "cpp/misra/inherited-non-overridable-member-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-2-nonvirtual@cortex-m",
+    "tests/misra-validation/cases/rule-6-4-2-nonvirtual@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-2-nonvirtual"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.2",
+   "id": "TV-CQL-RULE-6-4-2-03",
+   "rule_id": "cpp/misra/inherited-overridable-member-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-2-virtual@cortex-m",
+    "tests/misra-validation/cases/rule-6-4-2-virtual@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-2-virtual"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.3",
+   "id": "TV-CQL-RULE-6-4-3-01",
+   "rule_id": "cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-3@cortex-m",
+    "tests/misra-validation/cases/rule-6-4-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.4.3",
+   "id": "TV-CQL-RULE-6-4-3-02",
+   "rule_id": "cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this-audit",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-4-3@cortex-m",
+    "tests/misra-validation/cases/rule-6-4-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-4-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.5.1",
+   "id": "TV-CQL-RULE-6-5-1-01",
+   "rule_id": "cpp/misra/external-linkage-not-declared-in-header-file-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-5-1@cortex-m",
+    "tests/misra-validation/cases/rule-6-5-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-5-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.5.2",
+   "id": "TV-CQL-RULE-6-5-2-01",
+   "rule_id": "cpp/misra/internal-linkage-specified-appropriately",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-5-2@cortex-m",
+    "tests/misra-validation/cases/rule-6-5-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-5-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.7.1",
+   "id": "TV-CQL-RULE-6-7-1-01",
+   "rule_id": "cpp/misra/local-variable-static-storage-duration",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-7-1@cortex-m",
+    "tests/misra-validation/cases/rule-6-7-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-7-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.7.2",
+   "id": "TV-CQL-RULE-6-7-2-01",
+   "rule_id": "cpp/misra/global-variable-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-7-2@cortex-m",
+    "tests/misra-validation/cases/rule-6-7-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-7-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.8.1",
+   "id": "TV-CQL-RULE-6-8-1-01",
+   "rule_id": "cpp/misra/object-accessed-after-lifetime-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-8-1-after@cortex-m",
+    "tests/misra-validation/cases/rule-6-8-1-after@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-8-1-after"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.8.1",
+   "id": "TV-CQL-RULE-6-8-1-02",
+   "rule_id": "cpp/misra/object-accessed-before-lifetime-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-8-1-before@cortex-m",
+    "tests/misra-validation/cases/rule-6-8-1-before@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-8-1-before"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-044"
+   ],
+   "guideline": "Rule 6.8.2",
+   "id": "TV-CQL-RULE-6-8-2-01",
+   "rule_id": "cpp/misra/return-reference-or-pointer-to-automatic-local-variable",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-8-2-indirect@cortex-m",
+    "tests/misra-validation/cases/rule-6-8-2-indirect@host",
+    "tests/misra-validation/cases/rule-6-8-2@cortex-m",
+    "tests/misra-validation/cases/rule-6-8-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-8-2",
+    "tests/misra-validation/cases/rule-6-8-2-indirect"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.8.3",
+   "id": "TV-CQL-RULE-6-8-3-01",
+   "rule_id": "cpp/misra/automatic-storage-assigned-to-object-greater-lifetime",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-8-3@cortex-m",
+    "tests/misra-validation/cases/rule-6-8-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-8-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.8.4",
+   "id": "TV-CQL-RULE-6-8-4-01",
+   "rule_id": "cpp/misra/member-functions-refqualified",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-8-4@cortex-m",
+    "tests/misra-validation/cases/rule-6-8-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-8-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.9.1",
+   "id": "TV-CQL-RULE-6-9-1-01",
+   "rule_id": "cpp/misra/type-aliases-declaration",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-9-1@cortex-m",
+    "tests/misra-validation/cases/rule-6-9-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-9-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 6.9.2",
+   "id": "TV-CQL-RULE-6-9-2-01",
+   "rule_id": "cpp/misra/avoid-standard-integer-type-names",
+   "runs": [
+    "tests/misra-validation/cases/rule-6-9-2@cortex-m",
+    "tests/misra-validation/cases/rule-6-9-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-6-9-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.0.1",
+   "id": "TV-CQL-RULE-7-0-1-01",
+   "rule_id": "cpp/misra/no-conversion-from-bool",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-7-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.0.2",
+   "id": "TV-CQL-RULE-7-0-2-01",
+   "rule_id": "cpp/misra/no-implicit-bool-conversion",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-0-2@cortex-m",
+    "tests/misra-validation/cases/rule-7-0-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-0-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.0.3",
+   "id": "TV-CQL-RULE-7-0-3-01",
+   "rule_id": "cpp/misra/no-character-numerical-value",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-0-3@cortex-m",
+    "tests/misra-validation/cases/rule-7-0-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-0-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.0.4",
+   "id": "TV-CQL-RULE-7-0-4-01",
+   "rule_id": "cpp/misra/inappropriate-bitwise-or-shift-operands",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-0-4@cortex-m",
+    "tests/misra-validation/cases/rule-7-0-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-0-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.0.5",
+   "id": "TV-CQL-RULE-7-0-5-01",
+   "rule_id": "cpp/misra/no-signedness-change-from-promotion",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-0-5@cortex-m",
+    "tests/misra-validation/cases/rule-7-0-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-0-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.0.6",
+   "id": "TV-CQL-RULE-7-0-6-01",
+   "rule_id": "cpp/misra/numeric-assignment-type-mismatch",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-0-6@cortex-m",
+    "tests/misra-validation/cases/rule-7-0-6@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-0-6"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.11.1",
+   "id": "TV-TIDY-RULE-7-11-1-01",
+   "rule_id": "modernize-use-nullptr",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-11-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-11-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.11.1",
+   "id": "TV-CQL-RULE-7-11-1-01",
+   "rule_id": "cpp/misra/nullptr-not-the-only-form-of-the-null-pointer-constant",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-11-1@cortex-m",
+    "tests/misra-validation/cases/rule-7-11-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-11-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.11.2",
+   "id": "TV-TIDY-RULE-7-11-2-01",
+   "rule_id": "cppcoreguidelines-pro-bounds-array-to-pointer-decay",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-11-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-11-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.11.2",
+   "id": "TV-CQL-RULE-7-11-2-01",
+   "rule_id": "cpp/misra/array-passed-as-function-argument-decay-to-a-pointer",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-11-2@cortex-m",
+    "tests/misra-validation/cases/rule-7-11-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-11-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 7.11.3",
+   "id": "TV-CQL-RULE-7-11-3-01",
+   "rule_id": "cpp/misra/function-pointer-conversion-context",
+   "runs": [
+    "tests/misra-validation/cases/rule-7-11-3@cortex-m",
+    "tests/misra-validation/cases/rule-7-11-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-7-11-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.0.1",
+   "id": "TV-CQL-RULE-8-0-1-01",
+   "rule_id": "cpp/misra/missing-precedence-clarifying-parenthesis",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.0.1",
+   "id": "TV-CQL-RULE-8-0-1-02",
+   "rule_id": "cpp/misra/missing-sizeof-operator-parenthesis",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.1.1",
+   "id": "TV-CQL-RULE-8-1-1-01",
+   "rule_id": "cpp/misra/non-transient-lambda-implicitly-captures-this",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.1.2",
+   "id": "TV-CQL-RULE-8-1-2-01",
+   "rule_id": "cpp/misra/implicit-captures-disallowed-in-non-transient-lambda",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-1-2@cortex-m",
+    "tests/misra-validation/cases/rule-8-1-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-1-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.1",
+   "id": "TV-TIDY-RULE-8-2-1-01",
+   "rule_id": "fuchsia-virtual-inheritance",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.1",
+   "id": "TV-CQL-RULE-8-2-1-01",
+   "rule_id": "cpp/misra/virtual-base-class-cast-to-derived",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.2",
+   "id": "TV-CQL-RULE-8-2-2-01",
+   "rule_id": "cpp/misra/no-c-style-or-functional-casts",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-2@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.3",
+   "id": "TV-TIDY-RULE-8-2-3-01",
+   "rule_id": "cppcoreguidelines-pro-type-const-cast",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-3"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [
+    "AN-001"
+   ],
+   "guideline": "Rule 8.2.3",
+   "id": "TV-CQL-RULE-8-2-3-01",
+   "rule_id": "cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-3-adding@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-3-adding@host",
+    "tests/misra-validation/cases/rule-8-2-3-reference@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-3-reference@host",
+    "tests/misra-validation/cases/rule-8-2-3@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-3",
+    "tests/misra-validation/cases/rule-8-2-3-adding",
+    "tests/misra-validation/cases/rule-8-2-3-reference"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.4",
+   "id": "TV-CQL-RULE-8-2-4-01",
+   "rule_id": "cpp/misra/casts-between-a-pointer-to-function-and-any-other-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-4@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.5",
+   "id": "TV-TIDY-RULE-8-2-5-01",
+   "rule_id": "cppcoreguidelines-pro-type-reinterpret-cast",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-5@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-5"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.5",
+   "id": "TV-CQL-RULE-8-2-5-01",
+   "rule_id": "cpp/misra/reinterpret-cast-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-5@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.6",
+   "id": "TV-CQL-RULE-8-2-6-01",
+   "rule_id": "cpp/misra/int-to-pointer-cast-prohibited",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-6@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-6@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-6"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.7",
+   "id": "TV-CQL-RULE-8-2-7-01",
+   "rule_id": "cpp/misra/no-pointer-to-integral-cast",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-7@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-7@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-7"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.8",
+   "id": "TV-CQL-RULE-8-2-8-01",
+   "rule_id": "cpp/misra/pointer-to-integral-cast",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-8@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-8@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-8"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.9",
+   "id": "TV-CLANG-RULE-8-2-9-01",
+   "rule_id": "error /use of typeid requires '?-frtti'?/",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-9@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-9"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.9",
+   "id": "TV-GCC-RULE-8-2-9-01",
+   "rule_id": "error /cannot use 'typeid' with '-fno-rtti'/",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-9@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-9"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.9",
+   "id": "TV-GCCARM-RULE-8-2-9-01",
+   "rule_id": "error /cannot use 'typeid' with '-fno-rtti'/",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-9@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-9"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.10",
+   "id": "TV-CQL-RULE-8-2-10-01",
+   "rule_id": "cpp/misra/functions-call-themselves-either-directly-or-indirectly",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-10@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-10@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-10"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.11",
+   "id": "TV-TIDY-RULE-8-2-11-01",
+   "rule_id": "cppcoreguidelines-pro-type-vararg",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-11@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-11"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.2.11",
+   "id": "TV-CQL-RULE-8-2-11-01",
+   "rule_id": "cpp/misra/inappropriate-argument-type-passed-via-ellipsis",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-2-11-trivial@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-11-trivial@host",
+    "tests/misra-validation/cases/rule-8-2-11@cortex-m",
+    "tests/misra-validation/cases/rule-8-2-11@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-2-11",
+    "tests/misra-validation/cases/rule-8-2-11-trivial"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.3.1",
+   "id": "TV-CQL-RULE-8-3-1-01",
+   "rule_id": "cpp/misra/built-in-unary-operator-applied-to-unsigned-expression",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.3.2",
+   "id": "TV-CQL-RULE-8-3-2-01",
+   "rule_id": "cpp/misra/built-in-unary-plus-operator-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-3-2@cortex-m",
+    "tests/misra-validation/cases/rule-8-3-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-3-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.7.1",
+   "id": "TV-CQL-RULE-8-7-1-01",
+   "rule_id": "cpp/misra/pointer-argument-to-cstring-function-is-invalid",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-7-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-7-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-7-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.7.1",
+   "id": "TV-CQL-RULE-8-7-1-02",
+   "rule_id": "cpp/misra/pointer-arithmetic-forms-an-invalid-pointer",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-7-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-7-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-7-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.7.2",
+   "id": "TV-CQL-RULE-8-7-2-01",
+   "rule_id": "cpp/misra/pointer-difference-taken-between-different-arrays",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-7-2@cortex-m",
+    "tests/misra-validation/cases/rule-8-7-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-7-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.9.1",
+   "id": "TV-CQL-RULE-8-9-1-01",
+   "rule_id": "cpp/misra/pointer-compared-between-different-arrays",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-9-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-9-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-9-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.14.1",
+   "id": "TV-CQL-RULE-8-14-1-01",
+   "rule_id": "cpp/misra/short-circuited-persistent-side-effect",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-14-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-14-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-14-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-007"
+   ],
+   "guideline": "Rule 8.18.1",
+   "id": "TV-CQL-RULE-8-18-1-01",
+   "rule_id": "cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-18-1-prefix@cortex-m",
+    "tests/misra-validation/cases/rule-8-18-1-prefix@host",
+    "tests/misra-validation/cases/rule-8-18-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-18-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-18-1",
+    "tests/misra-validation/cases/rule-8-18-1-prefix"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.18.1",
+   "id": "TV-CQL-RULE-8-18-1-02",
+   "rule_id": "cpp/misra/object-copied-to-an-overlapping-object-misra-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-18-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-18-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-18-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.18.2",
+   "id": "TV-CQL-RULE-8-18-2-01",
+   "rule_id": "cpp/misra/result-of-an-assignment-operator-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-18-2@cortex-m",
+    "tests/misra-validation/cases/rule-8-18-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-18-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.19.1",
+   "id": "TV-CQL-RULE-8-19-1-01",
+   "rule_id": "cpp/misra/comma-operator-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-19-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-19-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-19-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 8.20.1",
+   "id": "TV-CQL-RULE-8-20-1-01",
+   "rule_id": "cpp/misra/unsigned-operation-with-constant-operands-wraps",
+   "runs": [
+    "tests/misra-validation/cases/rule-8-20-1@cortex-m",
+    "tests/misra-validation/cases/rule-8-20-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-8-20-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.2.1",
+   "id": "TV-CQL-RULE-9-2-1-01",
+   "rule_id": "cpp/misra/no-standalone-type-cast-expression",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-9-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.3.1",
+   "id": "TV-TIDY-RULE-9-3-1-01",
+   "rule_id": "readability-braces-around-statements",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-3-1-selection@host",
+    "tests/misra-validation/cases/rule-9-3-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-3-1",
+    "tests/misra-validation/cases/rule-9-3-1-selection"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [
+    "AN-041"
+   ],
+   "guideline": "Rule 9.3.1",
+   "id": "TV-CQL-RULE-9-3-1-01",
+   "rule_id": "cpp/misra/loop-body-compound-condition",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-3-1-selection@cortex-m",
+    "tests/misra-validation/cases/rule-9-3-1-selection@host",
+    "tests/misra-validation/cases/rule-9-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-9-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-3-1",
+    "tests/misra-validation/cases/rule-9-3-1-selection"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.3.1",
+   "id": "TV-CQL-RULE-9-3-1-02",
+   "rule_id": "cpp/misra/switch-body-compound-condition",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-9-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.4.1",
+   "id": "TV-TIDY-RULE-9-4-1-01",
+   "rule_id": "hicpp-multiway-paths-covered",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-4-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-4-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.4.1",
+   "id": "TV-CQL-RULE-9-4-1-01",
+   "rule_id": "cpp/misra/if-else-if-end-condition",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-4-1@cortex-m",
+    "tests/misra-validation/cases/rule-9-4-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-4-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.4.2",
+   "id": "TV-CQL-RULE-9-4-2-01",
+   "rule_id": "cpp/misra/appropriate-structure-of-switch-statement",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-4-2@cortex-m",
+    "tests/misra-validation/cases/rule-9-4-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-4-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.5.1",
+   "id": "TV-CQL-RULE-9-5-1-01",
+   "rule_id": "cpp/misra/legacy-for-statements-should-be-simple",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-5-1@cortex-m",
+    "tests/misra-validation/cases/rule-9-5-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-5-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.5.2",
+   "id": "TV-CQL-RULE-9-5-2-01",
+   "rule_id": "cpp/misra/for-range-initializer-at-most-one-function-call",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-5-2@cortex-m",
+    "tests/misra-validation/cases/rule-9-5-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-5-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.1",
+   "id": "TV-TIDY-RULE-9-6-1-01",
+   "rule_id": "cppcoreguidelines-avoid-goto",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.1",
+   "id": "TV-CQL-RULE-9-6-1-01",
+   "rule_id": "cpp/misra/goto-statement-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-9-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.2",
+   "id": "TV-TIDY-RULE-9-6-2-01",
+   "rule_id": "cppcoreguidelines-avoid-goto",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-2-sibling@host",
+    "tests/misra-validation/cases/rule-9-6-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-2",
+    "tests/misra-validation/cases/rule-9-6-2-sibling"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [
+    "AN-039"
+   ],
+   "guideline": "Rule 9.6.2",
+   "id": "TV-CQL-RULE-9-6-2-01",
+   "rule_id": "cpp/misra/goto-reference-a-label-in-surrounding-block",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-2-sibling@cortex-m",
+    "tests/misra-validation/cases/rule-9-6-2-sibling@host",
+    "tests/misra-validation/cases/rule-9-6-2@cortex-m",
+    "tests/misra-validation/cases/rule-9-6-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-2",
+    "tests/misra-validation/cases/rule-9-6-2-sibling"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.3",
+   "id": "TV-TIDY-RULE-9-6-3-01",
+   "rule_id": "cppcoreguidelines-avoid-goto",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-3"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.3",
+   "id": "TV-CQL-RULE-9-6-3-01",
+   "rule_id": "cpp/misra/goto-shall-jump-to-label-declared-later-in-the-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-3@cortex-m",
+    "tests/misra-validation/cases/rule-9-6-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.4",
+   "id": "TV-CQL-RULE-9-6-4-01",
+   "rule_id": "cpp/misra/function-declared-with-the-noreturn-attribute-return",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-4@cortex-m",
+    "tests/misra-validation/cases/rule-9-6-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.5",
+   "id": "TV-CLANG-RULE-9-6-5-01",
+   "rule_id": "-Wreturn-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-5@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-5"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.5",
+   "id": "TV-GCC-RULE-9-6-5-01",
+   "rule_id": "-Wreturn-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-5@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-5"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.5",
+   "id": "TV-GCCARM-RULE-9-6-5-01",
+   "rule_id": "-Wreturn-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-5@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-5"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 9.6.5",
+   "id": "TV-CQL-RULE-9-6-5-01",
+   "rule_id": "cpp/misra/non-void-function-shall-return-a-value-on-all-paths",
+   "runs": [
+    "tests/misra-validation/cases/rule-9-6-5@cortex-m",
+    "tests/misra-validation/cases/rule-9-6-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-9-6-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-046"
+   ],
+   "guideline": "Rule 10.0.1",
+   "id": "TV-CQL-RULE-10-0-1-01",
+   "rule_id": "cpp/misra/use-single-global-or-member-declarators",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-0-1-initialised@cortex-m",
+    "tests/misra-validation/cases/rule-10-0-1-initialised@host",
+    "tests/misra-validation/cases/rule-10-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-10-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-0-1",
+    "tests/misra-validation/cases/rule-10-0-1-initialised"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.0.1",
+   "id": "TV-CQL-RULE-10-0-1-02",
+   "rule_id": "cpp/misra/use-single-local-declarators",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-10-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.1.1",
+   "id": "TV-CQL-RULE-10-1-1-01",
+   "rule_id": "cpp/misra/pointer-or-ref-param-not-const",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-10-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.1.2",
+   "id": "TV-CQL-RULE-10-1-2-01",
+   "rule_id": "cpp/misra/volatile-qualifier-not-used-appropriately",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-1-2@cortex-m",
+    "tests/misra-validation/cases/rule-10-1-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-1-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.2.1",
+   "id": "TV-CQL-RULE-10-2-1-01",
+   "rule_id": "cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-10-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.2.2",
+   "id": "TV-CQL-RULE-10-2-2-01",
+   "rule_id": "cpp/misra/unscoped-enumerations-should-not-be-declared",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-2-2@cortex-m",
+    "tests/misra-validation/cases/rule-10-2-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-2-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.2.3",
+   "id": "TV-CQL-RULE-10-2-3-01",
+   "rule_id": "cpp/misra/unscoped-enum-without-fixed-underlying-type-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-2-3@cortex-m",
+    "tests/misra-validation/cases/rule-10-2-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-2-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.3.1",
+   "id": "TV-TIDY-RULE-10-3-1-01",
+   "rule_id": "google-build-namespaces",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-3-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-3-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.3.1",
+   "id": "TV-CQL-RULE-10-3-1-01",
+   "rule_id": "cpp/misra/unnamed-namespaces-in-header-files",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-10-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.4.1",
+   "id": "TV-TIDY-RULE-10-4-1-01",
+   "rule_id": "hicpp-no-assembler",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-4-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-4-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 10.4.1",
+   "id": "TV-CQL-RULE-10-4-1-01",
+   "rule_id": "cpp/misra/asm-declaration-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-10-4-1@cortex-m",
+    "tests/misra-validation/cases/rule-10-4-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-10-4-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 11.3.1",
+   "id": "TV-TIDY-RULE-11-3-1-01",
+   "rule_id": "cppcoreguidelines-avoid-c-arrays",
+   "runs": [
+    "tests/misra-validation/cases/rule-11-3-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-11-3-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 11.3.1",
+   "id": "TV-CQL-RULE-11-3-1-01",
+   "rule_id": "cpp/misra/variable-declared-array-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-11-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-11-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-11-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 11.3.2",
+   "id": "TV-CQL-RULE-11-3-2-01",
+   "rule_id": "cpp/misra/declaration-of-an-object-indirections-level",
+   "runs": [
+    "tests/misra-validation/cases/rule-11-3-2@cortex-m",
+    "tests/misra-validation/cases/rule-11-3-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-11-3-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 11.6.1",
+   "id": "TV-CQL-RULE-11-6-1-01",
+   "rule_id": "cpp/misra/uninitialized-variable",
+   "runs": [
+    "tests/misra-validation/cases/rule-11-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-11-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-11-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 11.6.2",
+   "id": "TV-CQL-RULE-11-6-2-01",
+   "rule_id": "cpp/misra/value-of-an-object-must-not-be-read-before-it-has-been-set",
+   "runs": [
+    "tests/misra-validation/cases/rule-11-6-2@cortex-m",
+    "tests/misra-validation/cases/rule-11-6-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-11-6-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 11.6.3",
+   "id": "TV-CQL-RULE-11-6-3-01",
+   "rule_id": "cpp/misra/non-unique-enumeration-constant",
+   "runs": [
+    "tests/misra-validation/cases/rule-11-6-3@cortex-m",
+    "tests/misra-validation/cases/rule-11-6-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-11-6-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 12.2.1",
+   "id": "TV-CQL-RULE-12-2-1-01",
+   "rule_id": "cpp/misra/bit-fields-should-not-be-declared-misra-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-12-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-12-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-12-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-048"
+   ],
+   "guideline": "Rule 12.2.2",
+   "id": "TV-CQL-RULE-12-2-2-01",
+   "rule_id": "cpp/misra/bit-field-shall-have-an-appropriate-type",
+   "runs": [
+    "tests/misra-validation/cases/rule-12-2-2@cortex-m",
+    "tests/misra-validation/cases/rule-12-2-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-12-2-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-010"
+   ],
+   "guideline": "Rule 12.2.3",
+   "id": "TV-CQL-RULE-12-2-3-01",
+   "rule_id": "cpp/misra/signed-integer-named-bit-field-have-a-length-of-one-bit",
+   "runs": [
+    "tests/misra-validation/cases/rule-12-2-3-alias@cortex-m",
+    "tests/misra-validation/cases/rule-12-2-3-alias@host",
+    "tests/misra-validation/cases/rule-12-2-3@cortex-m",
+    "tests/misra-validation/cases/rule-12-2-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-12-2-3",
+    "tests/misra-validation/cases/rule-12-2-3-alias"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 12.3.1",
+   "id": "TV-CQL-RULE-12-3-1-01",
+   "rule_id": "cpp/misra/union-keyword-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-12-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-12-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-12-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.1.1",
+   "id": "TV-TIDY-RULE-13-1-1-01",
+   "rule_id": "fuchsia-virtual-inheritance",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-1-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-1-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.1.1",
+   "id": "TV-CQL-RULE-13-1-1-01",
+   "rule_id": "cpp/misra/virtual-inheritance-not-allowed",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-13-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.1.2",
+   "id": "TV-TIDY-RULE-13-1-2-01",
+   "rule_id": "fuchsia-virtual-inheritance",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-1-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-1-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.1.2",
+   "id": "TV-CQL-RULE-13-1-2-01",
+   "rule_id": "cpp/misra/virtual-and-non-virtual-class-in-the-hierarchy",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-1-2@cortex-m",
+    "tests/misra-validation/cases/rule-13-1-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-1-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.3.1",
+   "id": "TV-CQL-RULE-13-3-1-01",
+   "rule_id": "cpp/misra/member-specifiers-not-used-appropriately",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-13-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.3.2",
+   "id": "TV-TIDY-RULE-13-3-2-01",
+   "rule_id": "google-default-arguments",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-3-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-3-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.3.2",
+   "id": "TV-CQL-RULE-13-3-2-01",
+   "rule_id": "cpp/misra/overriding-shall-specify-different-default-arguments",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-3-2@cortex-m",
+    "tests/misra-validation/cases/rule-13-3-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-3-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 13.3.3",
+   "id": "TV-CQL-RULE-13-3-3-01",
+   "rule_id": "cpp/misra/declarations-of-a-function-same-parameter-name",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-3-3@cortex-m",
+    "tests/misra-validation/cases/rule-13-3-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-3-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-043"
+   ],
+   "guideline": "Rule 13.3.4",
+   "id": "TV-CQL-RULE-13-3-4-01",
+   "rule_id": "cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr",
+   "runs": [
+    "tests/misra-validation/cases/rule-13-3-4-variables@cortex-m",
+    "tests/misra-validation/cases/rule-13-3-4-variables@host",
+    "tests/misra-validation/cases/rule-13-3-4@cortex-m",
+    "tests/misra-validation/cases/rule-13-3-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-13-3-4",
+    "tests/misra-validation/cases/rule-13-3-4-variables"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 14.1.1",
+   "id": "TV-CQL-RULE-14-1-1-01",
+   "rule_id": "cpp/misra/private-and-public-data-members-mixed",
+   "runs": [
+    "tests/misra-validation/cases/rule-14-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-14-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-14-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.0.1",
+   "id": "TV-CQL-RULE-15-0-1-01",
+   "rule_id": "cpp/misra/improperly-provided-special-member-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-15-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.0.2",
+   "id": "TV-CQL-RULE-15-0-2-01",
+   "rule_id": "cpp/misra/invalid-signature-for-special-member-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-0-2@cortex-m",
+    "tests/misra-validation/cases/rule-15-0-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-0-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.1.1",
+   "id": "TV-CQL-RULE-15-1-1-01",
+   "rule_id": "cpp/misra/objects-dynamic-type-used-from-constructor-or-destructor",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-15-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-1-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-057"
+   ],
+   "guideline": "Rule 15.1.2",
+   "id": "TV-CQL-RULE-15-1-2-01",
+   "rule_id": "cpp/misra/initialize-all-virtual-base-classes",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-1-2-delegating@cortex-m",
+    "tests/misra-validation/cases/rule-15-1-2-delegating@host",
+    "tests/misra-validation/cases/rule-15-1-2@cortex-m",
+    "tests/misra-validation/cases/rule-15-1-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-1-2",
+    "tests/misra-validation/cases/rule-15-1-2-delegating"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.1.3",
+   "id": "TV-TIDY-RULE-15-1-3-01",
+   "rule_id": "google-explicit-constructor",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-1-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-1-3"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.1.3",
+   "id": "TV-CQL-RULE-15-1-3-01",
+   "rule_id": "cpp/misra/non-explicit-conversion-member",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-1-3@cortex-m",
+    "tests/misra-validation/cases/rule-15-1-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-1-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.1.4",
+   "id": "TV-CQL-RULE-15-1-4-01",
+   "rule_id": "cpp/misra/non-static-member-not-init-before-use",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-1-4@cortex-m",
+    "tests/misra-validation/cases/rule-15-1-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-1-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 15.1.5",
+   "id": "TV-CQL-RULE-15-1-5-01",
+   "rule_id": "cpp/misra/initializer-list-constructor-is-the-only-constructor",
+   "runs": [
+    "tests/misra-validation/cases/rule-15-1-5@cortex-m",
+    "tests/misra-validation/cases/rule-15-1-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-15-1-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-050"
+   ],
+   "guideline": "Dir 15.8.1",
+   "id": "TV-CQL-DIR-15-8-1-01",
+   "rule_id": "cpp/misra/copy-and-move-assignments-shall-handle-self-assignment",
+   "runs": [
+    "tests/misra-validation/cases/dir-15-8-1-swap@cortex-m",
+    "tests/misra-validation/cases/dir-15-8-1-swap@host",
+    "tests/misra-validation/cases/dir-15-8-1@cortex-m",
+    "tests/misra-validation/cases/dir-15-8-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/dir-15-8-1",
+    "tests/misra-validation/cases/dir-15-8-1-swap"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 16.5.1",
+   "id": "TV-CQL-RULE-16-5-1-01",
+   "rule_id": "cpp/misra/logical-and-and-logical-or-operators-overloaded",
+   "runs": [
+    "tests/misra-validation/cases/rule-16-5-1@cortex-m",
+    "tests/misra-validation/cases/rule-16-5-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-16-5-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 16.5.2",
+   "id": "TV-TIDY-RULE-16-5-2-01",
+   "rule_id": "google-runtime-operator",
+   "runs": [
+    "tests/misra-validation/cases/rule-16-5-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-16-5-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 16.5.2",
+   "id": "TV-CQL-RULE-16-5-2-01",
+   "rule_id": "cpp/misra/address-of-operator-overloaded",
+   "runs": [
+    "tests/misra-validation/cases/rule-16-5-2@cortex-m",
+    "tests/misra-validation/cases/rule-16-5-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-16-5-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 16.6.1",
+   "id": "TV-CQL-RULE-16-6-1-01",
+   "rule_id": "cpp/misra/invalid-operator-overloaded-as-member-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-16-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-16-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-16-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 17.8.1",
+   "id": "TV-CQL-RULE-17-8-1-01",
+   "rule_id": "cpp/misra/function-templates-explicitly-specialized",
+   "runs": [
+    "tests/misra-validation/cases/rule-17-8-1@cortex-m",
+    "tests/misra-validation/cases/rule-17-8-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-17-8-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.1",
+   "id": "TV-CLANG-RULE-18-1-1-01",
+   "rule_id": "error /cannot use 'throw' with exceptions disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-1-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-1-1"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.1",
+   "id": "TV-GCC-RULE-18-1-1-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-1-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-1-1"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.1",
+   "id": "TV-GCCARM-RULE-18-1-1-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-1-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-1-1"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.1",
+   "id": "TV-HBC-RULE-18-1-1-01",
+   "rule_id": "forbidden-patterns/exceptions-rtti",
+   "runs": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.2",
+   "id": "TV-CLANG-RULE-18-1-2-01",
+   "rule_id": "error /cannot use '(throw|try)' with exceptions disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-1-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-1-2"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.2",
+   "id": "TV-GCC-RULE-18-1-2-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-1-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-1-2"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.2",
+   "id": "TV-GCCARM-RULE-18-1-2-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-1-2@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-1-2"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.1.2",
+   "id": "TV-HBC-RULE-18-1-2-01",
+   "rule_id": "forbidden-patterns/exceptions-rtti",
+   "runs": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.1",
+   "id": "TV-CLANG-RULE-18-3-1-01",
+   "rule_id": "error /cannot use '(throw|try)' with exceptions disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-1"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.1",
+   "id": "TV-GCC-RULE-18-3-1-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-1"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.1",
+   "id": "TV-GCCARM-RULE-18-3-1-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-1"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.1",
+   "id": "TV-HBC-RULE-18-3-1-01",
+   "rule_id": "forbidden-patterns/exceptions-rtti",
+   "runs": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.2",
+   "id": "TV-CLANG-RULE-18-3-2-01",
+   "rule_id": "error /cannot use '(throw|try)' with exceptions disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-2"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.2",
+   "id": "TV-GCC-RULE-18-3-2-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-2"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.2",
+   "id": "TV-GCCARM-RULE-18-3-2-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-2@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-2"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.2",
+   "id": "TV-HBC-RULE-18-3-2-01",
+   "rule_id": "forbidden-patterns/exceptions-rtti",
+   "runs": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.3",
+   "id": "TV-CLANG-RULE-18-3-3-01",
+   "rule_id": "error /cannot use '(throw|try)' with exceptions disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-3"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.3",
+   "id": "TV-GCC-RULE-18-3-3-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-3"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.3",
+   "id": "TV-GCCARM-RULE-18-3-3-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-3-3@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-3-3"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.3.3",
+   "id": "TV-HBC-RULE-18-3-3-01",
+   "rule_id": "forbidden-patterns/exceptions-rtti",
+   "runs": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.4.1",
+   "id": "TV-CQL-RULE-18-4-1-01",
+   "rule_id": "cpp/misra/exception-unfriendly-function-must-be-noexcept",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-4-1@cortex-m",
+    "tests/misra-validation/cases/rule-18-4-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-4-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.5.1",
+   "id": "TV-CLANG-RULE-18-5-1-01",
+   "rule_id": "error /cannot use '(throw|try)' with exceptions disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-5-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-5-1"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.5.1",
+   "id": "TV-GCC-RULE-18-5-1-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-5-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-5-1"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.5.1",
+   "id": "TV-GCCARM-RULE-18-5-1-01",
+   "rule_id": "error /exception handling disabled/",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-5-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-5-1"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.5.1",
+   "id": "TV-HBC-RULE-18-5-1-01",
+   "rule_id": "forbidden-patterns/exceptions-rtti",
+   "runs": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tools/handbook_check/test_handbook_check.py::test_heap_exceptions_rtti_virtual_in_code"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 18.5.2",
+   "id": "TV-CQL-RULE-18-5-2-01",
+   "rule_id": "cpp/misra/avoid-program-terminating-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-18-5-2@cortex-m",
+    "tests/misra-validation/cases/rule-18-5-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-18-5-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.0.2",
+   "id": "TV-TIDY-RULE-19-0-2-01",
+   "rule_id": "cppcoreguidelines-macro-usage",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-0-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-0-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.0.2",
+   "id": "TV-CQL-RULE-19-0-2-01",
+   "rule_id": "cpp/misra/function-like-macros-defined",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-0-2@cortex-m",
+    "tests/misra-validation/cases/rule-19-0-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-0-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-040"
+   ],
+   "guideline": "Rule 19.0.3",
+   "id": "TV-CQL-RULE-19-0-3-01",
+   "rule_id": "cpp/misra/include-directives-preceded-by-preprocessor-directives",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-0-3-using@cortex-m",
+    "tests/misra-validation/cases/rule-19-0-3-using@host",
+    "tests/misra-validation/cases/rule-19-0-3@cortex-m",
+    "tests/misra-validation/cases/rule-19-0-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-0-3",
+    "tests/misra-validation/cases/rule-19-0-3-using"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.0.4",
+   "id": "TV-CQL-RULE-19-0-4-01",
+   "rule_id": "cpp/misra/undef-of-macro-not-defined-in-file",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-0-4@cortex-m",
+    "tests/misra-validation/cases/rule-19-0-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-0-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-CLANG-RULE-19-1-1-01",
+   "rule_id": "-Wexpansion-to-defined",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-elif@host",
+    "tests/misra-validation/cases/rule-19-1-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1",
+    "tests/misra-validation/cases/rule-19-1-1-elif"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-CLANG-RULE-19-1-1-02",
+   "rule_id": "error /macro name (missing|must be an identifier)/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-GCC-RULE-19-1-1-01",
+   "rule_id": "-Wexpansion-to-defined",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-elif@host",
+    "tests/misra-validation/cases/rule-19-1-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1",
+    "tests/misra-validation/cases/rule-19-1-1-elif"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-GCCARM-RULE-19-1-1-01",
+   "rule_id": "-Wexpansion-to-defined",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-elif@cortex-m",
+    "tests/misra-validation/cases/rule-19-1-1@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1",
+    "tests/misra-validation/cases/rule-19-1-1-elif"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-GCC-RULE-19-1-1-02",
+   "rule_id": "error /operator .defined. requires an identifier/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-GCCARM-RULE-19-1-1-02",
+   "rule_id": "error /operator .defined. requires an identifier/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [
+    "AN-036"
+   ],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-CQL-RULE-19-1-1-01",
+   "rule_id": "cpp/misra/defined-operator-expanded-in-if-directive",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-elif@cortex-m",
+    "tests/misra-validation/cases/rule-19-1-1-elif@host",
+    "tests/misra-validation/cases/rule-19-1-1@cortex-m",
+    "tests/misra-validation/cases/rule-19-1-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1",
+    "tests/misra-validation/cases/rule-19-1-1-elif"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-005"
+   ],
+   "guideline": "Rule 19.1.1",
+   "id": "TV-CQL-RULE-19-1-1-02",
+   "rule_id": "cpp/misra/invalid-token-in-defined-operator",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed@cortex-m",
+    "tests/misra-validation/cases/rule-19-1-1-malformed@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-1-malformed"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.2",
+   "id": "TV-CLANG-RULE-19-1-2-01",
+   "rule_id": "error /unterminated conditional directive/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-2"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.2",
+   "id": "TV-GCC-RULE-19-1-2-01",
+   "rule_id": "error /unterminated #if/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-2"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.2",
+   "id": "TV-GCCARM-RULE-19-1-2-01",
+   "rule_id": "error /unterminated #if/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-2@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-2"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.3",
+   "id": "TV-CLANG-RULE-19-1-3-01",
+   "rule_id": "-Wundef",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-3"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.3",
+   "id": "TV-GCC-RULE-19-1-3-01",
+   "rule_id": "-Wundef",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-3"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.3",
+   "id": "TV-GCCARM-RULE-19-1-3-01",
+   "rule_id": "-Wundef",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-3@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-3"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.1.3",
+   "id": "TV-CQL-RULE-19-1-3-01",
+   "rule_id": "cpp/misra/identifiers-used-in-the-controlling-expression-of",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-1-3@cortex-m",
+    "tests/misra-validation/cases/rule-19-1-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-1-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.1",
+   "id": "TV-HBC-RULE-19-2-1-01",
+   "rule_id": "include-guards",
+   "runs": [
+    "handbook checks/source_checks.py selftest@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "handbook checks/source_checks.py selftest"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.1",
+   "id": "TV-CQL-RULE-19-2-1-01",
+   "rule_id": "cpp/misra/include-outside-guard",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-1-include-outside@cortex-m",
+    "tests/misra-validation/cases/rule-19-2-1-include-outside@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-1-include-outside"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.1",
+   "id": "TV-CQL-RULE-19-2-1-02",
+   "rule_id": "cpp/misra/no-valid-ifdef-guard-in-header",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-1-no-guard@cortex-m",
+    "tests/misra-validation/cases/rule-19-2-1-no-guard@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-1-no-guard"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-CLANG-RULE-19-2-2-01",
+   "rule_id": "-Wextra-tokens",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-CLANG-RULE-19-2-2-02",
+   "rule_id": "error /expected \"FILENAME\" or <FILENAME>/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-GCC-RULE-19-2-2-01",
+   "rule_id": "error /#include'? expects/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-GCCARM-RULE-19-2-2-01",
+   "rule_id": "error /#include'? expects/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-GCC-RULE-19-2-2-02",
+   "rule_id": "message /extra tokens at end of '?#include'? directive \\[-Werror\\]/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-GCCARM-RULE-19-2-2-02",
+   "rule_id": "message /extra tokens at end of '?#include'? directive \\[-Werror\\]/",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [
+    "AN-004"
+   ],
+   "guideline": "Rule 19.2.2",
+   "id": "TV-CQL-RULE-19-2-2-01",
+   "rule_id": "cpp/misra/invalid-include-directive",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens@cortex-m",
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-2-extra-tokens"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.2.3",
+   "id": "TV-CQL-RULE-19-2-3-01",
+   "rule_id": "cpp/misra/chars-that-should-not-occur-in-header-file-name",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-2-3@cortex-m",
+    "tests/misra-validation/cases/rule-19-2-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-2-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.3.1",
+   "id": "TV-CQL-RULE-19-3-1-01",
+   "rule_id": "cpp/misra/and-preprocessor-operators-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-19-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-058"
+   ],
+   "guideline": "Rule 19.3.2",
+   "id": "TV-CQL-RULE-19-3-2-01",
+   "rule_id": "cpp/misra/macro-parameter-following-hash",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-3-2-split@cortex-m",
+    "tests/misra-validation/cases/rule-19-3-2-split@host",
+    "tests/misra-validation/cases/rule-19-3-2@cortex-m",
+    "tests/misra-validation/cases/rule-19-3-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-3-2",
+    "tests/misra-validation/cases/rule-19-3-2-split"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.3.3",
+   "id": "TV-CQL-RULE-19-3-3-01",
+   "rule_id": "cpp/misra/a-mixed-use-macro-argument-subject-to-expansion",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-3-3@cortex-m",
+    "tests/misra-validation/cases/rule-19-3-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-3-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.3.4",
+   "id": "TV-CQL-RULE-19-3-4-01",
+   "rule_id": "cpp/misra/unparenthesized-macro-argument",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-3-4@cortex-m",
+    "tests/misra-validation/cases/rule-19-3-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-3-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.3.5",
+   "id": "TV-CQL-RULE-19-3-5-01",
+   "rule_id": "cpp/misra/tokens-that-look-like-directives-in-a-macro-argument",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-3-5@cortex-m",
+    "tests/misra-validation/cases/rule-19-3-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-3-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.6.1",
+   "id": "TV-HBC-RULE-19-6-1-01",
+   "rule_id": "include-guards",
+   "runs": [
+    "handbook checks/source_checks.py selftest@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "handbook checks/source_checks.py selftest"
+   ],
+   "tool": "handbook-check"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 19.6.1",
+   "id": "TV-CQL-RULE-19-6-1-01",
+   "rule_id": "cpp/misra/disallowed-use-of-pragma",
+   "runs": [
+    "tests/misra-validation/cases/rule-19-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-19-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-19-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.1",
+   "id": "TV-TIDY-RULE-21-2-1-01",
+   "rule_id": "cert-err34-c",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.1",
+   "id": "TV-CQL-RULE-21-2-1-01",
+   "rule_id": "cpp/misra/atof-atoi-atol-and-atoll-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-1@cortex-m",
+    "tests/misra-validation/cases/rule-21-2-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.2",
+   "id": "TV-TIDY-RULE-21-2-2-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.2",
+   "id": "TV-CQL-RULE-21-2-2-01",
+   "rule_id": "cpp/misra/unsafe-string-handling-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-2@cortex-m",
+    "tests/misra-validation/cases/rule-21-2-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.3",
+   "id": "TV-TIDY-RULE-21-2-3-01",
+   "rule_id": "cert-env33-c",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-3"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.3",
+   "id": "TV-CQL-RULE-21-2-3-01",
+   "rule_id": "cpp/misra/banned-system-function",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-3@cortex-m",
+    "tests/misra-validation/cases/rule-21-2-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.2.4",
+   "id": "TV-CQL-RULE-21-2-4-01",
+   "rule_id": "cpp/misra/macro-offsetof-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-2-4@cortex-m",
+    "tests/misra-validation/cases/rule-21-2-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-2-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.6.1",
+   "id": "TV-CQL-RULE-21-6-1-01",
+   "rule_id": "cpp/misra/dynamic-memory-should-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-037"
+   ],
+   "guideline": "Rule 21.6.2",
+   "id": "TV-CQL-RULE-21-6-2-01",
+   "rule_id": "cpp/misra/dynamic-memory-managed-manually",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-2-array@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-2-array@host",
+    "tests/misra-validation/cases/rule-21-6-2@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-2",
+    "tests/misra-validation/cases/rule-21-6-2-array"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-035"
+   ],
+   "guideline": "Rule 21.6.3",
+   "id": "TV-CQL-RULE-21-6-3-01",
+   "rule_id": "cpp/misra/advanced-memory-management-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-3-uninitialized@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-3-uninitialized@host",
+    "tests/misra-validation/cases/rule-21-6-3@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-3",
+    "tests/misra-validation/cases/rule-21-6-3-uninitialized"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.6.4",
+   "id": "TV-CQL-RULE-21-6-4-01",
+   "rule_id": "cpp/misra/global-sized-operator-delete-shall-be-defined",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-4@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-002"
+   ],
+   "guideline": "Rule 21.6.4",
+   "id": "TV-CQL-RULE-21-6-4-02",
+   "rule_id": "cpp/misra/global-unsized-operator-delete-shall-be-defined",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-4-sized-only@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-4-sized-only@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-4-sized-only"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.6.5",
+   "id": "TV-CLANG-RULE-21-6-5-01",
+   "rule_id": "-Wdelete-incomplete",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-5@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-5"
+   ],
+   "tool": "clang"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.6.5",
+   "id": "TV-GCC-RULE-21-6-5-01",
+   "rule_id": "-Wdelete-incomplete",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-5@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-5"
+   ],
+   "tool": "gcc"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.6.5",
+   "id": "TV-GCCARM-RULE-21-6-5-01",
+   "rule_id": "-Wdelete-incomplete",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-5@cortex-m"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-5"
+   ],
+   "tool": "gcc-arm"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.6.5",
+   "id": "TV-CQL-RULE-21-6-5-01",
+   "rule_id": "cpp/misra/pointer-to-an-incomplete-class-type-deleted",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-6-5@cortex-m",
+    "tests/misra-validation/cases/rule-21-6-5@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-6-5"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.1",
+   "id": "TV-TIDY-RULE-21-10-1-01",
+   "rule_id": "cppcoreguidelines-pro-type-vararg",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.1",
+   "id": "TV-CQL-RULE-21-10-1-01",
+   "rule_id": "cpp/misra/no-variadic-function-macros",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-1@cortex-m",
+    "tests/misra-validation/cases/rule-21-10-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.2",
+   "id": "TV-TIDY-RULE-21-10-2-01",
+   "rule_id": "cert-err52-cpp",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.2",
+   "id": "TV-CQL-RULE-21-10-2-01",
+   "rule_id": "cpp/misra/no-csetjmp-header",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-2@cortex-m",
+    "tests/misra-validation/cases/rule-21-10-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.3",
+   "id": "TV-TIDY-RULE-21-10-3-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-3"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.3",
+   "id": "TV-CQL-RULE-21-10-3-01",
+   "rule_id": "cpp/misra/csignal-facilities-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-3@cortex-m",
+    "tests/misra-validation/cases/rule-21-10-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 21.10.3",
+   "id": "TV-CQL-RULE-21-10-3-02",
+   "rule_id": "cpp/misra/csignal-types-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-21-10-3@cortex-m",
+    "tests/misra-validation/cases/rule-21-10-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-21-10-3"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 22.3.1",
+   "id": "TV-TIDY-RULE-22-3-1-01",
+   "rule_id": "misc-static-assert",
+   "runs": [
+    "tests/misra-validation/cases/rule-22-3-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-22-3-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 22.3.1",
+   "id": "TV-CQL-RULE-22-3-1-01",
+   "rule_id": "cpp/misra/assert-macro-used-with-a-constant-expression",
+   "runs": [
+    "tests/misra-validation/cases/rule-22-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-22-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-22-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-003"
+   ],
+   "guideline": "Rule 22.4.1",
+   "id": "TV-CQL-RULE-22-4-1-01",
+   "rule_id": "cpp/misra/invalid-assignment-to-errno",
+   "runs": [
+    "tests/misra-validation/cases/rule-22-4-1@cortex-m",
+    "tests/misra-validation/cases/rule-22-4-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-22-4-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 23.11.1",
+   "id": "TV-CQL-RULE-23-11-1-01",
+   "rule_id": "cpp/misra/use-smart-ptr-factory-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-23-11-1@cortex-m",
+    "tests/misra-validation/cases/rule-23-11-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-23-11-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 24.5.1",
+   "id": "TV-TIDY-RULE-24-5-1-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-24-5-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-24-5-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 24.5.1",
+   "id": "TV-CQL-RULE-24-5-1-01",
+   "rule_id": "cpp/misra/character-handling-function-restrictions",
+   "runs": [
+    "tests/misra-validation/cases/rule-24-5-1@cortex-m",
+    "tests/misra-validation/cases/rule-24-5-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-24-5-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 24.5.2",
+   "id": "TV-TIDY-RULE-24-5-2-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-24-5-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-24-5-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 24.5.2",
+   "id": "TV-CQL-RULE-24-5-2-01",
+   "rule_id": "cpp/misra/no-memory-functions-from-c-string",
+   "runs": [
+    "tests/misra-validation/cases/rule-24-5-2@cortex-m",
+    "tests/misra-validation/cases/rule-24-5-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-24-5-2"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 25.5.1",
+   "id": "TV-TIDY-RULE-25-5-1-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 25.5.1",
+   "id": "TV-CQL-RULE-25-5-1-01",
+   "rule_id": "cpp/misra/locale-global-function-not-allowed",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-1@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 25.5.2",
+   "id": "TV-TIDY-RULE-25-5-2-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-2@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-2"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [
+    "AN-008"
+   ],
+   "guideline": "Rule 25.5.2",
+   "id": "TV-CQL-RULE-25-5-2-01",
+   "rule_id": "cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-2-const-use@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-2-const-use@host",
+    "tests/misra-validation/cases/rule-25-5-2-subscript-write@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-2-subscript-write@host",
+    "tests/misra-validation/cases/rule-25-5-2@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-2",
+    "tests/misra-validation/cases/rule-25-5-2-const-use",
+    "tests/misra-validation/cases/rule-25-5-2-subscript-write"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 25.5.3",
+   "id": "TV-TIDY-RULE-25-5-3-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-3@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-3"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 25.5.3",
+   "id": "TV-CQL-RULE-25-5-3-01",
+   "rule_id": "cpp/misra/call-to-setlocale-invalidates-old-pointers-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-3-ordered-use@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-3-ordered-use@host",
+    "tests/misra-validation/cases/rule-25-5-3-strerror@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-3-strerror@host",
+    "tests/misra-validation/cases/rule-25-5-3@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-3",
+    "tests/misra-validation/cases/rule-25-5-3-ordered-use",
+    "tests/misra-validation/cases/rule-25-5-3-strerror"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 25.5.3",
+   "id": "TV-CQL-RULE-25-5-3-02",
+   "rule_id": "cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra",
+   "runs": [
+    "tests/misra-validation/cases/rule-25-5-3-ordered-use@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-3-ordered-use@host",
+    "tests/misra-validation/cases/rule-25-5-3-strerror@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-3-strerror@host",
+    "tests/misra-validation/cases/rule-25-5-3@cortex-m",
+    "tests/misra-validation/cases/rule-25-5-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-25-5-3",
+    "tests/misra-validation/cases/rule-25-5-3-ordered-use",
+    "tests/misra-validation/cases/rule-25-5-3-strerror"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-014"
+   ],
+   "guideline": "Rule 26.3.1",
+   "id": "TV-CQL-RULE-26-3-1-01",
+   "rule_id": "cpp/misra/vector-should-not-be-specialized-with-bool",
+   "runs": [
+    "tests/misra-validation/cases/rule-26-3-1-const@cortex-m",
+    "tests/misra-validation/cases/rule-26-3-1-const@host",
+    "tests/misra-validation/cases/rule-26-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-26-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-26-3-1",
+    "tests/misra-validation/cases/rule-26-3-1-const"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 28.3.1",
+   "id": "TV-CQL-RULE-28-3-1-01",
+   "rule_id": "cpp/misra/non-const-predicate-function-object",
+   "runs": [
+    "tests/misra-validation/cases/rule-28-3-1-lambda@cortex-m",
+    "tests/misra-validation/cases/rule-28-3-1-lambda@host",
+    "tests/misra-validation/cases/rule-28-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-28-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-28-3-1",
+    "tests/misra-validation/cases/rule-28-3-1-lambda"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 28.3.1",
+   "id": "TV-CQL-RULE-28-3-1-02",
+   "rule_id": "cpp/misra/predicate-with-persistent-side-effects",
+   "runs": [
+    "tests/misra-validation/cases/rule-28-3-1@cortex-m",
+    "tests/misra-validation/cases/rule-28-3-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-28-3-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 28.6.1",
+   "id": "TV-CQL-RULE-28-6-1-01",
+   "rule_id": "cpp/misra/std-move-with-non-const-lvalue",
+   "runs": [
+    "tests/misra-validation/cases/rule-28-6-1@cortex-m",
+    "tests/misra-validation/cases/rule-28-6-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-28-6-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-038"
+   ],
+   "guideline": "Rule 28.6.2",
+   "id": "TV-CQL-RULE-28-6-2-01",
+   "rule_id": "cpp/misra/forwarding-references-and-forward-not-used-together",
+   "runs": [
+    "tests/misra-validation/cases/rule-28-6-2-generic-lambda@cortex-m",
+    "tests/misra-validation/cases/rule-28-6-2-generic-lambda@host",
+    "tests/misra-validation/cases/rule-28-6-2@cortex-m",
+    "tests/misra-validation/cases/rule-28-6-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-28-6-2",
+    "tests/misra-validation/cases/rule-28-6-2-generic-lambda"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-024"
+   ],
+   "guideline": "Rule 28.6.3",
+   "id": "TV-CQL-RULE-28-6-3-01",
+   "rule_id": "cpp/misra/object-used-while-in-potentially-moved-from-state",
+   "runs": [
+    "tests/misra-validation/cases/rule-28-6-3-reassigned@cortex-m",
+    "tests/misra-validation/cases/rule-28-6-3-reassigned@host",
+    "tests/misra-validation/cases/rule-28-6-3@cortex-m",
+    "tests/misra-validation/cases/rule-28-6-3@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-28-6-3",
+    "tests/misra-validation/cases/rule-28-6-3-reassigned"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 28.6.4",
+   "id": "TV-CQL-RULE-28-6-4-01",
+   "rule_id": "cpp/misra/potentially-erroneous-container-usage",
+   "runs": [
+    "tests/misra-validation/cases/rule-28-6-4@cortex-m",
+    "tests/misra-validation/cases/rule-28-6-4@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-28-6-4"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 30.0.1",
+   "id": "TV-TIDY-RULE-30-0-1-01",
+   "rule_id": "bugprone-unsafe-functions",
+   "runs": [
+    "tests/misra-validation/cases/rule-30-0-1@host"
+   ],
+   "source": "matrix",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-30-0-1"
+   ],
+   "tool": "clang-tidy"
+  },
+  {
+   "anomalies": [
+    "AN-051"
+   ],
+   "guideline": "Rule 30.0.1",
+   "id": "TV-CQL-RULE-30-0-1-01",
+   "rule_id": "cpp/misra/cstdio-functions-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-30-0-1-algorithm-remove@cortex-m",
+    "tests/misra-validation/cases/rule-30-0-1-algorithm-remove@host",
+    "tests/misra-validation/cases/rule-30-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-30-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-30-0-1",
+    "tests/misra-validation/cases/rule-30-0-1-algorithm-remove"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 30.0.1",
+   "id": "TV-CQL-RULE-30-0-1-02",
+   "rule_id": "cpp/misra/cstdio-macros-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-30-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-30-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-30-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "Rule 30.0.1",
+   "id": "TV-CQL-RULE-30-0-1-03",
+   "rule_id": "cpp/misra/cstdio-types-shall-not-be-used",
+   "runs": [
+    "tests/misra-validation/cases/rule-30-0-1@cortex-m",
+    "tests/misra-validation/cases/rule-30-0-1@host"
+   ],
+   "source": "misra-pack",
+   "status": "pass",
+   "tests": [
+    "tests/misra-validation/cases/rule-30-0-1"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [
+    "AN-077"
+   ],
+   "guideline": "Rule 30.0.2",
+   "id": "TV-CQL-RULE-30-0-2-01",
+   "rule_id": "cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning",
+   "runs": [
+    "tests/misra-validation/cases/rule-30-0-2-member@host",
+    "tests/misra-validation/cases/rule-30-0-2@cortex-m",
+    "tests/misra-validation/cases/rule-30-0-2@host"
+   ],
+   "source": "misra-pack",
+   "status": "anomaly",
+   "tests": [
+    "tests/misra-validation/cases/rule-30-0-2",
+    "tests/misra-validation/cases/rule-30-0-2-member"
+   ],
+   "tool": "codeql"
+  },
+  {
+   "anomalies": [],
+   "guideline": "KB-CPP-046",
+   "id": "TV-CQL-KB-CPP-046-01",
+   "rule_id": "kokeb/cpp20/result-type-not-nodiscard",
+   "runs": [
+    "codeql/kokeb-cpp20/validation/kb-cpp-046@cortex-m",
+    "codeql/kokeb-cpp20/validation/kb-cpp-046@host"
+   ],
+   "source": "kokeb-profile",
+   "status": "pass",
+   "tests": [
+    "codeql/kokeb-cpp20/validation/kb-cpp-046"
+   ],
+   "tool": "codeql"
+  }
+ ],
+ "schema": 1,
+ "suite_sha256": "12e41ce68cc540ab76814ef6ee3394112d192c8156930e605eb106a36788d051",
+ "tool_versions": {
+  "arm_gcc": "14.3.1",
+  "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+  "clang_tidy": "LLVM version 20.1.0",
+  "codeql": "2.21.4",
+  "codeql_build": "13.3.0",
+  "cppcheck": "Cppcheck 2.13.0",
+  "gcc": "14.2.0",
+  "misra_pack": "codeql/misra-cpp-coding-standards@2.62.0"
+ },
+ "toolchain_sha256": "765756156ae0a2e6ff862eb9f76180ff472865f2041e1af6c226804697eb66bb"
+}
