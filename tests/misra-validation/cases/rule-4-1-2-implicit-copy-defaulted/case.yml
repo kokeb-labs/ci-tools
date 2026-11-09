@@ -11,6 +11,12 @@ known_misses:
     why: >-
       An explicitly defaulted copy constructor (= default) is counted as implicitly declared, so a class that
       declares all five special members = default together with its destructor is reported.
+other_findings:
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    why: >-
+      misfire: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
 seeded:
   - "implicit copy constructor used on a class with a user destructor"
 near_misses:

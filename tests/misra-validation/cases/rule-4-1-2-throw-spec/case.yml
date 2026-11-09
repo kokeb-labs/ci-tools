@@ -1,5 +1,8 @@
 ---
 guideline: Rule 4.1.2
+notes: >-
+  The query reports a function declared with throw() once, at its definition; the matching throw() on the
+  separate declaration of id (bad.cpp line 6) is part of the same seeded form and carries no marker.
 codeql:
   queries: [cpp/misra/noexcept-specifier-throw]
 seeded:

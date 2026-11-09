@@ -4,11 +4,11 @@
 namespace kv::rule_9_6_5::bad_loop {
 
 std::int32_t first_above(const std::int32_t* values, std::int32_t n, std::int32_t limit) {
-  for (std::int32_t i = 0; i < n; ++i) {  // seeded: codeql
+  for (std::int32_t i = 0; i < n; ++i) {
     if (values[i] > limit) {
       return i;
     }
   }
-}  // seeded: gcc,clang
+}  // seeded
 
 }  // namespace kv::rule_9_6_5::bad_loop

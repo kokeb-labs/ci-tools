@@ -9,6 +9,11 @@ other_findings:
   - query: cpp/misra/implicit-declaration-of-copy-constructor
     why: >-
       misfire: the Rule 4.1.2 query treats the explicitly defaulted copy members of a class that declares all five special members as implicitly declared (the same false positive as in rule-15-0-1).
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    why: >-
+      misfire: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
 seeded:
   - "typeid on a non-const polymorphic reference"
   - "typeid on a dereferenced non-const pointer"

@@ -6,13 +6,30 @@ codeql:
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
 other_findings:
-  - query: cpp/misra/numeric-assignment-type-mismatch
-    why: >-
-      misfire: passing a std::int32_t to strerror's int parameter is reported as an assignment between incompatible
-      types; on the host std::int32_t is int itself, and on arm-none-eabi it is long, of the same size and signedness.
   - query: cpp/misra/unsafe-string-handling-functions
     why: "true positive of Rule 21.2.2: strerror is one of the banned str* functions; this case shows only the
       call order of Rule 25.5.3 (getenv, the other function of the order queries, is covered by rule-25-5-3)."
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      misfire: on the host std::int32_t is int, so passing it to strerror's int parameter converts nothing; the Rule
+      7.0.6 query compares the typedef with int. On arm-none-eabi std::int32_t is long, and the same call is a true
+      positive of Rule 7.0.6 (an argument that is not overload-independent must keep its type); not this case's
+      guideline.
+known_misses:
+  - query: cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    kind: false-negative
+    why: >-
+      A strerror result kept in a struct member through brace initialisation (Report report{std::strerror(kept)},
+      bad_stored.cpp) and read after the next call is not reported: the query follows a result only from a
+      variable's own initializer or from an assignment to a variable, by local data flow, and the brace list
+      initialises the member through the enclosing object. The plain local form (bad.cpp) is reported.
+  - query: cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+    kind: false-negative
+    why: >-
+      Reports nothing in this case: the query flags a result stored in a global or member variable only when the
+      call is that variable's initializer or the right-hand side of an assignment to it. The only member store here
+      is the brace initialisation Report report{std::strerror(kept)} in bad_stored.cpp, which it does not see, so no
+      bad file holds a form it reports.
 seeded:
   - "strerror's first result used after a second call"
   - "a strerror result kept in a struct member and read after a second call"

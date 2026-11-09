@@ -2,6 +2,12 @@
 guideline: Rule 6.9.2
 codeql:
   queries: [cpp/misra/avoid-standard-integer-type-names]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the Rule 8.20.1 query reports the run-time increment value + 1U in Counter::operator++(int), whose
+      operand value is not a constant expression; the guideline covers operations whose operands are constant
+      expressions.
 seeded:
   - "long and int in a signature"
   - "unsigned short for a local"

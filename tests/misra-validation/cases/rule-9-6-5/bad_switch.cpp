@@ -4,12 +4,12 @@
 namespace kv::rule_9_6_5::bad_switch {
 
 std::int32_t code_of(std::int32_t k) {
-  switch (k) {  // seeded: codeql
+  switch (k) {
     case 0:
       return 10;
     case 1:
       return 20;
   }
-}  // seeded: gcc,clang
+}  // seeded
 
 }  // namespace kv::rule_9_6_5::bad_switch

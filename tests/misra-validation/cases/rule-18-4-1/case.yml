@@ -8,6 +8,20 @@ other_findings:
       misfire: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared, so a
       class that declares its special members (= default) is reported as using the deprecated implicit copy; an
       explicitly defaulted member is user-declared and not deprecated.
+  - query: cpp/misra/invalid-signature-for-special-member-function
+    why: >-
+      misfire: the Rule 15.0.2 query asks for noexcept on the user-provided move constructor and move assignment,
+      which are declared noexcept; under -fno-exceptions (the org flags) the extractor does not record the exception
+      specification.
+known_misses:
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    why: >-
+      The noexcept move constructors and move assignments (hand-written in ok.hpp, defaulted in ok_defaulted.hpp)
+      and the noexcept member swap are reported as needing noexcept. The database is built with -fno-exceptions (the
+      org flags), under which the extractor does not record an explicit noexcept, so these functions look
+      potentially throwing (the implicitly noexcept destructor is not reported); the seeded functions without
+      noexcept are reported.
 seeded:
   - move constructor and move assignment without noexcept
   - member swap without noexcept

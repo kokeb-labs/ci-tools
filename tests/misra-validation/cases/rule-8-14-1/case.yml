@@ -7,6 +7,13 @@ other_findings:
     why: >-
       misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
       reports the run-time increment `++port.reads`, whose operands are not constant, whenever its range analysis cannot bound them
+known_misses:
+  - query: cpp/misra/short-circuited-persistent-side-effect
+    kind: false-negative
+    why: >-
+      A read of a volatile object in the right operand of && (reg == 1U, bad_edge.cpp) is not reported: the query
+      does not count a volatile access as a persistent side effect, although the guideline does. Increments,
+      assignments and calls with persistent side effects in the right operand are reported.
 seeded:
   - "an increment of a persistent object in the right operand of &&"
   - "an assignment to a persistent object in the right operand of ||"

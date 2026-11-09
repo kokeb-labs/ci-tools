@@ -2,6 +2,14 @@
 guideline: Rule 28.6.1
 codeql:
   queries: [cpp/misra/std-move-with-non-const-lvalue]
+known_misses:
+  - query: cpp/misra/std-move-with-non-const-lvalue
+    kind: false-negative
+    why: >-
+      std::move(buffer_) in the const member function take() (bad_member.cpp) is not reported: the query asks
+      whether the argument's type is const, and the database gives a data member named in a const member function
+      its declared type (Buffer), without the const that the const object adds. std::move of a const reference
+      parameter, of a const T& in a template and of a prvalue are reported.
 seeded:
   - "std::move of a const reference parameter"
   - "std::move of a member in a const member function"

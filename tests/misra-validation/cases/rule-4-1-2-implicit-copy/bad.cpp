@@ -3,7 +3,7 @@
 
 namespace kv::rule_4_1_2_implicit_copy::bad {
 
-class Buffer {
+class Buffer {  // seeded
  public:
   explicit Buffer(std::uint32_t n) : n_(n) {}
   ~Buffer() { n_ = 0U; }  // user destructor, copy left implicit
@@ -14,7 +14,7 @@ class Buffer {
 };
 
 std::uint32_t clone_size(const Buffer& b) {
-  const Buffer c(b);  // uses the deprecated implicit copy constructor  // seeded
+  const Buffer c(b);  // uses the deprecated implicit copy constructor
   return c.size();
 }
 

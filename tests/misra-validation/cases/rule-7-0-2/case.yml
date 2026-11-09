@@ -2,6 +2,11 @@
 guideline: Rule 7.0.2
 codeql:
   queries: [cpp/misra/no-implicit-bool-conversion]
+other_findings:
+  - query: cpp/misra/no-pointer-to-integral-cast
+    why: >-
+      misfire: the Rule 8.2.7 query reports the pointer used as the if condition (if (p)) as a cast to bool; no cast
+      is written, the contextual conversion of a pointer is not a cast, and Rule 7.0.2 permits it by exception.
 seeded:
   - "an integer used directly as an if condition"
   - "a pointer converted to a bool object (a converting transfer, not a condition)"

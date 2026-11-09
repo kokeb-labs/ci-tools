@@ -9,6 +9,14 @@ clang-tidy:
   options: {readability-uppercase-literal-suffix.NewSuffixes: "L;LL;LU;LLU"}
 codeql:
   queries: [cpp/misra/lowercase-l-starts-in-literal-suffix]
+known_misses:
+  - query: cpp/misra/lowercase-l-starts-in-literal-suffix
+    kind: false-negative
+    why: >-
+      The floating literal 3.4l (bad_float.cpp) is not reported: the query checks integer literals only. It also
+      reports the compliant 5ul and 2Ull (ok_unsigned_first.hpp), where the lower-case l is not the first character
+      of the suffix, so it misreads the guideline in both directions; l, lu, lU and ll on integer literals are
+      reported.
 seeded:
   - "a lower-case l suffix"
   - "a lower-case lu suffix"

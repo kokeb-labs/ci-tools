@@ -2,6 +2,14 @@
 guideline: Rule 8.2.4
 codeql:
   queries: [cpp/misra/casts-between-a-pointer-to-function-and-any-other-type]
+known_misses:
+  - query: cpp/misra/casts-between-a-pointer-to-function-and-any-other-type
+    kind: false-negative
+    why: >-
+      reinterpret_cast<Narrow>(raw), a void* cast to a pointer to function (bad_edge.cpp), is not reported: the
+      query only checks whether the operand of the cast is a pointer to function, so a cast to a pointer to function
+      from another type is not seen. Casts from a pointer to function (to void* or to another function pointer type)
+      are reported.
 seeded:
   - "a function pointer cast to void*"
   - "a cast between two function pointer types"

@@ -9,6 +9,15 @@ other_findings:
   - query: cpp/misra/non-explicit-conversion-member
     why: "misfire: the Rule 15.1.3 query reports the implicit conversion to a function pointer of a captureless
       lambda's closure type; nothing was written, and no conversion can be declared explicit there."
+known_misses:
+  - query: cpp/misra/potentially-erroneous-container-usage
+    kind: false-negative
+    why: >-
+      Discarded results of std::remove, std::unique and std::remove_if on std::array iterators, of
+      unique_ptr::release, and of std::remove cast to void are not reported: the query requires an argument of an
+      iterator type the pack models (std::array's iterators are plain pointers in libstdc++), does not cover
+      unique_ptr::release, and only looks at a call that is itself an expression statement, so a call under a cast
+      to void is not seen. The discarded empty() results (member and non-member) are reported.
 seeded:
   - "std::remove and std::unique results discarded"
   - "vector::empty result discarded"

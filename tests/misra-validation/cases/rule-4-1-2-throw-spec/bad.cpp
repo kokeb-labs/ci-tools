@@ -3,7 +3,7 @@
 
 namespace kv::rule_4_1_2_throw_spec::bad {
 
-std::uint32_t id(std::uint32_t v) throw();  // seeded
+std::uint32_t id(std::uint32_t v) throw();
 std::uint32_t id(std::uint32_t v) throw() { return v; }  // seeded
 
 }  // namespace kv::rule_4_1_2_throw_spec::bad

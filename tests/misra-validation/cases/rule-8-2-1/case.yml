@@ -8,6 +8,14 @@ notes: >-
 clang-tidy: {check: fuchsia-virtual-inheritance}
 codeql:
   queries: [cpp/misra/virtual-base-class-cast-to-derived]
+known_misses:
+  - query: cpp/misra/virtual-base-class-cast-to-derived
+    kind: false-negative
+    why: >-
+      reinterpret_cast<Derived const*> of a pointer to a const virtual base (bad_edge.cpp) is not reported: the
+      query strips only the top-level specifiers of the pointer and then requires the pointed-to type to be a class,
+      so a pointer to const Base (a specified type) is not matched. The casts of a non-const pointer and of a
+      reference are reported.
 seeded:
   - "reinterpret_cast from a pointer to a virtual base to the derived class"
   - "reinterpret_cast from a pointer to a const virtual base to the derived class"

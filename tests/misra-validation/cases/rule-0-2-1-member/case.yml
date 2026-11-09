@@ -1,16 +1,15 @@
 ---
 guideline: Rule 0.2.1
-notes: Records a false positive of the pack on data members. The main case rule-0-2-1 proves detection.
+notes: >-
+  Near miss on data members: the private non-static data members of a class template must not be reported (an
+  earlier run reported them; the 2026-11-09 host run does not). The main case rule-0-2-1 proves detection.
 codeql:
   queries: [cpp/misra/unused-limited-visibility-variable]
-known_misses:
-  - query: cpp/misra/unused-limited-visibility-variable
-    kind: false-positive
+other_findings:
+  - query: cpp/misra/no-c-style-or-functional-casts
     why: >-
-      Private non-static data members of a class template (mask_, seen_) are reported as unused variables with
-      limited visibility. The guideline is about variables, and a non-static data member is not one; these
-      members are also read and written by the public members. The query counts the members as variables and
-      misses their uses in the uninstantiated template.
+      misfire: the Rule 8.2.2 query reports std::uint8_t{0U} as a C-style cast; it is functional notation with curly
+      braces, which the guideline's amplification excludes.
 seeded:
   - "a block-scope local never referenced"
 near_misses:

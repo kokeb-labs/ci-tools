@@ -10,6 +10,11 @@ known_misses:
       Private members of a class template, a plain member function and a member function template, are
       reported as never used although the public member Read calls both, and Read is called. The query does not
       link the calls in the uninstantiated template body to the members they name.
+other_findings:
+  - query: cpp/misra/function-pointer-conversion-context
+    why: >-
+      misfire: the Rule 7.11.3 query reports the call twice() in the uninstantiated class template as a conversion
+      of a function to a pointer to function; the function is called, nothing is converted.
 seeded:
   - "an uncalled private member function"
 near_misses:

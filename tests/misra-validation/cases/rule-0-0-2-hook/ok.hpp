@@ -2,12 +2,12 @@
 // the port's business; one test port always answers true, another always false. Neither makes the
 // condition in the template invariant, and the then-branch is reachable in the guideline's CFG
 // (the condition is not a constant expression). The if constexpr is out of scope of both rules.
-#ifndef KV_RULE_0_0_X_OK_HOOK_HPP
-#define KV_RULE_0_0_X_OK_HOOK_HPP
+#ifndef KV_RULE_0_0_2_OK_HOOK_HPP
+#define KV_RULE_0_0_2_OK_HOOK_HPP
 
 #include <cstdint>
 
-namespace kv::rule_0_0_x::ok_hook {
+namespace kv::rule_0_0_2::ok_hook {
 
 enum class Failure : std::uint8_t { Other, AddressNack };
 enum class Error : std::uint8_t { Bus, NoDevice };
@@ -55,6 +55,6 @@ inline bool use() noexcept {
          (TransferError(c) == Error::Bus);
 }
 
-}  // namespace kv::rule_0_0_x::ok_hook
+}  // namespace kv::rule_0_0_2::ok_hook
 
-#endif  // KV_RULE_0_0_X_OK_HOOK_HPP
+#endif  // KV_RULE_0_0_2_OK_HOOK_HPP

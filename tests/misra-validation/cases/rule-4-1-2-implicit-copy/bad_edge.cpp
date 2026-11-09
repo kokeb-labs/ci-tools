@@ -4,7 +4,7 @@
 namespace kv::rule_4_1_2_implicit_copy::bad_edge {
 
 // A user copy assignment, with the copy constructor left implicit and used.
-class Cell {
+class Cell {  // seeded
  public:
   explicit Cell(std::uint32_t v) : v_(v) {}
   Cell& operator=(const Cell& o) {
@@ -17,7 +17,7 @@ class Cell {
   std::uint32_t v_;
 };
 std::uint32_t copy_cell(const Cell& c) {
-  const Cell d(c);  // seeded
+  const Cell d(c);
   return d.get();
 }
 

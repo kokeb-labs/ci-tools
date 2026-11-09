@@ -20,6 +20,12 @@ other_findings:
     why: "true positive of Rule 21.6.2: the replacement releases memory with std::free."
   - query: cpp/misra/dynamic-memory-should-not-be-used
     why: "true positive of Rule 21.6.1: a replacement operator delete releases heap memory by definition."
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    why: >-
+      misfire: both replacement operator delete functions are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees the deallocation functions as potentially throwing (the false positive of
+      rule-18-4-1-no-exceptions).
 seeded:
   - "the sized global operator delete replaced without the unsized one"
 near_misses:

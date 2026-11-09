@@ -2,6 +2,14 @@
 guideline: Rule 30.0.2
 codeql:
   queries: [cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning]
+known_misses:
+  - query: cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning
+    kind: false-negative
+    why: >-
+      A read then a write on a std::fstream& parameter (patch in bad.cpp), and a write, std::flush, then a read on a
+      parameter (bad_write_read.cpp), are not reported: the query identifies a stream only by data flow from a
+      constructor call it can see (or an extern global), and nothing in the database passes a constructed stream to
+      these parameters. The same sequence on a local stream (patch_local) is reported.
 seeded:
   - "a read then a write with no positioning call (parameter and local stream)"
   - "a write, std::flush, then a read with no positioning call"

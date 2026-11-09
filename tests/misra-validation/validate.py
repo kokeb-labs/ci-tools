@@ -571,7 +571,7 @@ def build_requirements(matrix: list[dict], supported: dict, cases: list[dict]) -
         decided = {v["by"]: v["how"] for v in g["verification"] if not v.get("partial")}
         cs = by_g.get(gid, [])
         if "compiler" in decided:
-            claimed = sorted({(t, compiler_claim_holds(c[t], 0, "")[1]) for c in cs for t in ("gcc", "clang") if t in c})
+            claimed = sorted({(t, compiler_matcher(c[t])[1]) for c in cs for t in ("gcc", "clang") if t in c})
             for t, rid in claimed or [("gcc", "(no case)")]:
                 add(t, gid, rid, "matrix", decided["compiler"])
                 if t == "gcc":

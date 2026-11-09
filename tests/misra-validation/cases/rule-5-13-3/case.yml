@@ -2,6 +2,13 @@
 guideline: Rule 5.13.3
 codeql:
   queries: [cpp/misra/octal-constants-used]
+known_misses:
+  - query: cpp/misra/octal-constants-used
+    kind: false-negative
+    why: >-
+      The multi-digit zero 000U (bad_zeros.cpp) is not reported: the query is the shared non-zero octal literal
+      check, so an octal literal whose value is zero is skipped, although only the single digit 0 is outside the
+      guideline. Non-zero octal literals are reported.
 seeded:
   - "a three-digit octal literal"
   - "an octal literal in a case label"

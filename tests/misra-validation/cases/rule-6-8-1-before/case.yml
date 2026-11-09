@@ -6,6 +6,13 @@ notes: >-
   kept as a second form because the query models it as an access before lifetime.
 codeql:
   queries: [cpp/misra/object-accessed-before-lifetime-misra]
+known_misses:
+  - query: cpp/misra/object-accessed-before-lifetime-misra
+    kind: false-negative
+    why: >-
+      A read of a union member that is not the active member (w.halves[0] after w.whole is written, bad_union.cpp)
+      is not reported: the query models invalid pointers (never initialised, dangling) and has no notion of the
+      active member of a union. The dereference of an uninitialised pointer (bad.cpp) is reported.
 seeded:
   - "an uninitialised pointer dereferenced"
   - "a read of a union member that is not the active member (bad_union.cpp)"

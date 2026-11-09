@@ -7,6 +7,11 @@ notes: >-
   arguments are indeterminately sequenced, which the guideline still forbids for accesses to the same object.
 codeql:
   queries: [cpp/misra/memory-usage-not-sequenced]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the Rule 8.20.1 query reports the run-time increment ++k, whose operand is not a constant expression;
+      the guideline covers operations whose operands are constant expressions.
 seeded:
   - "i++ + i++ (two unsequenced writes)"
   - "f(i++, i++) (two indeterminately sequenced writes in arguments)"

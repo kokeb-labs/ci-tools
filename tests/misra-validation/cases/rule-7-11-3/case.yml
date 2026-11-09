@@ -6,6 +6,18 @@ other_findings:
   - query: cpp/misra/non-explicit-conversion-member
     why: >-
       misfire: the Rule 15.1.3 query reports the conversion-to-function-pointer operator that the compiler gives every captureless lambda's closure type; no conversion member was written.
+  - query: cpp/misra/casts-between-a-pointer-to-function-and-any-other-type
+    why: >-
+      misfire: the Rule 8.2.4 query reports static_cast<Fn>(two); the cast performs only the function-to-pointer
+      conversion to a pointer to the same function type, which the guideline's amplification permits even as a cast.
+known_misses:
+  - query: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    why: >-
+      A function name (call(two)) and a captureless lambda passed as the argument of a parameter of
+      pointer-to-function type (ok_transfer.hpp) are reported. Passing an argument is a converting transfer to an
+      object of pointer-to-function type, which the guideline accepts; the query does not recognise a function
+      argument as such a context. The seeded comparison, unary plus and condition forms are reported.
 seeded:
   - "a function name compared with nullptr"
   - "a captureless lambda converted by unary plus"

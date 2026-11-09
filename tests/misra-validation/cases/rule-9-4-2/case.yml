@@ -7,6 +7,15 @@ notes: >-
   that form is a known false negative kept in its own case.
 codeql:
   queries: [cpp/misra/appropriate-structure-of-switch-statement]
+other_findings:
+  - query: cpp/misra/unscoped-enumerations-should-not-be-declared
+    why: >-
+      true positive of Rule 10.2.2 (advisory): the near miss needs an unscoped enumeration (Mode) at namespace
+      scope, the one form that may leave out the default label; not this case's guideline.
+  - query: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type
+    why: >-
+      true positive of Rule 10.2.1: the near miss needs an enumeration without a fixed underlying type (Mode), the
+      one form that may leave out the default label; not this case's guideline.
 seeded:
   - fall-through from one clause into the next and no default (bad.cpp)
   - no default label although every clause breaks (bad_nodefault.cpp)

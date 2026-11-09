@@ -2,6 +2,17 @@
 guideline: Dir 15.8.1
 codeql:
   queries: [cpp/misra/copy-and-move-assignments-shall-handle-self-assignment]
+other_findings:
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    why: >-
+      misfire: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+  - query: cpp/misra/invalid-signature-for-special-member-function
+    why: >-
+      misfire: the Rule 15.0.2 query asks for noexcept on the user-provided move constructor and move assignment,
+      which are declared noexcept; under -fno-exceptions (the org flags) the extractor does not record the exception
+      specification.
 seeded:
   - copy assignment that overwrites state before copying, with no self-assignment test
   - hand-written move assignment that clears the source, so a self-move loses the value

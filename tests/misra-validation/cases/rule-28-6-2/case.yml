@@ -2,6 +2,14 @@
 guideline: Rule 28.6.2
 codeql:
   queries: [cpp/misra/forwarding-references-and-forward-not-used-together]
+known_misses:
+  - query: cpp/misra/forwarding-references-and-forward-not-used-together
+    kind: false-negative
+    why: >-
+      consume(payload), a forwarding reference passed on as an lvalue (bad.cpp), and std::forward<T> applied to the
+      T& parameter (bad_forward_lvalue.cpp) are not reported: the query reports only std::move of a forwarding
+      reference and std::forward of a parameter it classes as an rvalue reference. std::move(payload) of the
+      forwarding reference is reported.
 seeded:
   - "a forwarding reference passed on as an lvalue"
   - "a forwarding reference passed on with std::move"

@@ -9,6 +9,15 @@ clang-tidy:
     bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(localeconv|getenv|setlocale|strerror)$,,banned by the MISRA C++ profile"
 codeql:
   queries: [cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const]
+known_misses:
+  - query: cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const
+    kind: false-negative
+    why: >-
+      The write conventions->grouping[0] = 'x' through a char* member of the localeconv result
+      (bad_lconv_member.cpp) is not reported: the query's writes are *p = ..., ++*p and p->m = ... on a pointer that
+      flows from the call, and a subscripted write through a member pointer of the returned object matches none of
+      them (the subscript form of rule-25-5-2-subscript-write). Writes through *p after getenv, strerror and
+      setlocale are reported.
 seeded:
   - "the result of getenv and of strerror written through *p"
   - "the result of setlocale written through *p"

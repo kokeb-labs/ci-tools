@@ -3,6 +3,31 @@ guideline: Rule 22.3.1
 clang-tidy: {check: misc-static-assert}
 codeql:
   queries: [cpp/misra/assert-macro-used-with-a-constant-expression]
+other_findings:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      true positive of Rule 7.0.6 inside the C library's expansion of assert: glibc passes __LINE__ (int) to the
+      unsigned int line parameter of __assert_fail, an argument that is not overload-independent and so must keep
+      its type; the conversion is written by <cassert>, not by the snippet; not this case's guideline.
+  - query: cpp/misra/poorly-formed-identifier
+    why: >-
+      misfire: the Rule 5.10.1 query reports __PRETTY_FUNCTION__, which glibc's assert macro passes to
+      __assert_fail; it is an identifier predefined by the compiler and used by the standard library, not a
+      user-defined identifier.
+  - query: cpp/misra/invariant-condition
+    why: >-
+      misfire: the Rule 0.0.2 query reports the constant first operand of the conditional operator in the expansion
+      of assert(false && "..."); Rule 0.0.2 exception 3 permits any controlling expression that results from the
+      expansion of assert.
+  - query: cpp/misra/no-pointer-to-integral-cast
+    why: >-
+      misfire: the Rule 8.2.7 query reports the implicit conversion of the string literal to bool in assert(false &&
+      "...") as a cast; no cast is written there, and the form is the one Rule 22.3.1's exception allows.
+  - query: cpp/misra/unnecessary-write-to-local-object
+    why: >-
+      true positive of Rule 0.1.1 in the analysed build (assertions enabled): __assert_fail does not return, so the
+      initial value 0U of out is overwritten on one path and never read on the other; with NDEBUG it would be read.
+      Not this case's guideline.
 seeded:
   - "assert on a sizeof comparison"
   - "assert on a constexpr constant in a template"

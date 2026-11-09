@@ -5,6 +5,14 @@ codeql:
 other_findings:
   - query: cpp/misra/dynamic-memory-should-not-be-used
     why: "true positive of Rule 21.6.1 (advisory): std::string allocates; it is the movable type of the example."
+known_misses:
+  - query: cpp/misra/object-used-while-in-potentially-moved-from-state
+    kind: false-negative
+    why: >-
+      An lvalue reference parameter moved from and returned without being reassigned (bad_ref_param.cpp) is not
+      reported: the query reports a read of a variable after the move, and has no check for an lvalue reference
+      parameter that is still in potentially moved-from state on return, which the guideline also forbids. Reads
+      after a move, on one path or on every path, are reported.
 seeded:
   - "a string read after it was moved from"
   - "a string moved on one branch and read after the branches join"

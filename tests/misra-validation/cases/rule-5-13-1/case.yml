@@ -4,6 +4,13 @@ gcc: {message: "unknown escape sequence"}
 clang: {flag: unknown-escape-sequence}
 codeql:
   queries: [cpp/misra/backslash-character-misuse]
+known_misses:
+  - query: cpp/misra/backslash-character-misuse
+    kind: false-negative
+    why: >-
+      The unknown escape '\k' in a character literal (bad_edge.cpp) is not reported: the query inspects string
+      literals only. The unknown escapes in string literals (\q, \c) are reported; GCC and Clang report all three
+      forms.
 seeded:
   - "\\q in a string literal"
   - "\\k in a character literal"
