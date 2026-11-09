@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.3.5
 codeql:
   queries: [cpp/misra/tokens-that-look-like-directives-in-a-macro-argument]

@@ -1,3 +1,5 @@
+---
 guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/possible-data-race-between-threads]
+targets: [host]  # std::thread is not available on the bare-metal toolchain

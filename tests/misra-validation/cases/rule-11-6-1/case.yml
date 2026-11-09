@@ -1,3 +1,4 @@
+---
 guideline: Rule 11.6.1
 codeql:
   queries: [cpp/misra/uninitialized-variable]

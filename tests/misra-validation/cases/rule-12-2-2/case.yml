@@ -1,3 +1,4 @@
+---
 guideline: Rule 12.2.2
 notes: >-
   The query takes the compiler from the extractor's --mimic argument and matches it against "%gcc", "%g++", "%clang"

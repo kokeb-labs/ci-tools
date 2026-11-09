@@ -1,3 +1,4 @@
+---
 guideline: Rule 16.6.1
 codeql:
   queries: [cpp/misra/invalid-operator-overloaded-as-member-function]

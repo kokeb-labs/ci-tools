@@ -1,3 +1,4 @@
+---
 guideline: Rule 18.1.2
 notes: Not applicable (no exceptions); -fno-exceptions makes the construct a hard error. Seeded with a bare rethrow outside any handler.
 gcc: {error: "exception handling disabled"}

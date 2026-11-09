@@ -1,3 +1,4 @@
+---
 guideline: Rule 15.1.1
 codeql:
   queries: [cpp/misra/objects-dynamic-type-used-from-constructor-or-destructor]

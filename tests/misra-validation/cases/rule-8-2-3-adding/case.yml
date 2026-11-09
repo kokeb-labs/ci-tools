@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.3
 notes: >-
   CodeQL only: a const_cast that adds const is compliant with the guideline, so the query must stay silent; the

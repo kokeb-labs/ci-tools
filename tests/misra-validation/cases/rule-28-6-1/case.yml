@@ -1,3 +1,4 @@
+---
 guideline: Rule 28.6.1
 codeql:
   queries: [cpp/misra/std-move-with-non-const-lvalue]

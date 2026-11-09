@@ -1,3 +1,4 @@
+---
 guideline: Rule 4.1.2
 codeql:
   queries: [cpp/misra/use-of-deprecated-shared-ptr-unique]

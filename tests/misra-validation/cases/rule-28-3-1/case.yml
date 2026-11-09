@@ -1,3 +1,4 @@
+---
 guideline: Rule 28.3.1
 codeql:
   queries: [cpp/misra/non-const-predicate-function-object, cpp/misra/predicate-with-persistent-side-effects]

@@ -1,3 +1,4 @@
+---
 guideline: Rule 0.2.4
 codeql:
   queries: [cpp/misra/unused-limited-visibility-function]

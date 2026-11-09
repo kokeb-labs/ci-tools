@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.0.4
 codeql:
   queries: [cpp/misra/undef-of-macro-not-defined-in-file]

@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.2.3
 codeql:
   queries: [cpp/misra/chars-that-should-not-occur-in-header-file-name]

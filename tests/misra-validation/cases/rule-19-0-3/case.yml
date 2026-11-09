@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.0.3
 codeql:
   queries: [cpp/misra/include-directives-preceded-by-preprocessor-directives]

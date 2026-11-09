@@ -1,3 +1,4 @@
+---
 guideline: Rule 6.2.2
 codeql:
   queries: [cpp/misra/incompatible-function-declarations-cpp]

@@ -27,7 +27,7 @@ jobs:
       # =============================================================================
       extensions: "c,cpp,cc,cxx,h,hpp,ipp"
       # The sample project only: the fixtures under tests/ carry deliberate findings for other self-tests.
-      ignore: "build|.git|docs|_site|templates|packages|tests"
+      ignore: "build|.git|docs|_site|templates|packages|tests|codeql/kokeb-cpp20/validation|tools/misra/canary"
       cmake_source_dir: cpp-ci-test
       cmake_args: "-DCMAKE_BUILD_TYPE=Debug"
 

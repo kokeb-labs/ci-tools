@@ -1,3 +1,4 @@
+---
 guideline: Rule 18.4.1
 codeql:
   queries: [cpp/misra/exception-unfriendly-function-must-be-noexcept]

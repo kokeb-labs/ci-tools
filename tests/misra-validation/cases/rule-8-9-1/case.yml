@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.9.1
 codeql:
   queries: [cpp/misra/pointer-compared-between-different-arrays]

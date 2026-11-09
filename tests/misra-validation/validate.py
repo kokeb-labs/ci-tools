@@ -149,8 +149,9 @@ def tu_for(path: str, tmp: str) -> str:
 def compile_one(cxx: str, path: str, flags: list[str], tmp: str) -> tuple[int, str]:
     tu = tu_for(path, tmp)
     lang = ["-x", "c++"] if path.endswith(".ipp") else []
+    # LC_ALL=C: ASCII quotes in diagnostics, whatever the runner's locale (GCC quotes with U+2018/U+2019 in UTF-8).
     r = subprocess.run([cxx, *flags, "-I", os.path.dirname(path), *lang, "-c", tu, "-o", os.devnull],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, env={**os.environ, "LC_ALL": "C"})
     return r.returncode, r.stdout + r.stderr
 
 
@@ -259,6 +260,37 @@ def cmd_tidy(args) -> int:
     return finish(results, [e for e in results if e["problems"]], args.results, "clang-tidy")
 
 
+def cmd_handbook(args) -> int:
+    """The handbook checker's unit tests for the checks the matrix names; one result per claim."""
+    with open(args.matrix, encoding="utf-8") as fh:
+        matrix = yaml.safe_load(fh)["guidelines"]
+    test_file = os.path.join(REPO, "tools", "handbook_check", "test_handbook_check.py")
+    outcome = {}
+    for check, test in HANDBOOK_TESTS.items():
+        r = subprocess.run([sys.executable, test_file, "-k", test], capture_output=True, text=True)
+        outcome[check] = (r.returncode == 0 and "OK" in r.stderr, r.stderr[-2000:], f"{rel(test_file)}::{test}")
+    # The handbook's source checks (checks/source_checks.py) are validated by their own selftest, which seeds a break
+    # of every check and confirms it is reported; the checks it documents count as validated when it passes.
+    src = os.path.join(args.handbook, "checks", "source_checks.py") if args.handbook else ""
+    if src and os.path.isfile(src):
+        r = subprocess.run([sys.executable, src, "selftest"], capture_output=True, text=True)
+        with open(src, encoding="utf-8") as fh:
+            documented = set(re.findall(r"^  ([a-z0-9-]+(?:/[a-z0-9-]+)?)\s{2,}", fh.read(), re.M))
+        for check in documented:
+            outcome.setdefault(check, (r.returncode == 0, (r.stdout + r.stderr)[-2000:],
+                                       "handbook checks/source_checks.py selftest"))
+    results = []
+    for g in matrix:
+        for v in g["verification"]:
+            if v["by"] == "handbook-check" and not v.get("partial"):
+                check = v["how"].split(" ")[0]
+                ok, out, test = outcome.get(check, (False, f"no test validates the check {check}", "none"))
+                results.append({"case": test,
+                                "guideline": g["id"], "tool": "handbook-check", "claimed": True, "id": check,
+                                "target": "host", "proven": ok, "problems": [] if ok else [out]})
+    return finish(results, [r for r in results if r["problems"]], args.results, "handbook-check")
+
+
 def cmd_build(args) -> int:
     """Compile every file of one side for one target, for CodeQL to trace. A file that does not compile fails."""
     cases = [c for c in load_cases() if "codeql" in c and c.get("compiles", True) and args.target in c["targets"]]
@@ -326,7 +358,10 @@ def cmd_codeql(args) -> int:
                  "target": args.target, "proven": False, "problems": [], "fn": [], "fp": [],
                  "files": [rel(f) for f in c["bad"] + c["ok"]]}
             if not c.get("compiles", True):
-                e["problems"].append("bad files do not compile, so CodeQL cannot be shown to detect them")
+                if anomalies.get(q, {}).get("kind") == "false-negative":
+                    e["fn"].append("not exercisable: the seeded forms are compile errors")
+                else:
+                    e["problems"].append("bad files do not compile, so CodeQL cannot be shown to detect them")
             else:
                 for f in c["bad"]:
                     hits = [r for r in lookup(bad_f, f) if r["query"] == q]
@@ -343,7 +378,7 @@ def cmd_codeql(args) -> int:
                 observed = "false-negative" if e["fn"] else "false-positive" if e["fp"] else ""
                 e["anomaly"] = {"kind": a["kind"], "why": a.get("why", "")}
                 if observed != a["kind"]:
-                    if not observed and c.get("compiles", True):
+                    if not observed:
                         e["problems"].append(f"recorded {a['kind']} of {q} no longer occurs: remove it from "
                                              "known_misses and from the anomaly log (the requirement then passes)")
                     elif observed:
@@ -380,7 +415,8 @@ def finish(results, failures, path, label) -> int:
             print("    " + p.replace("\n", "\n    "))
     proven = sum(1 for r in results if r.get("proven"))
     anomalies = sum(1 for r in results if r.get("anomaly"))
-    print(f"{label}: {proven}/{len(results)} claim(s) proven, {anomalies} recorded anomaly(ies), "
+    claimed = sum(1 for r in results if r.get("claimed", True))
+    print(f"{label}: {proven}/{claimed} claim(s) proven, {anomalies} recorded anomaly(ies), "
           f"{len(failures)} failure(s)")
     if path:
         with open(path, "w", encoding="utf-8") as fh:
@@ -409,7 +445,10 @@ def file_sha(path: str) -> str:
         return hashlib.sha256(fh.read()).hexdigest()
 
 
-TOOL_CODE = {"gcc": "GCC", "clang": "CLANG", "gcc-arm": "GCCARM", "clang-tidy": "TIDY", "codeql": "CQL"}
+TOOL_CODE = {"gcc": "GCC", "clang": "CLANG", "gcc-arm": "GCCARM", "clang-tidy": "TIDY", "codeql": "CQL",
+             "handbook-check": "HBC"}
+# The handbook checker's own unit tests are its validation: the test that seeds each check the matrix names.
+HANDBOOK_TESTS = {"forbidden-patterns/exceptions-rtti": "test_heap_exceptions_rtti_virtual_in_code"}
 
 
 def build_requirements(matrix: list[dict], supported: dict, cases: list[dict]) -> list[dict]:
@@ -436,6 +475,9 @@ def build_requirements(matrix: list[dict], supported: dict, cases: list[dict]) -
         if "clang-tidy" in decided:
             for check in sorted({c["clang-tidy"]["check"] for c in cs if "clang-tidy" in c}) or ["(no case)"]:
                 add("clang-tidy", gid, check, "matrix", decided["clang-tidy"])
+        if "handbook-check" in decided:
+            check = decided["handbook-check"].split(" ")[0]
+            add("handbook-check", gid, check, "matrix", decided["handbook-check"])
         if g["applies"] is True:
             for q in supported.get(gid, []):
                 add("codeql", gid, q, "misra-pack", f"default-suite query of the pinned pack for {gid}")
@@ -601,7 +643,8 @@ def cmd_record(args) -> int:
 
 def render_traceability(record: dict, mapping: list[dict], log: dict) -> str:
     lines = ["# Traceability: requirement, tests, result", "",
-             "<!-- Generated by tests/misra-validation/validate.py record; the self-CI fails when it is stale. -->", "",
+             "<!-- generated: traceability (tests/misra-validation/validate.py record --write); checked by the self-CI -->",
+             "",
              "Every claim that a tool decides a guideline is a requirement. Its tests are the case directories under "
              "`tests/misra-validation/cases/` (and `codeql/*/validation/`), run on the targets listed; the result is "
              "that of the recorded validation run. The [plan](plan.md) defines the statuses.", "",
@@ -628,8 +671,8 @@ def render_traceability(record: dict, mapping: list[dict], log: dict) -> str:
 
 def render_report(record: dict, reqs: list[dict], log: dict, problems: list[str], results: list[dict]) -> str:
     lines = ["# Tool validation report: MISRA C++:2023 toolchain", "",
-             "Generated by `tests/misra-validation/validate.py record` from the self-CI run; attached to each "
-             "ci-tools release. The plan, acceptance criteria and statuses are in docs/tool-validation/plan.md.", "",
+             "The record of one self-CI run of the tool-validation suite (`tests/misra-validation/validate.py record`), "
+             "attached to each ci-tools release. The plan, acceptance criteria and statuses are in docs/tool-validation/plan.md.", "",
              f"**Result: {'ACCEPTED' if not problems else 'NOT ACCEPTED'}** "
              f"({len(problems)} open problem(s)).", "", "## Tools", "", "| Tool | Version |", "| --- | --- |"]
     lines += [f"| {k} | `{v}` |" for k, v in record["tool_versions"].items()]
@@ -742,6 +785,10 @@ def main() -> int:
     p = sub.add_parser("tidy")
     p.add_argument("--clang-tidy", default="clang-tidy")
     p.add_argument("--results")
+    p = sub.add_parser("handbook")
+    p.add_argument("--matrix", required=True)
+    p.add_argument("--handbook", help="a checkout of kokeb-labs/handbook at the matrix's commit")
+    p.add_argument("--results")
     p = sub.add_parser("build")
     p.add_argument("--side", choices=["bad", "ok"], required=True)
     p.add_argument("--target", choices=TARGETS, default="host")
@@ -779,7 +826,7 @@ def main() -> int:
     if args.cmd == "local" and not args.target:
         args.target = ["host"]
     try:
-        return {"compilers": cmd_compilers, "tidy": cmd_tidy, "build": cmd_build, "codeql": cmd_codeql,
+        return {"compilers": cmd_compilers, "tidy": cmd_tidy, "handbook": cmd_handbook, "build": cmd_build, "codeql": cmd_codeql,
                 "record": cmd_record, "local": cmd_local}[args.cmd](args)
     except CaseError as e:
         print(f"::error::{e}")

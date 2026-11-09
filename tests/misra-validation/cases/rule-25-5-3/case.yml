@@ -1,3 +1,4 @@
+---
 guideline: Rule 25.5.3
 notes: The clang-tidy claim bans every call of these functions, so the ok file calls none of them.
 clang-tidy:

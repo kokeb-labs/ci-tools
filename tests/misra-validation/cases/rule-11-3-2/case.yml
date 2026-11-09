@@ -1,3 +1,4 @@
+---
 guideline: Rule 11.3.2
 codeql:
   queries: [cpp/misra/declaration-of-an-object-indirections-level]

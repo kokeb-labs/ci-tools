@@ -1,3 +1,4 @@
+---
 guideline: Rule 15.1.2
 codeql:
   queries: [cpp/misra/initialize-all-virtual-base-classes]

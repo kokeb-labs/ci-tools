@@ -1,3 +1,4 @@
+---
 guideline: Rule 23.11.1
 codeql:
   queries: [cpp/misra/use-smart-ptr-factory-functions]

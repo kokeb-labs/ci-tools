@@ -1,3 +1,4 @@
+---
 guideline: Rule 6.8.3
 codeql:
   queries: [cpp/misra/automatic-storage-assigned-to-object-greater-lifetime]

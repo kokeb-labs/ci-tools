@@ -1,3 +1,4 @@
+---
 guideline: Rule 21.6.4
 notes: The sized global operator delete replaced alone; the ok file replaces both forms together.
 codeql:

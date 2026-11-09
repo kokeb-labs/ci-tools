@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.4
 codeql:
   queries: [cpp/misra/casts-between-a-pointer-to-function-and-any-other-type]

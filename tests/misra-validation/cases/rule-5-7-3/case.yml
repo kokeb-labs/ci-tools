@@ -1,3 +1,4 @@
+---
 guideline: Rule 5.7.3
 gcc: {flag: comment}
 clang: {flag: comment}

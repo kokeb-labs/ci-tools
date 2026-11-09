@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 env:
-  HANDBOOK_REF: c31400c3414e1d3cf77d7a4b1287efda8b76251e
+  HANDBOOK_REF: daec60fa62c5e418eb72a1bfb28c0937f536a751
 
 jobs:
   validate-compilers:
@@ -40,6 +40,12 @@ jobs:
           python3 tools/misra/install.py apt
           python3 tools/misra/install.py python --venv "$RUNNER_TEMP/venv" --with-clang-tidy
           python3 tools/misra/install.py arm --cache ~/.cache/ru-misra --dest "$RUNNER_TEMP/tools"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/handbook
+          ref: ${{ env.HANDBOOK_REF }}
+          path: .handbook
+          persist-credentials: false
       - name: Compiler-warning claims (GCC, Clang, cross GCC) and clean builds of every compliant file
         run: |
           mkdir -p "$RUNNER_TEMP/results"
@@ -50,6 +56,12 @@ jobs:
         run: |
           "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py tidy \
             --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" --results "$RUNNER_TEMP/results/results-tidy.json"
+      - name: Handbook-check claims (the checkers' own seeded tests)
+        if: ${{ always() }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py handbook \
+            --matrix .handbook/compliance/misra-cpp-2023.yml --handbook .handbook \
+            --results "$RUNNER_TEMP/results/results-handbook.json"
       - name: Tool versions
         if: ${{ always() }}
         run: |

@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.1.1
 notes: A defined operator without an identifier is a compile error.
 gcc: {error: "operator .defined. requires an identifier"}

@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.10
 codeql:
   queries: [cpp/misra/functions-call-themselves-either-directly-or-indirectly]

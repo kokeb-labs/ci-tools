@@ -1,3 +1,4 @@
+---
 guideline: Rule 5.13.6
 notes: >-
   On an LP64 host a literal with one L is long, never long long, so the query cannot fire on a host build;

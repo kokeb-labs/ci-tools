@@ -1,3 +1,4 @@
+---
 guideline: Rule 25.5.2
 notes: CodeQL only - a write through the subscript operator instead of unary *.
 codeql:

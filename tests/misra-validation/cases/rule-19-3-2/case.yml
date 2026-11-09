@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.3.2
 codeql:
   queries: [cpp/misra/macro-parameter-following-hash]

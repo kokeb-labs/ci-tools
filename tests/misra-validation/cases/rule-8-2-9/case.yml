@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.9
 notes: >-
   Not applicable (RTTI is off): with -fno-rtti any typeid is a compile error, so the compiler decides it. The

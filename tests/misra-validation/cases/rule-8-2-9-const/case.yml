@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.9
 notes: Records a false negative of the pack; our builds are protected by -fno-rtti (rule-8-2-9).
 codeql:

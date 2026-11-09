@@ -1,3 +1,4 @@
+---
 guideline: Rule 6.7.2
 codeql:
   queries: [cpp/misra/global-variable-used]

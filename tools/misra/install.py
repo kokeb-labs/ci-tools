@@ -146,9 +146,11 @@ def cmd_apt(_a) -> int:
 
 
 def first_line(cmd: list[str]) -> str:
+    """The first output line that names a version (clang-tidy prints a banner line first)."""
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-        return (r.stdout or r.stderr).strip().splitlines()[0]
+        lines = (r.stdout or r.stderr).strip().splitlines()
+        return next((x.strip() for x in lines if "version" in x.lower()), lines[0].strip())
     except (OSError, IndexError, subprocess.TimeoutExpired):
         return "not installed"
 

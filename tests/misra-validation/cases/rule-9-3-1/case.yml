@@ -1,3 +1,4 @@
+---
 guideline: Rule 9.3.1
 clang-tidy: {check: readability-braces-around-statements}
 codeql:

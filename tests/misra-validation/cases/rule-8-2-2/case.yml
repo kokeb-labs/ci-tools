@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.2
 codeql:
   queries: [cpp/misra/no-c-style-or-functional-casts]

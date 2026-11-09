@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.7
 codeql:
   queries: [cpp/misra/no-pointer-to-integral-cast]

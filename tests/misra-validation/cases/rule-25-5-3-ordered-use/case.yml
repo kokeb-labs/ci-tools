@@ -1,3 +1,4 @@
+---
 guideline: Rule 25.5.3
 notes: CodeQL only - the ok file calls getenv twice and finishes with each result before the next call.
 codeql:

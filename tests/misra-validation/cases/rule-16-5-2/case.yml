@@ -1,3 +1,4 @@
+---
 guideline: Rule 16.5.2
 clang-tidy: {check: google-runtime-operator}
 codeql:

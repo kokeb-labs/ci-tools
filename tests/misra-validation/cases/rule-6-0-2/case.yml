@@ -1,3 +1,4 @@
+---
 guideline: Rule 6.0.2
 codeql:
   queries: [cpp/misra/external-linkage-array-without-explicit-size-misra]

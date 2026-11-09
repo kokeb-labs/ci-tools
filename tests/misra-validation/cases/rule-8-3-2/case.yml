@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.3.2
 codeql:
   queries: [cpp/misra/built-in-unary-plus-operator-should-not-be-used]

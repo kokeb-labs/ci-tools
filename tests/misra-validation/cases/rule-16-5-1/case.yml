@@ -1,3 +1,4 @@
+---
 guideline: Rule 16.5.1
 codeql:
   queries: [cpp/misra/logical-and-and-logical-or-operators-overloaded]

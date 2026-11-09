@@ -1,3 +1,4 @@
+---
 guideline: Rule 0.1.2
 codeql:
   queries: [cpp/misra/unused-return-value-misra-cpp]

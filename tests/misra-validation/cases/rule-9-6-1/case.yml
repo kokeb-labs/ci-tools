@@ -1,3 +1,4 @@
+---
 guideline: Rule 9.6.1
 clang-tidy: {check: cppcoreguidelines-avoid-goto}
 codeql:

@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.9
 notes: >-
   The violation builds with RTTI on (the CodeQL build); our builds use -fno-rtti, see rule-8-2-9. A const-qualified

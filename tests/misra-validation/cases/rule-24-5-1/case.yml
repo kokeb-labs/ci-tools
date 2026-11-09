@@ -1,3 +1,4 @@
+---
 guideline: Rule 24.5.1
 clang-tidy:
   check: bugprone-unsafe-functions

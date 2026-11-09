@@ -1,3 +1,4 @@
+---
 guideline: Rule 21.6.5
 gcc: {flag: delete-incomplete}
 clang: {flag: delete-incomplete}

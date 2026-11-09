@@ -1,3 +1,4 @@
+---
 guideline: Dir 0.3.1
 codeql:
   queries: [cpp/misra/possible-misuse-of-nan-floating-point-value]

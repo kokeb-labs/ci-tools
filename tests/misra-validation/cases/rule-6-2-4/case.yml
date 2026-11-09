@@ -1,3 +1,4 @@
+---
 guideline: Rule 6.2.4
 clang-tidy: {check: misc-definitions-in-headers}
 codeql:

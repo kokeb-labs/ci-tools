@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.11
 notes: >-
   CodeQL only: a trivially copyable argument through an ellipsis is compliant, so the query must stay silent;

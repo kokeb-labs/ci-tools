@@ -1,3 +1,4 @@
+---
 guideline: Rule 6.7.1
 codeql:
   queries: [cpp/misra/local-variable-static-storage-duration]

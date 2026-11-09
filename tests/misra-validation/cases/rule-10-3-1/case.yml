@@ -1,3 +1,4 @@
+---
 guideline: Rule 10.3.1
 clang-tidy: {check: google-build-namespaces}
 codeql:

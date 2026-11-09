@@ -1,3 +1,4 @@
+---
 guideline: Rule 0.2.3
 codeql:
   queries: [cpp/misra/unused-type-with-limited-visibility]

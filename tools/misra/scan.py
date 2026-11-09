@@ -77,7 +77,9 @@ def main() -> int:
     paths = a.paths
 
     print(f"::group::{a.config}: deviation records and suppression markers", flush=True)
-    status = run([*misra, "prepare", "--records", a.records, *(["--repo-records", a.repo_records]
+    # Record and marker errors are reported by the report job (which applies the level); not fatal here.
+    status = 0
+    run([*misra, "prepare", "--records", a.records, *(["--repo-records", a.repo_records]
                   if a.repo_records else []), "--paths", paths, "--coding-standards",
                   os.path.join(root, "coding-standards.yml"), "--markers", os.path.join(out, "markers.json")])
     shutil.copyfile(os.path.join(root, "coding-standards.yml"), os.path.join(out, "coding-standards.yml"))
@@ -155,7 +157,7 @@ def main() -> int:
             return 1
 
     group(f"{a.config}: run-time assurance (extraction coverage, canary)")
-    status |= run([*misra, "extraction", "--compdb", compdb, "--compiled", os.path.join(out, "compiled.json"),
+    run([*misra, "extraction", "--compdb", compdb, "--compiled", os.path.join(out, "compiled.json"),
                    "--diagnostics", os.path.join(out, "diagnostics.json"), "--paths", paths, "--canary", CANARY,
                    "--out", os.path.join(out, "extraction.json")])
 

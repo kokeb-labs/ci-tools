@@ -1,3 +1,4 @@
+---
 guideline: Rule 7.0.6
 codeql:
   queries: [cpp/misra/numeric-assignment-type-mismatch]

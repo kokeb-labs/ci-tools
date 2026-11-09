@@ -73,7 +73,7 @@ on:
         description: "Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply"
         type: string
         required: false
-        default: "c31400c3414e1d3cf77d7a4b1287efda8b76251e"
+        default: "daec60fa62c5e418eb72a1bfb28c0937f536a751"
       advanced_security:
         description: >-
           Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this
@@ -299,7 +299,7 @@ jobs:
         run: |
           set -euo pipefail
           args=()
-          for c in $(echo "$CONFIGS" | tr -d '[]",' ); do
+          for c in $(echo "$CONFIGS" | tr -d '[]"' | tr ',' ' '); do
             args+=(--config "$c=.ru-misra/results/$NAME-$c")
           done
           markers=".ru-misra/results/$NAME-host/markers.json"
@@ -312,7 +312,7 @@ jobs:
             exit 1
           fi
           mkdir -p .ru-misra/report
-          for c in $(echo "$CONFIGS" | tr -d '[]",' ); do
+          for c in $(echo "$CONFIGS" | tr -d '[]"' | tr ',' ' '); do
             if [ -f ".ru-misra/results/$NAME-$c/results.sarif" ]; then
               cp ".ru-misra/results/$NAME-$c/results.sarif" ".ru-misra/report/$c.sarif"
             fi

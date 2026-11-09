@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.1.1
 notes: A macro whose expansion produces the defined operator inside #if.
 gcc: {flag: expansion-to-defined}

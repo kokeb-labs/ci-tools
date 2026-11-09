@@ -1,3 +1,4 @@
+---
 guideline: Rule 28.6.2
 codeql:
   queries: [cpp/misra/forwarding-references-and-forward-not-used-together]

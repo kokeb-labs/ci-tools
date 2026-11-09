@@ -1,6 +1,7 @@
+---
 guideline: Rule 19.2.2
 notes: Tokens after the header name; a default-on warning (Clang names -Wextra-tokens), an error with -Werror.
-gcc: {message: "extra tokens at end of '#include' directive \\[-Werror\\]"}
+gcc: {message: "extra tokens at end of '?#include'? directive \\[-Werror\\]"}
 clang: {flag: extra-tokens}
 codeql:
   queries: [cpp/misra/invalid-include-directive]

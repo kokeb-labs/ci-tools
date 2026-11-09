@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.14.1
 codeql:
   queries: [cpp/misra/short-circuited-persistent-side-effect]

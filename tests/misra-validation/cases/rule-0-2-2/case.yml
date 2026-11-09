@@ -1,3 +1,4 @@
+---
 guideline: Rule 0.2.2
 gcc: {flag: unused-parameter}
 clang: {flag: unused-parameter}

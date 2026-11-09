@@ -1,3 +1,4 @@
+---
 guideline: Dir 0.3.1
 notes: >-
   False negative found: an infinite value converted to a fixed-width alias (static_cast<std::int32_t>) is not reported, only a conversion to a built-in integer type; every conversion in our code goes to a fixed-width alias.

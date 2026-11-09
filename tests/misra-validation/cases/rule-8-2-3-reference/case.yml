@@ -1,3 +1,4 @@
+---
 guideline: Rule 8.2.3
 notes: Records a false negative of the pack; the clang-tidy check (every const_cast) still reports it.
 codeql:

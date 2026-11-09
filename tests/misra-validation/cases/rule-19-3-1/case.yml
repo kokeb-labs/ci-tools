@@ -1,3 +1,4 @@
+---
 guideline: Rule 19.3.1
 codeql:
   queries: [cpp/misra/and-preprocessor-operators-should-not-be-used]

@@ -1,3 +1,4 @@
+---
 guideline: Rule 28.6.3
 notes: CodeQL only - the moved-from object gets a new value before it is read again.
 codeql:

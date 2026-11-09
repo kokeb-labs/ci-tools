@@ -1,3 +1,4 @@
+---
 guideline: Rule 7.0.4
 codeql:
   queries: [cpp/misra/inappropriate-bitwise-or-shift-operands]

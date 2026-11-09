@@ -1,3 +1,4 @@
+---
 guideline: Rule 14.1.1
 codeql:
   queries: [cpp/misra/private-and-public-data-members-mixed]
