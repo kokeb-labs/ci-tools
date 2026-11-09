@@ -583,7 +583,10 @@ def cmd_record(args) -> int:
         elif failed or missing_runs:
             r["status"] = "fail"
             r["detail"] = [p for x in failed for p in x["problems"]][:5] + [f"not run: {m}" for m in missing_runs]
-        elif any(x.get("anomaly") for x in runs) and not any(x.get("proven") for x in runs):
+        elif any((x.get("anomaly") or {}).get("kind") == "false-negative" for x in runs) or not any(
+                x.get("proven") for x in runs):
+            # A recorded false negative makes the rule id partial: it does not decide the guideline, even if
+            # other cases pass. A recorded false positive is noise for review, not a gap: the requirement passes.
             r["status"] = "anomaly"
         else:
             r["status"] = "pass"

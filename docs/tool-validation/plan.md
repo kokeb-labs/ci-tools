@@ -148,8 +148,8 @@ with `tests/misra-validation/validate.py local`.
 
 | Status | Meaning | Accepted when |
 | --- | --- | --- |
-| `pass` | On every target of every case of the requirement, the tool reports the rule id on every seeded file and nothing on every compliant file | Always |
-| `anomaly` | A recorded false negative or false positive of the rule id, with a log entry and a disposition | Only for pack and profile queries; the guideline then keeps the mitigation the disposition names |
+| `pass` | On every target of every case of the requirement, the tool reports the rule id on every seeded file and nothing on every compliant file, except recorded false positives (listed with the requirement) | Always |
+| `anomaly` | A recorded false negative of the rule id in any case (or only recorded anomalies), with a log entry and a disposition. The rule id is then partial for the guideline | Only for pack and profile queries; the guideline keeps the mitigation the disposition names |
 | `fail` | A test does not hold, or did not run on a target | Never |
 | `no test` | No case for the requirement | Never |
 
