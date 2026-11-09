@@ -1,10 +1,31 @@
 # ru-release-with-artifacts
 
-Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit.
+Deprecated: use [`ru-release-firmware`](ru-release-firmware.md), which also works in private repositories. This
+one creates a GitHub Release for a tag with the firmware that `ru-build` built for the same commit.
 
 **File:** [`.github/workflows/ru-release-with-artifacts.yml`](../.github/workflows/ru-release-with-artifacts.yml)
 
-## Caller
+!!! warning "Fails in private repositories"
+    Its job asks only for `contents: write`. In a private repository that token cannot list the build workflow's
+    runs, and the release fails in the download step with `Resource not accessible by integration`. Asking for
+    `actions: read` here would break every caller that grants only `contents: write`, so
+    [`ru-release-firmware`](ru-release-firmware.md) asks for it instead. This workflow keeps working for its
+    existing callers until the next major, which removes it.
+
+## Move to ru-release-firmware
+
+Change the file name in `uses:` and grant `actions: read` next to `contents: write`. The inputs are the same.
+
+```yaml
+jobs:
+  release:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-release-firmware.yml@v1   # was ru-release-with-artifacts.yml
+    permissions:
+      actions: read                                                          # new
+      contents: write
+```
+
+## Caller (existing)
 
 ```yaml
 ---
@@ -75,8 +96,10 @@ name matches `artifact_pattern` from the run of `build_workflow` on `github.sha`
 for `tag_name` (default: the pushed tag) with generated notes and those files attached
 (`softprops/action-gh-release`). The checksums also go to the run's summary.
 
-The workflow does not ask for `actions: read`: existing callers grant only `contents: write`, and the token can
-read artifacts of its own repository without it.
+The workflow does not ask for `actions: read`, because existing callers grant only `contents: write` and would hit
+`startup_failure`. Without it the token can list workflow runs and download their artifacts only in a public
+repository. A private repository refuses those reads with `Resource not accessible by integration`; use
+[`ru-release-firmware`](ru-release-firmware.md) there.
 
 ## What the release holds
 
@@ -128,10 +151,11 @@ logs a warning. Set it to `true` to fail instead.
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | `startup_failure` | The calling job does not grant `contents: write` | Grant it in the calling job |
+| `Resource not accessible by integration - .../rest/actions/workflow-runs#list-workflow-runs-for-a-workflow` in the download step | The repository is private, and this workflow's token has no `actions: read` | Move to [`ru-release-firmware`](ru-release-firmware.md) and grant `actions: read` |
 | `Resource not accessible by integration` when creating the release | The repository restricts the workflow token to read | Grant `contents: write` in the caller; check **Settings > Actions > Workflow permissions** |
 | Release has no firmware zips | See [above](#when-it-finds-no-firmware) | Set `fail_on_no_artifacts: true` to catch it |
 | `release files share a name` | Two artifacts would give zips with the same name | Give the artifacts distinct names (`ru-build` names them by app, IDF version and build type) |
 | `flasher_args.json lists files the artifact lacks` | The build artifact was uploaded without part of the build | Upload the whole build folder in `ru-build` |
 | `tag ... does not exist here` | The release ran for a tag that was not pushed | Push the tag first |
 
-Next: [ensure-tools-directory](ensure-tools-directory.md), for your own jobs that need the project tools.
+Next: [ru-release-firmware](ru-release-firmware.md), which replaces this workflow.

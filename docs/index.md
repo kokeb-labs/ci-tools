@@ -31,7 +31,7 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
   in [`packages/kokeb-mkdocs-theme`](https://github.com/kokeb-labs/ci-tools/tree/main/packages/kokeb-mkdocs-theme),
   checks it, audits it and publishes it, versioned or not ([platform guide](docs-platform.md)).
 - **ESP-IDF firmware.** [`ru-build`](ru-build.md) builds every app of `app_config.yml` across ESP-IDF versions
-  and build types with a size report; [`ru-release-with-artifacts`](ru-release-with-artifacts.md) ships the
+  and build types with a size report; [`ru-release-firmware`](ru-release-firmware.md) ships the
   tested firmware ([ESP-IDF quickstart](esp-idf-quickstart.md)).
 - **Organisation checks.** [`dco`](dco.md) fails a pull request with an unsigned commit;
   [`org-standard-check`](org-standard-check.md) checks the required root files and the MIT licence.
@@ -61,7 +61,8 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | Lint Markdown with markdownlint-cli2 against the repository's own rules. | `contents: read` |
 | [`ru-misra.yml`](ru-misra.md) | Check C++ code against MISRA C++:2023 with the validated open-source toolchain, and get a per-guideline report. | `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | Build, check, audit and publish a Kokeb Labs documentation site with the shared theme, versioned or not. | `contents: write` |
-| [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit. | `contents: write` |
+| [`ru-release-firmware.yml`](ru-release-firmware.md) | Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit, in public and private repositories. | `actions: read`, `contents: write` |
+| [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Deprecated: use [`ru-release-firmware`](ru-release-firmware.md), which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that `ru-build` built for the same commit. | `contents: write` |
 | [`ru-release.yml`](ru-release.md) | Create a GitHub Release with generated notes for a tag. | `contents: write` |
 | [`ru-repo-checks.yml`](ru-repo-checks.md) | The small checks of a repository (sign-off, organisation standard, Markdown and YAML lint, handbook rules, template drift and cppcheck) as steps of one job, with the same scripts and failure rules as their single workflows. | `contents: read`, `pull-requests: read` |
 | [`ru-template-drift.yml`](ru-template-drift.md) | Find the files a driver or library has let drift from [driver-template](https://github.com/kokeb-labs/driver-template). | `contents: read` |

@@ -6,8 +6,8 @@ Create a GitHub Release with generated notes for a tag.
 [action-gh-release](https://github.com/softprops/action-gh-release) and `generate_release_notes: true`, so the
 notes list the pull requests merged since the previous tag. It attaches a source archive with a stable checksum,
 an SPDX 2.3 SBOM and `SHA256SUMS`, built by `tools/release_assets/release_assets.py`
-([what each holds and how to check a download](ru-release-with-artifacts.md#what-the-release-holds)). It attaches
-no build artifacts; firmware repositories use [`ru-release-with-artifacts`](ru-release-with-artifacts.md).
+([what each holds and how to check a download](ru-release-firmware.md#what-the-release-holds)). It attaches
+no build artifacts; firmware repositories use [`ru-release-firmware`](ru-release-firmware.md).
 
 ## Caller
 

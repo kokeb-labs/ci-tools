@@ -26,7 +26,8 @@ nav:
       - ru-docs-publish (legacy): ru-docs-publish.md
   - ESP-IDF:
       - ru-build: ru-build.md
-      - ru-release-with-artifacts: ru-release-with-artifacts.md
+      - ru-release-firmware: ru-release-firmware.md
+      - ru-release-with-artifacts (deprecated): ru-release-with-artifacts.md
       - ensure-tools-directory: ensure-tools-directory.md
   - Organisation checks:
       - dco (sign-off): dco.md

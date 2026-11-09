@@ -1,0 +1,134 @@
+---
+# GitHub Release for a tag with the firmware that ru-build built and tested for the same commit. Same inputs and
+# behaviour as ru-release-with-artifacts.yml, which it replaces.
+#
+# Why a new workflow: the firmware is fetched with dawidd6/action-download-artifact, which lists the repository's
+# workflow runs to find the tagged commit's CI run. In a private repository the workflow token can do that only
+# with actions: read; without it the release fails with "Resource not accessible by integration" (list workflow
+# runs for a workflow). Public repositories need no grant for that read. Adding actions: read to
+# ru-release-with-artifacts.yml would make every caller that grants only contents: write hit startup_failure,
+# a breaking change (docs/VERSIONING.md), so the job that needs it lives here and callers move by changing
+# `uses:` and granting actions: read. Guide: docs/ru-release-firmware.md.
+name: 📦 [RU] Release Firmware
+
+on:
+  workflow_call:
+    inputs:
+      build_workflow:
+        description: 'Name of the ESP32 build workflow'
+        required: false
+        type: string
+        default: 'esp32-examples-build-ci.yml'
+      artifact_pattern:
+        description: 'Pattern for firmware artifacts'
+        required: false
+        type: string
+        default: 'fw-.*'
+      draft:
+        description: 'Create as draft release'
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+      tag_name:
+        description: 'Tag name for release (defaults to github.ref_name)'
+        required: false
+        type: string
+        default: ''
+      fail_on_no_artifacts:
+        description: 'Fail if no firmware artifacts found'
+        required: false
+        type: boolean
+        default: false
+      commit:
+        description: >-
+          Commit whose CI artifacts are released, and that the release tag must point to. Empty: github.sha. A
+          caller triggered by workflow_run passes github.event.workflow_run.head_sha, because github.sha is then
+          the default branch's head, not the tagged commit.
+        required: false
+        type: string
+        default: ''
+
+permissions: {}
+
+jobs:
+  release:
+    name: Create Release with Artifacts
+    runs-on: ubuntu-latest
+    # contents: write creates the release and uploads its files. actions: read lets the token list the workflow
+    # runs and download their artifacts, which a private repository refuses without it.
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: ${{ inputs.commit || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      # The release tag must name the commit whose artifacts are released.
+      - name: Check the tag points to the released commit
+        env:
+          TAG: ${{ inputs.tag_name || github.ref_name }}
+          COMMIT: ${{ inputs.commit || github.sha }}
+        run: |
+          set -euo pipefail
+          tagged="$(git rev-parse "refs/tags/${TAG}^{commit}" 2>/dev/null || true)"
+          if [ "$tagged" != "$COMMIT" ]; then
+            echo "::error::tag ${TAG} points to ${tagged:-nothing}, not to the released commit ${COMMIT}"
+            exit 1
+          fi
+
+      # Get the build artifacts that were already tested
+      - name: Download build artifacts
+        uses: dawidd6/action-download-artifact@a92c7ae74cf1df8810783758581e485ac3aaa309  # v28
+        with:
+          workflow: ${{ inputs.build_workflow }}
+          commit: ${{ inputs.commit || github.sha }}
+          path: artifacts/
+          name_is_regexp: true
+          name: ${{ inputs.artifact_pattern }}
+          if_no_artifact_found: ${{ inputs.fail_on_no_artifacts && 'fail' || 'warn' }}
+
+      # The asset script at the commit of this workflow, so @v1 callers get the matching version. Trust: this is
+      # kokeb-labs/ci-tools' own code at the commit the caller pinned, the same trust as this workflow file.
+      - name: Checkout the release asset script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .release-assets
+          sparse-checkout: tools/release_assets
+          persist-credentials: false
+
+      # Source archive with a stable checksum, SPDX 2.3 SBOM and SHA256SUMS (tools/release_assets).
+      - name: Build source archive, SBOM and checksums
+        env:
+          TAG: ${{ inputs.tag_name || github.ref_name }}
+        run: |
+          set -euo pipefail
+          python3 -I .release-assets/tools/release_assets/release_assets.py --tag "$TAG" --out "$RUNNER_TEMP/dist" \
+            --firmware artifacts
+          {
+            echo '### Release files'
+            echo '```text'
+            cat "$RUNNER_TEMP/dist/SHA256SUMS"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Create the release; GitHub writes the notes
+      - name: Create Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64  # v3.0.3
+        with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
+          files: ${{ runner.temp }}/dist/*
+          fail_on_unmatched_files: true
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true

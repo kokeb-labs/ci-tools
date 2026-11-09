@@ -1,9 +1,9 @@
 ---
 # Signed build provenance for a published release: downloads the release's files, checks them against its
 # SHA256SUMS, and creates a GitHub artifact attestation (SLSA build provenance, signed through Sigstore) for every
-# file SHA256SUMS lists. A separate workflow, run after ru-release or ru-release-with-artifacts, because it needs
-# id-token: write and attestations: write, which a caller of those two does not grant. Needs a public repository
-# (or GitHub Enterprise Cloud). Guide: docs/ru-attest-release.md.
+# file SHA256SUMS lists. A separate workflow, run after ru-release or ru-release-firmware (or the deprecated
+# ru-release-with-artifacts), because it needs id-token: write and attestations: write, which a caller of those
+# does not grant. Needs a public repository (or GitHub Enterprise Cloud). Guide: docs/ru-attest-release.md.
 name: 🔏 [RU] Attest Release
 
 on:
@@ -38,7 +38,7 @@ jobs:
           cd "$RUNNER_TEMP/release"
           gh release download "$TAG" -R "$REPO"
           if [ ! -f SHA256SUMS ]; then
-            echo "::error::release ${TAG} has no SHA256SUMS; publish it with ru-release or ru-release-with-artifacts 1.7.0 or later"
+            echo "::error::release ${TAG} has no SHA256SUMS; publish it with ru-release or ru-release-firmware (ru-release-with-artifacts 1.7.0 or later also works)"
             exit 1
           fi
           sha256sum -c SHA256SUMS
