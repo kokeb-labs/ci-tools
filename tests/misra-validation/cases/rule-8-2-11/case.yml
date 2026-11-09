@@ -9,3 +9,8 @@ seeded:
 near_misses:
   - "a variadic function template (parameter pack) instead of an ellipsis"
   - "overloads with fixed parameters"
+other_findings:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      misfire (cortex-m only): on arm-none-eabi std::int32_t is long, so an int value assigned to it is reported; both
+      types have the same size and signedness there, so the conversion cannot change the value.

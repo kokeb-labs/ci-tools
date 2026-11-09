@@ -7,3 +7,8 @@ seeded:
 near_misses:
   - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
   - "std::is_trivially_copyable_v and std::is_standard_layout_v"
+other_findings:
+  - query: cpp/misra/no-implicit-bool-conversion
+    why: >-
+      misfire: the && of two std:: trait values in a variable template is reported as a conversion from an 'unknown'
+      type to bool; both operands are bool constants (the extractor leaves the dependent type unresolved).

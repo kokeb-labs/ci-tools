@@ -854,6 +854,50 @@ anomalies:
       section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
       confirmed.
     found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-077
+    tool: codeql
+    rule_id: cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-30-0-2-member
+    description: A read then a write on a stream reached through a reference member is not reported (Linux libstdc++);
+      the query follows streams that are parameters or locals only.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers use no streams (no hosted I/O on the targets); review checklist item R-UNDECIDABLE for host
+      tools.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-078
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-2-is-literal-type
+    description: 'the && of two std:: trait values in a variable template is reported as a conversion from an ''unknown''
+      type to bool; both operands are bool constants (the extractor leaves the dependent type unresolved).'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-079
+    tool: codeql
+    rule_id: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-25-5-3-strerror
+    description: passing a std::int32_t to strerror's int parameter is reported as an assignment between incompatible
+      types; on the host std::int32_t is int itself, and on arm-none-eabi it is long, of the same size and signedness.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-080
+    tool: codeql
+    rule_id: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11
+    description: 'misfire (cortex-m only): on arm-none-eabi std::int32_t is long, so an int value assigned to it
+      is reported; both types have the same size and signedness there, so the conversion cannot change the value.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
 limitations:
   - The pack is validated by its authors for C++14/17 with gcc 8.4, clang 10 and qcc 8.3 only; our C++20 code and
     GCC 13/14, Clang 18 and Arm GNU 14.3 are outside that scope. This suite is the evidence for our configuration

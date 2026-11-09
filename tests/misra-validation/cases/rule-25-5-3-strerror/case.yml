@@ -6,6 +6,10 @@ codeql:
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
 other_findings:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      misfire: passing a std::int32_t to strerror's int parameter is reported as an assignment between incompatible
+      types; on the host std::int32_t is int itself, and on arm-none-eabi it is long, of the same size and signedness.
   - query: cpp/misra/unsafe-string-handling-functions
     why: "true positive of Rule 21.2.2: strerror is one of the banned str* functions; this case shows only the
       call order of Rule 25.5.3 (getenv, the other function of the order queries, is covered by rule-25-5-3)."
