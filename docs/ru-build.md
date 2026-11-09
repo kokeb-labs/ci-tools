@@ -37,6 +37,7 @@ jobs:
 | `clean_build` | boolean | `false` | Skip caches for a clean build. |
 | `auto_clone_tools` | boolean | `true` | Auto-clone tools repo if project_tools_dir is missing |
 | `group_build_types` | boolean | `true` | Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type. |
+| `idf_install` | string | `native` | How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf image through espressif/esp-idf-ci-action, as before. |
 | `max_dec_total` | string | `0` | Maximum total dec size in bytes for size budget enforcement (0 to disable) |
 <!-- /generated -->
 
@@ -50,9 +51,18 @@ jobs:
 
 - **`generate-matrix`** checks out with submodules, finds the project tools (below), runs `generate_matrix.py`
   and outputs the matrix.
-- **`build`** frees runner disk space, checks out, restores the pip cache (skipped with `clean_build`), installs
-  the tools' `requirements.txt`, pulls `espressif/idf:<version>` (4 attempts, 10 / 30 / 60 s apart), runs
-  `build_app.sh` inside the image with `espressif/esp-idf-ci-action` and uploads the build folder.
+- **`build`** builds every build type of one app and IDF version (`group_build_types`): it checks out, restores
+  the pip and compiler (ccache) caches (skipped with `clean_build`) and installs the tools' `requirements.txt`.
+  With `idf_install: native` (default) it resolves the IDF version to a commit, restores `~/esp-idf` and
+  `~/.espressif` for the matrix target from the cache keyed by that commit (or clones the IDF and runs
+  `install.sh <target>` once when the key is new), installs a pinned, hash-checked ccache and runs `build_app.sh`
+  for each build type. With `idf_install: docker` it frees runner disk space when short, pulls
+  `espressif/idf:<version>` (4 attempts, 10 / 30 / 60 s apart) and runs `build_app.sh` inside the image with
+  `espressif/esp-idf-ci-action`. Either way it uploads the build folders.
+
+  Measured on driver-pcal9555 (Debug and Release of one app): native, warm cache, 93 s per job; native, new IDF
+  commit, about 190 s; docker with a warm ccache, 175 s. The image is 9.4 GB for every target; the native cache
+  holds one target, about 1.1 GB.
 - **`size-report`** downloads every `fw-*` artifact, writes a size table from `size.info` / `size.txt`, comments
   it on the pull request and enforces `max_dec_total` when it is not `0`.
 
