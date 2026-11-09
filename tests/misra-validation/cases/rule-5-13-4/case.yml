@@ -10,3 +10,10 @@ near_misses:
   - "0x80000000U"
   - "0x7FFFFFFF, which is a signed int"
   - "0xFFFF'FFFFU"
+known_misses:
+  - query: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    kind: false-negative
+    targets: [cortex-m]
+    why: >-
+      on Cortex-M (32-bit int) the hexadecimal literal 0x8000'0001 used as a template argument (bad_edge.cpp) has
+      type unsigned int without a U suffix, and is not reported; on the host (where it is also unsigned int) it is.

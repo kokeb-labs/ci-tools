@@ -2364,3 +2364,24 @@ limitations:
   - Dir 0.3.2, Rule 5.13.7 and Rule 19.0.1 have no query in the pack; 5.13.7 and 19.0.1 are left to the compilers
     by the pack authors, and are not claimed by any tool in the matrix.
   - The audit queries of the pack (3) are not in the default suite and are not validated; they are not used.
+  - id: AN-206
+    tool: codeql
+    rule_id: cpp/misra/no-csetjmp-header
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-10-2
+    description: with newlib (Cortex-M), a setjmp call through <setjmp.h> is not reported, because newlib declares
+      setjmp as a function and the query looks for the macro; longjmp is reported.
+    disposition: Accepted as a limitation of the pinned pack on the Cortex-M target. The header itself is banned
+      (Rule 21.10.2 also reports the include directive on both targets); drivers include no C library header
+      (forbidden-patterns), and the host scan reports the call.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-207
+    tool: codeql
+    rule_id: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-5-13-4
+    description: on Cortex-M, an unsuffixed hexadecimal literal of type unsigned int (0x8000'0001) used as a
+      template argument is not reported; the host scan reports it.
+    disposition: Accepted as a limitation of the pinned pack on the Cortex-M target. The host scan analyses the same
+      code and reports the form; review checklist R-UNDECIDABLE covers literal suffixes in Cortex-M-only code.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
