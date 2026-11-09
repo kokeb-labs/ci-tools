@@ -525,6 +525,16 @@ def cmd_report(a) -> int:
     if a.supported:
         with open(a.supported, encoding="utf-8") as fh:
             supported = {g: [q["id"] for q in qs if not q["audit"]] for g, qs in json.load(fh)["guidelines"].items()}
+    # A rule the tool validation found reporting compliant code (a false positive in the anomaly log) does not
+    # decide its guideline alone: at the high level its findings are listed for review with the anomaly ids, and
+    # do not fail the job (MISRA Compliance:2020 §3.4: a false diagnosis is investigated, not deviated). The
+    # safety level fails on them as on any other finding; the commercial checker and the review decide there.
+    known_fp: dict[tuple[str, str], list[str]] = {}
+    if a.anomalies:
+        with open(a.anomalies, encoding="utf-8") as fh:
+            for an in (yaml.safe_load(fh) or {}).get("anomalies", []):
+                if an.get("kind") == "false-positive":
+                    known_fp.setdefault((an.get("tool", "codeql"), an["rule_id"]), []).append(an["id"])
     canary_expect = [q for q in (a.canary_expect or "").split(",") if q]
     findings, configs, problems, warnings = [], [], [], []
     for spec in a.config:
@@ -590,6 +600,9 @@ def cmd_report(a) -> int:
         m["configs"].append(r["config"])
         m["deviated"] = m["deviated"] and r["deviated"]
     findings = sorted(merged.values(), key=lambda r: (r["guideline"], r["file"], r["line"]))
+    for f in findings:
+        f["known_fp"] = sorted(known_fp.get((f["tool"], f["query"]), []))
+        f["review"] = bool(f["known_fp"]) and a.level != "safety" and not f["deviated"]
 
     rows = {}
     for g in matrix:
@@ -597,20 +610,23 @@ def cmd_report(a) -> int:
         tools = sorted({v["by"] for v in g["verification"]})
         rows[gid] = {"guideline": gid, "category": g["category"], "our_category": g["our_category"],
                      "applies": g["applies"] is True, "verification": tools,
-                     "codeql_queries": supported.get(gid, []), "violations": 0, "deviated": 0, "status": "",
-                     "findings": []}
+                     "codeql_queries": supported.get(gid, []), "violations": 0, "deviated": 0, "review": 0,
+                     "status": "", "findings": []}
     for f in findings:
         row = rows.get(f["guideline"])
         if row is None:
             rows[f["guideline"]] = row = {"guideline": f["guideline"], "category": "profile", "our_category":
                                           "required", "applies": True, "verification": [], "codeql_queries": [],
-                                          "violations": 0, "deviated": 0, "status": "", "findings": []}
-        row["deviated" if f["deviated"] else "violations"] += 1
-        row["findings"].append({k: f[k] for k in ("tool", "query", "file", "line", "message", "deviated", "configs")})
+                                          "violations": 0, "deviated": 0, "review": 0, "status": "", "findings": []}
+        row["deviated" if f["deviated"] else "review" if f["review"] else "violations"] += 1
+        row["findings"].append({k: f[k] for k in ("tool", "query", "file", "line", "message", "deviated", "configs",
+                                                  "review", "known_fp")})
     flags_ok = all((c.get("flags") or {}).get("complete") for c in configs if "flags" in c)
     for row in rows.values():
         if row["violations"]:
             row["status"] = "violations"
+        elif row["review"]:
+            row["status"] = "review (rule with known false positives)"
         elif row["deviated"]:
             row["status"] = "deviated"
         elif row["codeql_queries"] or row["category"] == "profile" or "clang-tidy" in row["verification"]:
@@ -642,6 +658,7 @@ def cmd_report(a) -> int:
         "warning_guidelines": warnings, "records": records,
         "totals": {"violations": sum(r["violations"] for r in rows.values()),
                    "deviated": sum(r["deviated"] for r in rows.values()),
+                   "review": sum(r["review"] for r in rows.values()),
                    "guidelines_with_violations": sum(1 for r in rows.values() if r["violations"]),
                    "guidelines_deviated": sum(1 for r in rows.values() if r["deviated"] and not r["violations"]),
                    "guidelines_clean": sum(1 for r in rows.values() if r["status"].startswith("no findings"))},
@@ -649,10 +666,11 @@ def cmd_report(a) -> int:
     with open(os.path.join(a.out_dir, "misra-summary.json"), "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=1)
     with open(os.path.join(a.out_dir, "misra-findings.csv"), "w", encoding="utf-8") as fh:
-        fh.write("guideline,tool,rule,file,line,deviated,configurations,message\n")
+        fh.write("guideline,tool,rule,file,line,deviated,review,configurations,message\n")
         for f in findings:
             msg = f["message"].replace('"', "'").replace("\n", " ")
-            fh.write(f"{f['guideline']},{f['tool']},{f['query']},{f['file']},{f['line']},{f['deviated']},"
+            review = " ".join(f["known_fp"]) if f["review"] else ""
+            fh.write(f"{f['guideline']},{f['tool']},{f['query']},{f['file']},{f['line']},{f['deviated']},{review},"
                      f"{' '.join(f['configs'])},\"{msg}\"\n")
     md = render_summary(summary, a.level)
     with open(os.path.join(a.out_dir, "misra-summary.md"), "w", encoding="utf-8") as fh:
@@ -662,6 +680,9 @@ def cmd_report(a) -> int:
             fh.write(md)
     for f in findings:
         if f["deviated"]:
+            continue
+        if f["review"]:
+            # Listed in the report, not as annotations: hundreds of known false positives would drown the rest.
             continue
         kind = "error" if f["guideline"] in failing else "warning"
         emit(kind, f"{f['guideline']} [{f['query']}] {f['message']}", f["file"], f["line"])
@@ -685,7 +706,8 @@ def render_summary(s: dict, level: str) -> str:
     t = s["totals"]
     out = [f"### MISRA C++:2023 ({level} level): {'pass' if s['passed'] else 'FAIL'}", "",
            f"{t['violations']} violation(s) in {t['guidelines_with_violations']} guideline(s), {t['deviated']} "
-           f"deviated finding(s), {t['guidelines_clean']} guideline(s) without findings. No findings is not proof of "
+           f"deviated finding(s), {t.get('review', 0)} finding(s) of rules with known false positives to review, "
+           f"{t['guidelines_clean']} guideline(s) without findings. No findings is not proof of "
            "compliance for an undecidable guideline (MISRA Compliance:2020 §3.5): those keep their review step.", ""]
     out += ["| Configuration | Translation units | Source files analysed | Canary | Flags complete |",
             "| --- | --- | --- | --- | --- |"]
@@ -698,11 +720,16 @@ def render_summary(s: dict, level: str) -> str:
         out += ["", "**Problems**", ""]
         out += [f"- {p}" for p in s["problems"]]
         out += [f"- `{e.get('file', '')}:{e.get('line', '')}` {e['error']}" for e in s["suppression_errors"]]
-    out += ["", "| Guideline | Category (ours) | Violations | Deviated | Status |", "| --- | --- | --- | --- | --- |"]
+    out += ["", "| Guideline | Category (ours) | Violations | To review | Deviated | Status |",
+            "| --- | --- | --- | --- | --- | --- |"]
     for row in s["guidelines"].values():
-        if row["violations"] or row["deviated"]:
-            out.append(f"| {row['guideline']} | {row['our_category']} | {row['violations']} | {row['deviated']} | "
-                       f"{row['status']} |")
+        if row["violations"] or row["deviated"] or row.get("review"):
+            out.append(f"| {row['guideline']} | {row['our_category']} | {row['violations']} | {row.get('review', 0)} | "
+                       f"{row['deviated']} | {row['status']} |")
+    if any(r.get("review") for r in s["guidelines"].values()):
+        out += ["", "*To review*: findings of a rule the tool validation found reporting compliant code (the anomaly "
+                "ids are in misra-findings.csv). Each is checked by the reviewer (review checklist R-FP); a real one "
+                "is fixed, a false one needs no record beyond the anomaly. They do not fail the high level."]
     counts = {}
     for row in s["guidelines"].values():
         counts[row["status"]] = counts.get(row["status"], 0) + 1
@@ -759,6 +786,7 @@ def main() -> int:
     p = sub.add_parser("report")
     p.add_argument("--matrix", required=True)
     p.add_argument("--supported")
+    p.add_argument("--anomalies", help="the tool validation's anomaly log (tests/misra-validation/anomalies.yml)")
     p.add_argument("--markers", required=True)
     p.add_argument("--config", action="append", default=[], help="name=directory with that configuration's results")
     p.add_argument("--repo", default=".")

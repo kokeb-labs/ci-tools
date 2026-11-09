@@ -283,6 +283,7 @@ jobs:
           sparse-checkout: |
             tools/misra
             tests/misra-validation/codeql-supported.json
+            tests/misra-validation/anomalies.yml
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -330,6 +331,7 @@ jobs:
           "$RUNNER_TEMP/venv/bin/python" .ru-misra/ci-tools/tools/misra/misra.py report \
             --matrix .ru-misra/handbook/compliance/misra-cpp-2023.yml \
             --supported .ru-misra/ci-tools/tests/misra-validation/codeql-supported.json \
+            --anomalies .ru-misra/ci-tools/tests/misra-validation/anomalies.yml \
             --markers "$markers" "${args[@]}" --paths "$PATHS" --level "$LEVEL" --canary-expect "$expect" \
             --enforce "$ENFORCE" --out-dir .ru-misra/report
       - name: Upload the report

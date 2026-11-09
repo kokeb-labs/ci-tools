@@ -94,6 +94,13 @@ Any of these is a **suppression error**, and fails the scan at every level:
 | `safety` | Any finding no record deviates, and any translation unit built without the org flags (`-Wall -Wextra -Wpedantic -Wshadow -Wundef -Werror -fno-exceptions -fno-rtti`) |
 
 Both levels fail on suppression errors, a lapsed record, a missing canary detection or incomplete extraction.
+
+A rule the tool validation found reporting compliant code (a false positive in
+`tests/misra-validation/anomalies.yml`, for example a query that misreads code in class templates) does not decide its
+guideline alone. At the `high` level its findings are listed as **to review** in the summary and in
+`misra-findings.csv` (with the anomaly ids), and do not fail the job; the reviewer checks each one (review checklist
+R-FP), fixes a real one and needs no record for a false one. At the `safety` level they fail like any other finding.
+A recorded false negative never weakens a rule's findings.
 `enforce: false` reports only. The outputs carry the counts.
 
 A guideline without findings is reported as `no findings`, which proves nothing for an undecidable guideline. Those

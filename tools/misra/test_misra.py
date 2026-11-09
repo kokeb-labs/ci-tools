@@ -155,7 +155,7 @@ class Prepare(unittest.TestCase):
 
 
 class Report(unittest.TestCase):
-    def report(self, results, level, scopes=(), extraction_complete=True):
+    def report(self, results, level, scopes=(), extraction_complete=True, anomalies=None):
         d = tempfile.mkdtemp()
         cfg = os.path.join(d, "host")
         os.makedirs(cfg)
@@ -176,9 +176,15 @@ class Report(unittest.TestCase):
         with open(os.path.join(d, "matrix.yml"), "w", encoding="utf-8") as fh:
             fh.write(MATRIX)
         out = os.path.join(d, "out")
+        extra = []
+        if anomalies is not None:
+            with open(os.path.join(d, "anomalies.yml"), "w", encoding="utf-8") as fh:
+                json.dump({"anomalies": anomalies}, fh)
+            extra = ["--anomalies", os.path.join(d, "anomalies.yml")]
         r = run("report", "--matrix", os.path.join(d, "matrix.yml"), "--markers", os.path.join(d, "markers.json"),
                 "--config", f"host={cfg}", "--repo", d, "--paths", "inc", "--level", level,
-                "--canary-expect", "cpp/misra/unused-parameter-misra-cpp", "--out-dir", out, "--github-output", "")
+                "--canary-expect", "cpp/misra/unused-parameter-misra-cpp", "--out-dir", out, "--github-output", "",
+                *extra)
         with open(os.path.join(out, "misra-summary.json"), encoding="utf-8") as fh:
             return r, json.load(fh)
 
@@ -189,6 +195,19 @@ class Report(unittest.TestCase):
         r, s = self.report([("q/req", "rule-8-2-5", 3, False)], "high")
         self.assertEqual(r.returncode, 1)
         self.assertEqual(s["failing_guidelines"], ["Rule 8.2.5"])
+
+    def test_known_false_positive_rules_are_reviewed_not_failed_at_high(self):
+        an = [{"id": "AN-900", "tool": "codeql", "rule_id": "q/req", "kind": "false-positive"}]
+        r, s = self.report([("q/req", "rule-8-2-5", 3, False)], "high", anomalies=an)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertEqual(s["guidelines"]["Rule 8.2.5"]["review"], 1)
+        self.assertEqual(s["failing_guidelines"], [])
+        r, s = self.report([("q/req", "rule-8-2-5", 3, False)], "safety", anomalies=an)
+        self.assertEqual(r.returncode, 1)
+        # A false negative of the rule does not weaken its findings.
+        an = [{"id": "AN-901", "tool": "codeql", "rule_id": "q/req", "kind": "false-negative"}]
+        r, s = self.report([("q/req", "rule-8-2-5", 3, False)], "high", anomalies=an)
+        self.assertEqual(r.returncode, 1)
 
     def test_safety_fails_any_undeviated_finding(self):
         r, s = self.report([("q/adv", "rule-6-5-1", 3, False)], "safety")

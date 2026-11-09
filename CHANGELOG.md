@@ -42,6 +42,8 @@ that heading.
   reports more than its guideline (cppcoreguidelines-macro-usage and object-like macros) decides only that part.
 - `ru-misra`'s extraction check skips a unit the build defines but never compiles (no object file: a target outside
   `all`, such as a compile-fail test, or one the Cortex-M target does not build) and lists it as not analysed.
+- `ru-misra` reads the tool validation's anomaly log: at the high level, findings of a rule with a recorded false
+  positive are listed for review (with the anomaly ids) instead of failing the job; validated rules still fail.
 
 ## [1.12.1] - 2026-11-08
 
