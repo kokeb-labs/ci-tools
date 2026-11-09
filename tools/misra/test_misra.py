@@ -248,5 +248,32 @@ class Extraction(unittest.TestCase):
             self.assertEqual(json.load(fh)["not_analysed"], ["inc/b.hpp"])
 
 
+    def test_a_unit_the_build_never_compiled_is_not_an_extraction_failure(self):
+        # CMake's Makefile layout: `directory` is the target's subdirectory, `output` is relative to the top of
+        # the build tree. src/a.cpp was built (its object exists); src/c.cpp is defined but never compiled.
+        d = git_repo({"inc/a.hpp": "x", "src/a.cpp": "z", "src/c.cpp": "w"})
+        build = os.path.join(d, "build")
+        os.makedirs(os.path.join(build, "tests", "CMakeFiles", "t.dir"))
+        with open(os.path.join(build, "tests", "CMakeFiles", "t.dir", "a.cpp.o"), "w", encoding="utf-8") as fh:
+            fh.write("o")
+        compdb = os.path.join(d, "cc.json")
+        with open(compdb, "w", encoding="utf-8") as fh:
+            json.dump([{"directory": os.path.join(build, "tests"), "file": os.path.join(d, f), "arguments": ["g++"],
+                        "output": f"tests/CMakeFiles/t.dir/{os.path.basename(f)}.o"}
+                       for f in ("src/a.cpp", "src/c.cpp")], fh)
+        compiled = os.path.join(d, "compiled.json")
+        with open(compiled, "w", encoding="utf-8") as fh:
+            json.dump({"#select": {"tuples": [[os.path.join(d, "src/a.cpp"), "src/a.cpp", True],
+                                              [os.path.join(d, "inc/a.hpp"), "inc/a.hpp", False],
+                                              [os.path.join(d, "src/c.cpp"), "src/c.cpp", False]]}}, fh)
+        diags = os.path.join(d, "diags.json")
+        with open(diags, "w", encoding="utf-8") as fh:
+            json.dump({"#select": {"tuples": []}}, fh)
+        out = os.path.join(d, "ext.json")
+        r = run("extraction", "--compdb", compdb, "--compiled", compiled, "--diagnostics", diags, "--repo", d,
+                "--paths", "inc src", "--out", out)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("not built", r.stdout)
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

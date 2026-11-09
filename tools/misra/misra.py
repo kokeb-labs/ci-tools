@@ -272,6 +272,23 @@ def cmd_prepare(a) -> int:
 # --- build flags and extraction coverage ---------------------------------------------------------------------
 
 
+def object_path(directory: str, output: str) -> str:
+    """Where a compile database entry's object file is. CMake's Makefile generator writes `output` relative to the
+    top of the build tree while `directory` is the target's subdirectory, so the nearest ancestor of `directory`
+    that holds the file is taken; with none, the path relative to `directory` (the documented meaning)."""
+    if os.path.isabs(output):
+        return output
+    d = os.path.abspath(directory)
+    while True:
+        cand = os.path.join(d, output)
+        if os.path.isfile(cand):
+            return cand
+        parent = os.path.dirname(d)
+        if parent == d:
+            return os.path.join(os.path.abspath(directory), output)
+        d = parent
+
+
 def compdb_units(path: str, paths: list[str], canary: str | None) -> list[dict]:
     with open(path, encoding="utf-8") as fh:
         db = json.load(fh)
@@ -279,7 +296,7 @@ def compdb_units(path: str, paths: list[str], canary: str | None) -> list[dict]:
     for e in db:
         f = os.path.normpath(os.path.join(e.get("directory", ""), e["file"]))
         args = e.get("arguments") or shlex.split(e.get("command", ""))
-        out = os.path.join(e.get("directory", ""), e["output"]) if e.get("output") else None
+        out = object_path(e.get("directory", ""), e["output"]) if e.get("output") else None
         units.append({"file": f, "args": args, "output": out,
                       "canary": bool(canary) and os.path.normpath(f) == os.path.normpath(os.path.abspath(canary))})
     return units
