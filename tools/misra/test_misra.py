@@ -97,11 +97,12 @@ class Licence(unittest.TestCase):
 
 
 class Prepare(unittest.TestCase):
-    def prepare(self, files: dict[str, str], today="2026-11-08"):
+    def prepare(self, files: dict[str, str], today="2026-11-08", extra=()):
         d = git_repo({"records.yml": RECORDS, **files})
         out = os.path.join(d, "out")
         r = run("prepare", "--records", os.path.join(d, "records.yml"), "--paths", "inc", "--repo", d,
-                "--coding-standards", os.path.join(d, "coding-standards.yml"), "--markers", out, "--today", today)
+                "--coding-standards", os.path.join(d, "coding-standards.yml"), "--markers", out, "--today", today,
+                *extra)
         with open(out, encoding="utf-8") as fh:
             return r, json.load(fh), d
 
@@ -133,6 +134,18 @@ class Prepare(unittest.TestCase):
         errors = sorted((e["line"], e["error"]) for e in m["marker_errors"])
         self.assertEqual([line for line, _ in errors], [2, 3, 4])
         self.assertEqual(sorted(mk["line"] for mk in m["markers"]), [1, 2, 3, 5, 6])
+
+    def test_only_suppressions_of_matrix_checks_need_a_record(self):
+        configs = os.path.join(tempfile.mkdtemp(), "tidy-configs.json")
+        with open(configs, "w", encoding="utf-8") as fh:
+            json.dump([{"check": "cppcoreguidelines-macro-usage", "guidelines": ["Rule 19.0.2"]}], fh)
+        r, m, _d = self.prepare({"inc/a.hpp": textwrap.dedent("""            // NOLINTBEGIN(cppcoreguidelines-macro-usage)
+            // NOLINTEND(cppcoreguidelines-macro-usage)
+            int a;  // NOLINTNEXTLINE(modernize-use-std-numbers): not a check the matrix relies on
+            int b;  // NOLINT
+            int c;  // NOLINT(cppcoreguidelines-*)
+            """)}, today="2025-06-01", extra=("--tidy-configs", configs))
+        self.assertEqual(sorted(e["line"] for e in m["marker_errors"]), [1, 4, 5])
 
     def test_a_committed_coding_standards_file_fails(self):
         r, m, _d = self.prepare({"inc/a.hpp": "int x;\n", "coding-standards.yml": "deviations: []\n"},

@@ -39,6 +39,15 @@ def group(title: str) -> None:
     print(f"::endgroup::\n::group::{title}", flush=True)
 
 
+def ram_option() -> list[str]:
+    """CodeQL's heap: the machine's memory less 2 GiB for the OS and the evaluator's native memory."""
+    try:
+        total = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") // (1024 * 1024)
+    except (ValueError, OSError, AttributeError):
+        return []
+    return [f"--ram={max(2048, total - 2048)}"]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--config", choices=["host", "cortex-m"], required=True)
@@ -81,7 +90,8 @@ def main() -> int:
     status = 0
     run([*misra, "prepare", "--records", a.records, *(["--repo-records", a.repo_records]
                   if a.repo_records else []), "--paths", paths, "--coding-standards",
-                  os.path.join(root, "coding-standards.yml"), "--markers", os.path.join(out, "markers.json")])
+                  os.path.join(root, "coding-standards.yml"), "--markers", os.path.join(out, "markers.json"),
+                  *(["--tidy-configs", a.tidy_configs] if a.tidy_configs else [])])
     shutil.copyfile(os.path.join(root, "coding-standards.yml"), os.path.join(out, "coding-standards.yml"))
 
     group(f"{a.config}: configure (compile_commands.json)")
@@ -138,7 +148,7 @@ def main() -> int:
                for p in a.own_pack]
     search = os.pathsep.join([a.misra_pack, lib, *[os.path.dirname(os.path.normpath(p)) for p in a.own_pack]])
     if run([a.codeql, "database", "analyze", db, *suites, common, "--format=sarifv2.1.0",
-            f"--output={os.path.join(out, 'results.sarif')}", f"--threads={a.threads}",
+            f"--output={os.path.join(out, 'results.sarif')}", f"--threads={a.threads}", *ram_option(),
             f"--additional-packs={search}", "--sarif-add-snippets"]):
         print("::error::CodeQL analysis failed")
         return 1

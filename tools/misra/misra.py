@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import fnmatch
 import json
 import os
 import re
@@ -43,7 +44,7 @@ RECORD_ID = re.compile(r"\b(MD-CPP-\d{3}|DEV-\d{3})\b")
 # for any standard name, so a marker for another standard is reported instead of silently ignored.
 CODEQL_MARKER = re.compile(r"codeql::(\w+?)_deviation(?:_next_line|_begin|_end)?\(\s*\"?([^)\"]*)\"?\s*\)")
 CODEQL_ATTRIBUTE = re.compile(r"\[\[\s*codeql::(\w+?)_deviation\(([^\]]*)\)\s*\]\]")
-TOOL_SUPPRESSION = re.compile(r"(NOLINT(?:NEXTLINE|BEGIN|END)?\b(?:\([^)]*\))?|cppcheck-suppress\s+\S+)")
+TOOL_SUPPRESSION = re.compile(r"NOLINT(NEXTLINE|BEGIN|END)?\b(?:\(([^)]*)\))?|cppcheck-suppress\s+\S+")
 SOURCE_EXT = (".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".ipp", ".tpp", ".inl")
 # The flags the compiler-decided guidelines of the matrix rely on (tests/misra-validation/validate.py ORG_FLAGS).
 REQUIRED_FLAGS = ["-Wall", "-Wextra", "-Wpedantic", "-Wshadow", "-Wundef", "-Werror", "-fno-exceptions", "-fno-rtti"]
@@ -168,7 +169,22 @@ def load_records(path: str, repo_path: str | None, today: dt.date) -> tuple[dict
     return records, errors
 
 
-def scan_markers(repo: str, paths: list[str], known: dict) -> tuple[list[dict], list[dict]]:
+def suppression_needs_record(m: re.Match, matrix_checks: set[str] | None) -> bool:
+    """A tool suppression must cite a deviation record when it can silence a finding the matrix relies on: a
+    cppcheck suppression, a bare NOLINT, or a NOLINT naming a validated clang-tidy check (globs included). The
+    NOLINTEND that closes a region does not repeat the citation."""
+    if not m.group(0).startswith("NOLINT"):
+        return True
+    if m.group(1) == "END":
+        return False
+    if not m.group(2) or matrix_checks is None:
+        return True
+    named = [c.strip() for c in m.group(2).split(",") if c.strip()]
+    return any(fnmatch.fnmatchcase(v, c) for c in named for v in matrix_checks) or "*" in named
+
+
+def scan_markers(repo: str, paths: list[str], known: dict,
+                 matrix_checks: set[str] | None = None) -> tuple[list[dict], list[dict]]:
     """Every suppression marker in the sources, and the errors among them."""
     markers, errors = [], []
     for f in git_files(repo):
@@ -203,9 +219,10 @@ def scan_markers(repo: str, paths: list[str], known: dict) -> tuple[list[dict], 
                     errors.append({**mk, "error": f"{ident} applies only to {known[ident]['where']}"})
             # A tool suppression (NOLINT, cppcheck-suppress) silences a finding the matrix may rely on: it must cite
             # the record that allows it.
-            if TOOL_SUPPRESSION.search(comment):
+            sup = TOOL_SUPPRESSION.search(comment)
+            if sup:
                 ids = RECORD_ID.findall(comment)
-                if not ids:
+                if not ids and suppression_needs_record(sup, matrix_checks):
                     errors.append({"file": f, "line": n, "id": "", "form": "tool", "standard": "",
                                    "error": "a NOLINT or cppcheck-suppress must cite its deviation record id"})
                 for i in ids:
@@ -222,7 +239,11 @@ def cmd_prepare(a) -> int:
     for f in git_files(a.repo):
         if os.path.basename(f) in ("coding-standards.yml", "coding-standards.yaml"):
             errors.append(f"{f}: deviations come only from the deviation records; remove this file")
-    markers, marker_errors = scan_markers(a.repo, paths, records)
+    matrix_checks = None
+    if a.tidy_configs:
+        with open(a.tidy_configs, encoding="utf-8") as fh:
+            matrix_checks = {c["check"] for c in json.load(fh)}
+    markers, marker_errors = scan_markers(a.repo, paths, records, matrix_checks)
     deviations = []
     for r in records.values():
         if not re.fullmatch(r"(Rule|Dir) \d+(\.\d+)+", r["guideline"]):
@@ -346,8 +367,8 @@ def cmd_tidy_configs(a) -> int:
             t = spec.get("clang-tidy")
             if not t:
                 continue
-            key = json.dumps({"check": t["check"], "options": t.get("options") or {}, "config": t.get("config") or {}},
-                             sort_keys=True)
+            key = json.dumps({"check": t["check"], "options": t.get("options") or {}, "config": t.get("config") or {},
+                              "message": t.get("message", "")}, sort_keys=True)
             c = configs.setdefault(key, {**json.loads(key), "guidelines": [], "cases": []})
             if spec["guideline"] not in c["guidelines"]:
                 c["guidelines"].append(spec["guideline"])
@@ -387,6 +408,8 @@ def cmd_tidy(a) -> int:
                 f = os.path.relpath(os.path.normpath(os.path.join(root, m.group(1))), root)
                 if cfg["check"] not in [x.strip() for x in m.group(4).split(",")] or not under(f, paths):
                     continue
+                if cfg.get("message") and not re.search(cfg["message"], m.group(3)):
+                    continue  # the check reports more than the guideline; only these messages decide it
                 for g in cfg["guidelines"]:
                     k = (g, cfg["check"], f, int(m.group(2)))
                     findings[k] = {"tool": "clang-tidy", "query": cfg["check"], "guideline": g, "file": f,
@@ -691,6 +714,7 @@ def main() -> int:
     p.add_argument("--paths", default="")
     p.add_argument("--coding-standards", required=True)
     p.add_argument("--markers", required=True)
+    p.add_argument("--tidy-configs", help="the validated clang-tidy configurations (tidy-configs output)")
     p.add_argument("--today")
     p = sub.add_parser("flags")
     p.add_argument("--compdb", required=True)

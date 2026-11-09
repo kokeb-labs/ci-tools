@@ -34,6 +34,12 @@ that heading.
   leaves out the test fixtures, which break rules on purpose and whose findings the self-CI asserts.
 - `ru-misra` passes `cmake_args` and `paths` to its scanner as `--option=value`, so a value that starts with `-D`
   is not read as an option; the fixture self-test now passes one.
+- `ru-misra` gives CodeQL an explicit heap (the runner's memory less 2 GiB); the analysis ran out of memory on the
+  2-core runners of private repositories.
+- A tool suppression must cite a deviation record only when it can silence a finding the matrix relies on (a
+  cppcheck suppression, a bare `NOLINT`, or one naming a validated clang-tidy check); `NOLINTEND` never needs one.
+- A validated clang-tidy claim can carry `message:`, a regex the diagnostic must match to count: a check that
+  reports more than its guideline (cppcoreguidelines-macro-usage and object-like macros) decides only that part.
 
 ## [1.12.1] - 2026-11-08
 
