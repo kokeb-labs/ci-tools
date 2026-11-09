@@ -356,22 +356,41 @@ jobs:
           du -sh ~/esp-idf ~/.espressif
 
       # The espressif/idf image ships ccache; the runner does not. A pinned, hash-checked static build.
+      # The pinned ccache is kept in the Actions cache, so a run downloads it only when the version changes; a
+      # download that still fails after retries falls back to the runner's ccache package, with a warning.
+      - name: Restore the ccache binary
+        id: ccache_bin
+        if: ${{ inputs.idf_install == 'native' }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/kokeb-tools/ccache-4.14.2
+          key: ccache-bin-${{ runner.os }}-4.14.2-b20ff641
+
       - name: Install ccache (pinned, hash-checked)
         if: ${{ inputs.idf_install == 'native' }}
         env:
           CCACHE_VERSION: "4.14.2"
           CCACHE_SHA256: b20ff6415151226ac5a10dfd6839700c694bd67d1871c8fddb266d366ff25bfb
+          CACHED: ${{ steps.ccache_bin.outputs.cache-hit }}
         run: |
           set -euo pipefail
-          name="ccache-${CCACHE_VERSION}-linux-x86_64-musl-static"
-          cd "$RUNNER_TEMP"
-          curl -fsSL --retry 3 -o ccache.tar.xz \
-            "https://github.com/ccache/ccache/releases/download/v${CCACHE_VERSION}/${name}.tar.xz"
-          echo "${CCACHE_SHA256}  ccache.tar.xz" | sha256sum -c -
-          tar -xJf ccache.tar.xz
-          mkdir -p "$RUNNER_TEMP/bin" && install -m 0755 "${name}/ccache" "$RUNNER_TEMP/bin/ccache"
-          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/bin/ccache" --version | head -1
+          dir="$HOME/.cache/kokeb-tools/ccache-${CCACHE_VERSION}"
+          if [ "${CACHED}" != "true" ] || [ ! -x "$dir/ccache" ]; then
+            name="ccache-${CCACHE_VERSION}-linux-x86_64-musl-static"
+            cd "$RUNNER_TEMP"
+            if curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 20 -o ccache.tar.xz \
+                "https://github.com/ccache/ccache/releases/download/v${CCACHE_VERSION}/${name}.tar.xz"; then
+              echo "${CCACHE_SHA256}  ccache.tar.xz" | sha256sum -c -
+              tar -xJf ccache.tar.xz
+              mkdir -p "$dir" && install -m 0755 "${name}/ccache" "$dir/ccache"
+            else
+              echo "::warning::could not download ccache ${CCACHE_VERSION}; using the runner's ccache package"
+              sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ccache
+              mkdir -p "$dir" && ln -sf "$(command -v ccache)" "$dir/ccache"
+            fi
+          fi
+          echo "$dir" >> "$GITHUB_PATH"
+          "$dir/ccache" --version | head -1
 
       - name: Build (native ESP-IDF)
         if: ${{ inputs.idf_install == 'native' }}

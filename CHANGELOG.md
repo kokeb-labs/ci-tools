@@ -15,6 +15,22 @@ that heading.
 
 ## [Unreleased]
 
+## [1.12.1] - 2026-11-08
+
+### Fixed
+
+- `ru-build`: the native build no longer downloads ccache on every run. The pinned, hash-checked binary is kept in
+  the Actions cache by version; a download retries on every error with a delay, and one that still fails falls back
+  to the runner's ccache package with a warning. GitHub release downloads returning HTTP 504 had failed whole
+  ESP32 jobs.
+- Self-CI caches its pinned shellcheck and actionlint by version and hash and retries their download on any
+  error; `ru-cross-build` and `ru-docs-publish` retry their release downloads on any error (HTTP 5xx included).
+- `ru-docs-linkcheck` and `ru-mkdocs-publish` run lychee 0.24.2 installed by the job (pinned, SHA-256-checked,
+  kept in the Actions cache) instead of `lycheeverse/lychee-action`, which downloaded it from GitHub releases on every
+  run. Same arguments, same failure rule; the link report goes to the step summary.
+- `ru-docs-publish` (legacy): Doxygen 1.10.0 is kept in the Actions cache by version (falling back to the runner's
+  package with a warning when GitHub releases fail), and its link check runs the same cached lychee.
+
 ## [1.12.0] - 2026-11-08
 
 ### Added
