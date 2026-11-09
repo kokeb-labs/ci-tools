@@ -387,7 +387,7 @@ jobs:
 | `cross_build_target` | string | no | `""` | Target of the Cortex-M build (for example the driver's <chip>_optimised_build); empty builds all |
 | `profile_pack` | boolean | no | `true` | Also run the Kokeb C++20 profile pack (codeql/kokeb-cpp20) of this workflow's commit |
 | `repo_deviations` | string | no | `docs/deviations.yml` | The repository's own deviation records; entries with check: misra/<guideline> become code identifiers like the project-wide MD-CPP records |
-| `handbook_ref` | string | no | `64060f5517467e577865e6909022eefc8b20a763` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
+| `handbook_ref` | string | no | `db2cdd0f75cdf998797d535565966b60e97f8c8d` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
 | `advanced_security` | boolean | no | `false` | Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this repository. Without it, CodeQL may run only on a public repository under an OSI-approved licence. |
 | `open_source_prerelease` | boolean | no | `false` | Set true for a private repository whose code is released under the OSI-approved licence in its LICENSE file and is to be made public. CodeQL then runs and the job prints the declaration as a warning; the report stays in the run's artifact (nothing is uploaded to code scanning). |
 | `enforce` | boolean | no | `true` | Fail the job by the level's policy. False reports only (the counts are in the outputs). |
