@@ -1,0 +1,45 @@
+---
+guideline: Rule 0.0.1
+notes: >-
+  Records a false positive of the pack on templates instantiated with test ports. The main case rule-0-0-1
+  proves detection. rule-0-0-2-hook holds the same compliant header for Rule 0.0.2.
+codeql:
+  queries: [cpp/misra/unreachable-statement]
+known_misses:
+  - query: cpp/misra/unreachable-statement
+    kind: false-positive
+    why: >-
+      The statement guarded by a call to an optional port hook in a function template is reported as
+      unreachable, because one test port's hook always returns false. Reachability is judged on the template:
+      the condition is a run-time call, not a constant expression, so the guarded statement is reachable; what
+      a particular port answers is that port's business. The query judges each instantiation after it has
+      followed the trivial hook body.
+other_findings:
+  - query: cpp/misra/invariant-condition
+    why: >-
+      misfire: the Rule 0.0.2 query reports the same hook condition as invariant for the same reason; the
+      condition depends on the port and is not invariant in the template (recorded in rule-0-0-2-hook).
+  - query: cpp/misra/missing-precedence-clarifying-parenthesis
+    why: >-
+      true positive of Rule 8.0.1 (advisory): the operand failure == Failure::AddressNack of && ranks higher than &&
+      and is not parenthesized; not this case's guideline.
+  - query: cpp/misra/memory-usage-not-sequenced
+    why: >-
+      misfire: the Rule 4.6.1 query reports port.LastFailure(failure) && failure == Failure::AddressNack as
+      unsequenced; the built-in && sequences its left operand (which writes failure) before its right operand (which
+      reads it).
+  - query: cpp/misra/no-implicit-bool-conversion
+    why: >-
+      misfire: the Rule 7.0.2 query reports the dependent call port.LastFailure(failure) in the template as a
+      conversion from an 'unknown' type to bool; every instantiation's hook returns bool, so no conversion happens
+      (the extractor leaves the dependent type unresolved, as in rule-4-1-2-is-literal-type).
+  - query: cpp/misra/short-circuited-persistent-side-effect
+    why: >-
+      misfire: the Rule 8.14.1 query reports the right-hand operands TransferError(b) == Error::Bus and
+      TransferError(c) == Error::Bus; those calls only write the callee's local failure through the hook's reference
+      parameter and read the ports, so they have no persistent side effect.
+seeded:
+  - "a statement after an unconditional return"
+near_misses:
+  - "an if in a function template whose condition calls an optional port hook, instantiated with ports whose hook
+    always answers true, always answers false, or is absent (ok.hpp)"

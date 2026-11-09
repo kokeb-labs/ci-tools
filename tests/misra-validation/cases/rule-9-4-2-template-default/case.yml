@@ -1,0 +1,17 @@
+---
+guideline: Rule 9.4.2
+notes: Records a false positive of the pack in class templates. The main case rule-9-4-2 proves detection.
+codeql:
+  queries: [cpp/misra/appropriate-structure-of-switch-statement]
+known_misses:
+  - query: cpp/misra/appropriate-structure-of-switch-statement
+    kind: false-positive
+    why: >-
+      A switch in a member of a class template over the class's own private scoped enumeration, with a case for
+      every enumerator and a final default, every clause ending in return or break, is reported as missing an
+      enumerator. Every enumerator is listed and the default is there; the query does not match the case labels
+      to the enumerators of the member enumeration in the template.
+seeded:
+  - "fall-through from one clause into the next and no default"
+near_misses:
+  - "a switch in a class template over its member scoped enum listing every enumerator, with default (ok.hpp)"

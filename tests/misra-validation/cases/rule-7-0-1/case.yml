@@ -1,0 +1,16 @@
+---
+guideline: Rule 7.0.1
+codeql:
+  queries: [cpp/misra/no-conversion-from-bool]
+seeded:
+  - "a bool operand of built-in addition (a + b)"
+  - "a bool added through compound assignment (total += flag)"
+  - "a bool passed to a std::int32_t parameter"
+  - "a bool returned from a function returning std::int32_t"
+  - "a bool used as an operand in a function template instantiated with std::int32_t"
+  - "bools as operands of bitwise &"
+  - "an explicit static_cast from bool to std::int32_t"
+near_misses:
+  - "a truth value turned into a number with a conditional (flag ? 1 : 0)"
+  - "bools compared with == and combined with && and !"
+  - "a bool passed to a bool parameter"

@@ -1,0 +1,10 @@
+---
+guideline: Rule 16.5.1
+codeql:
+  queries: [cpp/misra/logical-and-and-logical-or-operators-overloaded]
+seeded:
+  - non-member operator&& and operator|| overloads
+  - member operator&& overload
+near_misses:
+  - named functions instead of logical operators
+  - overloaded bitwise operator& and operator| on a flag type

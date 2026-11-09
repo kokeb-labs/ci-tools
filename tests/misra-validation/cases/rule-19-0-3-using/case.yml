@@ -1,0 +1,15 @@
+---
+guideline: Rule 19.0.3
+notes: An #include after a file-scope using-declaration; rule-19-0-3 proves the namespace and in-namespace forms.
+codeql:
+  queries: [cpp/misra/include-directives-preceded-by-preprocessor-directives]
+known_misses:
+  - query: cpp/misra/include-directives-preceded-by-preprocessor-directives
+    kind: false-negative
+    why: >-
+      An #include that follows a file-scope using-declaration (using std::size_t;) is not reported; an #include after
+      a namespace with declarations is. Review (the include-order item of the checklist) covers the using form.
+seeded:
+  - "#include after a using-declaration at file scope"
+near_misses:
+  - "using-declaration placed after every #include"

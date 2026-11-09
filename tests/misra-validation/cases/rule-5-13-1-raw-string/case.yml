@@ -1,0 +1,15 @@
+---
+guideline: Rule 5.13.1
+notes: Raw string literals have no escape sequences, so the guideline does not apply to the backslashes in them.
+codeql:
+  queries: [cpp/misra/backslash-character-misuse]
+known_misses:
+  - query: cpp/misra/backslash-character-misuse
+    kind: false-positive
+    why: >-
+      A backslash inside a raw string literal (R"(dir\qfile)") is reported as a non-standard escape sequence;
+      raw strings have no escapes, so the backslash is plain text.
+seeded:
+  - "\\q in an ordinary string literal"
+near_misses:
+  - "a backslash inside a raw string literal"

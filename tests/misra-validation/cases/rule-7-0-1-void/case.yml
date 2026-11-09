@@ -1,0 +1,23 @@
+---
+guideline: Rule 7.0.1
+notes: Records a false positive of the pack in templates. The main case rule-7-0-1 proves detection.
+codeql:
+  queries: [cpp/misra/no-conversion-from-bool]
+known_misses:
+  - query: cpp/misra/no-conversion-from-bool
+    kind: false-positive
+    why: >-
+      A bool result discarded by an explicit cast to void ((void)port_.Set(true)) inside a member function
+      template of a class template is reported as a conversion from bool. Casting to void only discards the
+      value, which the guideline allows by exception; no bool is used as a number. The query does not exclude
+      the void cast on the dependent call.
+other_findings:
+  - query: cpp/misra/no-implicit-bool-conversion
+    why: >-
+      misfire: the Rule 7.0.2 query reports the dependent call port_.Set(false) under ! in the template as a
+      conversion from an 'unknown' type to bool; the instantiated Set returns bool, so no conversion happens (the
+      extractor leaves the dependent type unresolved, as in rule-4-1-2-is-literal-type).
+seeded:
+  - "a bool operand of built-in addition (a + b)"
+near_misses:
+  - "a bool result cast to void in a member function template of a class template (ok.hpp)"

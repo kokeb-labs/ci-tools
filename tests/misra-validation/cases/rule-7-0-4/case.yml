@@ -1,0 +1,14 @@
+---
+guideline: Rule 7.0.4
+codeql:
+  queries: [cpp/misra/inappropriate-bitwise-or-shift-operands]
+seeded:
+  - "& and << on signed operands"
+  - "| and ^ on signed operands"
+  - "~ on a signed operand"
+  - "a compound shift assignment on a signed object"
+  - "an unsigned shift whose count is not less than the operand width"
+near_misses:
+  - "& | ^ ~ on std::uint32_t operands with U literals"
+  - "a shift by a count in range (31U on 32 bits)"
+  - "a mask held in a constexpr unsigned constant"

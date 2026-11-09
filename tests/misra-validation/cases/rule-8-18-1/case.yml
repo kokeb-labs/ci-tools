@@ -1,0 +1,15 @@
+---
+guideline: Rule 8.18.1
+codeql:
+  queries:
+    - cpp/misra/object-copied-to-an-overlapping-object-misra-cpp
+    - cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp
+seeded:
+  - "memcpy between overlapping ranges of one array"
+  - "a union member assigned from a sibling of the same size"
+  - "memcpy of an array onto itself shifted by one element"
+  - "a union member assigned from a converted sibling of another type (float to std::uint32_t)"
+near_misses:
+  - "std::copy_backward for an overlapping move"
+  - "std::copy between distinct arrays"
+  - "a struct member assigned from another member"

@@ -1,0 +1,15 @@
+---
+guideline: Rule 19.1.2
+notes: >-
+  The pack does not implement this guideline (compiler checked). An #if left open is a compile error, and so is an
+  #if closed by an #endif in another file: both compilers keep conditional groups per file.
+gcc: {error: "unterminated #if"}
+clang: {error: "unterminated conditional directive"}
+compiles: false
+seeded:
+  - '#if group left open at the end of the file'
+  - '#ifdef group left open at the end of the file'
+  - '#if group whose #endif is in an included file (bad_split.cpp, kv_close.inc), the form the guideline targets'
+near_misses:
+  - '#if group opened and closed in the file'
+  - 'nested #if / #ifdef groups, each closed in the file'

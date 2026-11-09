@@ -1,0 +1,21 @@
+---
+guideline: Rule 6.8.1
+notes: >-
+  bad_union.cpp is the guideline's own "before its lifetime" form: reading a union member that is not the active
+  one. bad.cpp dereferences an uninitialised pointer; that is mainly a read of an indeterminate value (Rule 11.6.2),
+  kept as a second form because the query models it as an access before lifetime.
+codeql:
+  queries: [cpp/misra/object-accessed-before-lifetime-misra]
+known_misses:
+  - query: cpp/misra/object-accessed-before-lifetime-misra
+    kind: false-negative
+    why: >-
+      A read of a union member that is not the active member (w.halves[0] after w.whole is written, bad_union.cpp)
+      is not reported: the query models invalid pointers (never initialised, dangling) and has no notion of the
+      active member of a union. The dereference of an uninitialised pointer (bad.cpp) is reported.
+seeded:
+  - "an uninitialised pointer dereferenced"
+  - "a read of a union member that is not the active member (bad_union.cpp)"
+near_misses:
+  - "a pointer initialised to a live object"
+  - "a pointer initialised from a conditional choosing between two live objects"

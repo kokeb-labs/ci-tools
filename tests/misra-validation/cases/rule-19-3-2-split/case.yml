@@ -1,0 +1,20 @@
+---
+guideline: Rule 19.3.2
+notes: >-
+  The macro uses # on one parameter and ## between two others; no stringised parameter is pasted. The main case
+  rule-19-3-2 proves detection.
+codeql:
+  queries: [cpp/misra/macro-parameter-following-hash]
+known_misses:
+  - query: cpp/misra/macro-parameter-following-hash
+    kind: false-positive
+    why: >-
+      A macro whose replacement list has # on one parameter and a separate ## between two other parameters is
+      reported, although the stringised parameter is followed by a comma, not by ##; the query appears to match
+      the two operators anywhere in the same definition.
+other_findings:
+  - {query: cpp/misra/and-preprocessor-operators-should-not-be-used, why: "true positive of Rule 19.3.1: the near miss needs # and ##"}
+seeded:
+  - "#p ## q with spaces"
+near_misses:
+  - "# on one parameter and ## between two others in the same macro"

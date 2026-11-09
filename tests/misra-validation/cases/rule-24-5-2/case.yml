@@ -1,0 +1,22 @@
+---
+guideline: Rule 24.5.2
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?mem(cpy|move|cmp|chr)$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/no-memory-functions-from-c-string]
+known_misses:
+  - query: cpp/misra/no-memory-functions-from-c-string
+    kind: false-negative
+    why: >-
+      ::memchr (bad_move_chr.cpp) is not reported: the query bans memcpy, memmove and memcmp only, while the
+      guideline (MISRA C++:2023 with TC1) also bans memchr and the wmem* variants. memcpy, memmove and memcmp are
+      reported.
+seeded:
+  - "std::memcpy and std::memcmp"
+  - "memmove (unqualified) and ::memchr through <string.h>"
+  - "std::memcpy inside a function template"
+near_misses:
+  - "copy assignment and operator== of std::array"
+  - "std::copy, std::equal and std::find"

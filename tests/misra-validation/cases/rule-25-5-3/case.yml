@@ -1,0 +1,34 @@
+---
+guideline: Rule 25.5.3
+notes: >-
+  The clang-tidy claim bans every call of these functions, so it is held to the call lines and the ok file calls
+  none of them; CodeQL is held to the line that uses the first result after the second call. Storing a result in an
+  object is not itself a violation; bad_stored.cpp reads the stored pointer after the next call.
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(asctime|ctime|gmtime|localtime|localeconv|getenv|setlocale|strerror)$,,banned by the MISRA C++ profile"
+codeql:
+  queries:
+    - cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+known_misses:
+  - query: cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    kind: false-negative
+    why: >-
+      A getenv result kept in a struct member through brace initialisation (Settings settings{std::getenv("HOME")},
+      bad_stored.cpp) and read after the next call is not reported: the query follows a result only from a
+      variable's own initializer or from an assignment to a variable, by local data flow, and the brace list
+      initialises the member through the enclosing object. The plain local form (bad.cpp) is reported.
+  - query: cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+    kind: false-negative
+    why: >-
+      Reports nothing in this case: the query flags a result stored in a global or member variable only when the
+      call is that variable's initializer or the right-hand side of an assignment to it. The only member store here
+      is the brace initialisation Settings settings{std::getenv("HOME")} in bad_stored.cpp, which it does not see,
+      so no bad file holds a form it reports.
+seeded:
+  - "the first getenv result compared after a second getenv call"
+  - "a getenv result kept in a struct member and read after a second getenv call"
+near_misses:
+  - "the values passed as parameters (no function with a static result buffer is called)"

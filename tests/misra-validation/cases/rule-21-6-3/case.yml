@@ -1,0 +1,9 @@
+---
+guideline: Rule 21.6.3
+codeql:
+  queries: [cpp/misra/advanced-memory-management-used]
+seeded:
+  - "placement new and an explicit destructor call"
+near_misses:
+  - "an ordinary object with automatic lifetime"
+  - "std::optional::emplace and reset"

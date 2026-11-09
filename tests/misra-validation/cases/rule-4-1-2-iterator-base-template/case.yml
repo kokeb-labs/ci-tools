@@ -1,0 +1,15 @@
+---
+guideline: Rule 4.1.2
+notes: A class template deriving from std::iterator; kept apart because the query does not report it.
+codeql:
+  queries: [cpp/misra/use-of-deprecated-std-iterator-base-class]
+known_misses:
+  - query: cpp/misra/use-of-deprecated-std-iterator-base-class
+    kind: false-negative
+    why: >-
+      A class template whose base is std::iterator<std::forward_iterator_tag, T> is not reported (neither the
+      template nor its instantiation); only a non-template class with a concrete std::iterator base is.
+seeded:
+  - "a class template deriving from std::iterator<std::forward_iterator_tag, T>, instantiated"
+near_misses:
+  - "an iterator declaring its member types with using"

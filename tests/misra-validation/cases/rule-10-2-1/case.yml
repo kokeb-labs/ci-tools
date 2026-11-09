@@ -1,0 +1,21 @@
+---
+guideline: Rule 10.2.1
+notes: >-
+  An enumeration whose enumerators all keep their default values needs no fixed type (the guideline's exception
+  1), so the bad files give at least one enumerator an explicit value; ok_default.hpp holds the all-default form.
+codeql:
+  queries: [cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type]
+known_misses:
+  - query: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type
+    kind: false-positive
+    why: >-
+      A scoped enumeration without a fixed type whose enumerators all keep their default values (ok_default.hpp)
+      is reported; exception 1 of the guideline waives the fixed type for it.
+seeded:
+  - a namespace-scope scoped enum with explicit values and no fixed type (bad.cpp)
+  - a class-member scoped enum with one explicit value and no fixed type (bad_member.cpp)
+near_misses:
+  - a scoped enum with std::uint8_t (ok.hpp)
+  - an opaque declaration with the type, then its definition (ok_near.hpp)
+  - a class-member scoped enum with a fixed type (ok_near.hpp)
+  - a scoped enum without a fixed type whose enumerators all use default values (exception 1, ok_default.hpp)

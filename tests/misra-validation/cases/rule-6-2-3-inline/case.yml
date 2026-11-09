@@ -1,0 +1,11 @@
+---
+guideline: Rule 6.2.3
+codeql:
+  queries: [cpp/misra/duplicate-inline-function-definitions]
+notes: Each bad file defines one inline function and includes a .inc copy of the other's, so each carries a result.
+seeded:
+  - "an inline function defined in two source files (copies through .inc files)"
+  - "the same for a second function"
+near_misses:
+  - "an inline function defined once in a header"
+  - "an inline function and a template from one header included by two translation units"

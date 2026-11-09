@@ -1,0 +1,14 @@
+---
+guideline: Rule 8.2.9
+notes: >-
+  Not applicable (RTTI is off): with -fno-rtti any typeid is a compile error, so the compiler decides it. The
+  CodeQL query is validated in rule-8-2-9-codeql, whose violation builds with RTTI on.
+gcc: {error: "cannot use 'typeid' with '-fno-rtti'"}
+clang: {error: "use of typeid requires '?-frtti'?"}
+compiles: false
+seeded:
+  - "typeid on a polymorphic reference"
+  - "typeid on a dereferenced pointer to a polymorphic class"
+near_misses:
+  - "the kind as an explicit member"
+  - "a virtual function returning the kind"

@@ -1,0 +1,28 @@
+---
+guideline: Rule 21.2.2
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    # The str*, wcs*, strto* and wcsto* functions (strto*/wcsto* are matched by the same prefix).
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(str|wcs)[a-z]+$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/unsafe-string-handling-functions]
+known_misses:
+  - query: cpp/misra/unsafe-string-handling-functions
+    kind: false-negative
+    why: >-
+      std::wcslen (bad_wide.cpp) is not reported: the query's StringFunction list holds the str* functions, the
+      wcsto* conversions, fgetwc and fputwc, but none of the other <cwchar> string functions the guideline lists
+      (wcslen, wcscpy, wcscat, wcschr, wcscmp, wcsncmp, wcstok and the rest). The str* forms and wcstoul are
+      reported.
+seeded:
+  - "strlen, strcpy and strtol through <cstring>/<cstdlib>"
+  - "wcslen and wcstoul (the wide forms)"
+  - "strncmp and strtoul unqualified through the C headers"
+  - "strchr inside a lambda passed to a template"
+  - "the address of std::strlen taken into a function pointer (no call)"
+  - "std::strcmp called through a using-declaration"
+near_misses:
+  - "std::string_view::size and starts_with"
+  - "a function of our own named strip (prefix str, not a C function)"
+  - "std::char_traits<char>::length"

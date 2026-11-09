@@ -1,0 +1,22 @@
+---
+guideline: Rule 6.7.2
+notes: Records a false positive of the pack on variable templates. The main case rule-6-7-2 proves detection.
+codeql:
+  queries: [cpp/misra/global-variable-used]
+known_misses:
+  - query: cpp/misra/global-variable-used
+    kind: false-positive
+    why: >-
+      An inline constexpr variable template (kAlwaysFalse) is reported as a global variable once it is named
+      with a dependent argument inside a function template. A constexpr variable is const and constant
+      initialised, so it is not a global variable in the guideline's sense; the query does not see the
+      constexpr on the variable template.
+other_findings:
+  - query: cpp/misra/no-implicit-bool-conversion
+    why: >-
+      misfire: the Rule 7.0.2 query reports the static_assert condition kAlwaysFalse<Port>, which is a bool
+      constant; the dependent expression has an unknown type in the uninstantiated template.
+seeded:
+  - "a mutable namespace-scope variable"
+near_misses:
+  - "an inline constexpr variable template named in a static_assert of a function template (ok.hpp)"

@@ -1,0 +1,20 @@
+---
+guideline: Rule 8.7.1
+codeql:
+  queries:
+    - cpp/misra/pointer-arithmetic-forms-an-invalid-pointer
+    - cpp/misra/pointer-argument-to-cstring-function-is-invalid
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports `buffer.size() - 1U` and the counter increment `++n`, both with run-time operands, whose operands are not constant, whenever its range analysis cannot bound them
+seeded:
+  - "pointer arithmetic beyond one past the end"
+  - "memcpy writing past the end of the destination"
+  - "pointer arithmetic before the start of an array"
+  - "strncpy writing past the end of a destination that is too small"
+near_misses:
+  - "a pointer to one past the end (allowed)"
+  - "a pointer to the last element"
+  - "std::array indexing inside the bounds"

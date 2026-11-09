@@ -131,6 +131,9 @@ jobs:
       - name: Unit tests for the release asset script (source archive, SBOM, checksums, firmware zips)
         run: python tools/release_assets/test_release_assets.py
 
+      - name: Unit tests for ru-misra's scripts (licence gate, deviation records, markers, policy, extraction)
+        run: python tools/misra/test_misra.py
+
       # ru-build inlines the ensure-tools-directory action's script (see the
       # comment there); the two copies must not drift apart.
       - name: ru-build's inlined tools-directory step matches the action
@@ -313,6 +316,13 @@ jobs:
       contents: read
       pull-requests: read
 
+  # The MISRA toolchain's tool validation (docs/tool-validation/plan.md) and ru-misra's self-test.
+  selftest-misra:
+    name: MISRA toolchain validation
+    uses: ./.github/workflows/ci-misra.yml
+    permissions:
+      contents: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
@@ -332,6 +342,7 @@ jobs:
       - selftest-cross-build
       - selftest-handbook-check
       - selftest-repo-checks
+      - selftest-misra
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:

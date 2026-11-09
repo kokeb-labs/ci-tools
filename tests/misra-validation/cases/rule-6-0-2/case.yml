@@ -1,0 +1,18 @@
+---
+guideline: Rule 6.0.2
+codeql:
+  queries: [cpp/misra/external-linkage-array-without-explicit-size-misra]
+other_findings:
+  - {query: cpp/misra/variable-declared-array-type, why: "true positive of Rule 11.3.1: the guideline is about built-in arrays, so the compliant example still declares one"}
+  - query: cpp/misra/global-variable-used
+    why: >-
+      misfire: the extern declarations of const arrays (std::int32_t const and const char* const elements) are
+      reported as non-const globals. Rule 6.7.2 exempts const objects with static initialisation; these arrays are
+      const, and an array of constants defined elsewhere with constant initialisers is statically initialised, so
+      the guideline does not apply. The query takes the array type itself as non-const.
+seeded:
+  - "an extern array of integers declared without a size"
+  - "an extern array of pointers declared without a size"
+near_misses:
+  - "an extern array declared with its size"
+  - "extern arrays of pointers and integers with sizes"

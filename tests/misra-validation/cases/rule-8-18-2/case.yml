@@ -1,0 +1,18 @@
+---
+guideline: Rule 8.18.2
+codeql:
+  queries: [cpp/misra/result-of-an-assignment-operator-should-not-be-used]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the Rule 8.20.1 query reports the run-time loop step `i = i + 1U`; the guideline covers operations whose operands are constant expressions.
+seeded:
+  - "an assignment used in an if condition"
+  - "chained assignments (a = b = c)"
+  - "an assignment used as a function argument"
+  - "a compound assignment used as a return value"
+  - "an assignment used in a while condition"
+near_misses:
+  - "the assignment as its own statement"
+  - "an equality comparison in the condition"
+  - "an assignment in the third clause of a for loop"

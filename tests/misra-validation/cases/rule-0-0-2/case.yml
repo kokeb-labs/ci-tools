@@ -1,0 +1,14 @@
+---
+guideline: Rule 0.0.2
+codeql:
+  queries: [cpp/misra/invariant-condition]
+seeded:
+  - "an unsigned value compared >= 0 (always true)"
+  - "an unsigned value compared < 0 (always false)"
+  - "an 8-bit value compared <= 255 (always true)"
+  - "an invariant first operand of the conditional operator (bad_operands.cpp)"
+  - "an invariant left operand of && (bad_operands.cpp)"
+near_misses:
+  - "a bound inside the range of the input"
+  - "an 8-bit value compared with 127, which can go both ways"
+  - "a while (true) loop, permitted by the exception (ok_loop.hpp)"

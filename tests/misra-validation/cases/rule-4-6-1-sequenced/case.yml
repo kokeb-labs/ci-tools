@@ -1,0 +1,18 @@
+---
+guideline: Rule 4.6.1
+codeql:
+  queries: [cpp/misra/memory-usage-not-sequenced]
+known_misses:
+  - query: cpp/misra/memory-usage-not-sequenced
+    kind: false-positive
+    why: >-
+      Two shapes in templates are reported as unsequenced: c ? f(x) : g(x) where both operands write x through a
+      reference (only one operand is evaluated, after the condition), and f(x) && x == k (the left operand of &&
+      is sequenced before the right).
+other_findings:
+  - {query: cpp/misra/no-implicit-bool-conversion, why: "misfire: the ?: operands are bool; the dependent call type is unknown in the uninstantiated template (as AN-078)"}
+seeded:
+  - "f(i++, i++) (two indeterminately sequenced writes in arguments)"
+near_misses:
+  - "fast ? bus.Data8(m, reply) : bus.Write8(b, m, reply) in a class template member"
+  - "port.GetLastFailure(failure) && failure == kNack in a function template"

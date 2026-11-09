@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
-from unittest import mock
+import unittest.mock
 
 from mkdocs.commands.build import build
 from mkdocs.config import load_config
@@ -22,7 +22,7 @@ FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
 
 def built(name: str, env: dict | None = None) -> tuple[object, pathlib.Path, tempfile.TemporaryDirectory]:
     tmp = tempfile.TemporaryDirectory()
-    with mock.patch.dict(os.environ, env or {}, clear=False):
+    with unittest.mock.patch.dict(os.environ, env or {}, clear=False):
         cfg = load_config(str(FIXTURES / name / "mkdocs.yml"), site_dir=tmp.name, strict=True)
         cfg.plugins.on_startup(command="build", dirty=False)
         build(cfg)
@@ -31,14 +31,14 @@ def built(name: str, env: dict | None = None) -> tuple[object, pathlib.Path, tem
 
 class VersionedSettingTest(unittest.TestCase):
     def test_precedence(self):
-        with mock.patch.dict(os.environ, {"KOKEB_DOCS_VERSIONED": ""}):
+        with unittest.mock.patch.dict(os.environ, {"KOKEB_DOCS_VERSIONED": ""}):
             self.assertTrue(versioned_setting(None, org_site=False))
             self.assertFalse(versioned_setting(None, org_site=True))
             self.assertTrue(versioned_setting(True, org_site=True))
             self.assertFalse(versioned_setting(False, org_site=False))
-        with mock.patch.dict(os.environ, {"KOKEB_DOCS_VERSIONED": "false"}):
+        with unittest.mock.patch.dict(os.environ, {"KOKEB_DOCS_VERSIONED": "false"}):
             self.assertFalse(versioned_setting(True, org_site=False))
-        with mock.patch.dict(os.environ, {"KOKEB_DOCS_VERSIONED": "true"}):
+        with unittest.mock.patch.dict(os.environ, {"KOKEB_DOCS_VERSIONED": "true"}):
             self.assertTrue(versioned_setting(False, org_site=True))
 
 
@@ -107,7 +107,7 @@ class RepositoryLinkTest(unittest.TestCase):
         (root / "docs/api-reference.md").write_text("# API reference\n\n[Open it](api/index.html){ .md-button }\n")
         cfg = load_config(str(root / "mkdocs.yml"), site_dir=str(root / "site"), strict=True)
         cfg.plugins.on_startup(command="build", dirty=False)
-        with tmp, mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "kokeb-labs/driver-example"}):
+        with tmp, unittest.mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "kokeb-labs/driver-example"}):
             build(cfg)
             out = (root / "site/api-reference/index.html").read_text()
         self.assertIn('<a href="../api/index.html" class="md-button">Open it</a>', out)

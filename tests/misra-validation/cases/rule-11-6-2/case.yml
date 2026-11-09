@@ -1,0 +1,10 @@
+---
+guideline: Rule 11.6.2
+codeql:
+  queries: [cpp/misra/value-of-an-object-must-not-be-read-before-it-has-been-set]
+seeded:
+  - read on the path where the conditional write did not happen (bad.cpp)
+  - read after a loop whose write may never run (bad_loop.cpp)
+near_misses:
+  - initialised before the conditional write (ok.hpp)
+  - initialised from a parameter, then conditionally overwritten before the read (ok_near.hpp)

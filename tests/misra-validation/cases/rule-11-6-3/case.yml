@@ -1,0 +1,19 @@
+---
+guideline: Rule 11.6.3
+codeql:
+  queries: [cpp/misra/non-unique-enumeration-constant]
+known_misses:
+  - query: cpp/misra/non-unique-enumeration-constant
+    kind: false-positive
+    why: >-
+      An implicit enumerator equal to an explicit one written only as the name of another enumerator
+      (kLast = kC, ok_name.hpp) is reported; the guideline's exception permits it.
+seeded:
+  - an implicit enumerator equal to a later explicit one (bad.cpp)
+  - an implicit enumerator equal to an earlier explicit one (bad_later.cpp)
+  - an implicit enumerator equal to an explicit value computed from another enumerator (kD = kB + 1, bad_expr.cpp)
+near_misses:
+  - all values distinct (ok.hpp)
+  - all values implicit (ok_near.hpp)
+  - two explicit, deliberately equal values (an alias) (ok_near.hpp)
+  - an explicit value that is only the name of another enumerator (kLast = kC), the exception (ok_name.hpp)

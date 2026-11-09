@@ -1,0 +1,12 @@
+---
+guideline: Rule 21.2.1
+clang-tidy: {check: cert-err34-c}
+codeql:
+  queries: [cpp/misra/atof-atoi-atol-and-atoll-used]
+seeded:
+  - "std::atoi and std::atof through <cstdlib>"
+  - "atol (::-qualified) and atoll (unqualified) through <stdlib.h>"
+  - "atoi inside a function template and inside a lambda"
+near_misses:
+  - "std::from_chars, which reports where a conversion failed"
+  - "a member function of our own named atoi (not the C library function)"

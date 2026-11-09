@@ -16,6 +16,7 @@ nav:
       - ru-handbook-check: ru-handbook-check.md
       - ru-cpp-lint: ru-cpp-lint.md
       - ru-cpp-analysis: ru-cpp-analysis.md
+      - ru-misra (MISRA C++:2023): ru-misra.md
       - ru-mkdocs-publish: ru-mkdocs-publish.md
       - ru-docs-linkcheck: ru-docs-linkcheck.md
       - ru-markdown-lint: ru-markdown-lint.md
@@ -32,6 +33,10 @@ nav:
       - org-standard-check: org-standard-check.md
       - ru-template-drift: ru-template-drift.md
       - ru-repo-checks (all in one job): ru-repo-checks.md
+  - Tool validation:
+      - Plan: tool-validation/plan.md
+      - Traceability: tool-validation/traceability.md
+      - Review checklist: tool-validation/review-checklist.md
   - Docs platform:
       - Platform guide: docs-platform.md
       - Migrating to MkDocs: MIGRATING-TO-MKDOCS.md

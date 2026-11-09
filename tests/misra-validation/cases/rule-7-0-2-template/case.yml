@@ -1,0 +1,33 @@
+---
+guideline: Rule 7.0.2
+notes: Records a false positive of the pack in class templates. The main case rule-7-0-2 proves detection.
+codeql:
+  queries: [cpp/misra/no-implicit-bool-conversion]
+known_misses:
+  - query: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    why: >-
+      In a member of a class template whose port type is a template parameter, conditions that are already bool
+      (the bool result of a dependent port hook under !) or a class with an explicit operator bool (under ! and
+      as the ?: condition, which the guideline permits) are reported as implicit conversions to bool. The query
+      sees the dependent expressions of the uninstantiated template with an unknown type.
+other_findings:
+  - query: kokeb/cpp20/result-type-not-nodiscard
+    why: >-
+      true positive of KB-CPP-046 (own profile): the snippet's struct Result is a result type and is not declared
+      [[nodiscard]]; not this case's guideline.
+  - query: cpp/misra/function-pointer-conversion-context
+    why: >-
+      misfire: the Rule 7.11.3 query reports the calls step() in the uninstantiated class template as conversions of
+      a function to a pointer to function; the function is called, nothing is converted.
+  - query: cpp/misra/unreachable-statement
+    why: >-
+      misfire: the Rule 0.0.1 query reports return Result{1} under if (!port_.Ready()) as unreachable because the
+      test port's Ready() always returns true; the condition is a run-time call in the template, not a constant
+      expression, so the statement is reachable (the false positive recorded in rule-0-0-1-hook).
+seeded:
+  - "an integer used directly as an if condition"
+near_misses:
+  - "! on a class with an explicit operator bool in an if with an init-statement (ok.hpp)"
+  - "! on the bool result of a dependent port hook (ok.hpp)"
+  - "a class with an explicit operator bool as the ?: condition (ok.hpp)"

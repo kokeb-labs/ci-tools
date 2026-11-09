@@ -1,0 +1,15 @@
+---
+guideline: Rule 8.20.1
+codeql:
+  queries: [cpp/misra/unsigned-operation-with-constant-operands-wraps]
+known_misses:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    why: >-
+      Constant unsigned additions that stay in range are reported as possibly wrapping: a constexpr function
+      result plus 1U in a static_assert, and Shift + Width over template parameters in a requires-clause.
+seeded:
+  - "0xFFFFFFFFU + 2U"
+near_misses:
+  - "(at(Index::kLast) + 1U) == kCount in a static_assert"
+  - "(Shift + Width) <= 8U in a requires-clause, instantiated with 2U and 2U"

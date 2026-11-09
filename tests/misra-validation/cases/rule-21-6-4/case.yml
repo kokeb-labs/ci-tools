@@ -1,0 +1,40 @@
+---
+guideline: Rule 21.6.4
+notes: >-
+  The unsized global operator delete (and operator delete[]) replaced alone. The ok side replaces a corresponding
+  global pair (ok_pair.cpp) and declares a class-specific unsized operator delete, which the guideline does not
+  cover (ok_class_specific.hpp). The claimed query misses operator delete[] and reports the compliant pair (see
+  rule-21-6-4-sized-only), so the claim is recorded as a false-negative anomaly rather than as passing.
+codeql:
+  queries: [cpp/misra/global-sized-operator-delete-shall-be-defined]
+other_findings:
+  - query: cpp/misra/advanced-memory-management-used
+    why: "true positive of Rule 21.6.3: every user-declared operator new or operator delete, global or
+      class-specific, is advanced memory management; Rule 21.6.4 only arises for a project that replaces one."
+  - query: cpp/misra/global-namespace-declarations
+    why: "reported by the Rule 6.0.3 query: a replacement allocation function can only be declared in the
+      global namespace, so any compliant pair is reported; not decided here whether 6.0.3 exempts it."
+  - query: cpp/misra/dynamic-memory-managed-manually
+    why: "true positive of Rule 21.6.2: the replacement releases memory with std::free."
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1: a replacement operator delete releases heap memory by definition."
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    why: >-
+      misfire: both replacement operator delete functions are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees the deallocation functions as potentially throwing (the false positive of
+      rule-18-4-1-no-exceptions).
+known_misses:
+  - query: cpp/misra/global-sized-operator-delete-shall-be-defined
+    kind: false-negative
+    why: >-
+      operator delete[] replaced without its sized form (bad_array.cpp) is not reported: the pack's OperatorDelete
+      class matches only functions named operator delete, never operator delete[]. The single-object form (bad.cpp)
+      is reported. The query also reports both operators of the compliant pair in ok_pair.cpp, the false positive
+      recorded in rule-21-6-4-sized-only (isSizeDelete() never recognises the sized form).
+seeded:
+  - "the unsized global operator delete replaced without the sized one"
+  - "the unsized global operator delete[] replaced without the sized one"
+near_misses:
+  - "the unsized and sized global operator delete replaced together in one file"
+  - "a class-specific unsized operator delete (not a global one)"

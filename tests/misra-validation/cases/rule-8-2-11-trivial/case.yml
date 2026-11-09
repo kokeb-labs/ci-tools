@@ -1,0 +1,48 @@
+---
+guideline: Rule 8.2.11
+notes: >-
+  CodeQL only: the compliant ellipsis calls in the ok files must leave the query silent, and clang-tidy reports
+  every variadic call (a superset), so it is not claimed here. The guideline's test is not "trivially copyable":
+  only virtual member functions, a non-trivial copy or move constructor, or a non-trivial destructor make a class
+  inappropriate, so a class whose only user-provided member is a copy assignment is compliant (ok_near.hpp).
+codeql:
+  queries: [cpp/misra/inappropriate-argument-type-passed-via-ellipsis]
+known_misses:
+  - query: cpp/misra/inappropriate-argument-type-passed-via-ellipsis
+    kind: false-positive
+    why: >-
+      Handle, whose only user-provided member is a copy assignment, is reported when passed through the ellipsis
+      (ok_near.hpp). The guideline makes a class inappropriate only for virtual member functions, a non-trivial copy
+      or move constructor, or a non-trivial destructor; Handle's copy constructor and destructor are trivial. The
+      query also counts a non-trivial copy assignment. The seeded polymorphic and user-provided-move-constructor
+      forms are reported.
+other_findings:
+  - query: cpp/misra/no-c-style-or-functional-casts
+    why: >-
+      misfire: the Rule 8.2.2 query reports std::int32_t{1} and std::int32_t{2} as C-style casts; they are
+      functional notation with curly braces, which the guideline's amplification excludes.
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      misfire: the Rule 7.0.6 query reports Mode::kOn passed through the ellipsis as a transfer from 'Mode' to
+      'int'; Mode is a scoped enumeration, which is not a numeric type for Rule 7.0.6, and a scoped enumeration is
+      passed through an ellipsis without promotion.
+  - query: cpp/misra/implicit-declaration-of-copy-constructor
+    why: >-
+      misfire: the pack's Rule 4.1.2 query counts the explicitly defaulted copy constructor of Handle (= default) as
+      implicitly declared; an explicitly defaulted member is user-declared and not deprecated.
+  - query: cpp/misra/copy-and-move-assignments-shall-handle-self-assignment
+    why: >-
+      misfire: Handle's copy assignment copies one int member, which is correct for self-assignment (the value is
+      copied onto itself); the Dir 15.8.1 query recognises only a this != &other guard (as in dir-15-8-1-swap).
+  - query: cpp/misra/invalid-signature-for-special-member-function
+    why: >-
+      true positive of Rule 15.0.2 (advisory): Handle's user-provided copy assignment is not &-qualified; the
+      snippet keeps the near miss of Rule 8.2.11 short; not this case's guideline.
+seeded:
+  - "a polymorphic object passed through an ellipsis"
+  - "an object with a user-provided move constructor passed through an ellipsis"
+near_misses:
+  - "a trivially copyable integer through an ellipsis"
+  - "a pointer through an ellipsis"
+  - "an enumerator through an ellipsis"
+  - "a class whose only user-provided member is a copy assignment, through an ellipsis"

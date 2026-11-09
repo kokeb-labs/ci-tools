@@ -15,6 +15,43 @@ that heading.
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-11-09
+
+### Added
+
+- `ru-misra`: MISRA C++:2023 analysis with the CodeQL coding-standards pack (2.62.0, CLI 2.21.4) and the Kokeb C++20
+  profile pack on traced host and Cortex-M builds, the handbook's deviation records applied through the pack's
+  deviation mechanism (a marker must cite a record and deviate a finding of its guideline), clang-tidy's validated
+  checks and cppcheck on the same compile databases, and a per-guideline report (step summary, SARIF, JSON keyed by
+  guideline, CSV). Levels `high` and `safety`. Every scan analyses a canary and fails on incomplete extraction. The
+  first job refuses private repositories without an Advanced Security licence (CodeQL terms). Needs `contents: read`.
+- Tool validation of the MISRA toolchain (`docs/tool-validation/plan.md`): requirements derived from the compliance
+  matrix and the pack, a seeded-violation and compliant case per requirement (`tests/misra-validation/`), a
+  traceability page, an anomaly log, and a validation report attached to each release. The self-CI fails when a
+  tool-decided guideline has no passing test, or when the toolchain changes without re-validation.
+- `codeql/kokeb-cpp20`: the own C++20 profile query pack, with KB-CPP-046 (Result types are `[[nodiscard]]`).
+- `ru-misra`: `open_source_prerelease` lets a private repository whose code is under the OSI licence in its LICENSE
+  file, and is to be published, run the analysis; the job prints the declaration as a warning.
+- Code scanning of ci-tools moves to an advanced setup (`.github/workflows/codeql.yml`, `security-and-quality`) that
+  leaves out the test fixtures, which break rules on purpose and whose findings the self-CI asserts.
+- `ru-misra` passes `cmake_args` and `paths` to its scanner as `--option=value`, so a value that starts with `-D`
+  is not read as an option; the fixture self-test now passes one.
+- `ru-misra` gives CodeQL an explicit heap (the runner's memory less 2 GiB); the analysis ran out of memory on the
+  2-core runners of private repositories.
+- A tool suppression must cite a deviation record only when it can silence a finding the matrix relies on (a
+  cppcheck suppression, a bare `NOLINT`, or one naming a validated clang-tidy check); `NOLINTEND` never needs one.
+- A validated clang-tidy claim can carry `message:`, a regex the diagnostic must match to count: a check that
+  reports more than its guideline (cppcoreguidelines-macro-usage and object-like macros) decides only that part.
+- `ru-misra`'s extraction check skips a unit the build defines but never compiles (no object file: a target outside
+  `all`, such as a compile-fail test, or one the Cortex-M target does not build) and lists it as not analysed.
+- `ru-misra` reads the tool validation's anomaly log: at the high level, findings of a rule with a recorded false
+  positive are listed for review (with the anomaly ids) instead of failing the job; validated rules still fail.
+- Tool validation: every seeded violation is marked (`// seeded`) and every claimed tool must report on that line,
+  so a bad file that seeds several forms proves each detection; an independent review of all cases against the
+  guidelines corrected the cases that tested the wrong thing and added the missing forms. New cases record the
+  misreadings of class-template code found by the first driver scans. The CodeQL databases are traced with
+  `-fno-exceptions -fno-rtti`, as the scans build; clang-tidy claims accept `known_misses`.
+
 ## [1.12.1] - 2026-11-08
 
 ### Fixed

@@ -1,0 +1,13 @@
+---
+guideline: Rule 13.1.1
+clang-tidy: {check: fuchsia-virtual-inheritance}
+codeql:
+  queries: [cpp/misra/virtual-inheritance-not-allowed]
+seeded:
+  - a struct with a virtual base (bad.cpp)
+  - public virtual base of a class (bad_keyword.cpp)
+  - a class template with a virtual base (bad_template.cpp)
+near_misses:
+  - non-virtual inheritance (ok.hpp)
+  - virtual member functions without virtual inheritance (ok_near.hpp)
+  - non-virtual inheritance from two distinct bases (ok_near.hpp)

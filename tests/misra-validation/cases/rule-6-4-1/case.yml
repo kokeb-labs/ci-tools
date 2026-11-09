@@ -1,0 +1,28 @@
+---
+guideline: Rule 6.4.1
+gcc: {flag: shadow}
+codeql:
+  queries: [cpp/misra/variable-declared-in-inner-scope-hides-outer-scope]
+notes: >-
+  -Wshadow is stricter than the guideline in two places, so neither compliant form can be an ok file (the org flags
+  include -Wshadow -Werror): a captureless lambda's parameter named like an enclosing local (compliant: the local
+  cannot be found inside the lambda body) and a constructor parameter named like the member it initialises
+  (compliant by the exception). GCC warns on both.
+known_misses:
+  - query: cpp/misra/variable-declared-in-inner-scope-hides-outer-scope
+    kind: false-negative
+    why: >-
+      A local in a member function named like a data member of its class (level in Gauge::read, bad_edge.cpp) is not
+      reported: the query's scope model (hidesStrict) does not treat the class's data members as an enclosing scope
+      of a member function body. Locals hiding outer locals, a parameter, a namespace-scope variable and a lambda
+      capture are reported; GCC -Wshadow reports all five forms.
+seeded:
+  - "a loop-body local hiding an outer local"
+  - "a local hiding a data member"
+  - "a nested-block local hiding a parameter"
+  - "a local hiding a namespace-scope variable"
+  - "a lambda-body local hiding a captured variable"
+near_misses:
+  - "names that differ"
+  - "the same loop counter name in two sibling loops"
+  - "a constructor parameter named differently from the member"

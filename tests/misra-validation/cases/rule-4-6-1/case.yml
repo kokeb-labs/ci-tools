@@ -1,0 +1,23 @@
+---
+guideline: Rule 4.6.1
+notes: >-
+  C++17 sequencing applies: the right operand of an assignment is sequenced before the left, so i = i++ + 1U and
+  a[i] = i++ are compliant and are not seeded. They are not near misses here either: GCC's -Wsequence-point still
+  reports them (it does not model the C++17 order), so they cannot build cleanly with the org flags. Function
+  arguments are indeterminately sequenced, which the guideline still forbids for accesses to the same object.
+codeql:
+  queries: [cpp/misra/memory-usage-not-sequenced]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the Rule 8.20.1 query reports the run-time increment ++k, whose operand is not a constant expression;
+      the guideline covers operations whose operands are constant expressions.
+seeded:
+  - "i++ + i++ (two unsequenced writes)"
+  - "f(i++, i++) (two indeterminately sequenced writes in arguments)"
+  - "i + i++ (unsequenced read and write)"
+  - "a[i] + i++ (index read unsequenced with the increment)"
+  - "f(i, ++i) (read and write in arguments)"
+near_misses:
+  - "a read, an increment and a use of the same object in separate statements"
+  - "distinct objects combined in one call"

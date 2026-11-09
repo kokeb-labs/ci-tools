@@ -1,0 +1,9 @@
+---
+guideline: Rule 28.3.1
+notes: CodeQL only - the predicate is a mutable lambda (a closure with a non-const call operator).
+codeql:
+  queries: [cpp/misra/non-const-predicate-function-object]
+seeded:
+  - "a mutable lambda that changes its captured state as a count_if predicate"
+near_misses:
+  - "a non-mutable lambda capturing a limit by value"

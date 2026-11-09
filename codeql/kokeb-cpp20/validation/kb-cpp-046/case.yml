@@ -1,0 +1,22 @@
+---
+guideline: KB-CPP-046
+notes: >-
+  The example rule of the own profile. Bad: a Result template without [[nodiscard]] and a nodiscard-less struct
+  named Result. Ok: [[nodiscard]] on the template and on its explicit void specialisation; near miss: a type whose
+  name only contains Result (ResultCode) is not a Result type.
+codeql:
+  queries: [kokeb/cpp20/result-type-not-nodiscard]
+other_findings:
+  - query: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    why: >-
+      misfire: the pack's Rule 5.13.4 query reports an octal literal at Result{} (value-initialisation of a
+      member whose initializer is 0U); the source has no unsuffixed literal there.
+seeded:
+  - class template named Result without [[nodiscard]]
+  - plain struct named Result without [[nodiscard]]
+  - class named Result nested in a driver class, without [[nodiscard]]
+  - explicit specialisation Result<void> without [[nodiscard]] while the template has it
+near_misses:
+  - Result template and its void specialisation, both [[nodiscard]]
+  - nested Result class declared [[nodiscard]]
+  - types whose names only contain Result (ResultCode, SensorResult, ResultSink)

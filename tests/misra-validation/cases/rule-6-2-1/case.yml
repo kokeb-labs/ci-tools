@@ -1,0 +1,13 @@
+---
+guideline: Rule 6.2.1
+codeql:
+  queries: [cpp/misra/one-definition-rule-violated]
+notes: >-
+  Two translation units. bad_a.cpp defines limit_a and, through zz_dup_b.inc, a second limit_b; bad_b.cpp the
+  reverse. The query reports a pair at the path that sorts first, so each bad file carries one result.
+seeded:
+  - "two translation units with different definitions of limit_a"
+  - "two with different definitions of limit_b"
+near_misses:
+  - "one inline definition in a header"
+  - "an inline function and a function template from one header used by two translation units"

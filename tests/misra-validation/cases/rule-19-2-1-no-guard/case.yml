@@ -1,0 +1,13 @@
+---
+guideline: Rule 19.2.1
+codeql:
+  queries: [cpp/misra/no-valid-ifdef-guard-in-header]
+notes: >-
+  The query reports the header file itself (a result with no line), so the marker is on line 1 of each bad
+  header.
+seeded:
+  - header without any include guard
+  - header whose guard closes before the end of the file, leaving code outside it
+near_misses:
+  - 'the whole header inside #ifndef / #define / #endif'
+  - 'the guard written as #if !defined(X)'

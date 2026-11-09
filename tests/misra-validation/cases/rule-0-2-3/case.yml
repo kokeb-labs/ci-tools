@@ -1,0 +1,20 @@
+---
+guideline: Rule 0.2.3
+codeql:
+  queries: [cpp/misra/unused-type-with-limited-visibility]
+known_misses:
+  - query: cpp/misra/unused-type-with-limited-visibility
+    kind: false-negative
+    why: >-
+      An unused private nested struct (bad_private.cpp) is not reported; the guideline counts private member types
+      as having limited visibility. The unnamed-namespace and block-scope forms are reported.
+seeded:
+  - "an unused private nested struct (bad_private.cpp)"
+  - "an unused struct in an unnamed namespace"
+  - "an unused block-scope struct"
+  - "an unused block-scope type alias"
+  - "an unused enumeration in an unnamed namespace"
+near_misses:
+  - "a private type used by a data member"
+  - "a private type used only as the return type of a called private function"
+  - "a block-scope struct that is instantiated and read"

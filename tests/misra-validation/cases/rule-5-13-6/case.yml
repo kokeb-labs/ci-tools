@@ -1,0 +1,18 @@
+---
+guideline: Rule 5.13.6
+notes: >-
+  On an LP64 host a literal with one L is long, never long long, so the query cannot fire on a host build;
+  on ILP32 targets (the MCUs) a large single-L literal is long long, which the Cortex-M database proves.
+codeql:
+  queries: [cpp/misra/long-long-literal-with-single-l-suffix]
+known_misses:
+  - query: cpp/misra/long-long-literal-with-single-l-suffix
+    targets: [host]
+    why: >-
+      not exercisable on the LP64 host build: a single-L literal is never long long there. The violation exists
+      only on ILP32 targets; the Cortex-M (ILP32) database proves the query.
+seeded:
+  - "3000000000L, which is long long on ILP32 targets"
+near_misses:
+  - "the LL suffix for a value beyond 32 bits"
+  - "a small single-L literal, long on every target"

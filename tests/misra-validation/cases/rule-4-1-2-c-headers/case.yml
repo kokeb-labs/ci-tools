@@ -1,0 +1,15 @@
+---
+guideline: Rule 4.1.2
+notes: >-
+  The deprecated headers are those of C++17 [depr.cpp.headers]: <ccomplex>, <cstdalign>, <cstdbool> and
+  <ctgmath>. <ciso646> is not one of them (C++20 removed it without deprecating it), and the .h headers of
+  [depr.c.headers] are excluded by the guideline.
+codeql:
+  queries: [cpp/misra/use-of-deprecated-c-headers]
+seeded:
+  - "#include <cstdbool>"
+  - "#include <ccomplex>"
+  - "#include <cstdalign>"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "#include <climits>, <cstddef> and <cstdint>, which are not deprecated"

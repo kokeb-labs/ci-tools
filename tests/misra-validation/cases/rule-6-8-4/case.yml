@@ -1,0 +1,20 @@
+---
+guideline: Rule 6.8.4
+codeql:
+  queries: [cpp/misra/member-functions-refqualified]
+known_misses:
+  - query: cpp/misra/member-functions-refqualified
+    kind: false-negative
+    why: >-
+      Buffer& self() { return *this; } (bad.cpp) is not reported: the query recognises a member returning its object
+      only when the returned expression is this itself, so return *this (a dereference of this) is not matched.
+      Members returning a reference or a pointer to a data member are reported.
+seeded:
+  - "a const reference to a member returned without ref-qualifier"
+  - "a reference to *this returned without ref-qualifier"
+  - "a pointer to a member returned without ref-qualifier"
+  - "a non-const reference to a member returned without ref-qualifier"
+near_misses:
+  - "const& and deleted const&& overloads"
+  - "an & ref-qualified member returning *this"
+  - "a member returning by value"

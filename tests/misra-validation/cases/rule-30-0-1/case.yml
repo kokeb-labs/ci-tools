@@ -1,0 +1,19 @@
+---
+guideline: Rule 30.0.1
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    # Every <cstdio> function.
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(remove|rename|tmpfile|tmpnam|fclose|fflush|fopen|freopen|setbuf|setvbuf)$,,banned by the MISRA C++ profile;^::(std::)?v?(f|s|sn)?printf$,,banned by the MISRA C++ profile;^::(std::)?v?(f|s)?scanf$,,banned by the MISRA C++ profile;^::(std::)?(fgetc|fgets|fputc|fputs|getc|getchar|gets|putc|putchar|puts|ungetc)$,,banned by the MISRA C++ profile;^::(std::)?(fread|fwrite|fgetpos|fseek|fsetpos|ftell|rewind|clearerr|feof|ferror|perror)$,,banned by the MISRA C++ profile"
+codeql:
+  queries:
+    - cpp/misra/cstdio-functions-shall-not-be-used
+    - cpp/misra/cstdio-macros-shall-not-be-used
+    - cpp/misra/cstdio-types-shall-not-be-used
+seeded:
+  - "std::printf, std::fopen, std::fclose, std::FILE and EOF"
+  - "fputs, ::puts, FILE and EOF through <stdio.h>"
+  - "std::snprintf, BUFSIZ and a std::FILE parameter"
+near_misses:
+  - "std::to_chars into a caller-owned buffer"
+  - "a class of our own with members named puts and print"

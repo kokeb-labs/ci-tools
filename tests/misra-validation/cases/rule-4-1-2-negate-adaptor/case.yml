@@ -1,0 +1,11 @@
+---
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/use-of-deprecated-unary-or-binary-negate]
+notes: >-
+  False negative found: only a non-const variable of type std::unary_negate or std::binary_negate is reported; a const one, a temporary or a call to std::not1/not2 is not.
+seeded:
+  - "a non-const variable of type std::unary_negate built with std::not1"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "std::not_fn applied to a function object"

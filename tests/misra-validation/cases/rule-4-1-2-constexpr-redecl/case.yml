@@ -1,0 +1,11 @@
+---
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/redeclaration-of-static-constexpr-data-member]
+seeded:
+  - "an out-of-class redeclaration of a static constexpr data member"
+  - "two such redeclarations of one class's members"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "a static constexpr member used without redeclaration"
+  - "an out-of-class definition of a static const (not constexpr) member"

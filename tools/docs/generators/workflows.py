@@ -14,7 +14,6 @@ region differs from what the workflows give.
 from __future__ import annotations
 
 import pathlib
-import re
 
 import yaml
 

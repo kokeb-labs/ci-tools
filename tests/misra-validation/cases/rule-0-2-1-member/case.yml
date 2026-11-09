@@ -1,0 +1,16 @@
+---
+guideline: Rule 0.2.1
+notes: >-
+  Near miss on data members: the private non-static data members of a class template must not be reported (an
+  earlier run reported them; the 2026-11-09 host run does not). The main case rule-0-2-1 proves detection.
+codeql:
+  queries: [cpp/misra/unused-limited-visibility-variable]
+other_findings:
+  - query: cpp/misra/no-c-style-or-functional-casts
+    why: >-
+      misfire: the Rule 8.2.2 query reports std::uint8_t{0U} as a C-style cast; it is functional notation with curly
+      braces, which the guideline's amplification excludes.
+seeded:
+  - "a block-scope local never referenced"
+near_misses:
+  - "private non-static data members of a class template, written and read by public members (ok.hpp)"

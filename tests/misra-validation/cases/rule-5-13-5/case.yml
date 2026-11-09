@@ -1,0 +1,29 @@
+---
+guideline: Rule 5.13.5
+notes: >-
+  Only a lower-case l as the FIRST character of the suffix is forbidden: ul and Ull are compliant. The clang-tidy
+  NewSuffixes list therefore names only the suffixes that start with L (L, LL, LU, LLU); with UL and ULL in the
+  list the check also reports the compliant ul and Ull, and without LU it misses lu and lU.
+clang-tidy:
+  check: readability-uppercase-literal-suffix
+  options: {readability-uppercase-literal-suffix.NewSuffixes: "L;LL;LU;LLU"}
+codeql:
+  queries: [cpp/misra/lowercase-l-starts-in-literal-suffix]
+known_misses:
+  - query: cpp/misra/lowercase-l-starts-in-literal-suffix
+    kind: false-negative
+    why: >-
+      The floating literal 3.4l (bad_float.cpp) is not reported: the query checks integer literals only. It also
+      reports the compliant 5ul and 2Ull (ok_unsigned_first.hpp), where the lower-case l is not the first character
+      of the suffix, so it misreads the guideline in both directions; l, lu, lU and ll on integer literals are
+      reported.
+seeded:
+  - "a lower-case l suffix"
+  - "a lower-case lu suffix"
+  - "lU (lower-case l first, then upper-case U)"
+  - "a lower-case ll suffix"
+  - "a floating literal with a lower-case l suffix"
+near_misses:
+  - "the upper-case L, UL and LL suffixes"
+  - "a U suffix alone"
+  - "ul and Ull, where the lower-case l is not the first character"

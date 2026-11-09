@@ -1,0 +1,14 @@
+---
+guideline: Rule 6.5.2
+codeql:
+  queries: [cpp/misra/internal-linkage-specified-appropriately]
+seeded:
+  - "a static function at namespace scope"
+  - "a static function inside an unnamed namespace"
+  - "a static variable at namespace scope"
+  - "a static variable inside an unnamed namespace"
+  - "extern on a declaration inside an unnamed namespace"
+near_misses:
+  - "a function in an unnamed namespace"
+  - "a namespace-scope constexpr object, internal without static"
+  - "a static const object inside an unnamed namespace (const variables are outside the guideline)"

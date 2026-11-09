@@ -1,0 +1,229 @@
+---
+# The tool validation of the MISRA toolchain (docs/tool-validation/plan.md) and the self-test of ru-misra. Called by
+# ci-self.yml, so the CI gate covers it on every pull request and on main, and release.yml (which waits for the
+# self-CI) attaches the validation report to the release.
+#
+#   validate-compilers   compiler-warning claims (g++-14, clang++-18, arm-none-eabi-g++) and clang-tidy claims
+#   validate-codeql      the MISRA pack and the own profile pack on the suite, host and Cortex-M databases
+#   record               requirements, traceability, anomaly log and report; fails unless every matrix claim holds
+#                        and the committed record matches this run (re-validation, docs/tool-validation/plan.md)
+#   ru-misra fixture     ru-misra on a fixture with known findings, deviations and bad suppressions; counts checked
+name: 🛡️ MISRA toolchain validation
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  HANDBOOK_REF: db2cdd0f75cdf998797d535565966b60e97f8c8d
+
+jobs:
+  validate-compilers:
+    name: Validate compiler and clang-tidy claims
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/ru-misra
+          key: tool-validation-compilers-${{ hashFiles('tools/misra/toolchain.json') }}
+      - name: Install the validated toolchain (toolchain.json, hash-checked)
+        run: |
+          set -euo pipefail
+          python3 tools/misra/install.py apt
+          python3 tools/misra/install.py python --venv "$RUNNER_TEMP/venv" --with-clang-tidy
+          python3 tools/misra/install.py arm --cache ~/.cache/ru-misra --dest "$RUNNER_TEMP/tools"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/handbook
+          ref: ${{ env.HANDBOOK_REF }}
+          path: .handbook
+          persist-credentials: false
+      - name: Compiler-warning claims (GCC, Clang, cross GCC) and clean builds of every compliant file
+        run: |
+          mkdir -p "$RUNNER_TEMP/results"
+          "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py compilers --gcc g++-14 \
+            --clang clang++-18 --arm "$ARM_BIN/arm-none-eabi-g++" --results "$RUNNER_TEMP/results/results-compilers.json"
+      - name: clang-tidy claims
+        if: ${{ always() }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py tidy \
+            --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" --results "$RUNNER_TEMP/results/results-tidy.json"
+      - name: Handbook-check claims (the checkers' own seeded tests)
+        if: ${{ always() }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py handbook \
+            --matrix .handbook/compliance/misra-cpp-2023.yml --handbook .handbook \
+            --results "$RUNNER_TEMP/results/results-handbook.json"
+      - name: Tool versions
+        if: ${{ always() }}
+        run: |
+          python3 tools/misra/install.py versions --out "$RUNNER_TEMP/results/versions-compilers.json" \
+            --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" --arm-bin "$ARM_BIN"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: tool-validation-compilers
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+
+  validate-codeql:
+    name: Validate CodeQL claims (${{ matrix.target }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [host, cortex-m]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/ru-misra
+          key: tool-validation-codeql-${{ matrix.target }}-${{ hashFiles('tools/misra/toolchain.json') }}
+      - name: Install the validated toolchain (toolchain.json, hash-checked)
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          python3 tools/misra/install.py apt
+          python3 tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+          python3 tools/misra/install.py codeql --cache ~/.cache/ru-misra --dest "$RUNNER_TEMP/tools"
+          if [ "$TARGET" = "cortex-m" ]; then
+            python3 tools/misra/install.py arm --cache ~/.cache/ru-misra --dest "$RUNNER_TEMP/tools"
+          fi
+      # One database of every seeded violation and one of every compliant file, each built by a traced compile of
+      # each file with the target's compiler; both analysed with the full default suites, so results of other
+      # queries on compliant code are seen (and must be reviewed in the case's other_findings).
+      - name: Build, extract and analyse
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          py="$RUNNER_TEMP/venv/bin/python"
+          if [ "$TARGET" = "cortex-m" ]; then cxx="$ARM_BIN/arm-none-eabi-g++"; else cxx=g++; fi
+          mkdir -p "$RUNNER_TEMP/results"
+          for side in bad ok; do
+            script="$RUNNER_TEMP/build-$side.sh"
+            printf '#!/bin/sh\nexec %s tests/misra-validation/validate.py build --side %s --target %s --cxx %s --out %s\n' \
+              "$py" "$side" "$TARGET" "$cxx" "$RUNNER_TEMP/obj" > "$script"
+            chmod +x "$script"
+            "$CODEQL" database create "$RUNNER_TEMP/db-$side" --language=cpp --source-root=. --command="$script"
+            "$CODEQL" database analyze "$RUNNER_TEMP/db-$side" \
+              "$MISRA_PACK/codeql-suites/misra-cpp-default.qls" codeql/kokeb-cpp20/codeql-suites/kokeb-cpp20-default.qls \
+              --format=sarifv2.1.0 --output="$RUNNER_TEMP/results/$TARGET-$side.sarif" --threads=0 \
+              --additional-packs="$MISRA_PACK:$MISRA_PACK/.codeql/libraries:codeql"
+          done
+      - name: CodeQL claims
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py codeql --target "$TARGET" \
+            --bad "$RUNNER_TEMP/results/$TARGET-bad.sarif" --ok "$RUNNER_TEMP/results/$TARGET-ok.sarif" \
+            --results "$RUNNER_TEMP/results/results-codeql-$TARGET.json"
+      - name: Tool versions
+        if: ${{ always() }}
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          python3 tools/misra/install.py versions --out "$RUNNER_TEMP/results/versions-codeql-$TARGET.json" \
+            --codeql "$CODEQL" ${ARM_BIN:+--arm-bin "$ARM_BIN"}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: tool-validation-codeql-${{ matrix.target }}
+          path: ${{ runner.temp }}/results
+          retention-days: 30
+
+  record:
+    name: Validation record, traceability and report
+    needs: [validate-compilers, validate-codeql]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/handbook
+          ref: ${{ env.HANDBOOK_REF }}
+          path: .handbook
+          sparse-checkout: compliance
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: tool-validation-*
+          path: ${{ runner.temp }}/results
+      - name: Install PyYAML (pinned, hash-checked)
+        run: python3 tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+      # Fails when a guideline the matrix says a tool decides has no passing test, when a pack query has no case,
+      # when the anomaly log and the cases disagree, or when the committed record differs from this run.
+      - name: Record and check
+        run: |
+          set -uo pipefail
+          "$RUNNER_TEMP/venv/bin/python" tests/misra-validation/validate.py record \
+            --results-dir "$RUNNER_TEMP/results" --matrix .handbook/compliance/misra-cpp-2023.yml \
+            --out "$RUNNER_TEMP/tool-validation" --check
+          status=$?
+          cat "$RUNNER_TEMP/tool-validation/validation-report.md" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: tool-validation
+          path: ${{ runner.temp }}/tool-validation
+          retention-days: 90
+
+  ru-misra-fixture:
+    name: ru-misra on the fixture
+    uses: ./.github/workflows/ru-misra.yml
+    permissions:
+      contents: read
+    with:
+      paths: "tests/fixtures/misra-driver/inc tests/fixtures/misra-driver/src"
+      cmake_source_dir: tests/fixtures/misra-driver
+      # A value that starts with -D, as every driver passes: it must reach CMake as the value of --cmake-args.
+      cmake_args: "-DMISRA_FIXTURE_TESTS=ON"
+      level: high
+      enforce: false
+      artifact_name: misra-fixture
+
+  ru-misra-fixture-check:
+    name: ru-misra found what the fixture seeds
+    needs: ru-misra-fixture
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      # Seeded: Rule 9.3.1 twice (CodeQL and clang-tidy) and Rule 6.5.1 (advisory), Rules 8.2.5 and 8.2.6 deviated
+      # by MD-CPP-003 and MD-CPP-004, and three bad suppressions (an unknown record, a marker that deviates nothing,
+      # a bare NOLINT without a record). The canary and the extraction checks must pass on both configurations.
+      - name: Expect the seeded counts
+        env:
+          VIOLATIONS: ${{ needs.ru-misra-fixture.outputs.violations }}
+          DEVIATED: ${{ needs.ru-misra-fixture.outputs.deviated }}
+          SUPPRESSION_ERRORS: ${{ needs.ru-misra-fixture.outputs.suppression_errors }}
+          PROBLEMS: ${{ needs.ru-misra-fixture.outputs.problems }}
+          PASSED: ${{ needs.ru-misra-fixture.outputs.passed }}
+        run: |
+          echo "violations=$VIOLATIONS deviated=$DEVIATED suppression_errors=$SUPPRESSION_ERRORS problems=$PROBLEMS passed=$PASSED"
+          test "$VIOLATIONS" = 3
+          test "$DEVIATED" = 2
+          test "$SUPPRESSION_ERRORS" = 3
+          test "$PROBLEMS" = 0
+          test "$PASSED" = false

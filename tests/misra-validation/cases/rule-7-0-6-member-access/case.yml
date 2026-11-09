@@ -1,0 +1,15 @@
+---
+guideline: Rule 7.0.6
+codeql:
+  queries: [cpp/misra/numeric-assignment-type-mismatch]
+known_misses:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    why: >-
+      Widening a class member access (g.output_mask, std::uint8_t to std::uint32_t) is reported; the guideline
+      allows a same-signedness widening of an id-expression or a class member access, the query only of an
+      unqualified id-expression.
+seeded:
+  - "a std::uint32_t initialised from a call returning std::uint8_t (not an id-expression)"
+near_misses:
+  - "a std::uint32_t initialised from a std::uint8_t class member access"

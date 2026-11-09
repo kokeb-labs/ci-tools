@@ -1,0 +1,23 @@
+---
+guideline: Rule 7.11.3
+notes: Records a false positive of the pack in class templates. The main case rule-7-11-3 proves detection.
+codeql:
+  queries: [cpp/misra/function-pointer-conversion-context]
+known_misses:
+  - query: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    why: >-
+      A member function called by name inside a class template (value() in Box<T>::get) is reported as a
+      conversion of a function to a pointer to function. A call converts nothing: the function is named only to
+      be called. The same call in a non-template class (Plain::get) is not reported, so the query misreads the
+      unresolved call in the uninstantiated template.
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the Rule 8.20.1 query reports the sum of two get() results in use(), whose operands are run-time call
+      results, not constant expressions; the guideline covers operations whose operands are constant expressions.
+seeded:
+  - "a function name compared with nullptr"
+near_misses:
+  - "a private member function called by name in a member of a class template (ok.hpp)"
+  - "the same call in a non-template class, the control (ok.hpp)"

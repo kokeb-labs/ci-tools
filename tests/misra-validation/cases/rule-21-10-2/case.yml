@@ -1,0 +1,19 @@
+---
+guideline: Rule 21.10.2
+clang-tidy: {check: cert-err52-cpp}
+codeql:
+  queries: [cpp/misra/no-csetjmp-header]
+seeded:
+  - "setjmp and std::longjmp through <csetjmp>"
+  - "setjmp and longjmp through <setjmp.h> with a static jmp_buf"
+near_misses:
+  - "a status returned to the caller"
+  - "a dispatch table of our own named jump_table"
+known_misses:
+  - query: cpp/misra/no-csetjmp-header
+    kind: false-negative
+    targets: [cortex-m]
+    why: >-
+      with the Cortex-M C library (newlib), a setjmp call through <setjmp.h> (bad_c_header.cpp) is not reported:
+      newlib declares setjmp as a function, not the macro the query looks for; longjmp is reported. On the host
+      both are.

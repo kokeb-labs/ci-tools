@@ -1,0 +1,12 @@
+---
+guideline: Rule 13.1.2
+notes: The matrix bans virtual bases outright (Rule 13.1.1), so fuchsia-virtual-inheritance reports the virtual edge.
+clang-tidy: {check: fuchsia-virtual-inheritance}
+codeql:
+  queries: [cpp/misra/virtual-and-non-virtual-class-in-the-hierarchy]
+seeded:
+  - virtual and non-virtual paths to one base in a diamond (bad.cpp)
+  - virtual and non-virtual paths of different lengths (bad_deep.cpp)
+near_misses:
+  - composition instead of inheritance (ok.hpp)
+  - a base inherited twice, non-virtually on both paths (ok_near.hpp)

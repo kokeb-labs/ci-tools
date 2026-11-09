@@ -1,0 +1,27 @@
+---
+guideline: Rule 25.5.2
+notes: >-
+  The clang-tidy claim bans every call of these functions, so it is held to the call lines and the ok files call
+  none of them; CodeQL is held to the line that writes through the returned pointer.
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(localeconv|getenv|setlocale|strerror)$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const]
+known_misses:
+  - query: cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const
+    kind: false-negative
+    why: >-
+      The write conventions->grouping[0] = 'x' through a char* member of the localeconv result
+      (bad_lconv_member.cpp) is not reported: the query's writes are *p = ..., ++*p and p->m = ... on a pointer that
+      flows from the call, and a subscripted write through a member pointer of the returned object matches none of
+      them (the subscript form of rule-25-5-2-subscript-write). Writes through *p after getenv, strerror and
+      setlocale are reported.
+seeded:
+  - "the result of getenv and of strerror written through *p"
+  - "the result of setlocale written through *p"
+  - "a write through a char* member of localeconv's result held through a pointer to const"
+near_misses:
+  - "configuration passed as a parameter"
+  - "a function of our own named getenv whose buffer we own"

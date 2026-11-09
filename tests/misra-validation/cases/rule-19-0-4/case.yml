@@ -1,0 +1,10 @@
+---
+guideline: Rule 19.0.4
+codeql:
+  queries: [cpp/misra/undef-of-macro-not-defined-in-file]
+seeded:
+  - '#undef of a macro this file never defined'
+  - '#undef of a macro defined by an included header'
+near_misses:
+  - '#undef of the macro the file defined itself'
+  - '#undef of a macro the file defined under #if'

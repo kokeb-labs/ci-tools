@@ -1,0 +1,29 @@
+---
+guideline: Dir 15.8.1
+notes: >-
+  The copy-and-swap form handles self-assignment (a self-copy swaps a copy of the same value back), but the pack's
+  query accepts only an explicit this != &other test. The main case dir-15-8-1 proves detection.
+codeql:
+  queries: [cpp/misra/copy-and-move-assignments-shall-handle-self-assignment]
+known_misses:
+  - query: cpp/misra/copy-and-move-assignments-shall-handle-self-assignment
+    kind: false-positive
+    why: >-
+      Copy assignment through a local copy and std::swap, and move assignment by std::swap, are reported as not
+      handling self-assignment; both are self-assignment safe. The query recognises only a this != &other guard.
+other_findings:
+  - query: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    why: >-
+      misfire: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+  - query: cpp/misra/invalid-signature-for-special-member-function
+    why: >-
+      misfire: the Rule 15.0.2 query asks for noexcept on the user-provided move constructor and move assignment,
+      which are declared noexcept; under -fno-exceptions (the org flags) the extractor does not record the exception
+      specification.
+seeded:
+  - copy assignment that overwrites state before copying, with no self-assignment test
+near_misses:
+  - copy assignment through a local copy and std::swap (copy-and-swap inside the function)
+  - move assignment by std::swap of the members

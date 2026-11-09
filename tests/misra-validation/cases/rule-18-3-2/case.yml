@@ -1,0 +1,13 @@
+---
+guideline: Rule 18.3.2
+notes: >-
+  Not applicable (no exceptions); -fno-exceptions makes the construct a hard error. Seeded with a class-type exception caught by value. With -fno-exceptions each compiler rejects the first exception construct of a function, not the seeded construct itself (Clang at try or throw, GCC at the first handler or the throw), so the markers name the compiler that reports each line.
+gcc: {error: "exception handling disabled"}
+clang: {error: "cannot use '(throw|try)' with exceptions disabled"}
+compiles: false
+seeded:
+  - a class-type exception caught by value
+  - a class-type exception caught by value in the second of two handlers
+near_misses:
+  - errors returned as values (an enum status)
+  - identifiers and strings that only contain the words throw, try and catch (throttle, retry, catch_up)

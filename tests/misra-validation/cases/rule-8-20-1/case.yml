@@ -1,0 +1,12 @@
+---
+guideline: Rule 8.20.1
+codeql:
+  queries: [cpp/misra/unsigned-operation-with-constant-operands-wraps]
+seeded:
+  - "a constant addition that wraps"
+  - "a constant subtraction below zero (0U - 1U)"
+  - "a constant multiplication that wraps"
+  - "wrapping constexpr operands"
+near_misses:
+  - "a constant expression that stays in range"
+  - "a std::uint64_t sum of std::uint32_t maxima"

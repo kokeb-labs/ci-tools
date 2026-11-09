@@ -1,0 +1,16 @@
+---
+guideline: Rule 6.8.2
+notes: Indirect forms of returning a local's address; kept apart because the query does not report them.
+codeql:
+  queries: [cpp/misra/return-reference-or-pointer-to-automatic-local-variable]
+known_misses:
+  - query: cpp/misra/return-reference-or-pointer-to-automatic-local-variable
+    kind: false-negative
+    why: >-
+      Only a return of the local itself (return local; return &local;) is reported. A reference to a local returned
+      through a conditional (c ? a : b) and a pointer to an element of a local array (&buf[0]) are not.
+seeded:
+  - "a reference to a local returned through ?:"
+  - "a pointer into a local array returned"
+near_misses:
+  - "a reference to a parameter passed by reference returned through ?:"

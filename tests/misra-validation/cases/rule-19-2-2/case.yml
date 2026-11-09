@@ -1,0 +1,12 @@
+---
+guideline: Rule 19.2.2
+notes: An #include not followed by a quoted or bracketed name is a compile error.
+gcc: {error: "#include'? expects"}
+clang: {error: "expected \"FILENAME\" or <FILENAME>"}
+compiles: false
+seeded:
+  - '#include followed by a bare identifier'
+  - '#include of a macro that expands to a bare identifier'
+near_misses:
+  - bracketed and quoted header names
+  - '#include of a macro that expands to a quoted header name, which the guideline allows'

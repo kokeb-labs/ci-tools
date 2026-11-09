@@ -1,0 +1,14 @@
+---
+guideline: Rule 21.10.3
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(signal|raise)$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/csignal-facilities-used, cpp/misra/csignal-types-shall-not-be-used]
+seeded:
+  - "std::signal, std::raise and std::sig_atomic_t through <csignal>"
+  - "::signal, raise and a volatile sig_atomic_t through <signal.h>"
+near_misses:
+  - "an explicit status instead of a signal"
+  - "an enum of our own named Signal and a function named raise_alarm"

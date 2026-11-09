@@ -1,0 +1,17 @@
+---
+guideline: Rule 30.0.1
+notes: >-
+  CodeQL only - the near miss is std::remove from <algorithm>, which shares its name with the <cstdio> remove.
+  The clang-tidy CustomFunctions pattern of rule-30-0-1 matches it too, so this case claims CodeQL only.
+codeql:
+  queries: [cpp/misra/cstdio-functions-shall-not-be-used]
+known_misses:
+  - query: cpp/misra/cstdio-functions-shall-not-be-used
+    kind: false-positive
+    why: "The query matches functions by name in the global or std namespace, so the <algorithm> template
+      std::remove(first, last, value) is reported as the <cstdio> remove(const char*); the seeded <cstdio>
+      remove is reported."
+seeded:
+  - "std::remove from <cstdio> on a file name"
+near_misses:
+  - "std::remove from <algorithm> on a range of integers"

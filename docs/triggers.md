@@ -44,3 +44,13 @@ A manual trigger bought nothing a re-run does not give: every check already runs
 Repositories made from driver-template follow the same rule: their workflow files have no `workflow_dispatch`
 either. An ESP-IDF clean build needs no manual input: the caches are keyed by IDF commit and source, and
 `gh cache delete --all` empties them when a clean build is wanted.
+
+## Code scanning: untrusted checkout
+
+Code scanning runs `security-and-quality`, which includes `actions/untrusted-checkout/medium`. That query reports
+every `actions/checkout` whose `ref:` names a ref, SHA or head in a workflow a pull request can start; it cannot
+tell a pinned ci-tools or handbook commit from a pull request's branch. Every reusable workflow here checks out that
+way by design, and what the query warns about (a self-hosted runner, a cache or artifact that a privileged workflow
+later trusts) is ruled out by this trigger policy, GitHub-hosted runners, read-only tokens and
+`persist-credentials: false`. `.github/codeql/codeql-config.yml` therefore excludes the medium variant, with this
+reasoning, and keeps `actions/untrusted-checkout/high` (privileged triggers), which reports any regression.

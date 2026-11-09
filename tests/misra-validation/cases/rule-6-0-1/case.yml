@@ -1,0 +1,13 @@
+---
+guideline: Rule 6.0.1
+codeql:
+  queries: [cpp/misra/block-scope-function-ambiguous]
+seeded:
+  - "an empty-parentheses object declaration that declares a function"
+  - "a block-scope function declaration"
+  - "Counter c(Counter()), the vexing parse with a function parameter"
+  - "a block-scope declaration of a void function"
+near_misses:
+  - "brace initialisation"
+  - "copy initialisation from a value-initialised temporary"
+  - "a function call inside an expression, not a declaration"

@@ -1,0 +1,15 @@
+---
+guideline: Rule 16.6.1
+codeql:
+  queries: [cpp/misra/invalid-operator-overloaded-as-member-function]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the pack's Rule 8.20.1 query reports unsigned arithmetic on run-time operands; the guideline covers
+      operations whose operands are constant expressions.
+seeded:
+  - member operator+ and operator==
+  - member operator- and operator<
+near_misses:
+  - hidden-friend symmetric operators
+  - member compound assignment operator+= and member operator[], which are not symmetric

@@ -1,0 +1,18 @@
+---
+guideline: Rule 28.6.3
+notes: CodeQL only - the moved-from object gets a new value before it is read again.
+codeql:
+  queries: [cpp/misra/object-used-while-in-potentially-moved-from-state]
+known_misses:
+  - query: cpp/misra/object-used-while-in-potentially-moved-from-state
+    kind: false-positive
+    why: "An object of class type reassigned with operator= after the move is still reported as
+      possibly moved-from when read; the seeded violation is detected, the compliant reassignment is not
+      accepted."
+other_findings:
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1 (advisory): std::string allocates; it is the movable type of the example."
+seeded:
+  - "the moved-from string read before it is given a new value"
+near_misses:
+  - "the moved-from string reassigned with operator= before it is read"

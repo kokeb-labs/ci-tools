@@ -1,0 +1,9 @@
+---
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/use-of-deprecated-std-iterator-base-class]
+seeded:
+  - "a struct deriving from std::iterator"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "an iterator declaring the five member types with using"

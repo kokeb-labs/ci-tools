@@ -1,0 +1,13 @@
+---
+guideline: Rule 19.1.3
+gcc: {flag: undef}
+clang: {flag: undef}
+codeql:
+  queries: [cpp/misra/identifiers-used-in-the-controlling-expression-of]
+seeded:
+  - '#if comparing an identifier that was never defined'
+  - '#elif testing an identifier that was never defined'
+near_misses:
+  - 'identifier defined before #if uses it'
+  - defined(X) && X, which evaluates X only when it is defined
+  - '#ifdef of an undefined identifier, which does not evaluate it'

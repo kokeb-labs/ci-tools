@@ -1,0 +1,12 @@
+---
+guideline: Rule 18.1.2
+notes: Not applicable (no exceptions); -fno-exceptions makes the construct a hard error. Seeded with a bare rethrow outside any handler.
+gcc: {error: "exception handling disabled"}
+clang: {error: "cannot use '(throw|try)' with exceptions disabled"}
+compiles: false
+seeded:
+  - a bare throw outside any handler
+  - a bare throw in a function called from a handler (not lexically inside it)
+near_misses:
+  - errors returned as values (an enum status)
+  - identifiers and strings that only contain the words throw, try and catch (throttle, retry, catch_up)

@@ -1,0 +1,15 @@
+---
+guideline: Rule 8.2.2
+codeql:
+  queries: [cpp/misra/no-c-style-or-functional-casts]
+known_misses:
+  - query: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    why: >-
+      Functional-notation conversions with braces (std::uint32_t{x}, std::uint32_t{1}) are reported as c-style
+      casts; the guideline's amplification excludes functional notation that uses curly braces.
+seeded:
+  - "std::uint32_t(v), functional notation with parentheses"
+near_misses:
+  - "std::uint32_t{kError} | std::uint32_t{kWarning}"
+  - "std::uint32_t{1} << n"

@@ -1,0 +1,30 @@
+---
+guideline: Rule 6.2.4
+clang-tidy: {check: misc-definitions-in-headers}
+codeql:
+  queries: [cpp/misra/violations-of-one-definition-rule-misra]
+notes: >-
+  The matrix adds .ipp to the header extensions; clang-tidy 20 takes that as the top-level HeaderFileExtensions
+  option, which this suite does not set, so only .hpp is exercised here.
+known_misses:
+  - query: cpp/misra/violations-of-one-definition-rule-misra
+    kind: false-negative
+    why: >-
+      A const object given external linkage by a separate extern declaration (kScale) and the out-of-class
+      definition of a non-const static data member (Config::level), both defined in a header (bad_const_static.hpp),
+      are not reported: the query excludes every variable that is const, constexpr or declared static, without
+      checking whether it has external linkage. Non-inline functions, a function template specialisation and a
+      non-const namespace-scope variable defined in a header are reported.
+seeded:
+  - "a non-inline function defined in a header"
+  - "a non-inline member function defined outside its class in a header"
+  - "a non-inline full specialisation of a function template"
+  - "a non-inline variable"
+  - "a const object with a separate extern declaration defined in a header (bad_const_static.hpp)"
+  - "a non-const static data member defined in a header (bad_const_static.hpp)"
+near_misses:
+  - "an inline function and an inline constexpr variable"
+  - "a function template"
+  - "a class template with a full specialisation"
+  - "a static constexpr data member"
+  - "a namespace-scope const object (internal linkage, so the guideline does not apply)"

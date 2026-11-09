@@ -1,0 +1,28 @@
+---
+guideline: Rule 0.1.1
+notes: Records a false positive of the pack on member writes. The main case rule-0-1-1 proves detection.
+codeql:
+  queries: [cpp/misra/unnecessary-write-to-local-object]
+known_misses:
+  - query: cpp/misra/unnecessary-write-to-local-object
+    kind: false-positive
+    why: >-
+      Writes in a member of a class template to an element of a std::array data member and to a data member
+      selected through a pointer to member are reported as unnecessary writes to a local object. Both targets
+      are parts of *this, not objects with automatic storage duration, and GetConfig() reads them after the
+      call; the query treats the written member (or the pointer-to-member parameter) as a local.
+other_findings:
+  - query: cpp/misra/no-c-style-or-functional-casts
+    why: >-
+      misfire: the Rule 8.2.2 query reports std::uint16_t{0U} as a C-style cast; it is functional notation with
+      curly braces, which the guideline's amplification excludes.
+  - query: cpp/misra/member-functions-refqualified
+    why: >-
+      true positive of Rule 6.8.4 (advisory): GetConfig() returns a reference to the data member config_ and is not
+      ref-qualified (const& with the && overload deleted); the snippet keeps the getter short; not this case's
+      guideline.
+seeded:
+  - "a local overwritten before its first value is read"
+near_misses:
+  - "a write to an element of a std::array data member, read later through a getter (ok.hpp)"
+  - "a write to a data member selected by a pointer to member (ok.hpp)"

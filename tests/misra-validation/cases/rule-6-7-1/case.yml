@@ -1,0 +1,14 @@
+---
+guideline: Rule 6.7.1
+codeql:
+  queries: [cpp/misra/local-variable-static-storage-duration]
+other_findings:
+  - {query: cpp/misra/signed-integer-overflow, why: "misfire: counter_ += 1 only runs while counter_ < 1000, so it cannot overflow; the query does not use the guard"}
+seeded:
+  - "a mutable static local in a free function"
+  - "a mutable static local in a member function"
+  - "a mutable static local in a lambda"
+near_misses:
+  - "a static constexpr local"
+  - "a static const local"
+  - "state kept in a data member instead"

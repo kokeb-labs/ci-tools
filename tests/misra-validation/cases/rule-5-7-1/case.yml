@@ -1,0 +1,13 @@
+---
+guideline: Rule 5.7.1
+gcc: {flag: comment}
+clang: {flag: comment}
+codeql:
+  queries: [cpp/misra/character-sequence-used-within-ac-style-comment]
+seeded:
+  - "/* inside a block comment"
+  - "/* on the second line of a documentation block"
+near_misses:
+  - "a flat block comment"
+  - "a URL with // inside a block comment"
+  - "/* inside a // line comment"

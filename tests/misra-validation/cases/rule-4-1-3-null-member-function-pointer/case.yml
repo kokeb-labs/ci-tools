@@ -1,0 +1,15 @@
+---
+guideline: Rule 4.1.3
+notes: A null pointer to member function called; kept apart because the query does not report it.
+codeql:
+  queries: [cpp/misra/null-pointer-to-member-access-undefined-behavior]
+known_misses:
+  - query: cpp/misra/null-pointer-to-member-access-undefined-behavior
+    kind: false-negative
+    why: >-
+      Only a null pointer to data member that is dereferenced is reported; calling through a null pointer to
+      member function ((m.*fn)() with fn = nullptr) is not.
+seeded:
+  - "a pointer to member function initialised to nullptr and called"
+near_misses:
+  - "a pointer to member function checked against nullptr before the call"

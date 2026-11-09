@@ -121,6 +121,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-build.yml`](.github/workflows/ru-build.yml) | `contents: read`, `pull-requests: write` | checkout; firmware size comment on pull requests |
 | [`ru-ci-gate.yml`](.github/workflows/ru-ci-gate.yml) | `contents: read` | read the calling workflow to verify `needs` |
 | [`ru-cpp-analysis.yml`](.github/workflows/ru-cpp-analysis.yml) | `contents: read` | checkout |
+| [`ru-misra.yml`](.github/workflows/ru-misra.yml) | `contents: read` | checkout of the caller, of ci-tools (scripts, packs, pins) and of the handbook (matrix, deviation records) |
 | [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | `contents: read` | checkout |
 | [`ru-docs-linkcheck.yml`](.github/workflows/ru-docs-linkcheck.yml) | `contents: read` | checkout |
 | [`ru-docs-publish.yml`](.github/workflows/ru-docs-publish.yml) | `contents: write` | push to the deployment branch; required on pull requests too, although PRs never deploy |
@@ -351,6 +352,47 @@ jobs:
 | `max_configs` | number | no | `0` | Maximum configs to check (for template-heavy code, 0=unlimited) |
 | `artifact_name` | string | no | `cppcheck-report` | Name of the uploaded report artifact (unique per call when a run calls this more than once) |
 <!-- inputs:ru-cpp-analysis.yml:end -->
+
+### ru-misra
+
+MISRA C++:2023 analysis with the validated open-source toolchain: the CodeQL coding-standards pack and the Kokeb
+C++20 profile pack on a traced build of the host and the Cortex-M configuration, the handbook's deviation records
+(each suppression must cite a record id), clang-tidy's validated checks and cppcheck on the same compile database. A
+per-guideline summary, SARIF and JSON keyed by guideline go to the artifact. CodeQL may run only on a public
+repository under an OSI licence, or with a paid Advanced Security licence: the job checks this first. See
+[docs/ru-misra.md](docs/ru-misra.md) and the [tool validation plan](docs/tool-validation/plan.md).
+
+```yaml
+jobs:
+  misra:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-misra.yml@v1
+    permissions:
+      contents: read
+    with:
+      level: safety
+      cmake_args: "-DMYCHIP_BUILD_TESTS=ON"
+      cross_build_target: mychip_optimised_build
+```
+
+<!-- inputs:ru-misra.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `level` | string | no | `high` | Failure policy. high: a finding of a mandatory or required guideline (our category) that no record deviates fails, an advisory one warns. safety: any finding that no record deviates fails, and every translation unit must build with the flags the compiler-decided guidelines rely on. |
+| `paths` | string | no | `inc src` | Folders whose code is checked, space-separated, relative to the repository root |
+| `cmake_source_dir` | string | no | `.` | Directory with the top-level CMakeLists.txt |
+| `cmake_args` | string | no | `""` | Configure arguments that build every translation unit of the code under paths (for example -DMYCHIP_BUILD_TESTS=ON) |
+| `build_target` | string | no | `""` | Target of the host build; empty builds all |
+| `cross` | boolean | no | `true` | Also analyse the Cortex-M build (cortex-m4f, the Arm GNU toolchain of toolchain.json), whose preprocessor paths differ from the host's |
+| `cross_cmake_args` | string | no | `""` | Configure arguments of the Cortex-M build; empty uses cmake_args |
+| `cross_build_target` | string | no | `""` | Target of the Cortex-M build (for example the driver's <chip>_optimised_build); empty builds all |
+| `profile_pack` | boolean | no | `true` | Also run the Kokeb C++20 profile pack (codeql/kokeb-cpp20) of this workflow's commit |
+| `repo_deviations` | string | no | `docs/deviations.yml` | The repository's own deviation records; entries with check: misra/<guideline> become code identifiers like the project-wide MD-CPP records |
+| `handbook_ref` | string | no | `db2cdd0f75cdf998797d535565966b60e97f8c8d` | Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply |
+| `advanced_security` | boolean | no | `false` | Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this repository. Without it, CodeQL may run only on a public repository under an OSI-approved licence. |
+| `open_source_prerelease` | boolean | no | `false` | Set true for a private repository whose code is released under the OSI-approved licence in its LICENSE file and is to be made public. CodeQL then runs and the job prints the declaration as a warning; the report stays in the run's artifact (nothing is uploaded to code scanning). |
+| `enforce` | boolean | no | `true` | Fail the job by the level's policy. False reports only (the counts are in the outputs). |
+| `artifact_name` | string | no | `misra-report` | Name of the report artifact (unique per call when a run calls this more than once) |
+<!-- inputs:ru-misra.yml:end -->
 
 ### ru-mkdocs-publish
 
@@ -768,6 +810,7 @@ jobs:
 | [`ci-host-ci.yml`](.github/workflows/ci-host-ci.yml) | Runs `ru-host-ci` on a fixture: preset path on clean code must pass; `-S/-B` path with seeded defects must report findings |
 | `ci-cpp-lint.yml`, `ci-cpp-analysis.yml`, `ci-docs-linkcheck.yml`, `ci-markdown-lint.yml`, `ci-yaml-lint.yml` | Each runs its workflow on this repository |
 | [`ci-repo-checks.yml`](.github/workflows/ci-repo-checks.yml) | Runs `ru-repo-checks` on this repository (every check passes) and on the known-bad handbook and cppcheck fixtures (the findings are counted) |
+| [`ci-misra.yml`](.github/workflows/ci-misra.yml) | The MISRA toolchain's tool validation (compilers, clang-tidy, CodeQL on host and Cortex-M databases, the record check) and `ru-misra` on a fixture with exact counts; see the [tool validation plan](docs/tool-validation/plan.md) |
 | `ci-host-quality.yml`, `ci-cross-build.yml` | Run `ru-host-quality` and `ru-cross-build` in one job and with `separate_jobs` / `per_core_jobs`, and compare the figures |
 
 Third-party actions are pinned to commit SHAs with a `# vX.Y.Z` comment, and

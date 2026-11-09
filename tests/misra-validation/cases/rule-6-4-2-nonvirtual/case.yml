@@ -1,0 +1,29 @@
+---
+guideline: Rule 6.4.2
+codeql:
+  queries: [cpp/misra/inherited-non-overridable-member-function]
+known_misses:
+  - query: cpp/misra/inherited-non-overridable-member-function
+    kind: false-positive
+    why: >-
+      Sensor::level(std::int32_t) is reported for concealing Device::level() although Device is a private base
+      (ok_private.hpp); the guideline's amplification does not count a function of a privately inherited base as
+      concealed, and the query does not check the inheritance access. The seeded public-base forms are reported, and
+      the CRTP exception (ok_crtp.hpp) is respected.
+other_findings:
+  - query: cpp/misra/function-pointer-conversion-context
+    why: >-
+      misfire: the Rule 7.11.3 query reports the call self() in the uninstantiated class template as a conversion of
+      a function to a pointer to function; the function is called, nothing is converted.
+  - query: cpp/misra/signed-integer-overflow
+    why: >-
+      true positive of Rule 4.1.3 as the pack reads it: Device::level() + bias overflows for bias = INT32_MAX, and
+      the snippet does not range-check its parameter; not this case's guideline.
+seeded:
+  - "a derived overload hiding an inherited non-virtual function"
+  - "a derived overload hiding two inherited overloads"
+near_misses:
+  - "a using-declaration bringing the base overloads into scope"
+  - "a derived member with a different name"
+  - "a CRTP base member concealed by the derived class (exception; ok_crtp.hpp)"
+  - "a function of a privately inherited base concealed (ok_private.hpp)"

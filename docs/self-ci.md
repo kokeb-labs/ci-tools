@@ -18,6 +18,7 @@ The checks every pull request to this repository runs, and what each one proves.
 | [`ci-docs-linkcheck.yml`](https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-docs-linkcheck.yml) | `selftest-own-site` | `ru-docs-linkcheck` skips the repository's own unpublished Pages site |
 | `ci-cpp-lint.yml`, `ci-cpp-analysis.yml`, `ci-markdown-lint.yml`, `ci-yaml-lint.yml` | | Each reusable lint workflow on this repository |
 | [`ci-repo-checks.yml`](https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-repo-checks.yml) | `this-repository`, `findings` | [`ru-repo-checks`](ru-repo-checks.md) on this repository (every check passes), then on the known-bad handbook and cppcheck fixtures (the findings are counted) |
+| [`ci-misra.yml`](https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-misra.yml) | `validate-compilers`, `validate-codeql` (host, cortex-m), `record`, `ru-misra-fixture`, `ru-misra-fixture-check` | The [tool validation](tool-validation/plan.md) of the MISRA toolchain, and [`ru-misra`](ru-misra.md) on a fixture with known findings, deviations and bad suppressions (the counts are checked) |
 | [`ci-host-quality.yml`](https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-host-quality.yml), [`ci-cross-build.yml`](https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-cross-build.yml) | | [`ru-host-quality`](ru-host-quality.md) and [`ru-cross-build`](ru-cross-build.md) on fixtures, in one job and with `separate_jobs` / `per_core_jobs`; the figures must agree |
 
 ## Scripts

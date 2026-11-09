@@ -1,0 +1,9 @@
+---
+guideline: Rule 4.1.3
+codeql:
+  queries: [cpp/misra/non-existent-member-access-undefined-behavior]
+seeded:
+  - "a derived member pointer cast to the base and applied to an object that is only a Base"
+near_misses:
+  - "a member pointer of the right class chosen at run time"
+  - "a derived member pointer cast to the base and applied to a real Derived"

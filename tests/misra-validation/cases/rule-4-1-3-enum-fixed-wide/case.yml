@@ -1,0 +1,15 @@
+---
+guideline: Rule 4.1.3
+codeql:
+  queries: [cpp/misra/out-of-range-enum-cast-critical-unspecified-behavior]
+known_misses:
+  - query: cpp/misra/out-of-range-enum-cast-critical-unspecified-behavior
+    kind: false-positive
+    why: >-
+      A std::uint32_t converted to an enumeration with a fixed std::uint8_t underlying type is reported because
+      the source range is wider than 0..255; with a fixed underlying type the value is first converted to that
+      type ([expr.static.cast]), so no value is out of range, and the source here is masked to 0..3.
+seeded:
+  - "7 cast to an unfixed enumeration whose values are 0..1"
+near_misses:
+  - "a masked std::uint32_t field cast to an enum class with a std::uint8_t underlying type"

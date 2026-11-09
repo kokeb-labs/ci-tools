@@ -1,0 +1,11 @@
+# Kokeb Labs C++20 profile: CodeQL queries for the handbook's own rules (KB-CPP-*), run by ru-misra next to the
+# MISRA C++:2023 pack. Each query tags its rule as external/kokeb/id/<rule> and has validation cases under
+# validation/ (run by tests/misra-validation/validate.py, like the MISRA cases).
+name: kokeb/cpp20-queries
+version: 0.1.0
+description: Kokeb Labs C++20 profile rules
+license: MIT
+default-suite: codeql-suites/kokeb-cpp20-default.qls
+# The same library version the pinned misra-cpp-coding-standards pack bundles, so both compile against one cpp-all.
+dependencies:
+  codeql/cpp-all: 5.0.0

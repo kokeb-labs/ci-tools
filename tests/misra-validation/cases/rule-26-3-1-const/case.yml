@@ -1,0 +1,15 @@
+---
+guideline: Rule 26.3.1
+notes: CodeQL only - the specialisation declared const or as a reference parameter.
+codeql:
+  queries: [cpp/misra/vector-should-not-be-specialized-with-bool]
+known_misses:
+  - query: cpp/misra/vector-should-not-be-specialized-with-bool
+    why: "the query compares v.getUnderlyingType() with the instantiation; that strips typedefs but not const
+      or references, so const std::vector<bool> objects and std::vector<bool>& parameters are not reported
+      (a range-for over such a parameter is reported, through the compiler's own range variable)."
+seeded:
+  - "a const std::vector<bool> object"
+  - "a std::vector<bool> reference parameter"
+near_misses:
+  - "std::array<bool, N> passed by reference to const"

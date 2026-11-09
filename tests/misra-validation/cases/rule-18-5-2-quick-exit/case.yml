@@ -1,0 +1,12 @@
+---
+guideline: Rule 18.5.2
+notes: >-
+  std::quick_exit on the host only: the Cortex-M C library (newlib) does not declare it, so the form cannot be
+  written there. The other program-terminating functions are in rule-18-5-2 on both targets.
+targets: [host]
+codeql:
+  queries: [cpp/misra/avoid-program-terminating-functions]
+seeded:
+  - std::quick_exit
+near_misses:
+  - the fault returned to the caller

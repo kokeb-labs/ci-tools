@@ -1,0 +1,19 @@
+---
+guideline: Rule 6.2.2
+codeql:
+  queries: [cpp/misra/incompatible-function-declarations-cpp]
+notes: >-
+  Two declarations of one external function with different return types, in two translation units. The query only
+  compares entities of the global namespace (ExternalIdentifiers); the same mismatch inside a named namespace is not
+  reported, so the seeded declarations sit in the global namespace.
+other_findings:
+  - query: cpp/misra/no-c-style-or-functional-casts
+    why: >-
+      misfire: the Rule 8.2.2 query reports std::int32_t{1} as a C-style cast; it is functional notation with curly
+      braces, which the guideline's amplification excludes.
+seeded:
+  - "an external function declared with int32_t and int64_t return types in two translation units"
+near_misses:
+  - "one declaration in one header"
+  - "overloads with different parameter types"
+  - "a repeated identical declaration"

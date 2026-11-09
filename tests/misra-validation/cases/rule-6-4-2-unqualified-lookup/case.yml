@@ -1,0 +1,30 @@
+---
+guideline: Rule 6.4.2
+notes: >-
+  The pack tags definition-shall-be-considered-for-unqualified-lookup with Rule 6.4.2, so the suite tests it on the
+  guideline's own form: a derived class whose member conceals a base overload of the same signature although a
+  using-declaration names the overload set. The query looks only at namespace-scope functions declared after a
+  using-declaration (the shape of an earlier edition's rule), so it cannot report this form; the guideline stays
+  decided by the other 6.4.2 queries, which their own cases validate, and by review.
+codeql:
+  queries: [cpp/misra/definition-shall-be-considered-for-unqualified-lookup]
+known_misses:
+  - query: cpp/misra/definition-shall-be-considered-for-unqualified-lookup
+    kind: false-negative
+    why: >-
+      a derived-class member that conceals the base overload of the same signature, next to a using-declaration of
+      the base overload set (bad.cpp), is not reported: the query only considers namespace-scope functions.
+other_findings:
+  - query: cpp/misra/no-c-style-or-functional-casts
+    why: >-
+      misfire: the Rule 8.2.2 query reports std::int64_t{5}, std::int32_t{1}, std::int16_t{3} and std::int32_t{4} as
+      C-style casts; they are functional notation with curly braces, which the guideline's amplification excludes.
+  - query: cpp/misra/signed-integer-overflow
+    why: >-
+      misfire: the Rule 4.1.3 query reports the sum of two convert (or scale) results in use() as a possible
+      overflow; with the constant arguments the operands are 5 and 1 (6 and 4), so the sum cannot overflow; the
+      query does not follow the calls.
+seeded:
+  - "a derived member concealing a base overload of the same signature despite a using-declaration"
+near_misses:
+  - "the using-declaration brings in every base overload and the derived overload has a new signature"

@@ -472,6 +472,7 @@ class Fig:
             lens = [abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in segs]
             total = sum(lens) or 1
             target, acc = total * label_at, 0.0
+            lx, ly = pts[-1]  # rounding can leave target past the last segment: label at the end point
             for (a, b), ln in zip(segs, lens):
                 if acc + ln >= target:
                     t = (target - acc) / (ln or 1)

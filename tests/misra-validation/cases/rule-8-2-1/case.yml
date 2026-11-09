@@ -1,0 +1,25 @@
+---
+guideline: Rule 8.2.1
+notes: >-
+  fuchsia-virtual-inheritance reports the declaration of a virtual base, not the cast: it decides the guideline only
+  together with the policy of having no virtual bases at all, and it would also report the compliant dynamic_cast
+  from a virtual base (which cannot be an ok file here: -fno-rtti forbids dynamic_cast). So clang-tidy is marked
+  on the class lines and CodeQL on the cast lines.
+clang-tidy: {check: fuchsia-virtual-inheritance}
+codeql:
+  queries: [cpp/misra/virtual-base-class-cast-to-derived]
+known_misses:
+  - query: cpp/misra/virtual-base-class-cast-to-derived
+    kind: false-negative
+    why: >-
+      reinterpret_cast<Derived const*> of a pointer to a const virtual base (bad_edge.cpp) is not reported: the
+      query strips only the top-level specifiers of the pointer and then requires the pointed-to type to be a class,
+      so a pointer to const Base (a specified type) is not matched. The casts of a non-const pointer and of a
+      reference are reported.
+seeded:
+  - "reinterpret_cast from a pointer to a virtual base to the derived class"
+  - "reinterpret_cast from a pointer to a const virtual base to the derived class"
+  - "reinterpret_cast from a reference to a virtual base to the derived class"
+near_misses:
+  - "static_cast downcast from a non-virtual base"
+  - "an implicit upcast from derived to base"

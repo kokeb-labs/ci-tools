@@ -1,0 +1,22 @@
+---
+guideline: Rule 7.0.4
+codeql:
+  queries: [cpp/misra/inappropriate-bitwise-or-shift-operands]
+known_misses:
+  - query: cpp/misra/inappropriate-bitwise-or-shift-operands
+    kind: false-positive
+    why: >-
+      In the uninstantiated out-of-line member of a constrained class template, the type of `const auto s =
+      read32()` is unknown to the extractor, so s.value & kActive is reported with an 'unknown' left operand;
+      it is std::uint32_t, as the instantiation shows. The query does not skip uninstantiated templates.
+other_findings:
+  - {query: cpp/misra/unnecessary-write-to-local-object, why: "misfire: s is read on the next line; same unresolved auto in the uninstantiated template"}
+  - {query: cpp/misra/function-pointer-conversion-context, why: "misfire: read32() is called, not converted to a pointer; same unresolved call in the uninstantiated template"}
+  - query: kokeb/cpp20/result-type-not-nodiscard
+    why: >-
+      true positive of KB-CPP-046 (own profile): the snippet's class template Result is a result type and is not
+      declared [[nodiscard]]; not this case's guideline.
+seeded:
+  - "& on signed std::int32_t operands"
+near_misses:
+  - "& on a std::uint32_t member of an auto object in an out-of-line member of a class template"

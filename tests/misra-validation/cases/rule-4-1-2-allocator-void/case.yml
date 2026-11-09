@@ -1,0 +1,10 @@
+---
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/use-of-deprecated-allocator-void]
+seeded:
+  - "an alias of std::allocator<void> used as a parameter type"
+  - "std::allocator<void> passed through a function template"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "a user template named allocator specialised for void"

@@ -1,0 +1,344 @@
+---
+# MISRA C++:2023 analysis with the validated open-source toolchain (docs/ru-misra.md, docs/tool-validation/plan.md):
+# the CodeQL coding-standards pack and the own C++20 profile pack on a traced build, the deviation records applied
+# through the pack's deviation mechanism (a suppression must cite a record id), clang-tidy's validated checks and
+# cppcheck on the same compile database, for the host build and the Cortex-M cross build. Every tool comes from
+# tools/misra/toolchain.json at this workflow's commit. A per-guideline summary goes to the step summary and to the
+# artifact (SARIF, JSON keyed by guideline, CSV). The scan fails when it cannot show it analysed the build: a canary
+# file with known violations is analysed with every scan, and every translation unit and source file must be in the
+# database.
+name: 🛡️ [RU] MISRA C++:2023 analysis
+
+on:
+  workflow_call:
+    inputs:
+      level:
+        description: >-
+          Failure policy. high: a finding of a mandatory or required guideline (our category) that no record deviates
+          fails, an advisory one warns. safety: any finding that no record deviates fails, and every translation unit
+          must build with the flags the compiler-decided guidelines rely on.
+        type: string
+        required: false
+        default: "high"
+      paths:
+        description: "Folders whose code is checked, space-separated, relative to the repository root"
+        type: string
+        required: false
+        default: "inc src"
+      cmake_source_dir:
+        description: "Directory with the top-level CMakeLists.txt"
+        type: string
+        required: false
+        default: "."
+      cmake_args:
+        description: "Configure arguments that build every translation unit of the code under paths (for example -DMYCHIP_BUILD_TESTS=ON)"
+        type: string
+        required: false
+        default: ""
+      build_target:
+        description: "Target of the host build; empty builds all"
+        type: string
+        required: false
+        default: ""
+      cross:
+        description: >-
+          Also analyse the Cortex-M build (cortex-m4f, the Arm GNU toolchain of toolchain.json), whose preprocessor
+          paths differ from the host's
+        type: boolean
+        required: false
+        default: true
+      cross_cmake_args:
+        description: "Configure arguments of the Cortex-M build; empty uses cmake_args"
+        type: string
+        required: false
+        default: ""
+      cross_build_target:
+        description: "Target of the Cortex-M build (for example the driver's <chip>_optimised_build); empty builds all"
+        type: string
+        required: false
+        default: ""
+      profile_pack:
+        description: "Also run the Kokeb C++20 profile pack (codeql/kokeb-cpp20) of this workflow's commit"
+        type: boolean
+        required: false
+        default: true
+      repo_deviations:
+        description: >-
+          The repository's own deviation records; entries with check: misra/<guideline> become code identifiers
+          like the project-wide MD-CPP records
+        type: string
+        required: false
+        default: "docs/deviations.yml"
+      handbook_ref:
+        description: "Commit of kokeb-labs/handbook whose compliance matrix and project-wide deviation records apply"
+        type: string
+        required: false
+        default: "db2cdd0f75cdf998797d535565966b60e97f8c8d"
+      advanced_security:
+        description: >-
+          Set true only if the organisation holds a paid GitHub Advanced Security or Code Security licence for this
+          repository. Without it, CodeQL may run only on a public repository under an OSI-approved licence.
+        type: boolean
+        required: false
+        default: false
+      open_source_prerelease:
+        description: >-
+          Set true for a private repository whose code is released under the OSI-approved licence in its LICENSE
+          file and is to be made public. CodeQL then runs and the job prints the declaration as a warning; the
+          report stays in the run's artifact (nothing is uploaded to code scanning).
+        type: boolean
+        required: false
+        default: false
+      enforce:
+        description: "Fail the job by the level's policy. False reports only (the counts are in the outputs)."
+        type: boolean
+        required: false
+        default: true
+      artifact_name:
+        description: "Name of the report artifact (unique per call when a run calls this more than once)"
+        type: string
+        required: false
+        default: "misra-report"
+    outputs:
+      violations:
+        description: "Findings no deviation record covers"
+        value: ${{ jobs.report.outputs.violations }}
+      deviated:
+        description: "Findings a deviation record covers"
+        value: ${{ jobs.report.outputs.deviated }}
+      suppression_errors:
+        description: "Suppression markers that cite no record, an unknown record, or deviate nothing"
+        value: ${{ jobs.report.outputs.suppression_errors }}
+      problems:
+        description: "Scan problems: canary not detected, incomplete extraction, lapsed records, missing results"
+        value: ${{ jobs.report.outputs.problems }}
+      passed:
+        description: "true when the level's policy passes"
+        value: ${{ jobs.report.outputs.passed }}
+
+permissions: {}
+
+jobs:
+  plan:
+    name: licence and configurations
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      configs: ${{ steps.configs.outputs.configs }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      # The scripts and pins at the commit of this workflow (the same trust as this file).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-misra/ci-tools
+          sparse-checkout: tools/misra
+          persist-credentials: false
+      - name: Install PyYAML (pinned, hash-checked)
+        run: python3 .ru-misra/ci-tools/tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+      # CodeQL Terms and Conditions: analysis is licensed for an Open Source Codebase (CI only when it is hosted on
+      # GitHub.com); any other codebase, for example a private repository, needs a paid Advanced Security licence.
+      - name: May CodeQL run on this repository?
+        env:
+          PRIVATE: ${{ github.event.repository.private }}
+          ADVANCED_SECURITY: ${{ inputs.advanced_security }}
+          PRERELEASE: ${{ inputs.open_source_prerelease }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" .ru-misra/ci-tools/tools/misra/misra.py licence \
+            --private "${PRIVATE:-true}" --advanced-security "$ADVANCED_SECURITY" \
+            --open-source-prerelease "$PRERELEASE" --repo .
+      - name: Configurations
+        id: configs
+        env:
+          CROSS: ${{ inputs.cross }}
+          LEVEL: ${{ inputs.level }}
+        run: |
+          case "$LEVEL" in
+            high|safety) ;;
+            *) echo "::error::level must be high or safety, not '$LEVEL'"; exit 1 ;;
+          esac
+          if [ "$CROSS" = "true" ]; then configs='["host","cortex-m"]'; else configs='["host"]'; fi
+          echo "configs=$configs" >> "$GITHUB_OUTPUT"
+          echo "configurations: $configs"
+
+  scan:
+    name: scan (${{ matrix.config }})
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJSON(needs.plan.outputs.configs) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-misra/ci-tools
+          sparse-checkout: |
+            tools/misra
+            codeql
+            tests/misra-validation
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/handbook
+          ref: ${{ inputs.handbook_ref }}
+          path: .ru-misra/handbook
+          sparse-checkout: compliance
+          persist-credentials: false
+      # Only the downloaded archives are cached; install.py checks each one against its pinned SHA-256 on every run
+      # before extracting it, so a cache entry cannot change what runs.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/ru-misra
+          key: ru-misra-${{ matrix.config }}-${{ hashFiles('.ru-misra/ci-tools/tools/misra/toolchain.json') }}
+      - name: Install the validated toolchain (toolchain.json, hash-checked)
+        env:
+          CONFIG: ${{ matrix.config }}
+        run: |
+          set -euo pipefail
+          tools=.ru-misra/ci-tools/tools/misra
+          python3 "$tools/install.py" apt
+          python3 "$tools/install.py" python --venv "$RUNNER_TEMP/venv" --with-clang-tidy
+          python3 "$tools/install.py" codeql --cache ~/.cache/ru-misra --dest "$RUNNER_TEMP/ru-misra"
+          if [ "$CONFIG" = "cortex-m" ]; then
+            python3 "$tools/install.py" arm --cache ~/.cache/ru-misra --dest "$RUNNER_TEMP/ru-misra"
+          fi
+      - name: Tool versions
+        run: |
+          mkdir -p .ru-misra/out
+          python3 .ru-misra/ci-tools/tools/misra/install.py versions --out .ru-misra/out/versions.json \
+            --codeql "$CODEQL" --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" ${ARM_BIN:+--arm-bin "$ARM_BIN"}
+      - name: Scan
+        env:
+          CONFIG: ${{ matrix.config }}
+          PATHS: ${{ inputs.paths }}
+          SOURCE_DIR: ${{ inputs.cmake_source_dir }}
+          CMAKE_ARGS: ${{ matrix.config == 'cortex-m' && inputs.cross_cmake_args != '' && inputs.cross_cmake_args || inputs.cmake_args }}
+          BUILD_TARGET: ${{ matrix.config == 'cortex-m' && inputs.cross_build_target || inputs.build_target }}
+          REPO_DEVIATIONS: ${{ inputs.repo_deviations }}
+          PROFILE: ${{ inputs.profile_pack }}
+        run: |
+          set -euo pipefail
+          tools=.ru-misra/ci-tools/tools/misra
+          py="$RUNNER_TEMP/venv/bin/python"
+          "$py" "$tools/misra.py" tidy-configs --cases .ru-misra/ci-tools/tests/misra-validation/cases \
+            --out .ru-misra/out/tidy-configs.json
+          own=()
+          if [ "$PROFILE" = "true" ]; then own=(--own-pack .ru-misra/ci-tools/codeql/kokeb-cpp20); fi
+          repo_records=()
+          if [ -f "$REPO_DEVIATIONS" ]; then repo_records=(--repo-records "$REPO_DEVIATIONS"); fi
+          "$py" "$tools/scan.py" --config "$CONFIG" --out ".ru-misra/out/$CONFIG" \
+            --codeql "$CODEQL" --misra-pack "$MISRA_PACK" --cs-script "$CS_SCRIPT" \
+            --records .ru-misra/handbook/compliance/misra-cpp-2023-deviations.yml "${repo_records[@]}" \
+            --matrix .ru-misra/handbook/compliance/misra-cpp-2023.yml \
+            --source-dir "$SOURCE_DIR" --cmake-args="$CMAKE_ARGS" --build-target "$BUILD_TARGET" --paths="$PATHS" \
+            "${own[@]}" --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" --tidy-configs .ru-misra/out/tidy-configs.json \
+            --arm-bin "${ARM_BIN:-}"
+          cp .ru-misra/out/versions.json ".ru-misra/out/$CONFIG/"
+      - name: Upload the configuration's results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-${{ matrix.config }}
+          path: |
+            .ru-misra/out/${{ matrix.config }}/*.json
+            .ru-misra/out/${{ matrix.config }}/*.sarif
+            .ru-misra/out/${{ matrix.config }}/*.yml
+          retention-days: 30
+          if-no-files-found: warn
+
+  report:
+    name: per-guideline report
+    needs: [plan, scan]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      violations: ${{ steps.report.outputs.violations }}
+      deviated: ${{ steps.report.outputs.deviated }}
+      suppression_errors: ${{ steps.report.outputs.suppression_errors }}
+      problems: ${{ steps.report.outputs.problems }}
+      passed: ${{ steps.report.outputs.passed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-misra/ci-tools
+          sparse-checkout: |
+            tools/misra
+            tests/misra-validation/codeql-supported.json
+            tests/misra-validation/anomalies.yml
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: kokeb-labs/handbook
+          ref: ${{ inputs.handbook_ref }}
+          path: .ru-misra/handbook
+          sparse-checkout: compliance
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: ${{ inputs.artifact_name }}-*
+          path: .ru-misra/results
+      - name: Install PyYAML (pinned, hash-checked)
+        run: python3 .ru-misra/ci-tools/tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+      - name: Report
+        id: report
+        env:
+          CONFIGS: ${{ needs.plan.outputs.configs }}
+          NAME: ${{ inputs.artifact_name }}
+          PATHS: ${{ inputs.paths }}
+          LEVEL: ${{ inputs.level }}
+          ENFORCE: ${{ inputs.enforce }}
+          PROFILE: ${{ inputs.profile_pack }}
+        run: |
+          set -euo pipefail
+          args=()
+          for c in $(echo "$CONFIGS" | tr -d '[]"' | tr ',' ' '); do
+            args+=(--config "$c=.ru-misra/results/$NAME-$c")
+          done
+          markers=".ru-misra/results/$NAME-host/markers.json"
+          expect="cpp/misra/unused-parameter-misra-cpp,cpp/misra/loop-body-compound-condition"
+          expect="$expect,cpp/misra/global-namespace-declarations"
+          if [ "$PROFILE" = "true" ]; then expect="$expect,kokeb/cpp20/result-type-not-nodiscard"; fi
+          if [ ! -f "$markers" ]; then
+            echo "::error::the host scan produced no results"
+            echo "passed=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          mkdir -p .ru-misra/report
+          for c in $(echo "$CONFIGS" | tr -d '[]"' | tr ',' ' '); do
+            if [ -f ".ru-misra/results/$NAME-$c/results.sarif" ]; then
+              cp ".ru-misra/results/$NAME-$c/results.sarif" ".ru-misra/report/$c.sarif"
+            fi
+          done
+          "$RUNNER_TEMP/venv/bin/python" .ru-misra/ci-tools/tools/misra/misra.py report \
+            --matrix .ru-misra/handbook/compliance/misra-cpp-2023.yml \
+            --supported .ru-misra/ci-tools/tests/misra-validation/codeql-supported.json \
+            --anomalies .ru-misra/ci-tools/tests/misra-validation/anomalies.yml \
+            --markers "$markers" "${args[@]}" --paths "$PATHS" --level "$LEVEL" --canary-expect "$expect" \
+            --enforce "$ENFORCE" --out-dir .ru-misra/report
+      - name: Upload the report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .ru-misra/report
+          retention-days: 90
+          if-no-files-found: warn

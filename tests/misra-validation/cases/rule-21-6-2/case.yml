@@ -1,0 +1,23 @@
+---
+guideline: Rule 21.6.2
+codeql:
+  queries: [cpp/misra/dynamic-memory-managed-manually]
+other_findings:
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1 (advisory): the compliant form still allocates; this guideline is about
+      who owns the allocation."
+known_misses:
+  - query: cpp/misra/dynamic-memory-managed-manually
+    kind: false-negative
+    why: >-
+      new std::int32_t{3} and delete value in bad.cpp are not reported. The query reports calls of allocation and
+      deallocation functions, and the database records the call of operator new or operator delete for a new- or
+      delete-expression only when the translation unit includes <new> (directly or through <memory>); bad.cpp
+      includes <cstdint> and <cstdlib> only. delete raw in bad_release.cpp (which includes <memory>), malloc, free
+      and unique_ptr::release are reported.
+seeded:
+  - "new and delete of one object"
+  - "std::malloc and std::free"
+  - "unique_ptr::release followed by a manual delete"
+near_misses:
+  - "std::make_unique of one object"

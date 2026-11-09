@@ -1,0 +1,17 @@
+---
+guideline: Rule 10.0.1
+notes: Member and namespace-scope declarations of several declarators that have initializers.
+codeql:
+  queries:
+    - cpp/misra/use-single-global-or-member-declarators
+known_misses:
+  - query: cpp/misra/use-single-global-or-member-declarators
+    kind: false-negative
+    why: 'The query finds a following declarator by source position: it must start two or three columns after the
+      previous declarator ends. With an initializer in between (a = 0, b = 0) the gap is larger, so initialised
+      member and namespace-scope declarator lists are not reported.'
+seeded:
+  - two initialised members in one declaration
+  - two initialised namespace-scope objects in one declaration
+near_misses:
+  - one initialised declarator per declaration

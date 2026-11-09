@@ -1,0 +1,14 @@
+---
+guideline: Rule 9.6.5
+gcc: {flag: return-type}
+clang: {flag: return-type}
+codeql:
+  queries: [cpp/misra/non-void-function-shall-return-a-value-on-all-paths]
+seeded:
+  - two ifs that return, then the end of the function (bad.cpp)
+  - a switch without default and no return after it (bad_switch.cpp)
+  - the only return inside a loop (bad_loop.cpp)
+near_misses:
+  - one return of a value computed on every path (ok.hpp)
+  - if/else that return on both branches (ok_near.hpp)
+  - a switch with default where every clause returns (ok_near.hpp)

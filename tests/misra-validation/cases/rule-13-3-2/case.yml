@@ -1,0 +1,21 @@
+---
+guideline: Rule 13.3.2
+notes: The matrix forbids default arguments on virtual functions altogether, which google-default-arguments reports.
+clang-tidy: {check: google-default-arguments}
+codeql:
+  queries: [cpp/misra/overriding-shall-specify-different-default-arguments]
+other_findings:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      true positive of Rule 7.0.6 (cortex-m only): std::uint32_t is unsigned long on arm-none-eabi, so apply(1U) in
+      apply_default passes an unsigned int to a parameter that is not overload-independent (an unqualified member
+      call), which must keep its type, as in the guideline's f3( 2 ) example. A result on the default argument 1U of
+      the qualified call s.apply(v) in ok_near.hpp would instead be a misfire (overload-independent, a constant that
+      fits). Not this case's guideline; confirm the lines on the cortex-m run.
+seeded:
+  - an overrider with a different default for the same parameter (bad.cpp)
+  - an overrider that adds a default the base parameter does not have (bad_added.cpp)
+  - an overrider that keeps one default and changes the second (bad_second.cpp)
+near_misses:
+  - no default arguments on virtual functions; a non-virtual wrapper (ok.hpp)
+  - a default argument on a non-virtual member function (ok_near.hpp)

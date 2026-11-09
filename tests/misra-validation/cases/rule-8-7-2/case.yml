@@ -1,0 +1,10 @@
+---
+guideline: Rule 8.7.2
+codeql:
+  queries: [cpp/misra/pointer-difference-taken-between-different-arrays]
+seeded:
+  - "subtracting pointers into two different local arrays"
+  - "subtracting pointers into two different member arrays of one object"
+near_misses:
+  - "subtracting pointers into the same array, one of them one past the end"
+  - "subtracting the start of an array from an element of it"

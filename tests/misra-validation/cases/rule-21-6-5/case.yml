@@ -1,0 +1,12 @@
+---
+guideline: Rule 21.6.5
+gcc: {flag: delete-incomplete}
+clang: {flag: delete-incomplete}
+codeql:
+  queries: [cpp/misra/pointer-to-an-incomplete-class-type-deleted]
+seeded:
+  - "delete through a pointer to a forward-declared struct (free function)"
+  - "delete of a forward-declared implementation from a member function"
+near_misses:
+  - "delete of a complete class through unique_ptr"
+  - "a pimpl whose destructor is defined after the implementation is complete"

@@ -1,0 +1,17 @@
+---
+guideline: Rule 6.2.3
+codeql:
+  queries: [cpp/misra/template-specialization-wrong-location]
+other_findings:
+  - query: cpp/misra/unused-limited-visibility-variable
+    why: >-
+      misfire: the Rule 0.2.1 query reports the public non-static data member Sensor::raw; a non-static data member
+      is not a variable for that rule, and a public member of a class in a header does not have limited visibility.
+seeded:
+  - "an explicit specialisation in a source file other than the primary template's"
+  - "a second explicit specialisation there"
+  - "a partial specialisation there"
+near_misses:
+  - "explicit specialisation next to the primary template"
+  - "explicit and partial specialisations in the primary's header"
+  - "an explicit specialisation in the file that defines its class argument, the primary elsewhere (ok_arg.hpp)"

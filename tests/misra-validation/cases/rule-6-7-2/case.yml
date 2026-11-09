@@ -1,0 +1,17 @@
+---
+guideline: Rule 6.7.2
+codeql:
+  queries: [cpp/misra/global-variable-used]
+other_findings:
+  - {query: cpp/misra/signed-integer-overflow, why: "misfire: ++errors_ only runs while errors_ < 8, so it cannot overflow; the query does not use the guard"}
+seeded:
+  - "a mutable namespace-scope variable"
+  - "a mutable static data member (bad_member.cpp)"
+  - "a mutable variable in an unnamed namespace"
+  - "a mutable inline variable"
+  - "a const object with dynamic initialisation"
+near_misses:
+  - "a namespace-scope inline constexpr"
+  - "a namespace-scope const object"
+  - "a static constexpr data member"
+  - "state kept in a data member"

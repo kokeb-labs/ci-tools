@@ -1,0 +1,10 @@
+---
+guideline: Rule 13.3.3
+codeql:
+  queries: [cpp/misra/declarations-of-a-function-same-parameter-name]
+seeded:
+  - swapped parameter names between a declaration and the definition (bad.cpp)
+  - swapped names between an in-class declaration and the out-of-class definition (bad_member.cpp)
+near_misses:
+  - identical names in every declaration (ok.hpp)
+  - an unnamed parameter in a declaration (ok_near.hpp)

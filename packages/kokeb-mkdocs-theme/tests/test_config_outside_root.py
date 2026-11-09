@@ -12,7 +12,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from unittest import mock
+import unittest.mock
 
 from mkdocs.commands.build import build
 from mkdocs.config import load_config
@@ -65,7 +65,7 @@ class RootTest(unittest.TestCase):
             root = pathlib.Path(tmp).resolve()
             make_repo(root)
             for cwd in (root, root / "docs", root / "_config", root / "tests/docs"):
-                with mock.patch.dict(os.environ, {"KOKEB_DOCS_ROOT": "", "KOKEB_DOCS_CONFIG": ""}):
+                with unittest.mock.patch.dict(os.environ, {"KOKEB_DOCS_ROOT": "", "KOKEB_DOCS_CONFIG": ""}):
                     os.environ.pop("KOKEB_DOCS_ROOT")
                     os.environ.pop("KOKEB_DOCS_CONFIG")
                     old = os.getcwd()
@@ -79,7 +79,7 @@ class RootTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = pathlib.Path(tmp).resolve()
             cfg = make_repo(root)
-            with mock.patch.dict(os.environ, {"KOKEB_DOCS_CONFIG": str(cfg)}):
+            with unittest.mock.patch.dict(os.environ, {"KOKEB_DOCS_CONFIG": str(cfg)}):
                 os.environ.pop("KOKEB_DOCS_ROOT", None)
                 self.assertEqual(paths.repo_root(), root)
 
@@ -124,7 +124,7 @@ class BuildTest(unittest.TestCase):
         cfg_path = make_repo(root, body)
         cfg = load_config(str(cfg_path), strict=True)
         cfg.plugins.on_startup(command="build", dirty=False)
-        with tmp, mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "kokeb-labs/driver-example", "GITHUB_SHA": "abc123"}):
+        with tmp, unittest.mock.patch.dict(os.environ, {"GITHUB_REPOSITORY": "kokeb-labs/driver-example", "GITHUB_SHA": "abc123"}):
             build(cfg)
             return (root / "site/index.html").read_text()
 

@@ -33,6 +33,7 @@ import glob
 import os
 import re
 import sys
+from pathlib import Path
 
 import yaml
 
@@ -70,7 +71,7 @@ def parse_perm_cell(cell: str) -> dict[str, str]:
 
 
 def parse_readme(path: str) -> dict[str, dict[str, str]]:
-    text = open(path, encoding="utf-8").read()
+    text = Path(path).read_text(encoding="utf-8")
     if START not in text or END not in text:
         raise SystemExit(f"::error file={path}::permissions table markers not found ({START} ... {END})")
     block = text.split(START, 1)[1].split(END, 1)[0]

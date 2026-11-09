@@ -1,0 +1,12 @@
+---
+guideline: Rule 6.8.2
+codeql:
+  queries: [cpp/misra/return-reference-or-pointer-to-automatic-local-variable]
+seeded:
+  - "a reference to a local returned"
+  - "a pointer to a local returned"
+  - "a reference to a by-value parameter returned"
+near_misses:
+  - "a local returned by value"
+  - "a reference to a parameter passed by reference"
+  - "a pointer to a data member of *this from a ref-qualified member"

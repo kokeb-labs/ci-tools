@@ -1,0 +1,15 @@
+---
+guideline: Rule 30.0.2
+notes: The stream is a reference member and the read and the write are in a member function.
+targets: [host]
+codeql:
+  queries: [cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning]
+known_misses:
+  - query: cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning
+    why: >-
+      A read then a write on a stream reached through a reference member is not reported (Linux libstdc++); the
+      query follows streams that are parameters or locals only.
+seeded:
+  - "a read then a write on a std::fstream reference member, no positioning call"
+near_misses:
+  - "the same member repositioned with seekp between the read and the write"

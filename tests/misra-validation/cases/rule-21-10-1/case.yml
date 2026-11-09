@@ -1,0 +1,15 @@
+---
+guideline: Rule 21.10.1
+clang-tidy: {check: cppcoreguidelines-pro-type-vararg}
+codeql:
+  queries: [cpp/misra/no-variadic-function-macros]
+other_findings:
+  - query: cpp/misra/no-conversion-from-bool
+    why: "misfire: the Rule 7.0.1 query reports binding the literal true to std::count's const bool& parameter
+      as a conversion from bool; no bool is converted to a number."
+seeded:
+  - "va_list, va_start, va_arg and va_end in a variadic function"
+  - "va_copy and a va_list parameter"
+near_misses:
+  - "values passed as a std::span"
+  - "a variadic template with a fold expression"

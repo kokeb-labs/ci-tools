@@ -1,0 +1,18 @@
+---
+guideline: Rule 9.6.1
+clang-tidy: {check: cppcoreguidelines-avoid-goto}
+codeql:
+  queries: [cpp/misra/goto-statement-should-not-be-used]
+seeded:
+  - forward goto out of a loop (bad.cpp)
+  - goto out of a switch inside a loop (bad_switch.cpp)
+  - backward goto (bad_backward.cpp)
+near_misses:
+  - a flag ends the search loop (ok.hpp)
+  - break out of a loop (ok_near.hpp)
+  - continue to skip an element (ok_near.hpp)
+  - early return from a nested loop (ok_near.hpp)
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: 'misfire: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions'

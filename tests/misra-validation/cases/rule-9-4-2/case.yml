@@ -1,0 +1,32 @@
+---
+guideline: Rule 9.4.2
+notes: >-
+  A default label may only be left out for an unscoped enumeration without a fixed underlying type whose
+  enumerators are all listed. A scoped enumeration, or one with a fixed underlying type, still needs a default even
+  when every enumerator is listed; the query treats every enum switch that lists all enumerators as complete, so
+  that form is a known false negative kept in its own case.
+codeql:
+  queries: [cpp/misra/appropriate-structure-of-switch-statement]
+other_findings:
+  - query: cpp/misra/unscoped-enumerations-should-not-be-declared
+    why: >-
+      true positive of Rule 10.2.2 (advisory): the near miss needs an unscoped enumeration (Mode) at namespace
+      scope, the one form that may leave out the default label; not this case's guideline.
+  - query: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type
+    why: >-
+      true positive of Rule 10.2.1: the near miss needs an enumeration without a fixed underlying type (Mode), the
+      one form that may leave out the default label; not this case's guideline.
+seeded:
+  - fall-through from one clause into the next and no default (bad.cpp)
+  - no default label although every clause breaks (bad_nodefault.cpp)
+  - a switch with a single branch (bad_onebranch.cpp)
+  - an enum switch without default that misses an enumerator (bad_enummissing.cpp)
+  - a case label nested inside an if block in the switch (bad_nestedlabel.cpp)
+near_misses:
+  - every clause breaks, default last (ok.hpp)
+  - consecutive labels sharing one clause (ok_near.hpp)
+  - default first (ok_near.hpp)
+  - a clause body in its own braced block ending in break (ok_near.hpp)
+  - clauses that end in return instead of break (ok_near.hpp)
+  - a branch ended by [[fallthrough]]; (ok_near.hpp)
+  - a switch over an unscoped enumeration without a fixed underlying type covering every enumerator, with no default (ok_near.hpp)

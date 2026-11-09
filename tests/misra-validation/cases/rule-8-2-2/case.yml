@@ -1,0 +1,13 @@
+---
+guideline: Rule 8.2.2
+codeql:
+  queries: [cpp/misra/no-c-style-or-functional-casts]
+seeded:
+  - "a C-style cast between integer types"
+  - "a functional-notation cast"
+  - "a C-style cast to a pointer type"
+  - "a functional-notation cast through a type alias"
+  - "a functional-notation cast in a template"
+near_misses:
+  - "static_cast for the conversion"
+  - "a C-style cast to void to discard a value"

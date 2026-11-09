@@ -1,0 +1,13 @@
+---
+guideline: Rule 11.3.1
+clang-tidy: {check: cppcoreguidelines-avoid-c-arrays}
+codeql:
+  queries: [cpp/misra/variable-declared-array-type]
+seeded:
+  - a local built-in array (bad.cpp)
+  - a built-in array member (bad_member.cpp)
+  - a two-dimensional constexpr built-in array at namespace scope (bad_twodim.cpp)
+near_misses:
+  - std::array local (ok.hpp)
+  - std::array member and nested std::array (ok_near.hpp)
+  - a string literal used without declaring an array (ok_near.hpp)

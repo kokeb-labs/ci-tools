@@ -1,0 +1,23 @@
+---
+guideline: Rule 19.1.3
+notes: >-
+  Records a false positive of the pack on __has_include. The main case rule-19-1-3 proves detection and holds
+  the compiler claims (-Wundef). rule-4-1-1-has-include holds the same compliant header for Rule 4.1.1.
+codeql:
+  queries: [cpp/misra/identifiers-used-in-the-controlling-expression-of]
+known_misses:
+  - query: cpp/misra/identifiers-used-in-the-controlling-expression-of
+    kind: false-positive
+    why: >-
+      #if __has_include("kv_absent_config.h") is reported as using identifiers that are not defined. The
+      operand of __has_include is a header name, which is not evaluated as identifiers, and __has_include
+      itself is tested with #ifdef first; the query splits the quoted header name into identifiers.
+other_findings:
+  - query: cpp/misra/compiler-language-extensions-used
+    why: >-
+      misfire: the Rule 4.1.1 query reports #ifdef __has_include as a language extension; __has_include is
+      standard since C++17 (recorded in rule-4-1-1-has-include).
+seeded:
+  - "#if comparing an identifier that was never defined"
+near_misses:
+  - "#if __has_include(\"header\") guarded by #ifdef __has_include (ok.hpp)"

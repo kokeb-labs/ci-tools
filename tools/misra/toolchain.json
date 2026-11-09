@@ -1,0 +1,56 @@
+{
+  "_comment": [
+    "The validated MISRA toolchain: every tool ru-misra and the tool-validation suite run, pinned to a version and,",
+    "where it is downloaded, to its SHA-256. tools/misra/install.py installs from this file only, so a scan and the",
+    "validation always run the same tools. Changing any entry changes a validated tool: the self-CI fails until the",
+    "validation has been re-run and its record (tests/misra-validation/validation-record.json) re-committed",
+    "(docs/tool-validation/plan.md, Re-validation). Compilers come from the runner image's signed Ubuntu archive;",
+    "their exact versions are recorded at every run, so an image update that changes one fails the record check too."
+  ],
+  "codeql_bundle": {
+    "version": "2.21.4",
+    "why": "the CodeQL CLI the coding-standards release supports (its supported_codeql_configs.json)",
+    "url": "https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.21.4/codeql-bundle-linux64.tar.zst",
+    "sha256": "6da9f3df228d4e162af877569240a627c1af22f6adbd26352b22357fb8bd7545"
+  },
+  "misra_pack": {
+    "name": "codeql/misra-cpp-coding-standards",
+    "version": "2.62.0",
+    "url": "https://github.com/github/codeql-coding-standards/releases/download/v2.62.0/coding-standards-codeql-packs.zip",
+    "sha256": "775e34cb36e522c30f3c4381c0758a7fbe29e6c9a5428eb6c9ad67ebd145cb0b",
+    "member": "misra-cpp-coding-standards.tgz",
+    "member_sha256": "8a9c7a3de5c537f2206f951e3578284119b168bcab1b712d89ff95a4af0ca6f3"
+  },
+  "coding_standards_script": {
+    "why": "indexes the generated deviation configuration into the database (the pack's documented mechanism)",
+    "url": "https://raw.githubusercontent.com/github/codeql-coding-standards/6ac4b1dfc3c3d55dc79ec99b8ab960a46df4231e/scripts/configuration/process_coding_standards_config.py",
+    "commit": "6ac4b1dfc3c3d55dc79ec99b8ab960a46df4231e",
+    "sha256": "86e5ba402b1767a9147537787eeebdb6e8597f7e57971c0f8ce9b7711f113903"
+  },
+  "clang_tidy": {
+    "version": "20.1.0",
+    "requirement": "clang-tidy==20.1.0 --hash=sha256:e205541e350044ffe0b0d1fcaf62b9953890f8ecba31458bbcdcfe73040e58b6"
+  },
+  "pyyaml": {
+    "version": "6.0.3",
+    "requirement": "PyYAML==6.0.3 --hash=sha256:ba1cc08a7ccde2d2ec775841541641e4548226580ab850948cbfda66a1befcdc"
+  },
+  "arm_gnu_toolchain": {
+    "version": "14.3.rel1",
+    "url": "https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz",
+    "sha256": "8f6903f8ceb084d9227b9ef991490413014d991874a1e34074443c2a72b14dbd"
+  },
+  "host": {
+    "runner": "ubuntu-24.04",
+    "apt": ["g++-14", "clang-18", "g++", "cppcheck"],
+    "gcc": "g++-14",
+    "clang": "clang++-18",
+    "codeql_build": "g++",
+    "codeql_build_why": "Ubuntu's default GCC, invoked as g++: the compiler family the pack recognises, and the same family as arm-none-eabi-g++"
+  },
+  "cortex_m": {
+    "core": "cortex-m4f",
+    "cxx": "arm-none-eabi-g++",
+    "flags": "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16"
+  }
+}

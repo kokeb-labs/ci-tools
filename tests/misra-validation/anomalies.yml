@@ -1,0 +1,2422 @@
+# Anomaly log of the MISRA toolchain: every known false negative and false positive found by the tool-validation
+# suite, with its disposition. validate.py record fails when this log and the cases disagree (an anomaly a case
+# records that is not here, or an entry no case records any more). Ids are never reused.
+---
+anomalies:
+  - id: AN-001
+    tool: codeql
+    rule_id: cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-2-3-reference
+    description: 'a cast of a volatile (or const) object to a non-volatile reference is not reported: the query
+      looks for the qualifier below a pointer or reference type, but the operand of the cast is the object itself'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; clang-tidy cppcoreguidelines-pro-type-const-cast reports every const_cast (validated, TV-TIDY-RULE-8-2-3-01);
+      the guideline stays decided by clang-tidy.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-002
+    tool: codeql
+    rule_id: cpp/misra/global-unsized-operator-delete-shall-be-defined
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-6-4-sized-only
+    description: 'never reports: isSizeDelete() compares getParameter(1).getType().getUnderlyingType() with Size_t,
+      a type named size_t; getUnderlyingType() strips the typedef, so no replacement is ever recognised as the sized
+      form.'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Drivers never replace global operator delete (no heap, KB-CPP-003; Rule 21.6.1 query validated);
+      review checklist item R-21.6.4.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-003
+    tool: codeql
+    rule_id: cpp/misra/invalid-assignment-to-errno
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-22-4-1
+    description: isErrno() only matches a variable named errno or __errno; glibc defines errno as a macro over a
+      call (*__errno_location()), the macOS SDK over (*__error()), so no assignment to errno is ever reported there.
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; errno is not used by our code; review checklist item R-22.4.1.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-004
+    tool: codeql
+    rule_id: cpp/misra/invalid-include-directive
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-19-2-2-extra-tokens
+    description: The query checks only the header-name part of the directive, so tokens after the name are not reported;
+      any other malformed form is a compile error (rule-19-2-2). The compilers decide this one with -Werror.
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Other malformed forms are compile errors (validated compiler requirement of Rule 19.2.2); trailing
+      tokens warn under -Werror (rule-19-2-2-extra-tokens).
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-005
+    tool: codeql
+    rule_id: cpp/misra/invalid-token-in-defined-operator
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-19-1-1-malformed
+    description: The query only reports defined forms that are compile errors (no operand, or a non-identifier operand);
+      a build that compiles cannot contain one, so CodeQL never sees it here. The compiler claim above decides it.
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Every such form is a compile error (GCC and Clang), validated by the compiler requirement of Rule
+      19.1.1.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-006
+    tool: codeql
+    rule_id: cpp/misra/long-long-literal-with-single-l-suffix
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-5-13-6
+    description: 'not exercisable on the LP64 host build: a single-L literal is never long long there. The violation
+      exists only on ILP32 targets; the Cortex-M (ILP32) database proves the query.'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Only the ILP32 Cortex-M configuration can hold the violation; review checklist item R-5.13.6 until
+      the cortex-m database proves it.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-007
+    tool: codeql
+    rule_id: cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-18-1-prefix
+    description: 'union members that start at the same offset but differ in size (a 16-bit member assigned to the
+      32-bit one) are not reported: the overlap test only covers identical, strictly nested or partly shifted ranges'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Unions are banned (Rule 12.3.1, validated query); review checklist item R-8.18.1 for any deviation
+      of 12.3.1.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-008
+    tool: codeql
+    rule_id: cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-2-subscript-write
+    description: the sink is only *p = ..., ++*p or p->m = ...; a write through p[i] = ... is an array expression
+      and is not reported.
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; clang-tidy bugprone-unsafe-functions bans every call to these functions (validated, TV-TIDY-RULE-25-5-2-01),
+      so no pointer exists to write through.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-009
+    tool: codeql
+    rule_id: cpp/misra/polymorphic-class-type-expression-in-typeid
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-2-9-const
+    description: 'typeid of a const-qualified polymorphic object is not reported: the query takes the operand''s
+      type without stripping cv-qualifiers, so `const Shape` is not seen as a class'
+    disposition: 'Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; RTTI is disabled (-fno-rtti, checked by ru-misra flags): every typeid on a polymorphic object is
+      a compile error, so the miss cannot reach our code.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-010
+    tool: codeql
+    rule_id: cpp/misra/signed-integer-named-bit-field-have-a-length-of-one-bit
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-12-2-3-alias
+    description: The query tests bitField.getType() as an IntegralType without resolving typedefs, so a one-bit
+      field of std::int8_t (a typedef of signed char) is not reported. False negative for fixed-width aliases.
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Bit-fields are banned (Rule 12.2.1, validated query); review checklist item R-12.2.3 for any deviation
+      of 12.2.1.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-011
+    tool: codeql
+    rule_id: cpp/misra/use-of-deprecated-function-binder-typedef-member
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-4-1-2-binder-typedef
+    description: 'false negative for our toolchains: the query matches only alias-declaration (using) members declared
+      in the function object itself; libstdc++ declares result_type and the argument typedefs with typedef in the
+      std::binary_function / std::unary_function base, and libc++ removes them in C++20 mode.'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Drivers use no standard function objects through these typedefs; review checklist item R-4.1.2.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-012
+    tool: codeql
+    rule_id: cpp/misra/use-of-deprecated-shared-ptr-unique
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-4-1-2-shared-ptr-unique
+    description: 'false negative for our toolchains: the query matches unique() declared in std::shared_ptr itself;
+      libstdc++ declares it in its std::__shared_ptr base class, and libc++ removes it in C++20 mode.'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Drivers use no shared_ptr (no heap); review checklist item R-4.1.2.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-013
+    tool: codeql
+    rule_id: cpp/misra/use-of-deprecated-std-allocator-member
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-4-1-2-allocator-member
+    description: 'not exercisable in C++20: the deprecated std::allocator members (address, max_size, construct,
+      destroy, rebind, pointer, reference and the two-argument allocate) are removed from libstdc++ and libc++ in
+      C++20 mode, so code that uses them does not compile. The query also matches only alias-declaration members,
+      while both libraries declare value_type, size_type and difference_type with typedef.'
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Not exercisable in C++20 (the members are removed, so such code does not compile); no residual risk.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-014
+    tool: codeql
+    rule_id: cpp/misra/vector-should-not-be-specialized-with-bool
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-26-3-1-const
+    description: the query compares v.getUnderlyingType() with the instantiation; that strips typedefs but not const
+      or references, so const std::vector<bool> objects and std::vector<bool>& parameters are not reported (a range-for
+      over such a parameter is reported, through the compiler's own range variable).
+    disposition: Accepted as a limitation of the pinned pack. The requirement is recorded as an anomaly, not as
+      passing; Drivers use no std::vector (no heap, Rule 21.6.1 validated); review checklist item R-26.3.1.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-015
+    tool: codeql
+    rule_id: cpp/misra/bit-field-shall-have-an-appropriate-type
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-12-2-3-alias
+    description: std::uint8_t is an unsigned integer type; reported only because g++-14 is not recognised as GCC
+      (see the rule-12-2-2 notes)
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-016
+    tool: codeql
+    rule_id: cpp/misra/cstdio-functions-shall-not-be-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-28-6-4
+    description: the Rule 30.0.1 query matches functions by name (hasGlobalOrStdName on the name remove), so the
+      <algorithm> template std::remove(first, last, value) is reported as the <cstdio> remove(const char*).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-017
+    tool: codeql
+    rule_id: cpp/misra/global-sized-operator-delete-shall-be-defined
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-21-6-4-sized-only
+    description: reports both operators of a compliant sized-and-unsized pair as unsized without a sized version;
+      isSizeDelete() compares getParameter(1).getType().getUnderlyingType() with Size_t, a type named size_t; getUnderlyingType()
+      strips the typedef, so no replacement is ever recognised as the sized form.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-018
+    tool: codeql
+    rule_id: cpp/misra/global-variable-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-0-2
+    description: an array of const elements is reported as a non-const global; no element can be modified
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-019
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-0-1
+    description: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared,
+      so a class that declares all five special members (= default) with a user-declared destructor is reported
+      as using the deprecated implicit copy; an explicitly defaulted member is user-declared and not deprecated.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-020
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-0-2
+    description: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared,
+      so a class that declares all five special members (= default) with a user-declared destructor is reported
+      as using the deprecated implicit copy; an explicitly defaulted member is user-declared and not deprecated.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-021
+    tool: codeql
+    rule_id: cpp/misra/member-specifiers-not-used-appropriately
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-1
+    description: the pack's Rule 13.3.1 query reports the implicitly declared destructor of a class derived from
+      a polymorphic base for lacking override; nothing was written that could carry the specifier.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-022
+    tool: codeql
+    rule_id: cpp/misra/member-specifiers-not-used-appropriately
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-virtual
+    description: reports the implicitly declared destructor of the final class, which has no declaration that could
+      carry override
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-023
+    tool: codeql
+    rule_id: cpp/misra/no-conversion-from-bool
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-21-10-1
+    description: the Rule 7.0.1 query reports binding the literal true to std::count's const bool& parameter as
+      a conversion from bool; no bool is converted to a number.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-024
+    tool: codeql
+    rule_id: cpp/misra/object-used-while-in-potentially-moved-from-state
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-28-6-3-reassigned
+    description: An object of class type reassigned with operator= after the move is still reported as possibly
+      moved-from when read; the seeded violation is detected, the compliant reassignment is not accepted.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-025
+    tool: codeql
+    rule_id: cpp/misra/signed-integer-overflow
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-7-1
+    description: counter_ += 1 only runs while counter_ < 1000, so it cannot overflow; the query does not use the
+      guard
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-026
+    tool: codeql
+    rule_id: cpp/misra/signed-integer-overflow
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-7-2
+    description: ++errors_ only runs while errors_ < 8, so it cannot overflow; the query does not use the guard
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-027
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-16-6-1
+    description: the pack's Rule 8.20.1 query reports unsigned arithmetic on run-time operands; the guideline covers
+      operations whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-028
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-19-0-2
+    description: the pack's Rule 8.20.1 query reports unsigned arithmetic on run-time operands; the guideline covers
+      operations whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-029
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-0-1
+    description: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports `(high << 8U) + low` with run-time operands, whose operands are not constant, whenever its range analysis
+      cannot bound them
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-030
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-14-1
+    description: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports the run-time increment `++port.reads`, whose operands are not constant, whenever its range analysis
+      cannot bound them
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-031
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-19-1
+    description: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports the run-time increments `++a` and `++b`, whose operands are not constant, whenever its range analysis
+      cannot bound them
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-032
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-10
+    description: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports the loop counter increment `++d`, whose operands are not constant, whenever its range analysis cannot
+      bound them
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-033
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-3-1
+    description: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports `0U - value` with a run-time operand (the deliberate modular negation), whose operands are not constant,
+      whenever its range analysis cannot bound them
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-034
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-7-1
+    description: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports `buffer.size() - 1U` and the counter increment `++n`, both with run-time operands, whose operands
+      are not constant, whenever its range analysis cannot bound them
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-035
+    tool: codeql
+    rule_id: cpp/misra/advanced-memory-management-used
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-6-3-uninitialized
+    description: UninitializedMemoryManagementFunction requires the function to be declared in a file named memory;
+      libstdc++ declares std::construct_at, std::destroy_at and the uninitialized_* algorithms in internal headers
+      (bits/stl_construct.h, bits/stl_uninitialized.h) and libc++ in __memory/*.h, so their calls are not reported.
+      Placement new and explicit destructor calls (rule-21-6-3) are reported.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers allocate nothing (Rule 21.6.1); review checklist item R-21.6.3 for construct_at, destroy_at
+      and uninitialized_*.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-036
+    tool: codeql
+    rule_id: cpp/misra/defined-operator-expanded-in-if-directive
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-19-1-1-elif
+    description: 'A macro that expands to defined(X) in the controlling expression of #elif is not reported (the
+      #if form is, in rule-19-1-1). -Wexpansion-to-defined reports both, so the compilers decide this aspect.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The compilers decide it (-Wexpansion-to-defined, validated in the same case).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-037
+    tool: codeql
+    rule_id: cpp/misra/dynamic-memory-managed-manually
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-6-2-array
+    description: An array new-expression whose result is released with delete[] is not reported. The query reports
+      calls of allocation and deallocation functions, and the database records the call of operator new[] or
+      operator delete[] only when the translation unit includes <new> (directly or through <memory>); this file does
+      not. The array form is reported where <memory> is included (rule-23-11-1/bad_array.cpp).
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers allocate nothing (Rule 21.6.1 query validated, KB-CPP-003); review checklist item R-21.6.2.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-038
+    tool: codeql
+    rule_id: cpp/misra/forwarding-references-and-forward-not-used-together
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-28-6-2-generic-lambda
+    description: A generic lambda's auto&& parameter passed on without std::forward is not reported; only the T&&
+      parameters of function templates (rule-28-6-2) are.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-28.6.2 (auto&& lambda parameters are forwarded).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-039
+    tool: codeql
+    rule_id: cpp/misra/goto-reference-a-label-in-surrounding-block
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-9-6-2-sibling
+    description: The query reports a goto only when the label is at the same or a greater statement depth; a label
+      in a sibling block that is shallower than the goto (goto inside for/if, label in a later while body) does
+      not surround the goto but is not reported.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. goto is banned outright (Rule 9.6.1 query and clang-tidy cppcoreguidelines-avoid-goto, both validated).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-040
+    tool: codeql
+    rule_id: cpp/misra/include-directives-preceded-by-preprocessor-directives
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-19-0-3-using
+    description: 'An #include that follows a file-scope using-declaration (using std::size_t;) is not reported;
+      an #include after a namespace with declarations is. Review (the include-order item of the checklist) covers
+      the using form.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-19.0.3 (all #include lines first).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-041
+    tool: codeql
+    rule_id: cpp/misra/loop-body-compound-condition
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-9-3-1-selection
+    description: 'The pack has no query for unbraced if and else bodies: its Rule 9.3.1 queries cover loop and switch
+      bodies only, so an unbraced if or else is not reported by CodeQL.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy readability-braces-around-statements decides the if/else bodies (TV-TIDY-RULE-9-3-1-01,
+      validated).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-042
+    tool: codeql
+    rule_id: cpp/misra/null-pointer-to-member-access-undefined-behavior
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-4-1-3-null-member-function-pointer
+    description: Only a null pointer to data member that is dereferenced is reported; calling through a null pointer
+      to member function ((m.*fn)() with fn = nullptr) is not.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-UNDECIDABLE; drivers use no pointers to member functions.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-043
+    tool: codeql
+    rule_id: cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-13-3-4-variables
+    description: The query reports a comparison only when one operand is the address of a virtual member itself
+      (&Device::start); two pointer-to-member variables compared with each other are not reported, although either
+      may hold a virtual member.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-13.3.4; drivers do not compare pointers to members.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-044
+    tool: codeql
+    rule_id: cpp/misra/return-reference-or-pointer-to-automatic-local-variable
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-8-2-indirect
+    description: 'Only a return of the local itself (return local; return &local;) is reported. A reference to a
+      local returned through a conditional (c ? a : b) and a pointer to an element of a local array (&buf[0]) are
+      not.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Compilers warn on returning a local address in the direct forms (-Wreturn-local-addr, -Wreturn-stack-address);
+      review checklist item R-UNDECIDABLE for the indirect ones.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-045
+    tool: codeql
+    rule_id: cpp/misra/use-of-deprecated-std-iterator-base-class
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-4-1-2-iterator-base-template
+    description: A class template whose base is std::iterator<std::forward_iterator_tag, T> is not reported (neither
+      the template nor its instantiation); only a non-template class with a concrete std::iterator base is.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-4.1.2 (no std::iterator base in templates).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-046
+    tool: codeql
+    rule_id: cpp/misra/use-single-global-or-member-declarators
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-10-0-1-initialised
+    description: 'The query finds a following declarator by source position: it must start two or three columns
+      after the previous declarator ends. With an initializer in between (a = 0, b = 0) the gap is larger, so initialised
+      member and namespace-scope declarator lists are not reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-10.0.1 (one declarator per declaration with initialisers).'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-047
+    tool: codeql
+    rule_id: cpp/misra/backslash-character-misuse
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-5-13-1-raw-string
+    description: A backslash inside a raw string literal (R"(dir\qfile)") is reported as a non-standard escape sequence;
+      raw strings have no escapes, so the backslash is plain text.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-048
+    tool: codeql
+    rule_id: cpp/misra/bit-field-shall-have-an-appropriate-type
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-12-2-2
+    description: A std::uint32_t bit-field (unsigned long on arm-none-eabi) is reported on the Cortex-M database;
+      it is an unsigned integer type, which the guideline allows. The seeded plain int and char bit-fields are reported
+      on both targets.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-049
+    tool: codeql
+    rule_id: cpp/misra/bit-field-shall-have-an-appropriate-type
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-12-2-3
+    description: 'misfire (cortex-m only): the Rule 12.2.2 query rejects a std::uint32_t bit-field on arm-none-eabi,
+      where the type is unsigned long; it is an unsigned integer type, which the guideline allows.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-050
+    tool: codeql
+    rule_id: cpp/misra/copy-and-move-assignments-shall-handle-self-assignment
+    kind: false-positive
+    case: tests/misra-validation/cases/dir-15-8-1-swap
+    description: Copy assignment through a local copy and std::swap, and move assignment by std::swap, are reported
+      as not handling self-assignment; both are self-assignment safe. The query recognises only a this != &other
+      guard.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-051
+    tool: codeql
+    rule_id: cpp/misra/cstdio-functions-shall-not-be-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-30-0-1-algorithm-remove
+    description: The query matches functions by name in the global or std namespace, so the <algorithm> template
+      std::remove(first, last, value) is reported as the <cstdio> remove(const char*); the seeded <cstdio> remove
+      is reported.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-052
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-3
+    description: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared,
+      so a class that declares its special members (= default) is reported as using the deprecated implicit copy;
+      an explicitly defaulted member is user-declared and not deprecated.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-053
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-5
+    description: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared,
+      so a class that declares its special members (= default) is reported as using the deprecated implicit copy;
+      an explicitly defaulted member is user-declared and not deprecated.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-054
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-18-4-1
+    description: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared,
+      so a class that declares its special members (= default) is reported as using the deprecated implicit copy;
+      an explicitly defaulted member is user-declared and not deprecated.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-055
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-2-implicit-copy-defaulted
+    description: An explicitly defaulted copy constructor (= default) is counted as implicitly declared, so a class
+      that declares all five special members = default together with its destructor is reported.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-056
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-9-codeql
+    description: the Rule 4.1.2 query treats the explicitly defaulted copy members of a class that declares all
+      five special members as implicitly declared (the same false positive as in rule-15-0-1).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-057
+    tool: codeql
+    rule_id: cpp/misra/initialize-all-virtual-base-classes
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-2-delegating
+    description: 'A delegating constructor (Derived() : Derived(1U)) is reported for not calling the base constructor,
+      although the language forbids a base initializer there and the delegated-to constructor initialises the base.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-058
+    tool: codeql
+    rule_id: cpp/misra/macro-parameter-following-hash
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-19-3-2-split
+    description: 'A macro whose replacement list has # on one parameter and a separate ## between two other parameters
+      is reported, although the stringised parameter is followed by a comma, not by ##; the query appears to match
+      the two operators anywhere in the same definition.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-059
+    tool: codeql
+    rule_id: cpp/misra/non-explicit-conversion-member
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-19-0-2
+    description: the pack's Rule 15.1.3 query reports the conversion-to-function-pointer operator the compiler gives
+      a capture-less lambda's closure type; nobody declared it and it cannot be marked explicit.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-060
+    tool: codeql
+    rule_id: cpp/misra/non-explicit-conversion-member
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-28-6-2-generic-lambda
+    description: the Rule 15.1.3 query reports the implicit conversion to a function pointer of a captureless generic
+      lambda's closure type; nothing was written, and no conversion can be declared explicit there.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-061
+    tool: codeql
+    rule_id: cpp/misra/non-explicit-conversion-member
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-28-6-4
+    description: the Rule 15.1.3 query reports the implicit conversion to a function pointer of a captureless lambda's
+      closure type; nothing was written, and no conversion can be declared explicit there.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-062
+    tool: codeql
+    rule_id: cpp/misra/non-explicit-conversion-member
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-11-3
+    description: the Rule 15.1.3 query reports the conversion-to-function-pointer operator that the compiler gives
+      every captureless lambda's closure type; no conversion member was written.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-066
+    tool: codeql
+    rule_id: cpp/misra/trigraph-like-sequences-should-not-be-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-5-0-1-escaped
+    description: The query inspects the literal's value after escape processing, so "?\?=" (no trigraph-like sequence
+      in the source) is reported as if it were "??=".
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-067
+    tool: codeql
+    rule_id: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    kind: false-positive
+    case: codeql/kokeb-cpp20/validation/kb-cpp-046
+    description: the pack's Rule 5.13.4 query reports an octal literal at Result{} (value-initialisation of a member
+      whose initializer is 0U); the source has no unsuffixed literal there.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-068
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-10-0-1
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-069
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-19-3-4
+    description: the pack's Rule 8.20.1 query reports v * 2U with a run-time operand; the guideline covers operations
+      whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-070
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-21-6-1
+    description: the Rule 8.20.1 query reports ++used_ although used_ < slots_.size() is checked first and the operand
+      is not a constant expression.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-071
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-18-2
+    description: the Rule 8.20.1 query reports the run-time loop step `i = i + 1U`; the guideline covers operations
+      whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-072
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-3-1
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-073
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-5-1
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-074
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-6-1
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-075
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-6-2
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-076
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-6-3
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-077
+    tool: codeql
+    rule_id: cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-30-0-2-member
+    description: A read then a write on a stream reached through a reference member is not reported (Linux libstdc++);
+      the query follows streams that are parameters or locals only.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers use no streams (no hosted I/O on the targets); review checklist item R-UNDECIDABLE for host
+      tools.'
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-078
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-2-is-literal-type
+    description: 'the && of two std:: trait values in a variable template is reported as a conversion from an ''unknown''
+      type to bool; both operands are bool constants (the extractor leaves the dependent type unresolved).'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-079
+    tool: codeql
+    rule_id: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-25-5-3-strerror
+    description: on the host std::int32_t is int, so passing it to strerror's int parameter converts nothing; the
+      Rule 7.0.6 query compares the typedef with int. On arm-none-eabi std::int32_t is long, and the same call is a
+      true positive of Rule 7.0.6 (an argument that is not overload-independent must keep its type); not this case's
+      guideline.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA Compliance:2020
+      section 3.4) with an investigation record in the pull request; it is never deviated. Reported upstream when
+      confirmed.
+    found: 2026-11-08 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-081
+    tool: codeql
+    rule_id: cpp/misra/possible-misuse-of-infinite-floating-point-value
+    kind: false-negative
+    case: tests/misra-validation/cases/dir-0-3-1-infinity
+    description: A possibly infinite value converted to a fixed-width alias (static_cast<std::int32_t>,
+      bad_alias.cpp) is not reported; only a conversion to a built-in integer type is. Every conversion in our code
+      goes to a fixed-width alias.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Every conversion of a floating value in our code goes to a fixed-width alias, so the matrix''s review
+      step for Dir 0.3.1 (infinity and NaN are handled) covers it; R-UNDECIDABLE.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-082
+    tool: codeql
+    rule_id: cpp/misra/unnecessary-write-to-local-object
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-0-1-1
+    description: A local inside a lambda body that is overwritten before its first value is read (bad_lambda.cpp) is
+      not reported; the same write in a function body is.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 0.1.1 and the commercial checker at the safety
+      level. R-UNDECIDABLE (writes inside lambda bodies).'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-083
+    tool: codeql
+    rule_id: cpp/misra/unused-return-value-misra-cpp
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-0-1-2
+    description: The dropped result of a call to a lambda (twice(v), bad_lambda.cpp) is not reported; the guideline
+      covers every call written with function call syntax, closures included.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Result types and Error enumerations are [[nodiscard]] (KB-CPP-046); The guideline keeps the matrix''s
+      review step for Rule 0.1.2 and the commercial checker at the safety level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-084
+    tool: codeql
+    rule_id: cpp/misra/unused-return-value-misra-cpp
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-0-1-2-niebloid
+    description: The dropped result of std::ranges::fill(buf, 0U) is not reported. std::ranges::fill is a function
+      object (a niebloid), so the call goes through its operator() and returns an iterator; the guideline covers
+      every call written with function call syntax, but the query skips calls of function objects.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Result types and Error enumerations are [[nodiscard]] (KB-CPP-046); The guideline keeps the matrix''s
+      review step for Rule 0.1.2 and the commercial checker at the safety level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-085
+    tool: codeql
+    rule_id: cpp/misra/unused-type-with-limited-visibility
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-0-2-3
+    description: An unused private nested struct (bad_private.cpp) is not reported; the guideline counts private
+      member types as having limited visibility. The unnamed-namespace and block-scope forms are reported.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. -Wunused-local-typedefs covers local aliases only; The guideline keeps the matrix''s review step for
+      Rule 0.2.3 and the commercial checker at the safety level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-086
+    tool: codeql
+    rule_id: cpp/misra/volatile-qualifier-not-used-appropriately
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-10-1-2
+    description: A volatile-qualified member function (bad_member.cpp) is not reported; locals, parameters (by value
+      and volatile pointers) and return types are.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. volatile is confined to register access in the MCU port; The guideline keeps the matrix''s review step
+      for Rule 10.1.2 and the commercial checker at the safety level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-087
+    tool: codeql
+    rule_id: cpp/misra/initializer-list-constructor-is-the-only-constructor
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-15-1-5
+    description: A default constructor next to an initializer_list constructor (bad_default.cpp) is not reported;
+      the guideline permits only copy and move constructors besides it.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 15.1.5 and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-088
+    tool: codeql
+    rule_id: cpp/misra/disallowed-use-of-pragma
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-19-6-1
+    description: 'The _Pragma operator (bad_operator.cpp) is not reported; the #pragma directive and #pragma once
+      are.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The handbook check include-guards (KB-CPP-019) bans #pragma and _Pragma in inc/, src/, tests/ and
+      examples/; the guideline stays decided by it.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-089
+    tool: codeql
+    rule_id: cpp/misra/unsafe-string-handling-functions
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-2-2
+    description: 'std::wcslen (bad_wide.cpp) is not reported: the query''s StringFunction list holds the str*
+      functions, the wcsto* conversions, fgetwc and fputwc, but none of the other <cwchar> string functions the
+      guideline lists (wcslen, wcscpy, wcscat, wcschr, wcscmp, wcsncmp, wcstok and the rest). The str* forms and
+      wcstoul are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions reports every str* and wcs* function (validated in the same
+      case); the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-090
+    tool: codeql
+    rule_id: cpp/misra/dynamic-memory-should-not-be-used
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-6-1
+    description: The new-expressions new std::int32_t{0} (bad.cpp) and new std::uint8_t[n] (bad_array_new.cpp) are
+      not reported. The query reports calls of allocation functions, and the database records the call of operator
+      new for a new-expression only when the translation unit includes <new> (directly or through <memory>, as in
+      rule-23-11-1, where both forms are reported); these files include <cstdlib> only. malloc, realloc, calloc and
+      std::vector are reported.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers allocate nothing (KB-CPP-003, handbook check forbidden-patterns/heap); a new-expression in a
+      translation unit without <new> keeps the matrix''s review step for Rule 21.6.1.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-091
+    tool: codeql
+    rule_id: cpp/misra/dynamic-memory-managed-manually
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-6-2
+    description: new std::int32_t{3} and delete value in bad.cpp are not reported. The query reports calls of
+      allocation and deallocation functions, and the database records the call of operator new or operator delete
+      for a new- or delete-expression only when the translation unit includes <new> (directly or through <memory>);
+      bad.cpp includes <cstdint> and <cstdlib> only. delete raw in bad_release.cpp (which includes <memory>),
+      malloc, free and unique_ptr::release are reported.
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers allocate nothing (KB-CPP-003, handbook check forbidden-patterns/heap); review checklist item
+      R-21.6.2.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-092
+    tool: codeql
+    rule_id: cpp/misra/global-sized-operator-delete-shall-be-defined
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-6-4
+    description: 'operator delete[] replaced without its sized form (bad_array.cpp) is not reported: the pack''s
+      OperatorDelete class matches only functions named operator delete, never operator delete[]. The single-object
+      form (bad.cpp) is reported. The query also reports both operators of the compliant pair in ok_pair.cpp, the
+      false positive recorded in rule-21-6-4-sized-only (isSizeDelete() never recognises the sized form).'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers never replace global operator delete (no heap, KB-CPP-003); review checklist item R-21.6.4.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-093
+    tool: codeql
+    rule_id: cpp/misra/no-memory-functions-from-c-string
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-24-5-2
+    description: '::memchr (bad_move_chr.cpp) is not reported: the query bans memcpy, memmove and memcmp only, while
+      the guideline (MISRA C++:2023 with TC1) also bans memchr and the wmem* variants. memcpy, memmove and memcmp
+      are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans memcpy, memmove, memcmp and memchr (validated in the same
+      case); the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-094
+    tool: codeql
+    rule_id: cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-2
+    description: 'The write conventions->grouping[0] = ''x'' through a char* member of the localeconv result
+      (bad_lconv_member.cpp) is not reported: the query''s writes are *p = ..., ++*p and p->m = ... on a pointer
+      that flows from the call, and a subscripted write through a member pointer of the returned object matches none
+      of them (the subscript form of rule-25-5-2-subscript-write). Writes through *p after getenv, strerror and
+      setlocale are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to localeconv, getenv, setlocale and strerror
+      (validated in the same case), so no returned pointer exists to write through; the guideline stays decided by
+      clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-095
+    tool: codeql
+    rule_id: cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-3
+    description: 'A getenv result kept in a struct member through brace initialisation (Settings
+      settings{std::getenv("HOME")}, bad_stored.cpp) and read after the next call is not reported: the query follows
+      a result only from a variable''s own initializer or from an assignment to a variable, by local data flow, and
+      the brace list initialises the member through the enclosing object. The plain local form (bad.cpp) is
+      reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to these functions (validated in rule-25-5-3), so
+      no result exists to reuse; the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-096
+    tool: codeql
+    rule_id: cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-3
+    description: 'Reports nothing in this case: the query flags a result stored in a global or member variable only
+      when the call is that variable''s initializer or the right-hand side of an assignment to it. The only member
+      store here is the brace initialisation Settings settings{std::getenv("HOME")} in bad_stored.cpp, which it does
+      not see, so no bad file holds a form it reports.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to these functions (validated in rule-25-5-3), so
+      no result exists to reuse; the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-097
+    tool: codeql
+    rule_id: cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-3-ordered-use
+    description: 'A getenv result kept in a struct member through brace initialisation (Cache
+      cache{std::getenv("PATH")}, bad_stored.cpp) and read after the next call is not reported: the query follows a
+      result only from a variable''s own initializer or from an assignment to a variable, by local data flow, and
+      the brace list initialises the member through the enclosing object. The plain local form (bad.cpp) is
+      reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to these functions (validated in rule-25-5-3), so
+      no result exists to reuse; the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-098
+    tool: codeql
+    rule_id: cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-3-ordered-use
+    description: 'Reports nothing in this case: the query flags a result stored in a global or member variable only
+      when the call is that variable''s initializer or the right-hand side of an assignment to it. The only member
+      store here is the brace initialisation Cache cache{std::getenv("PATH")} in bad_stored.cpp, which it does not
+      see, so no bad file holds a form it reports.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to these functions (validated in rule-25-5-3), so
+      no result exists to reuse; the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-099
+    tool: codeql
+    rule_id: cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-3-strerror
+    description: 'A strerror result kept in a struct member through brace initialisation (Report
+      report{std::strerror(kept)}, bad_stored.cpp) and read after the next call is not reported: the query follows a
+      result only from a variable''s own initializer or from an assignment to a variable, by local data flow, and
+      the brace list initialises the member through the enclosing object. The plain local form (bad.cpp) is
+      reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to these functions (validated in rule-25-5-3), so
+      no result exists to reuse; the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-100
+    tool: codeql
+    rule_id: cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-25-5-3-strerror
+    description: 'Reports nothing in this case: the query flags a result stored in a global or member variable only
+      when the call is that variable''s initializer or the right-hand side of an assignment to it. The only member
+      store here is the brace initialisation Report report{std::strerror(kept)} in bad_stored.cpp, which it does not
+      see, so no bad file holds a form it reports.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-unsafe-functions bans every call to these functions (validated in rule-25-5-3), so
+      no result exists to reuse; the guideline stays decided by clang-tidy.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-101
+    tool: codeql
+    rule_id: cpp/misra/std-move-with-non-const-lvalue
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-28-6-1
+    description: 'std::move(buffer_) in the const member function take() (bad_member.cpp) is not reported: the query
+      asks whether the argument''s type is const, and the database gives a data member named in a const member
+      function its declared type (Buffer), without the const that the const object adds. std::move of a const
+      reference parameter, of a const T& in a template and of a prvalue are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 28.6.1 and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-102
+    tool: codeql
+    rule_id: cpp/misra/forwarding-references-and-forward-not-used-together
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-28-6-2
+    description: 'consume(payload), a forwarding reference passed on as an lvalue (bad.cpp), and std::forward<T>
+      applied to the T& parameter (bad_forward_lvalue.cpp) are not reported: the query reports only std::move of a
+      forwarding reference and std::forward of a parameter it classes as an rvalue reference. std::move(payload) of
+      the forwarding reference is reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review checklist item R-28.6.2.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-103
+    tool: codeql
+    rule_id: cpp/misra/object-used-while-in-potentially-moved-from-state
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-28-6-3
+    description: 'An lvalue reference parameter moved from and returned without being reassigned (bad_ref_param.cpp)
+      is not reported: the query reports a read of a variable after the move, and has no check for an lvalue
+      reference parameter that is still in potentially moved-from state on return, which the guideline also forbids.
+      Reads after a move, on one path or on every path, are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 28.6.3 and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-104
+    tool: codeql
+    rule_id: cpp/misra/potentially-erroneous-container-usage
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-28-6-4
+    description: 'Discarded results of std::remove, std::unique and std::remove_if on std::array iterators, of
+      unique_ptr::release, and of std::remove cast to void are not reported: the query requires an argument of an
+      iterator type the pack models (std::array''s iterators are plain pointers in libstdc++), does not cover
+      unique_ptr::release, and only looks at a call that is itself an expression statement, so a call under a cast
+      to void is not seen. The discarded empty() results (member and non-member) are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 28.6.4 and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-105
+    tool: codeql
+    rule_id: cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-30-0-2
+    description: 'A read then a write on a std::fstream& parameter (patch in bad.cpp), and a write, std::flush, then
+      a read on a parameter (bad_write_read.cpp), are not reported: the query identifies a stream only by data flow
+      from a constructor call it can see (or an extern global), and nothing in the database passes a constructed
+      stream to these parameters. The same sequence on a local stream (patch_local) is reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Drivers use no streams (no hosted I/O on the targets); review checklist item R-UNDECIDABLE for host
+      tools.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-106
+    tool: codeql
+    rule_id: cpp/misra/backslash-character-misuse
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-5-13-1
+    description: 'The unknown escape ''\k'' in a character literal (bad_edge.cpp) is not reported: the query
+      inspects string literals only. The unknown escapes in string literals (\q, \c) are reported; GCC and Clang
+      report all three forms.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. GCC and Clang report every unknown escape sequence under -Werror (validated in the same case); the
+      guideline stays decided by the compilers.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-107
+    tool: codeql
+    rule_id: cpp/misra/octal-constants-used
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-5-13-3
+    description: 'The multi-digit zero 000U (bad_zeros.cpp) is not reported: the query is the shared non-zero octal
+      literal check, so an octal literal whose value is zero is skipped, although only the single digit 0 is outside
+      the guideline. Non-zero octal literals are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Review per the matrix (no literal other than 0 starts with 0) and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-108
+    tool: codeql
+    rule_id: cpp/misra/lowercase-l-starts-in-literal-suffix
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-5-13-5
+    description: 'The floating literal 3.4l (bad_float.cpp) is not reported: the query checks integer literals only.
+      It also reports the compliant 5ul and 2Ull (ok_unsigned_first.hpp), where the lower-case l is not the first
+      character of the suffix, so it misreads the guideline in both directions; l, lu, lU and ll on integer literals
+      are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy readability-uppercase-literal-suffix decides the guideline (validated in the same case).'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-109
+    tool: codeql
+    rule_id: cpp/misra/violations-of-one-definition-rule-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-2-4
+    description: 'A const object given external linkage by a separate extern declaration (kScale) and the
+      out-of-class definition of a non-const static data member (Config::level), both defined in a header
+      (bad_const_static.hpp), are not reported: the query excludes every variable that is const, constexpr or
+      declared static, without checking whether it has external linkage. Non-inline functions, a function template
+      specialisation and a non-const namespace-scope variable defined in a header are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy misc-definitions-in-headers decides the guideline (validated in the same case).'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-110
+    tool: codeql
+    rule_id: cpp/misra/variable-declared-in-inner-scope-hides-outer-scope
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-4-1
+    description: 'A local in a member function named like a data member of its class (level in Gauge::read,
+      bad_edge.cpp) is not reported: the query''s scope model (hidesStrict) does not treat the class''s data members
+      as an enclosing scope of a member function body. Locals hiding outer locals, a parameter, a namespace-scope
+      variable and a lambda capture are reported; GCC -Wshadow reports all five forms.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. GCC -Wshadow under -Werror reports every form (validated in the same case); the guideline stays
+      decided by the compiler.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-111
+    tool: codeql
+    rule_id: cpp/misra/inherited-non-overridable-member-function
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-4-2-using
+    description: 'Derived::convert(std::int32_t) next to using Base::convert (bad.cpp) is not reported: a
+      using-declaration does not introduce a base overload whose signature the derived class declares itself, so
+      Base::convert(std::int32_t) stays concealed, but the query treats the using-declaration as bringing in the
+      whole base overload set.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 6.4.2 and the commercial checker at the safety
+      level. R-SYSTEM.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-112
+    tool: codeql
+    rule_id: cpp/misra/object-accessed-before-lifetime-misra
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-8-1-before
+    description: 'A read of a union member that is not the active member (w.halves[0] after w.whole is written,
+      bad_union.cpp) is not reported: the query models invalid pointers (never initialised, dangling) and has no
+      notion of the active member of a union. The dereference of an uninitialised pointer (bad.cpp) is reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. Unions are banned (Rule 12.3.1); The guideline keeps the matrix''s review step for Rule 6.8.1 and the
+      commercial checker at the safety level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-113
+    tool: codeql
+    rule_id: cpp/misra/member-functions-refqualified
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-8-4
+    description: 'Buffer& self() { return *this; } (bad.cpp) is not reported: the query recognises a member
+      returning its object only when the returned expression is this itself, so return *this (a dereference of this)
+      is not matched. Members returning a reference or a pointer to a data member are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 6.8.4 and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-114
+    tool: codeql
+    rule_id: cpp/misra/short-circuited-persistent-side-effect
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-14-1
+    description: 'A read of a volatile object in the right operand of && (reg == 1U, bad_edge.cpp) is not reported:
+      the query does not count a volatile access as a persistent side effect, although the guideline does.
+      Increments, assignments and calls with persistent side effects in the right operand are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. The guideline keeps the matrix''s review step for Rule 8.14.1 and the commercial checker at the safety
+      level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-115
+    tool: codeql
+    rule_id: cpp/misra/virtual-base-class-cast-to-derived
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-2-1
+    description: 'reinterpret_cast<Derived const*> of a pointer to a const virtual base (bad_edge.cpp) is not
+      reported: the query strips only the top-level specifiers of the pointer and then requires the pointed-to type
+      to be a class, so a pointer to const Base (a specified type) is not matched. The casts of a non-const pointer
+      and of a reference are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. No virtual bases exist: clang-tidy fuchsia-virtual-inheritance reports every virtual base (validated
+      in the same case), so the cast cannot occur.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-116
+    tool: clang-tidy
+    rule_id: cppcoreguidelines-pro-type-const-cast
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-2-3
+    description: a const_cast that removes const below the first pointer level (const int* const* to int**) is not
+      reported by the pinned clang-tidy (20.1.0; 21 also misses it), bad_multilevel.cpp
+    disposition: 'Accepted as a limitation of the pinned clang-tidy (20.1.0): this form is not detected, so the
+      check is partial for it. The CodeQL Rule 8.2.3 query reports the form in the same case (bad_multilevel.cpp);
+      the matrix entry that has clang-tidy decide Rule 8.2.3 must name CodeQL as well or become partial.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-117
+    tool: codeql
+    rule_id: cpp/misra/casts-between-a-pointer-to-function-and-any-other-type
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-8-2-4
+    description: 'reinterpret_cast<Narrow>(raw), a void* cast to a pointer to function (bad_edge.cpp), is not
+      reported: the query only checks whether the operand of the cast is a pointer to function, so a cast to a
+      pointer to function from another type is not seen. Casts from a pointer to function (to void* or to another
+      function pointer type) are reported.'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy cppcoreguidelines-pro-type-reinterpret-cast reports the reinterpret_cast; The guideline
+      keeps the matrix''s review step for Rule 8.2.4 and the commercial checker at the safety level.'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-118
+    tool: codeql
+    rule_id: cpp/misra/appropriate-structure-of-switch-statement
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-9-4-2-scoped-enum
+    description: 'a switch over a scoped enumeration (or one with a fixed underlying type) that lists every
+      enumerator but has no default label is not reported: the query exempts every enum switch that covers all
+      enumerators, while the guideline''s exception only covers unscoped enumerations without a fixed underlying
+      type'
+    disposition: 'Accepted as a limitation of the pinned pack: this form is not detected, so the query is partial
+      for it. clang-tidy bugprone-switch-missing-default-case (partial in the matrix) and the review step for Rule
+      9.4.2 (every switch ends with a default label).'
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-119
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/dir-15-8-1
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-120
+    tool: codeql
+    rule_id: cpp/misra/invalid-signature-for-special-member-function
+    kind: false-positive
+    case: tests/misra-validation/cases/dir-15-8-1
+    description: the Rule 15.0.2 query asks for noexcept on the user-provided move constructor and move assignment,
+      which are declared noexcept; under -fno-exceptions (the org flags) the extractor does not record the exception
+      specification.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-121
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/dir-15-8-1-swap
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-122
+    tool: codeql
+    rule_id: cpp/misra/invalid-signature-for-special-member-function
+    kind: false-positive
+    case: tests/misra-validation/cases/dir-15-8-1-swap
+    description: the Rule 15.0.2 query asks for noexcept on the user-provided move constructor and move assignment,
+      which are declared noexcept; under -fno-exceptions (the org flags) the extractor does not record the exception
+      specification.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-123
+    tool: codeql
+    rule_id: cpp/misra/invariant-condition
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-1-hook
+    description: the Rule 0.0.2 query reports the same hook condition as invariant for the same reason; the
+      condition depends on the port and is not invariant in the template (recorded in rule-0-0-2-hook).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-124
+    tool: codeql
+    rule_id: cpp/misra/memory-usage-not-sequenced
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-1-hook
+    description: the Rule 4.6.1 query reports port.LastFailure(failure) && failure == Failure::AddressNack as
+      unsequenced; the built-in && sequences its left operand (which writes failure) before its right operand (which
+      reads it).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-125
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-1-hook
+    description: the Rule 7.0.2 query reports the dependent call port.LastFailure(failure) in the template as a
+      conversion from an 'unknown' type to bool; every instantiation's hook returns bool, so no conversion happens
+      (the extractor leaves the dependent type unresolved, as in rule-4-1-2-is-literal-type).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-127
+    tool: codeql
+    rule_id: cpp/misra/short-circuited-persistent-side-effect
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-1-hook
+    description: the Rule 8.14.1 query reports the right-hand operands TransferError(b) == Error::Bus and
+      TransferError(c) == Error::Bus; those calls only write the callee's local failure through the hook's reference
+      parameter and read the ports, so they have no persistent side effect.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-128
+    tool: codeql
+    rule_id: cpp/misra/unreachable-statement
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-1-hook
+    description: 'The statement guarded by a call to an optional port hook in a function template is reported as
+      unreachable, because one test port''s hook always returns false. Reachability is judged on the template: the
+      condition is a run-time call, not a constant expression, so the guarded statement is reachable; what a
+      particular port answers is that port''s business. The query judges each instantiation after it has followed
+      the trivial hook body.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-129
+    tool: codeql
+    rule_id: cpp/misra/invariant-condition
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-2-hook
+    description: The condition of an if in a function template that calls an optional port hook is reported as
+      invariant, because one test port's hook always returns true and another's always false. The template's
+      condition depends on the port it is instantiated with, so it is not invariant; the query judges each
+      instantiation after it has followed the trivial hook body.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-130
+    tool: codeql
+    rule_id: cpp/misra/memory-usage-not-sequenced
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-2-hook
+    description: the Rule 4.6.1 query reports port.LastFailure(failure) && failure == Failure::AddressNack as
+      unsequenced; the built-in && sequences its left operand (which writes failure) before its right operand (which
+      reads it).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-131
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-2-hook
+    description: the Rule 7.0.2 query reports the dependent call port.LastFailure(failure) in the template as a
+      conversion from an 'unknown' type to bool; every instantiation's hook returns bool, so no conversion happens
+      (the extractor leaves the dependent type unresolved, as in rule-4-1-2-is-literal-type).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-132
+    tool: codeql
+    rule_id: cpp/misra/short-circuited-persistent-side-effect
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-2-hook
+    description: the Rule 8.14.1 query reports the right-hand operands TransferError(b) == Error::Bus and
+      TransferError(c) == Error::Bus; those calls only write the callee's local failure through the hook's reference
+      parameter and read the ports, so they have no persistent side effect.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-133
+    tool: codeql
+    rule_id: cpp/misra/unreachable-statement
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-0-2-hook
+    description: the Rule 0.0.1 query reports the statement guarded by the same hook condition as unreachable for
+      the same reason; it is reachable in the template (recorded in rule-0-0-1-hook).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-134
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-1-1-member
+    description: the Rule 8.2.2 query reports std::uint16_t{0U} as a C-style cast; it is functional notation with
+      curly braces, which the guideline's amplification excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-135
+    tool: codeql
+    rule_id: cpp/misra/unnecessary-write-to-local-object
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-1-1-member
+    description: Writes in a member of a class template to an element of a std::array data member and to a data
+      member selected through a pointer to member are reported as unnecessary writes to a local object. Both targets
+      are parts of *this, not objects with automatic storage duration, and GetConfig() reads them after the call;
+      the query treats the written member (or the pointer-to-member parameter) as a local.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-136
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-2-1-member
+    description: the Rule 8.2.2 query reports std::uint8_t{0U} as a C-style cast; it is functional notation with
+      curly braces, which the guideline's amplification excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-137
+    tool: codeql
+    rule_id: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-2-4-template
+    description: the Rule 7.11.3 query reports the call twice() in the uninstantiated class template as a conversion
+      of a function to a pointer to function; the function is called, nothing is converted.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-138
+    tool: codeql
+    rule_id: cpp/misra/unused-limited-visibility-function
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-0-2-4-template
+    description: Private members of a class template, a plain member function and a member function template, are
+      reported as never used although the public member Read calls both, and Read is called. The query does not link
+      the calls in the uninstantiated template body to the members they name.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-139
+    tool: codeql
+    rule_id: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-10-2-1
+    description: A scoped enumeration without a fixed type whose enumerators all keep their default values
+      (ok_default.hpp) is reported; exception 1 of the guideline waives the fixed type for it.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-140
+    tool: codeql
+    rule_id: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-10-2-3
+    description: the near misses' unscoped enums give no enumerator a value, so Rule 10.2.1 exception 1 waives the
+      fixed type
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-141
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-11-6-1
+    description: the pack's Rule 8.20.1 query reports unsigned arithmetic on run-time operands; the guideline covers
+      operations whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-142
+    tool: codeql
+    rule_id: cpp/misra/non-unique-enumeration-constant
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-11-6-3
+    description: An implicit enumerator equal to an explicit one written only as the name of another enumerator
+      (kLast = kC, ok_name.hpp) is reported; the guideline's exception permits it.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-143
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-0-1
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-144
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-0-2
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-145
+    tool: codeql
+    rule_id: cpp/misra/initialize-all-virtual-base-classes
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-2
+    description: A constructor that leaves an empty base class (no data members, no virtual functions) out of its
+      initializer list (ok_empty.hpp) is reported; the guideline's exception says an empty base need not be
+      initialised.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-146
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-3
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-147
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-15-1-5
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-148
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-18-4-1
+    description: The noexcept move constructors and move assignments (hand-written in ok.hpp, defaulted in
+      ok_defaulted.hpp) and the noexcept member swap are reported as needing noexcept. The database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record an explicit noexcept, so these
+      functions look potentially throwing (the implicitly noexcept destructor is not reported); the seeded functions
+      without noexcept are reported.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-149
+    tool: codeql
+    rule_id: cpp/misra/invalid-signature-for-special-member-function
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-18-4-1
+    description: the Rule 15.0.2 query asks for noexcept on the user-provided move constructor and move assignment,
+      which are declared noexcept; under -fno-exceptions (the org flags) the extractor does not record the exception
+      specification.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-150
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-18-4-1-no-exceptions
+    description: Under -fno-exceptions, constexpr noexcept functions that initialise namespace-scope variables
+      (Defaults, MakeTable) are reported as needing noexcept. They are declared noexcept; the extractor drops the
+      exception specification when exceptions are disabled, so the query sees them as potentially throwing.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-151
+    tool: codeql
+    rule_id: cpp/misra/unused-limited-visibility-variable
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-18-4-1-no-exceptions
+    description: the Rule 0.2.1 query reports the non-static data member Config::value, which is not a variable for
+      that rule and is read by DefaultValue().
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-152
+    tool: codeql
+    rule_id: cpp/misra/compiler-language-extensions-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-19-1-3-has-include
+    description: 'the Rule 4.1.1 query reports #ifdef __has_include as a language extension; __has_include is
+      standard since C++17 (recorded in rule-4-1-1-has-include).'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-153
+    tool: codeql
+    rule_id: cpp/misra/identifiers-used-in-the-controlling-expression-of
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-19-1-3-has-include
+    description: '#if __has_include("kv_absent_config.h") is reported as using identifiers that are not defined. The
+      operand of __has_include is a header name, which is not evaluated as identifiers, and __has_include itself is
+      tested with #ifdef first; the query splits the quoted header name into identifiers.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-154
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-21-6-4
+    description: both replacement operator delete functions are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees the deallocation functions as potentially throwing (the false positive of
+      rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-155
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-21-6-4-sized-only
+    description: both replacement operator delete functions are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees the deallocation functions as potentially throwing (the false positive of
+      rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-156
+    tool: codeql
+    rule_id: cpp/misra/invariant-condition
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-22-3-1
+    description: the Rule 0.0.2 query reports the constant first operand of the conditional operator in the
+      expansion of assert(false && "..."); Rule 0.0.2 exception 3 permits any controlling expression that results
+      from the expansion of assert.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-157
+    tool: codeql
+    rule_id: cpp/misra/no-pointer-to-integral-cast
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-22-3-1
+    description: the Rule 8.2.7 query reports the implicit conversion of the string literal to bool in assert(false
+      && "...") as a cast; no cast is written there, and the form is the one Rule 22.3.1's exception allows.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-158
+    tool: codeql
+    rule_id: cpp/misra/poorly-formed-identifier
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-22-3-1
+    description: the Rule 5.10.1 query reports __PRETTY_FUNCTION__, which glibc's assert macro passes to
+      __assert_fail; it is an identifier predefined by the compiler and used by the standard library, not a
+      user-defined identifier.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-159
+    tool: codeql
+    rule_id: cpp/misra/compiler-language-extensions-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-1-has-include
+    description: '#ifdef __has_include is reported as a compiler language extension. __has_include is part of
+      standard C++ since C++17, and the standard lets #ifdef and defined test it as if it were a macro name; the
+      query treats the name as a vendor extension.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-160
+    tool: codeql
+    rule_id: cpp/misra/identifiers-used-in-the-controlling-expression-of
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-1-has-include
+    description: the Rule 19.1.3 query reports the operand of __has_include as undefined identifiers; the operand is
+      a header name, not identifiers to evaluate (recorded in rule-19-1-3-has-include).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-161
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-2-implicit-copy-defaulted
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-162
+    tool: codeql
+    rule_id: cpp/misra/out-of-range-enum-cast-critical-unspecified-behavior
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-1-3-enum-fixed-wide
+    description: A std::uint32_t converted to an enumeration with a fixed std::uint8_t underlying type is reported
+      because the source range is wider than 0..255; with a fixed underlying type the value is first converted to
+      that type ([expr.static.cast]), so no value is out of range, and the source here is masked to 0..3.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-163
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-6-1
+    description: the Rule 8.20.1 query reports the run-time increment ++k, whose operand is not a constant
+      expression; the guideline covers operations whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-164
+    tool: codeql
+    rule_id: cpp/misra/memory-usage-not-sequenced
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-6-1-sequenced
+    description: 'Two shapes in templates are reported as unsequenced: c ? f(x) : g(x) where both operands write x
+      through a reference (only one operand is evaluated, after the condition), and f(x) && x == k (the left operand
+      of && is sequenced before the right).'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-165
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-4-6-1-sequenced
+    description: 'the ?: operands are bool; the dependent call type is unknown in the uninstantiated template (as
+      AN-078)'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-166
+    tool: codeql
+    rule_id: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-5-13-4-value-init
+    description: Timing{} (value-initialisation of a class whose members have default member initialisers 0U and 0)
+      is reported as an unsuffixed octal literal of unsigned type; no such literal is in the source (as AN-067).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-167
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-2-2-function
+    description: the Rule 8.2.2 query reports std::int32_t{1} as a C-style cast; it is functional notation with
+      curly braces, which the guideline's amplification excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-168
+    tool: codeql
+    rule_id: cpp/misra/unused-limited-visibility-variable
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-2-3-specialization
+    description: the Rule 0.2.1 query reports the public non-static data member Sensor::raw; a non-static data
+      member is not a variable for that rule, and a public member of a class in a header does not have limited
+      visibility.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-169
+    tool: codeql
+    rule_id: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-nonvirtual
+    description: the Rule 7.11.3 query reports the call self() in the uninstantiated class template as a conversion
+      of a function to a pointer to function; the function is called, nothing is converted.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-170
+    tool: codeql
+    rule_id: cpp/misra/inherited-non-overridable-member-function
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-nonvirtual
+    description: Sensor::level(std::int32_t) is reported for concealing Device::level() although Device is a private
+      base (ok_private.hpp); the guideline's amplification does not count a function of a privately inherited base
+      as concealed, and the query does not check the inheritance access. The seeded public-base forms are reported,
+      and the CRTP exception (ok_crtp.hpp) is respected.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-171
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-using
+    description: the Rule 8.2.2 query reports std::int64_t{5}, std::int32_t{1}, std::int16_t{3} and std::int32_t{4}
+      as C-style casts; they are functional notation with curly braces, which the guideline's amplification
+      excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-172
+    tool: codeql
+    rule_id: cpp/misra/signed-integer-overflow
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-using
+    description: the Rule 4.1.3 query reports the sum of two convert (or scale) results in use() as a possible
+      overflow; with the constant arguments the operands are 5 and 1 (6 and 4), so the sum cannot overflow; the
+      query does not follow the calls.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-173
+    tool: codeql
+    rule_id: cpp/misra/global-variable-used
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-7-2-variable-template
+    description: An inline constexpr variable template (kAlwaysFalse) is reported as a global variable once it is
+      named with a dependent argument inside a function template. A constexpr variable is const and constant
+      initialised, so it is not a global variable in the guideline's sense; the query does not see the constexpr on
+      the variable template.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-174
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-7-2-variable-template
+    description: the Rule 7.0.2 query reports the static_assert condition kAlwaysFalse<Port>, which is a bool
+      constant; the dependent expression has an unknown type in the uninstantiated template.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-175
+    tool: codeql
+    rule_id: cpp/misra/member-functions-refqualified
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-8-4-template
+    description: A member of a class template that returns a reference into *this, declared const& with its const&&
+      overload deleted, is reported once the template is instantiated. That pair is the compliant form (the same
+      pair in a non-template class is accepted by the main case); the query loses the ref-qualifier on the
+      instantiated member.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-176
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-9-2
+    description: the Rule 8.20.1 query reports the run-time increment value + 1U in Counter::operator++(int), whose
+      operand value is not a constant expression; the guideline covers operations whose operands are constant
+      expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-177
+    tool: codeql
+    rule_id: cpp/misra/no-conversion-from-bool
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-1-void
+    description: A bool result discarded by an explicit cast to void ((void)port_.Set(true)) inside a member
+      function template of a class template is reported as a conversion from bool. Casting to void only discards the
+      value, which the guideline allows by exception; no bool is used as a number. The query does not exclude the
+      void cast on the dependent call.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-178
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-1-void
+    description: the Rule 7.0.2 query reports the dependent call port_.Set(false) under ! in the template as a
+      conversion from an 'unknown' type to bool; the instantiated Set returns bool, so no conversion happens (the
+      extractor leaves the dependent type unresolved, as in rule-4-1-2-is-literal-type).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-179
+    tool: codeql
+    rule_id: cpp/misra/no-pointer-to-integral-cast
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-2
+    description: the Rule 8.2.7 query reports the pointer used as the if condition (if (p)) as a cast to bool; no
+      cast is written, the contextual conversion of a pointer is not a cast, and Rule 7.0.2 permits it by exception.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-180
+    tool: codeql
+    rule_id: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-2-template
+    description: the Rule 7.11.3 query reports the calls step() in the uninstantiated class template as conversions
+      of a function to a pointer to function; the function is called, nothing is converted.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-181
+    tool: codeql
+    rule_id: cpp/misra/no-implicit-bool-conversion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-2-template
+    description: 'In a member of a class template whose port type is a template parameter, conditions that are
+      already bool (the bool result of a dependent port hook under !) or a class with an explicit operator bool
+      (under ! and as the ?: condition, which the guideline permits) are reported as implicit conversions to bool.
+      The query sees the dependent expressions of the uninstantiated template with an unknown type.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-182
+    tool: codeql
+    rule_id: cpp/misra/unreachable-statement
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-2-template
+    description: the Rule 0.0.1 query reports return Result{1} under if (!port_.Ready()) as unreachable because the
+      test port's Ready() always returns true; the condition is a run-time call in the template, not a constant
+      expression, so the statement is reachable (the false positive recorded in rule-0-0-1-hook).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-183
+    tool: codeql
+    rule_id: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-4-dependent-auto
+    description: read32() is called, not converted to a pointer; same unresolved call in the uninstantiated template
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-184
+    tool: codeql
+    rule_id: cpp/misra/inappropriate-bitwise-or-shift-operands
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-4-dependent-auto
+    description: In the uninstantiated out-of-line member of a constrained class template, the type of `const auto s
+      = read32()` is unknown to the extractor, so s.value & kActive is reported with an 'unknown' left operand; it
+      is std::uint32_t, as the instantiation shows. The query does not skip uninstantiated templates.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-185
+    tool: codeql
+    rule_id: cpp/misra/unnecessary-write-to-local-object
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-4-dependent-auto
+    description: s is read on the next line; same unresolved auto in the uninstantiated template
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-186
+    tool: codeql
+    rule_id: cpp/misra/no-signedness-change-from-promotion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-5-same-type
+    description: A comparison (relational or equality) of two operands of the same narrow unsigned type is reported
+      as a signedness change; the query implements Exceptions 1 and 2 only, not Exception 3.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-187
+    tool: codeql
+    rule_id: cpp/misra/no-signedness-change-from-promotion
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-5-shift-count
+    description: The integral promotion of a narrow unsigned right operand of a shift (the count) is reported; the
+      left operand is std::uint32_t and the result type does not depend on the count.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-188
+    tool: codeql
+    rule_id: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-6-implicit-this
+    description: An integer constant that fits, passed to a member function without overloads through an implicit
+      this, is held to the same-type requirement; the query treats only an explicit qualifier as non-extensible.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-189
+    tool: codeql
+    rule_id: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-0-6-member-access
+    description: Widening a class member access (g.output_mask, std::uint8_t to std::uint32_t) is reported; the
+      guideline allows a same-signedness widening of an id-expression or a class member access, the query only of an
+      unqualified id-expression.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-190
+    tool: codeql
+    rule_id: cpp/misra/casts-between-a-pointer-to-function-and-any-other-type
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-11-3
+    description: the Rule 8.2.4 query reports static_cast<Fn>(two); the cast performs only the function-to-pointer
+      conversion to a pointer to the same function type, which the guideline's amplification permits even as a cast.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-191
+    tool: codeql
+    rule_id: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-11-3
+    description: A function name (call(two)) and a captureless lambda passed as the argument of a parameter of
+      pointer-to-function type (ok_transfer.hpp) are reported. Passing an argument is a converting transfer to an
+      object of pointer-to-function type, which the guideline accepts; the query does not recognise a function
+      argument as such a context. The seeded comparison, unary plus and condition forms are reported.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-192
+    tool: codeql
+    rule_id: cpp/misra/function-pointer-conversion-context
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-11-3-template
+    description: 'A member function called by name inside a class template (value() in Box<T>::get) is reported as a
+      conversion of a function to a pointer to function. A call converts nothing: the function is named only to be
+      called. The same call in a non-template class (Plain::get) is not reported, so the query misreads the
+      unresolved call in the uninstantiated template.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-193
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-7-11-3-template
+    description: the Rule 8.20.1 query reports the sum of two get() results in use(), whose operands are run-time
+      call results, not constant expressions; the guideline covers operations whose operands are constant
+      expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-194
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11
+    description: the Rule 8.2.2 query reports std::int32_t{1} as a C-style cast; it is functional notation with
+      curly braces, which the guideline's amplification excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-195
+    tool: codeql
+    rule_id: cpp/misra/copy-and-move-assignments-shall-handle-self-assignment
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11-trivial
+    description: Handle's copy assignment copies one int member, which is correct for self-assignment (the value is
+      copied onto itself); the Dir 15.8.1 query recognises only a this != &other guard (as in dir-15-8-1-swap).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-196
+    tool: codeql
+    rule_id: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11-trivial
+    description: the pack's Rule 4.1.2 query counts the explicitly defaulted copy constructor of Handle (= default)
+      as implicitly declared; an explicitly defaulted member is user-declared and not deprecated.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-197
+    tool: codeql
+    rule_id: cpp/misra/inappropriate-argument-type-passed-via-ellipsis
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11-trivial
+    description: Handle, whose only user-provided member is a copy assignment, is reported when passed through the
+      ellipsis (ok_near.hpp). The guideline makes a class inappropriate only for virtual member functions, a
+      non-trivial copy or move constructor, or a non-trivial destructor; Handle's copy constructor and destructor
+      are trivial. The query also counts a non-trivial copy assignment. The seeded polymorphic and
+      user-provided-move-constructor forms are reported.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-198
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11-trivial
+    description: the Rule 8.2.2 query reports std::int32_t{1} and std::int32_t{2} as C-style casts; they are
+      functional notation with curly braces, which the guideline's amplification excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-199
+    tool: codeql
+    rule_id: cpp/misra/numeric-assignment-type-mismatch
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-11-trivial
+    description: the Rule 7.0.6 query reports Mode::kOn passed through the ellipsis as a transfer from 'Mode' to
+      'int'; Mode is a scoped enumeration, which is not a numeric type for Rule 7.0.6, and a scoped enumeration is
+      passed through an ellipsis without promotion.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-200
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-2-braced
+    description: Functional-notation conversions with braces (std::uint32_t{x}, std::uint32_t{1}) are reported as
+      c-style casts; the guideline's amplification excludes functional notation that uses curly braces.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-201
+    tool: codeql
+    rule_id: cpp/misra/exception-unfriendly-function-must-be-noexcept
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-2-9-codeql
+    description: the move constructor and the move assignment are declared noexcept; the database is built with
+      -fno-exceptions (the org flags), under which the extractor does not record the exception specification, so the
+      Rule 18.4.1 query sees them as potentially throwing (the false positive of rule-18-4-1-no-exceptions).
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-202
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-8-20-1-constant-in-range
+    description: 'Constant unsigned additions that stay in range are reported as possibly wrapping: a constexpr
+      function result plus 1U in a static_assert, and Shift + Width over template parameters in a requires-clause.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-203
+    tool: codeql
+    rule_id: cpp/misra/appropriate-structure-of-switch-statement
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-4-2-template-default
+    description: A switch in a member of a class template over the class's own private scoped enumeration, with a
+      case for every enumerator and a final default, every clause ending in return or break, is reported as missing
+      an enumerator. Every enumerator is listed and the default is there; the query does not match the case labels
+      to the enumerators of the member enumeration in the template.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-204
+    tool: codeql
+    rule_id: cpp/misra/legacy-for-statements-should-be-simple
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-5-1-size-t
+    description: 'Simple counting loops are reported: a std::size_t counter against a constexpr bound, a std::size_t
+      counter against std::array::size() of a member in a class template, and a std::uint32_t counter against a
+      constexpr call with constant arguments. Each has one integer counter, stepped by ++, compared with a bound
+      that the body does not change; the query does not accept std::size_t as an integer counter type or these
+      bounds as constant.'
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-205
+    tool: codeql
+    rule_id: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-9-5-1-size-t
+    description: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (the accumulator and the sum
+      of the results); the guideline covers operations whose operands are constant expressions.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-206
+    tool: codeql
+    rule_id: cpp/misra/no-csetjmp-header
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-21-10-2
+    description: with newlib (Cortex-M), a setjmp call through <setjmp.h> is not reported, because newlib declares
+      setjmp as a function and the query looks for the macro; longjmp is reported.
+    disposition: Accepted as a limitation of the pinned pack on the Cortex-M target. The header itself is banned
+      (Rule 21.10.2 also reports the include directive on both targets); drivers include no C library header
+      (forbidden-patterns), and the host scan reports the call.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-207
+    tool: codeql
+    rule_id: cpp/misra/unsigned-integer-literals-not-appropriately-suffixed
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-5-13-4
+    description: on Cortex-M, an unsuffixed hexadecimal literal of type unsigned int (0x8000'0001) used as a
+      template argument is not reported; the host scan reports it.
+    disposition: Accepted as a limitation of the pinned pack on the Cortex-M target. The host scan analyses the same
+      code and reports the form; review checklist R-UNDECIDABLE covers literal suffixes in Cortex-M-only code.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-208
+    tool: codeql
+    rule_id: cpp/misra/definition-shall-be-considered-for-unqualified-lookup
+    kind: false-negative
+    case: tests/misra-validation/cases/rule-6-4-2-unqualified-lookup
+    description: a derived-class member that conceals the base overload of the same signature next to a
+      using-declaration of the overload set is not reported; the query only considers namespace-scope functions.
+    disposition: Accepted as a limitation of the pinned pack. The query is partial for Rule 6.4.2; the guideline's
+      other queries (inherited-non-overridable-member-function and the virtual-hiding queries) and the review step
+      of the matrix decide it.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-209
+    tool: codeql
+    rule_id: cpp/misra/no-c-style-or-functional-casts
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-unqualified-lookup
+    description: the Rule 8.2.2 query reports std::int64_t{5}, std::int32_t{1}, std::int16_t{3} and std::int32_t{4}
+      as C-style casts; they are functional notation with curly braces, which the guideline's amplification
+      excludes.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+  - id: AN-210
+    tool: codeql
+    rule_id: cpp/misra/signed-integer-overflow
+    kind: false-positive
+    case: tests/misra-validation/cases/rule-6-4-2-unqualified-lookup
+    description: the Rule 4.1.3 query reports the sum of two convert (or scale) results in use() as a possible
+      overflow; with the constant arguments the operands are 5 and 1 (6 and 4), so the sum cannot overflow; the
+      query does not follow the calls.
+    disposition: Accepted. A result of this query on code of this shape is triaged as a false diagnosis (MISRA
+      Compliance:2020 section 3.4) with an investigation record in the pull request; it is never deviated. Reported
+      upstream when confirmed.
+    found: 2026-11-09 (pack 2.62.0, CLI 2.21.4)
+limitations:
+  - The pack is validated by its authors for C++14/17 with gcc 8.4, clang 10 and qcc 8.3 only; our C++20 code and
+    GCC 13/14, Clang 18 and Arm GNU 14.3 are outside that scope. This suite is the evidence for our configuration
+    (MD-CPP-001 covers C++20).
+  - 'A passing requirement shows the tool reports every seeded form and stays silent on every compliant form in
+    the suite. For an undecidable guideline it never shows absence of violations: those keep their review step (MISRA
+    Compliance:2020 section 3.5).'
+  - 'Results depend on the compiler identity the extractor sees: the suite and ru-misra build CodeQL databases with
+    g++ (host) and arm-none-eabi-g++ (Cortex-M) only. Another compiler is outside the validated configuration.'
+  - Only the configurations ru-misra analyses (host and cortex-m4f) are validated. Code compiled only for ESP-IDF
+    (Xtensa) is not analysed by ru-misra yet; it stays under review and the commercial checker.
+  - Compiler-decided guidelines hold only when the build uses the org flags; ru-misra checks every translation unit
+    for them and fails at the safety level when one is missing.
+  - Dir 0.3.2, Rule 5.13.7 and Rule 19.0.1 have no query in the pack; 5.13.7 and 19.0.1 are left to the compilers
+    by the pack authors, and are not claimed by any tool in the matrix.
+  - The audit queries of the pack (3) are not in the default suite and are not validated; they are not used.

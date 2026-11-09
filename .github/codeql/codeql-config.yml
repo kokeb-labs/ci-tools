@@ -1,0 +1,23 @@
+# Code scanning configuration for ci-tools (advanced setup, .github/workflows/codeql.yml).
+#
+# The paths below are test fixtures: code written to break rules, so that the tools these workflows run can be shown
+# to detect what they claim (docs/tool-validation/plan.md). Their findings are the expected result and are asserted
+# by the self-CI (tests/misra-validation/validate.py, the cpp-analysis and quality self-tests), not code-scanning
+# alerts. Everything else in the repository is scanned.
+name: ci-tools
+paths-ignore:
+  - tests/misra-validation
+  - tests/fixtures
+  - codeql/kokeb-cpp20/validation
+  - tools/misra/canary
+queries:
+  - uses: security-and-quality
+# actions/untrusted-checkout/medium is a name heuristic: it reports every actions/checkout whose ref expression
+# mentions a ref, SHA or head in a workflow a pull request can start. Every reusable workflow here checks out the
+# caller's commit or a pinned ci-tools/handbook commit that way, by design. The risks it names (a self-hosted runner,
+# a cache or artifact a privileged workflow later trusts) are ruled out by the trigger policy (docs/triggers.md,
+# enforced by .github/scripts/check_triggers.py), GitHub-hosted runners, read-only tokens and
+# persist-credentials: false. The privileged-trigger variant, actions/untrusted-checkout/high, stays on.
+query-filters:
+  - exclude:
+      id: actions/untrusted-checkout/medium

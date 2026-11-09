@@ -1,0 +1,10 @@
+---
+guideline: Rule 6.2.3
+codeql:
+  queries: [cpp/misra/duplicate-type-definitions]
+seeded:
+  - "a struct defined in two source files"
+  - "a second struct defined in two source files"
+near_misses:
+  - "a struct defined once in a header"
+  - "a type from one header used by two translation units"

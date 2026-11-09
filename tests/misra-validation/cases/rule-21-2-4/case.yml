@@ -1,0 +1,12 @@
+---
+guideline: Rule 21.2.4
+codeql:
+  queries: [cpp/misra/macro-offsetof-shall-not-be-used]
+seeded:
+  - "offsetof in an ordinary function"
+  - "offsetof in a function template"
+  - "offsetof initialising a constexpr constant"
+  - "offsetof inside static_assert"
+near_misses:
+  - "members reached by name"
+  - "a named offset constant and a function of our own named offset_of"

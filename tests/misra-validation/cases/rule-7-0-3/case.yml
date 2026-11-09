@@ -1,0 +1,12 @@
+---
+guideline: Rule 7.0.3
+codeql:
+  queries: [cpp/misra/no-character-numerical-value]
+seeded:
+  - "subtracting a character literal from a char (c - '0')"
+  - "adding an integer to a char (c + 1)"
+  - "comparing a char with an integer code (c < 48)"
+  - "a char multiplied as a number"
+near_misses:
+  - "chars compared for equality with character literals"
+  - "a char copied into another char"

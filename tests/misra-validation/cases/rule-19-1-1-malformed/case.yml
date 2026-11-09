@@ -1,0 +1,18 @@
+---
+guideline: Rule 19.1.1
+notes: A defined operator without an identifier is a compile error.
+gcc: {error: "operator .defined. requires an identifier"}
+clang: {error: "macro name (missing|must be an identifier)"}
+compiles: false
+codeql:
+  queries: [cpp/misra/invalid-token-in-defined-operator]
+known_misses:
+  - query: cpp/misra/invalid-token-in-defined-operator
+    why: >-
+      The query only reports defined forms that are compile errors (no operand, or a non-identifier operand); a
+      build that compiles cannot contain one, so CodeQL never sees it here. The compiler claim above decides it.
+seeded:
+  - defined with empty parentheses
+  - defined applied to a number
+near_misses:
+  - defined naming one identifier, in parentheses

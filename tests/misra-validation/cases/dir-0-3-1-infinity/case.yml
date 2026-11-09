@@ -1,0 +1,23 @@
+---
+guideline: Dir 0.3.1
+notes: >-
+  bad_alias.cpp seeds the conversion to a fixed-width alias (static_cast<std::int32_t>), the only form our code
+  writes; bad.cpp and bad_edge.cpp convert to built-in integer types.
+codeql:
+  queries: [cpp/misra/possible-misuse-of-infinite-floating-point-value]
+known_misses:
+  - query: cpp/misra/possible-misuse-of-infinite-floating-point-value
+    kind: false-negative
+    why: >-
+      A possibly infinite value converted to a fixed-width alias (static_cast<std::int32_t>, bad_alias.cpp) is not
+      reported; only a conversion to a built-in integer type is. Every conversion in our code goes to a fixed-width
+      alias.
+seeded:
+  - "double quotient whose divisor may be zero converted to int (static_cast<int>)"
+  - "a possibly infinite quotient used as the divisor of another division"
+  - "float quotient over an unchecked item count converted to int"
+  - "the same flow inside a const member function, converted to long"
+  - "double quotient whose divisor may be zero converted to std::int32_t (bad_alias.cpp)"
+near_misses:
+  - "quotient taken only after both operands are checked finite and the divisor non-zero, range-checked before the conversion"
+  - "a bounded, finite input divided by a non-zero constant before the conversion"

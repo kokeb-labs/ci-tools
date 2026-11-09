@@ -1,0 +1,13 @@
+---
+guideline: Rule 0.2.4
+codeql:
+  queries: [cpp/misra/unused-limited-visibility-function]
+seeded:
+  - "an uncalled private member function"
+  - "an uncalled function in an unnamed namespace"
+  - "an uncalled static (internal linkage) function"
+  - "an uncalled private static member function"
+near_misses:
+  - "a private member called by a public member"
+  - "a private static member called only from a lambda"
+  - "an uncalled private overload whose overload set is used (ok_overload.hpp)"

@@ -1,0 +1,25 @@
+---
+guideline: Rule 9.5.1
+notes: Records a false positive of the pack. The main case rule-9-5-1 proves detection.
+codeql:
+  queries: [cpp/misra/legacy-for-statements-should-be-simple]
+known_misses:
+  - query: cpp/misra/legacy-for-statements-should-be-simple
+    kind: false-positive
+    why: >-
+      Simple counting loops are reported: a std::size_t counter against a constexpr bound, a std::size_t
+      counter against std::array::size() of a member in a class template, and a std::uint32_t counter against
+      a constexpr call with constant arguments. Each has one integer counter, stepped by ++, compared with a
+      bound that the body does not change; the query does not accept std::size_t as an integer counter type
+      or these bounds as constant.
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (the accumulator and the
+      sum of the results); the guideline covers operations whose operands are constant expressions.
+seeded:
+  - "counter also changed in the body"
+near_misses:
+  - "a std::size_t counter against a constexpr bound (ok.hpp)"
+  - "a std::size_t counter against std::array::size() in a class template (ok.hpp)"
+  - "a std::uint32_t counter against a constexpr call with constant arguments (ok.hpp)"

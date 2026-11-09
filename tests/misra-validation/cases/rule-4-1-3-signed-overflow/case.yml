@@ -1,0 +1,11 @@
+---
+guideline: Rule 4.1.3
+codeql:
+  queries: [cpp/misra/signed-integer-overflow]
+seeded:
+  - "unguarded signed addition, called with INT32_MAX and 1 (a certain overflow)"
+  - "unguarded signed multiplication on unconstrained parameters (a possible overflow)"
+  - "unguarded signed subtraction on unconstrained parameters (a possible overflow)"
+near_misses:
+  - "addition done in 64 bits and clamped"
+  - "addition of two 8-bit values widened to 32 bits"

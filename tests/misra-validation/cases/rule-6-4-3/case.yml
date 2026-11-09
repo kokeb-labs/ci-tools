@@ -1,0 +1,13 @@
+---
+guideline: Rule 6.4.3
+codeql:
+  queries:
+    - cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this
+    - cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this-audit
+seeded:
+  - "an unqualified call that binds to a global function instead of the dependent base's member"
+  - "the same with a second base and member name"
+near_misses:
+  - "this->gain()"
+  - "an explicitly namespace-qualified global call"
+  - "a Base<T>::-qualified call"

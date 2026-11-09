@@ -1,0 +1,15 @@
+---
+guideline: Rule 8.2.8
+codeql:
+  queries: [cpp/misra/pointer-to-integral-cast]
+other_findings:
+  - query: cpp/misra/reinterpret-cast-shall-not-be-used
+    why: "true positive of Rule 8.2.5: the only way to turn a pointer into std::uintptr_t is reinterpret_cast"
+  - query: cpp/misra/no-pointer-to-integral-cast
+    why: "true positive of Rule 8.2.7 (advisory): 8.2.8 is about the target type once that cast is made"
+seeded:
+  - "a pointer cast to std::uint64_t"
+  - "a pointer cast to std::int64_t"
+near_misses:
+  - "a pointer cast to std::intptr_t"
+  - "a pointer cast to std::uintptr_t"
