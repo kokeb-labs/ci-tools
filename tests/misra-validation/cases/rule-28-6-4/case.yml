@@ -1,0 +1,7 @@
+guideline: Rule 28.6.4
+codeql:
+  queries: [cpp/misra/potentially-erroneous-container-usage]
+other_findings:
+  - query: cpp/misra/cstdio-functions-shall-not-be-used
+    why: "misfire: the Rule 30.0.1 query matches functions by name (hasGlobalOrStdName on the name remove), so the
+      <algorithm> template std::remove(first, last, value) is reported as the <cstdio> remove(const char*)."

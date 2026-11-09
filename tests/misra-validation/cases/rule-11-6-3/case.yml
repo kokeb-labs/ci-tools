@@ -1,0 +1,3 @@
+guideline: Rule 11.6.3
+codeql:
+  queries: [cpp/misra/non-unique-enumeration-constant]

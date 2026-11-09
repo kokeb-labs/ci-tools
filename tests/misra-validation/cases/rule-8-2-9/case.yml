@@ -1,0 +1,7 @@
+guideline: Rule 8.2.9
+notes: >-
+  Not applicable (RTTI is off): with -fno-rtti any typeid is a compile error, so the compiler decides it. The
+  CodeQL query is validated in rule-8-2-9-codeql, whose violation builds with RTTI on.
+gcc: {error: "cannot use 'typeid' with '-fno-rtti'"}
+clang: {error: "use of typeid requires '?-frtti'?"}
+compiles: false

@@ -1,0 +1,5 @@
+guideline: Rule 19.1.2
+notes: The pack does not implement this guideline (compiler checked), and an #if left open is a compile error.
+gcc: {error: "unterminated #if"}
+clang: {error: "unterminated conditional directive"}
+compiles: false

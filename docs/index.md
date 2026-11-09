@@ -59,6 +59,7 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 | [`ru-host-ci.yml`](ru-host-ci.md) | Build, test and analyse a CMake project on the host, with clang-tidy 18 and cppcheck over the compiler's own compile database. | `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets for each assurance level (ADR-0020). | `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | Lint Markdown with markdownlint-cli2 against the repository's own rules. | `contents: read` |
+| [`ru-misra.yml`](ru-misra.md) | Check C++ code against MISRA C++:2023 with the validated open-source toolchain, and get a per-guideline report. | `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | Build, check, audit and publish a Kokeb Labs documentation site with the shared theme, versioned or not. | `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit. | `contents: write` |
 | [`ru-release.yml`](ru-release.md) | Create a GitHub Release with generated notes for a tag. | `contents: write` |

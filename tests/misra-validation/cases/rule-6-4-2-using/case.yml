@@ -1,0 +1,3 @@
+guideline: Rule 6.4.2
+codeql:
+  queries: [cpp/misra/definition-shall-be-considered-for-unqualified-lookup]

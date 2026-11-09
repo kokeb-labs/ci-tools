@@ -1,0 +1,3 @@
+guideline: Rule 8.20.1
+codeql:
+  queries: [cpp/misra/unsigned-operation-with-constant-operands-wraps]

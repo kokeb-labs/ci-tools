@@ -1,0 +1,9 @@
+guideline: Rule 8.2.3
+notes: Records a false negative of the pack; the clang-tidy check (every const_cast) still reports it.
+codeql:
+  queries: [cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference]
+known_misses:
+  - query: cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference
+    why: >-
+      a cast of a volatile (or const) object to a non-volatile reference is not reported: the query looks for the
+      qualifier below a pointer or reference type, but the operand of the cast is the object itself

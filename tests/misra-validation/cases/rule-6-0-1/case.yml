@@ -1,0 +1,3 @@
+guideline: Rule 6.0.1
+codeql:
+  queries: [cpp/misra/block-scope-function-ambiguous]

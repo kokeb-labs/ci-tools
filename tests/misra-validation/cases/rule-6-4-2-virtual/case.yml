@@ -1,0 +1,10 @@
+guideline: Rule 6.4.2
+notes: >-
+  The query only considers declarations that are not also definitions, for both the overrider and the hidden
+  overload, so the base overloads are pure and the override is defined out of class. The same hiding with functions
+  defined inside the class bodies was not reported in local runs (a false negative to keep in mind; review covers
+  it).
+codeql:
+  queries: [cpp/misra/inherited-overridable-member-function]
+other_findings:
+  - {query: cpp/misra/member-specifiers-not-used-appropriately, why: "misfire: reports the implicitly declared destructor of the final class, which has no declaration that could carry override"}

@@ -1,0 +1,5 @@
+guideline: Rule 9.6.3
+notes: Our matrix raises Rule 9.6.1 to required, so no goto exists at all; cppcoreguidelines-avoid-goto reports every goto.
+clang-tidy: {check: cppcoreguidelines-avoid-goto}
+codeql:
+  queries: [cpp/misra/goto-shall-jump-to-label-declared-later-in-the-function]

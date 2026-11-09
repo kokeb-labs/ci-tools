@@ -1,0 +1,10 @@
+guideline: Rule 25.5.3
+notes: The clang-tidy claim bans every call of these functions, so the ok file calls none of them.
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(asctime|ctime|gmtime|localtime|localeconv|getenv|setlocale|strerror)$,,banned by the MISRA C++ profile"
+codeql:
+  queries:
+    - cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra

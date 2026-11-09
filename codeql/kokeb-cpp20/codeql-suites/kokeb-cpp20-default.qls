@@ -1,0 +1,7 @@
+- description: Kokeb Labs C++20 profile (default)
+- queries: rules
+  from: kokeb/cpp20-queries
+- include:
+    kind:
+      - problem
+      - path-problem

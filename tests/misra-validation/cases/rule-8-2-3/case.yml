@@ -1,0 +1,4 @@
+guideline: Rule 8.2.3
+clang-tidy: {check: cppcoreguidelines-pro-type-const-cast}
+codeql:
+  queries: [cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference]

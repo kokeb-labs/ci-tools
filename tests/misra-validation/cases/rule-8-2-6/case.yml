@@ -1,0 +1,3 @@
+guideline: Rule 8.2.6
+codeql:
+  queries: [cpp/misra/int-to-pointer-cast-prohibited]

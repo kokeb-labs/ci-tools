@@ -1,0 +1,7 @@
+guideline: KB-CPP-046
+notes: >-
+  The example rule of the own profile. Bad: a Result template without [[nodiscard]] and a nodiscard-less struct
+  named Result. Ok: [[nodiscard]] on the template and on its explicit void specialisation; near miss: a type whose
+  name only contains Result (ResultCode) is not a Result type.
+codeql:
+  queries: [kokeb/cpp20/result-type-not-nodiscard]

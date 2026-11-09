@@ -1,0 +1,4 @@
+guideline: Rule 9.6.1
+clang-tidy: {check: cppcoreguidelines-avoid-goto}
+codeql:
+  queries: [cpp/misra/goto-statement-should-not-be-used]

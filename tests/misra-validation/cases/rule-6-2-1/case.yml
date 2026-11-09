@@ -1,0 +1,6 @@
+guideline: Rule 6.2.1
+codeql:
+  queries: [cpp/misra/one-definition-rule-violated]
+notes: >-
+  Two translation units. bad_a.cpp defines limit_a and, through zz_dup_b.inc, a second limit_b; bad_b.cpp the
+  reverse. The query reports a pair at the path that sorts first, so each bad file carries one result.

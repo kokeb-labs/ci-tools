@@ -1,0 +1,3 @@
+guideline: Rule 0.2.1
+codeql:
+  queries: [cpp/misra/unused-limited-visibility-variable]

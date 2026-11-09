@@ -1,0 +1,3 @@
+guideline: Rule 13.3.3
+codeql:
+  queries: [cpp/misra/declarations-of-a-function-same-parameter-name]

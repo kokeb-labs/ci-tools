@@ -1,0 +1,8 @@
+guideline: Rule 21.2.2
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    # The str*, wcs*, strto* and wcsto* functions (strto*/wcsto* are matched by the same prefix).
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(str|wcs)[a-z]+$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/unsafe-string-handling-functions]

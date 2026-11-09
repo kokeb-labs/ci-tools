@@ -1,0 +1,6 @@
+guideline: Rule 9.4.1
+clang-tidy:
+  check: hicpp-multiway-paths-covered
+  options: {hicpp-multiway-paths-covered.WarnOnMissingElse: true}
+codeql:
+  queries: [cpp/misra/if-else-if-end-condition]

@@ -1,0 +1,8 @@
+guideline: Rule 8.3.1
+codeql:
+  queries: [cpp/misra/built-in-unary-operator-applied-to-unsigned-expression]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports `0U - value` with a run-time operand (the deliberate modular negation), whose operands are not constant, whenever its range analysis cannot bound them

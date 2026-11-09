@@ -1,0 +1,7 @@
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/use-of-deprecated-shared-ptr-unique]
+known_misses:
+  - query: cpp/misra/use-of-deprecated-shared-ptr-unique
+    why: >-
+      false negative for our toolchains: the query matches unique() declared in std::shared_ptr itself; libstdc++ declares it in its std::__shared_ptr base class, and libc++ removes it in C++20 mode.

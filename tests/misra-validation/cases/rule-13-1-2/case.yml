@@ -1,0 +1,5 @@
+guideline: Rule 13.1.2
+notes: The matrix bans virtual bases outright (Rule 13.1.1), so fuchsia-virtual-inheritance reports the virtual edge.
+clang-tidy: {check: fuchsia-virtual-inheritance}
+codeql:
+  queries: [cpp/misra/virtual-and-non-virtual-class-in-the-hierarchy]

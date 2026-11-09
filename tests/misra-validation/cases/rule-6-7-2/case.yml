@@ -1,0 +1,5 @@
+guideline: Rule 6.7.2
+codeql:
+  queries: [cpp/misra/global-variable-used]
+other_findings:
+  - {query: cpp/misra/signed-integer-overflow, why: "misfire: ++errors_ only runs while errors_ < 8, so it cannot overflow; the query does not use the guard"}

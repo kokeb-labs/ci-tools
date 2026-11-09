@@ -30,6 +30,7 @@ read from the workflow files.
 | [`ru-host-ci.yml`](ru-host-ci.md) | `contents: read` | `host`: `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | `contents: read` | `gates`: `contents: read`<br>`complexity`: `contents: read`<br>`coverage`: `contents: read`<br>`sanitizers`: `contents: read`<br>`fuzz`: `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | `contents: read` | `markdownlint`: `contents: read` |
+| [`ru-misra.yml`](ru-misra.md) | `contents: read` | `plan`: `contents: read`<br>`scan`: `contents: read`<br>`report`: `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`deploy`: `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-release.yml`](ru-release.md) | `contents: write` | `release`: `contents: write` |

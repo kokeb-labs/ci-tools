@@ -1,0 +1,5 @@
+guideline: Rule 5.7.1
+gcc: {flag: comment}
+clang: {flag: comment}
+codeql:
+  queries: [cpp/misra/character-sequence-used-within-ac-style-comment]

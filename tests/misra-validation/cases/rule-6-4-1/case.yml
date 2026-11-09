@@ -1,0 +1,4 @@
+guideline: Rule 6.4.1
+gcc: {flag: shadow}
+codeql:
+  queries: [cpp/misra/variable-declared-in-inner-scope-hides-outer-scope]

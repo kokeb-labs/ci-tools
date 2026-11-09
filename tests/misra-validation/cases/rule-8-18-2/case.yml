@@ -1,0 +1,3 @@
+guideline: Rule 8.18.2
+codeql:
+  queries: [cpp/misra/result-of-an-assignment-operator-should-not-be-used]

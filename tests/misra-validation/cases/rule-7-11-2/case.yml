@@ -1,0 +1,4 @@
+guideline: Rule 7.11.2
+clang-tidy: {check: cppcoreguidelines-pro-bounds-array-to-pointer-decay}
+codeql:
+  queries: [cpp/misra/array-passed-as-function-argument-decay-to-a-pointer]

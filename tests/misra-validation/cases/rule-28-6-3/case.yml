@@ -1,0 +1,6 @@
+guideline: Rule 28.6.3
+codeql:
+  queries: [cpp/misra/object-used-while-in-potentially-moved-from-state]
+other_findings:
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1 (advisory): std::string allocates; it is the movable type of the example."

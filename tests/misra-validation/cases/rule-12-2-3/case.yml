@@ -1,0 +1,5 @@
+guideline: Rule 12.2.3
+codeql:
+  queries: [cpp/misra/signed-integer-named-bit-field-have-a-length-of-one-bit]
+other_findings:
+  - {query: cpp/misra/bit-fields-should-not-be-declared-misra-cpp, why: "true positive of Rule 12.2.1: the case needs a bit-field to exist"}

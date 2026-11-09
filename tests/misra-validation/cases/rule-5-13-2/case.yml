@@ -1,0 +1,3 @@
+guideline: Rule 5.13.2
+codeql:
+  queries: [cpp/misra/non-terminated-escape-sequences]

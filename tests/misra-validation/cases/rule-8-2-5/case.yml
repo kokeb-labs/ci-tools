@@ -1,0 +1,4 @@
+guideline: Rule 8.2.5
+clang-tidy: {check: cppcoreguidelines-pro-type-reinterpret-cast}
+codeql:
+  queries: [cpp/misra/reinterpret-cast-shall-not-be-used]

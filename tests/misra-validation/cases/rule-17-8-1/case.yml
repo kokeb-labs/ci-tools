@@ -1,0 +1,3 @@
+guideline: Rule 17.8.1
+codeql:
+  queries: [cpp/misra/function-templates-explicitly-specialized]

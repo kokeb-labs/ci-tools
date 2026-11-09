@@ -24,3 +24,7 @@ bin-release/
 __pycache__/
 *.egg-info/
 site/
+
+# ru-misra and the MISRA tool-validation suite, local runs
+.ru-misra/
+build-misra-validation/

@@ -1,0 +1,3 @@
+guideline: Rule 8.1.2
+codeql:
+  queries: [cpp/misra/implicit-captures-disallowed-in-non-transient-lambda]

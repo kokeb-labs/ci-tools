@@ -1,0 +1,1904 @@
+{
+ "pack": "codeql/misra-cpp-coding-standards",
+ "version": "2.62.0",
+ "source": "query metadata of the release's misra-cpp-coding-standards.tgz (default suite: audit queries excluded)",
+ "guidelines": {
+  "Rule 0.0.1": [
+   {
+    "id": "cpp/misra/unreachable-statement",
+    "query": "UnreachableStatement.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 0.0.2": [
+   {
+    "id": "cpp/misra/invariant-condition",
+    "query": "InvariantCondition.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 0.1.1": [
+   {
+    "id": "cpp/misra/unnecessary-write-to-local-object",
+    "query": "UnnecessaryWriteToLocalObject.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 0.1.2": [
+   {
+    "id": "cpp/misra/unused-return-value-misra-cpp",
+    "query": "UnusedReturnValueMisraCpp.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 0.2.1": [
+   {
+    "id": "cpp/misra/unused-limited-visibility-variable",
+    "query": "UnusedLimitedVisibilityVariable.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 0.2.2": [
+   {
+    "id": "cpp/misra/unused-parameter-misra-cpp",
+    "query": "UnusedParameterMisraCpp.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 0.2.3": [
+   {
+    "id": "cpp/misra/unused-type-with-limited-visibility",
+    "query": "UnusedTypeWithLimitedVisibility.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 0.2.4": [
+   {
+    "id": "cpp/misra/unused-limited-visibility-function",
+    "query": "UnusedLimitedVisibilityFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   }
+  ],
+  "Dir 0.3.1": [
+   {
+    "id": "cpp/misra/possible-misuse-of-infinite-floating-point-value",
+    "query": "PossibleMisuseOfInfiniteFloatingPointValue.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/possible-misuse-of-nan-floating-point-value",
+    "query": "PossibleMisuseOfNaNFloatingPointValue.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "tu"
+   }
+  ],
+  "Rule 4.1.1": [
+   {
+    "id": "cpp/misra/compiler-language-extensions-used",
+    "query": "CompilerLanguageExtensionsUsed.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 4.1.2": [
+   {
+    "id": "cpp/misra/implicit-declaration-of-copy-constructor",
+    "query": "ImplicitDeclarationOfCopyConstructor.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/implicit-declaration-of-copy-constructor-audit",
+    "query": "ImplicitDeclarationOfCopyConstructorAudit.ql",
+    "audit": true,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/noexcept-specifier-throw",
+    "query": "NoexceptSpecifierThrow.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/redeclaration-of-static-constexpr-data-member",
+    "query": "RedeclarationOfStaticConstexprDataMember.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-allocator-void",
+    "query": "UseOfDeprecatedAllocatorVoid.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-c-headers",
+    "query": "UseOfDeprecatedCHeaders.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-function-binder-typedef-member",
+    "query": "UseOfDeprecatedFunctionBinderTypedefMember.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-is-literal-type-traits",
+    "query": "UseOfDeprecatedIsLiteralTypeTraits.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-raw-storage-iterator",
+    "query": "UseOfDeprecatedRawStorageIterator.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-shared-ptr-unique",
+    "query": "UseOfDeprecatedSharedPtrUnique.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-std-allocator-member",
+    "query": "UseOfDeprecatedStdAllocatorMember.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-std-iterator-base-class",
+    "query": "UseOfDeprecatedStdIteratorBaseClass.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-str-stream-class",
+    "query": "UseOfDeprecatedStrStreamClass.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-temporary-buffers",
+    "query": "UseOfDeprecatedTemporaryBuffers.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-deprecated-unary-or-binary-negate",
+    "query": "UseOfDeprecatedUnaryOrBinaryNegate.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-of-uncaught-exception",
+    "query": "UseOfUncaughtException.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 4.1.3": [
+   {
+    "id": "cpp/misra/array-deleted-through-pointer-of-incorrect-type",
+    "query": "ArrayDeletedThroughPointerOfIncorrectType.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/deallocation-type-mismatch",
+    "query": "DeallocationTypeMismatch.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/division-by-zero-undefined-behavior",
+    "query": "DivisionByZeroUndefinedBehavior.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/non-existent-member-access-undefined-behavior",
+    "query": "NonExistentMemberAccessUndefinedBehavior.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/null-pointer-to-member-access-undefined-behavior",
+    "query": "NullPointerToMemberAccessUndefinedBehavior.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/out-of-range-enum-cast-critical-unspecified-behavior",
+    "query": "OutOfRangeEnumCastCriticalUnspecifiedBehavior.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/possible-data-race-between-threads",
+    "query": "PossibleDataRaceBetweenThreads.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/signed-integer-overflow",
+    "query": "SignedIntegerOverflow.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/string-literal-possibly-modified-audit",
+    "query": "StringLiteralPossiblyModifiedAudit.ql",
+    "audit": true,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/uninitialized-static-pointer-to-member-undefined-behavior",
+    "query": "UninitializedStaticPointerToMemberUndefinedBehavior.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 4.6.1": [
+   {
+    "id": "cpp/misra/memory-usage-not-sequenced",
+    "query": "MemoryUsageNotSequenced.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 5.0.1": [
+   {
+    "id": "cpp/misra/trigraph-like-sequences-should-not-be-used",
+    "query": "TrigraphLikeSequencesShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.7.1": [
+   {
+    "id": "cpp/misra/character-sequence-used-within-ac-style-comment",
+    "query": "CharacterSequenceUsedWithinACStyleComment.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Dir 5.7.2": [
+   {
+    "id": "cpp/misra/sections-of-code-should-not-be-commented-out",
+    "query": "SectionsOfCodeShouldNotBeCommentedOut.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.7.3": [
+   {
+    "id": "cpp/misra/line-splicing-used-in-comments",
+    "query": "LineSplicingUsedInComments.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.10.1": [
+   {
+    "id": "cpp/misra/poorly-formed-identifier",
+    "query": "PoorlyFormedIdentifier.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.13.1": [
+   {
+    "id": "cpp/misra/backslash-character-misuse",
+    "query": "BackslashCharacterMisuse.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.13.2": [
+   {
+    "id": "cpp/misra/non-terminated-escape-sequences",
+    "query": "NonTerminatedEscapeSequences.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.13.3": [
+   {
+    "id": "cpp/misra/octal-constants-used",
+    "query": "OctalConstantsUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.13.4": [
+   {
+    "id": "cpp/misra/unsigned-integer-literals-not-appropriately-suffixed",
+    "query": "UnsignedIntegerLiteralsNotAppropriatelySuffixed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.13.5": [
+   {
+    "id": "cpp/misra/lowercase-l-starts-in-literal-suffix",
+    "query": "LowercaseLStartsInLiteralSuffix.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 5.13.6": [
+   {
+    "id": "cpp/misra/long-long-literal-with-single-l-suffix",
+    "query": "LongLongLiteralWithSingleLSuffix.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.0.1": [
+   {
+    "id": "cpp/misra/block-scope-function-ambiguous",
+    "query": "BlockScopeFunctionAmbiguous.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.0.2": [
+   {
+    "id": "cpp/misra/external-linkage-array-without-explicit-size-misra",
+    "query": "ExternalLinkageArrayWithoutExplicitSizeMisra.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.0.3": [
+   {
+    "id": "cpp/misra/global-namespace-declarations",
+    "query": "GlobalNamespaceDeclarations.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.0.4": [
+   {
+    "id": "cpp/misra/non-global-function-main",
+    "query": "NonGlobalFunctionMain.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.2.1": [
+   {
+    "id": "cpp/misra/one-definition-rule-violated",
+    "query": "OneDefinitionRuleViolated.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   }
+  ],
+  "Rule 6.2.2": [
+   {
+    "id": "cpp/misra/incompatible-function-declarations-cpp",
+    "query": "IncompatibleFunctionDeclarationsCpp.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/incompatible-object-declarations-cpp",
+    "query": "IncompatibleObjectDeclarationsCpp.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.2.3": [
+   {
+    "id": "cpp/misra/duplicate-inline-function-definitions",
+    "query": "DuplicateInlineFunctionDefinitions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/duplicate-type-definitions",
+    "query": "DuplicateTypeDefinitions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/template-specialization-wrong-location",
+    "query": "TemplateSpecializationWrongLocation.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   }
+  ],
+  "Rule 6.2.4": [
+   {
+    "id": "cpp/misra/violations-of-one-definition-rule-misra",
+    "query": "ViolationsOfOneDefinitionRuleMisra.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.4.1": [
+   {
+    "id": "cpp/misra/variable-declared-in-inner-scope-hides-outer-scope",
+    "query": "VariableDeclaredInInnerScopeHidesOuterScope.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.4.2": [
+   {
+    "id": "cpp/misra/definition-shall-be-considered-for-unqualified-lookup",
+    "query": "DefinitionShallBeConsideredForUnqualifiedLookup.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/inherited-non-overridable-member-function",
+    "query": "InheritedNonOverridableMemberFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/inherited-overridable-member-function",
+    "query": "InheritedOverridableMemberFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.4.3": [
+   {
+    "id": "cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this",
+    "query": "NameShallBeReferredUsingAQualifiedIdOrThis.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this-audit",
+    "query": "NameShallBeReferredUsingAQualifiedIdOrThisAudit.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.5.1": [
+   {
+    "id": "cpp/misra/external-linkage-not-declared-in-header-file-misra",
+    "query": "ExternalLinkageNotDeclaredInHeaderFileMisra.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.5.2": [
+   {
+    "id": "cpp/misra/internal-linkage-specified-appropriately",
+    "query": "InternalLinkageSpecifiedAppropriately.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.7.1": [
+   {
+    "id": "cpp/misra/local-variable-static-storage-duration",
+    "query": "LocalVariableStaticStorageDuration.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.7.2": [
+   {
+    "id": "cpp/misra/global-variable-used",
+    "query": "GlobalVariableUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.8.1": [
+   {
+    "id": "cpp/misra/object-accessed-after-lifetime-misra",
+    "query": "ObjectAccessedAfterLifetimeMisra.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/object-accessed-before-lifetime-misra",
+    "query": "ObjectAccessedBeforeLifetimeMisra.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.8.2": [
+   {
+    "id": "cpp/misra/return-reference-or-pointer-to-automatic-local-variable",
+    "query": "ReturnReferenceOrPointerToAutomaticLocalVariable.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.8.3": [
+   {
+    "id": "cpp/misra/automatic-storage-assigned-to-object-greater-lifetime",
+    "query": "AutomaticStorageAssignedToObjectGreaterLifetime.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.8.4": [
+   {
+    "id": "cpp/misra/member-functions-refqualified",
+    "query": "MemberFunctionsRefqualified.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.9.1": [
+   {
+    "id": "cpp/misra/type-aliases-declaration",
+    "query": "TypeAliasesDeclaration.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 6.9.2": [
+   {
+    "id": "cpp/misra/avoid-standard-integer-type-names",
+    "query": "AvoidStandardIntegerTypeNames.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.0.1": [
+   {
+    "id": "cpp/misra/no-conversion-from-bool",
+    "query": "NoConversionFromBool.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.0.2": [
+   {
+    "id": "cpp/misra/no-implicit-bool-conversion",
+    "query": "NoImplicitBoolConversion.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.0.3": [
+   {
+    "id": "cpp/misra/no-character-numerical-value",
+    "query": "NoCharacterNumericalValue.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.0.4": [
+   {
+    "id": "cpp/misra/inappropriate-bitwise-or-shift-operands",
+    "query": "InappropriateBitwiseOrShiftOperands.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.0.5": [
+   {
+    "id": "cpp/misra/no-signedness-change-from-promotion",
+    "query": "NoSignednessChangeFromPromotion.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.0.6": [
+   {
+    "id": "cpp/misra/numeric-assignment-type-mismatch",
+    "query": "NumericAssignmentTypeMismatch.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.11.1": [
+   {
+    "id": "cpp/misra/nullptr-not-the-only-form-of-the-null-pointer-constant",
+    "query": "NullptrNotTheOnlyFormOfTheNullPointerConstant.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.11.2": [
+   {
+    "id": "cpp/misra/array-passed-as-function-argument-decay-to-a-pointer",
+    "query": "ArrayPassedAsFunctionArgumentDecayToAPointer.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 7.11.3": [
+   {
+    "id": "cpp/misra/function-pointer-conversion-context",
+    "query": "FunctionPointerConversionContext.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.0.1": [
+   {
+    "id": "cpp/misra/missing-precedence-clarifying-parenthesis",
+    "query": "MissingPrecedenceClarifyingParenthesis.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/missing-sizeof-operator-parenthesis",
+    "query": "MissingSizeofOperatorParenthesis.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.1.1": [
+   {
+    "id": "cpp/misra/non-transient-lambda-implicitly-captures-this",
+    "query": "NonTransientLambdaImplicitlyCapturesThis.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.1.2": [
+   {
+    "id": "cpp/misra/implicit-captures-disallowed-in-non-transient-lambda",
+    "query": "ImplicitCapturesDisallowedInNonTransientLambda.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.1": [
+   {
+    "id": "cpp/misra/virtual-base-class-cast-to-derived",
+    "query": "VirtualBaseClassCastToDerived.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.2": [
+   {
+    "id": "cpp/misra/no-c-style-or-functional-casts",
+    "query": "NoCStyleOrFunctionalCasts.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.3": [
+   {
+    "id": "cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference",
+    "query": "CastRemovesConstOrVolatileFromPointerOrReference.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.4": [
+   {
+    "id": "cpp/misra/casts-between-a-pointer-to-function-and-any-other-type",
+    "query": "CastsBetweenAPointerToFunctionAndAnyOtherType.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.5": [
+   {
+    "id": "cpp/misra/reinterpret-cast-shall-not-be-used",
+    "query": "ReinterpretCastShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.6": [
+   {
+    "id": "cpp/misra/int-to-pointer-cast-prohibited",
+    "query": "IntToPointerCastProhibited.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.7": [
+   {
+    "id": "cpp/misra/no-pointer-to-integral-cast",
+    "query": "NoPointerToIntegralCast.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.8": [
+   {
+    "id": "cpp/misra/pointer-to-integral-cast",
+    "query": "PointerToIntegralCast.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.9": [
+   {
+    "id": "cpp/misra/polymorphic-class-type-expression-in-typeid",
+    "query": "PolymorphicClassTypeExpressionInTypeid.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.2.10": [
+   {
+    "id": "cpp/misra/functions-call-themselves-either-directly-or-indirectly",
+    "query": "FunctionsCallThemselvesEitherDirectlyOrIndirectly.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 8.2.11": [
+   {
+    "id": "cpp/misra/inappropriate-argument-type-passed-via-ellipsis",
+    "query": "InappropriateArgumentTypePassedViaEllipsis.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.3.1": [
+   {
+    "id": "cpp/misra/built-in-unary-operator-applied-to-unsigned-expression",
+    "query": "BuiltInUnaryOperatorAppliedToUnsignedExpression.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.3.2": [
+   {
+    "id": "cpp/misra/built-in-unary-plus-operator-should-not-be-used",
+    "query": "BuiltInUnaryPlusOperatorShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.7.1": [
+   {
+    "id": "cpp/misra/pointer-argument-to-cstring-function-is-invalid",
+    "query": "PointerArgumentToCstringFunctionIsInvalid.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/pointer-arithmetic-forms-an-invalid-pointer",
+    "query": "PointerArithmeticFormsAnInvalidPointer.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 8.7.2": [
+   {
+    "id": "cpp/misra/pointer-difference-taken-between-different-arrays",
+    "query": "PointerDifferenceTakenBetweenDifferentArrays.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 8.9.1": [
+   {
+    "id": "cpp/misra/pointer-compared-between-different-arrays",
+    "query": "PointerComparedBetweenDifferentArrays.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 8.14.1": [
+   {
+    "id": "cpp/misra/short-circuited-persistent-side-effect",
+    "query": "ShortCircuitedPersistentSideEffect.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 8.18.1": [
+   {
+    "id": "cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp",
+    "query": "ObjectAssignedToAnOverlappingObjectMisraCpp.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/object-copied-to-an-overlapping-object-misra-cpp",
+    "query": "ObjectCopiedToAnOverlappingObjectMisraCpp.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 8.18.2": [
+   {
+    "id": "cpp/misra/result-of-an-assignment-operator-should-not-be-used",
+    "query": "ResultOfAnAssignmentOperatorShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.19.1": [
+   {
+    "id": "cpp/misra/comma-operator-should-not-be-used",
+    "query": "CommaOperatorShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 8.20.1": [
+   {
+    "id": "cpp/misra/unsigned-operation-with-constant-operands-wraps",
+    "query": "UnsignedOperationWithConstantOperandsWraps.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.2.1": [
+   {
+    "id": "cpp/misra/no-standalone-type-cast-expression",
+    "query": "NoStandaloneTypeCastExpression.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.3.1": [
+   {
+    "id": "cpp/misra/loop-body-compound-condition",
+    "query": "LoopBodyCompoundCondition.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/switch-body-compound-condition",
+    "query": "SwitchBodyCompoundCondition.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.4.1": [
+   {
+    "id": "cpp/misra/if-else-if-end-condition",
+    "query": "IfElseIfEndCondition.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.4.2": [
+   {
+    "id": "cpp/misra/appropriate-structure-of-switch-statement",
+    "query": "AppropriateStructureOfSwitchStatement.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.5.1": [
+   {
+    "id": "cpp/misra/legacy-for-statements-should-be-simple",
+    "query": "LegacyForStatementsShouldBeSimple.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.5.2": [
+   {
+    "id": "cpp/misra/for-range-initializer-at-most-one-function-call",
+    "query": "ForRangeInitializerAtMostOneFunctionCall.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.6.1": [
+   {
+    "id": "cpp/misra/goto-statement-should-not-be-used",
+    "query": "GotoStatementShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.6.2": [
+   {
+    "id": "cpp/misra/goto-reference-a-label-in-surrounding-block",
+    "query": "GotoReferenceALabelInSurroundingBlock.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.6.3": [
+   {
+    "id": "cpp/misra/goto-shall-jump-to-label-declared-later-in-the-function",
+    "query": "GotoShallJumpToLabelDeclaredLaterInTheFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 9.6.4": [
+   {
+    "id": "cpp/misra/function-declared-with-the-noreturn-attribute-return",
+    "query": "FunctionDeclaredWithTheNoreturnAttributeReturn.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 9.6.5": [
+   {
+    "id": "cpp/misra/non-void-function-shall-return-a-value-on-all-paths",
+    "query": "NonVoidFunctionShallReturnAValueOnAllPaths.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.0.1": [
+   {
+    "id": "cpp/misra/use-single-global-or-member-declarators",
+    "query": "UseSingleGlobalOrMemberDeclarators.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/use-single-local-declarators",
+    "query": "UseSingleLocalDeclarators.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.1.1": [
+   {
+    "id": "cpp/misra/pointer-or-ref-param-not-const",
+    "query": "PointerOrRefParamNotConst.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.1.2": [
+   {
+    "id": "cpp/misra/volatile-qualifier-not-used-appropriately",
+    "query": "VolatileQualifierNotUsedAppropriately.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.2.1": [
+   {
+    "id": "cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type",
+    "query": "EnumerationNotDefinedWithAnExplicitUnderlyingType.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.2.2": [
+   {
+    "id": "cpp/misra/unscoped-enumerations-should-not-be-declared",
+    "query": "UnscopedEnumerationsShouldNotBeDeclared.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.2.3": [
+   {
+    "id": "cpp/misra/unscoped-enum-without-fixed-underlying-type-used",
+    "query": "UnscopedEnumWithoutFixedUnderlyingTypeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.3.1": [
+   {
+    "id": "cpp/misra/unnamed-namespaces-in-header-files",
+    "query": "UnnamedNamespacesInHeaderFiles.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 10.4.1": [
+   {
+    "id": "cpp/misra/asm-declaration-shall-not-be-used",
+    "query": "AsmDeclarationShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 11.3.1": [
+   {
+    "id": "cpp/misra/variable-declared-array-type",
+    "query": "VariableDeclaredArrayType.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 11.3.2": [
+   {
+    "id": "cpp/misra/declaration-of-an-object-indirections-level",
+    "query": "DeclarationOfAnObjectIndirectionsLevel.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 11.6.1": [
+   {
+    "id": "cpp/misra/uninitialized-variable",
+    "query": "UninitializedVariable.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 11.6.2": [
+   {
+    "id": "cpp/misra/value-of-an-object-must-not-be-read-before-it-has-been-set",
+    "query": "ValueOfAnObjectMustNotBeReadBeforeItHasBeenSet.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 11.6.3": [
+   {
+    "id": "cpp/misra/non-unique-enumeration-constant",
+    "query": "NonUniqueEnumerationConstant.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 12.2.1": [
+   {
+    "id": "cpp/misra/bit-fields-should-not-be-declared-misra-cpp",
+    "query": "BitFieldsShouldNotBeDeclaredMisraCpp.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 12.2.2": [
+   {
+    "id": "cpp/misra/bit-field-shall-have-an-appropriate-type",
+    "query": "BitFieldShallHaveAnAppropriateType.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 12.2.3": [
+   {
+    "id": "cpp/misra/signed-integer-named-bit-field-have-a-length-of-one-bit",
+    "query": "SignedIntegerNamedBitFieldHaveALengthOfOneBit.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 12.3.1": [
+   {
+    "id": "cpp/misra/union-keyword-used",
+    "query": "UnionKeywordUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 13.1.1": [
+   {
+    "id": "cpp/misra/virtual-inheritance-not-allowed",
+    "query": "VirtualInheritanceNotAllowed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 13.1.2": [
+   {
+    "id": "cpp/misra/virtual-and-non-virtual-class-in-the-hierarchy",
+    "query": "VirtualAndNonVirtualClassInTheHierarchy.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 13.3.1": [
+   {
+    "id": "cpp/misra/member-specifiers-not-used-appropriately",
+    "query": "MemberSpecifiersNotUsedAppropriately.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 13.3.2": [
+   {
+    "id": "cpp/misra/overriding-shall-specify-different-default-arguments",
+    "query": "OverridingShallSpecifyDifferentDefaultArguments.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 13.3.3": [
+   {
+    "id": "cpp/misra/declarations-of-a-function-same-parameter-name",
+    "query": "DeclarationsOfAFunctionSameParameterName.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   }
+  ],
+  "Rule 13.3.4": [
+   {
+    "id": "cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr",
+    "query": "PotentiallyVirtualPointerOnlyComparesToNullptr.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 14.1.1": [
+   {
+    "id": "cpp/misra/private-and-public-data-members-mixed",
+    "query": "PrivateAndPublicDataMembersMixed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 15.0.1": [
+   {
+    "id": "cpp/misra/improperly-provided-special-member-functions",
+    "query": "ImproperlyProvidedSpecialMemberFunctions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/improperly-provided-special-member-functions-audit",
+    "query": "ImproperlyProvidedSpecialMemberFunctionsAudit.ql",
+    "audit": true,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 15.0.2": [
+   {
+    "id": "cpp/misra/invalid-signature-for-special-member-function",
+    "query": "InvalidSignatureForSpecialMemberFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 15.1.1": [
+   {
+    "id": "cpp/misra/objects-dynamic-type-used-from-constructor-or-destructor",
+    "query": "ObjectsDynamicTypeUsedFromConstructorOrDestructor.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 15.1.2": [
+   {
+    "id": "cpp/misra/initialize-all-virtual-base-classes",
+    "query": "InitializeAllVirtualBaseClasses.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 15.1.3": [
+   {
+    "id": "cpp/misra/non-explicit-conversion-member",
+    "query": "NonExplicitConversionMember.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 15.1.4": [
+   {
+    "id": "cpp/misra/non-static-member-not-init-before-use",
+    "query": "NonStaticMemberNotInitBeforeUse.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 15.1.5": [
+   {
+    "id": "cpp/misra/initializer-list-constructor-is-the-only-constructor",
+    "query": "InitializerListConstructorIsTheOnlyConstructor.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Dir 15.8.1": [
+   {
+    "id": "cpp/misra/copy-and-move-assignments-shall-handle-self-assignment",
+    "query": "CopyAndMoveAssignmentsShallHandleSelfAssignment.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 16.5.1": [
+   {
+    "id": "cpp/misra/logical-and-and-logical-or-operators-overloaded",
+    "query": "LogicalAndAndLogicalOrOperatorsOverloaded.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 16.5.2": [
+   {
+    "id": "cpp/misra/address-of-operator-overloaded",
+    "query": "AddressOfOperatorOverloaded.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 16.6.1": [
+   {
+    "id": "cpp/misra/invalid-operator-overloaded-as-member-function",
+    "query": "InvalidOperatorOverloadedAsMemberFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 17.8.1": [
+   {
+    "id": "cpp/misra/function-templates-explicitly-specialized",
+    "query": "FunctionTemplatesExplicitlySpecialized.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.1.1": [
+   {
+    "id": "cpp/misra/exception-object-have-pointer-type",
+    "query": "ExceptionObjectHavePointerType.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.1.2": [
+   {
+    "id": "cpp/misra/empty-throw-only-within-a-catch-handler",
+    "query": "EmptyThrowOnlyWithinACatchHandler.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.3.1": [
+   {
+    "id": "cpp/misra/missing-catch-all-exception-handler-in-main",
+    "query": "MissingCatchAllExceptionHandlerInMain.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.3.2": [
+   {
+    "id": "cpp/misra/class-exception-caught-by-value",
+    "query": "ClassExceptionCaughtByValue.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.3.3": [
+   {
+    "id": "cpp/misra/handlers-refer-to-non-static-members-from-their-class",
+    "query": "HandlersReferToNonStaticMembersFromTheirClass.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.4.1": [
+   {
+    "id": "cpp/misra/exception-unfriendly-function-must-be-noexcept",
+    "query": "ExceptionUnfriendlyFunctionMustBeNoexcept.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 18.5.1": [
+   {
+    "id": "cpp/misra/noexcept-function-should-not-propagate-to-the-caller",
+    "query": "NoexceptFunctionShouldNotPropagateToTheCaller.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 18.5.2": [
+   {
+    "id": "cpp/misra/avoid-program-terminating-functions",
+    "query": "AvoidProgramTerminatingFunctions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.0.2": [
+   {
+    "id": "cpp/misra/function-like-macros-defined",
+    "query": "FunctionLikeMacrosDefined.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.0.3": [
+   {
+    "id": "cpp/misra/include-directives-preceded-by-preprocessor-directives",
+    "query": "IncludeDirectivesPrecededByPreprocessorDirectives.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.0.4": [
+   {
+    "id": "cpp/misra/undef-of-macro-not-defined-in-file",
+    "query": "UndefOfMacroNotDefinedInFile.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.1.1": [
+   {
+    "id": "cpp/misra/defined-operator-expanded-in-if-directive",
+    "query": "DefinedOperatorExpandedInIfDirective.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/invalid-token-in-defined-operator",
+    "query": "InvalidTokenInDefinedOperator.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.1.3": [
+   {
+    "id": "cpp/misra/identifiers-used-in-the-controlling-expression-of",
+    "query": "IdentifiersUsedInTheControllingExpressionOf.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.2.1": [
+   {
+    "id": "cpp/misra/include-outside-guard",
+    "query": "IncludeOutsideGuard.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/no-valid-ifdef-guard-in-header",
+    "query": "NoValidIfdefGuardInHeader.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.2.2": [
+   {
+    "id": "cpp/misra/invalid-include-directive",
+    "query": "InvalidIncludeDirective.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.2.3": [
+   {
+    "id": "cpp/misra/chars-that-should-not-occur-in-header-file-name",
+    "query": "CharsThatShouldNotOccurInHeaderFileName.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.3.1": [
+   {
+    "id": "cpp/misra/and-preprocessor-operators-should-not-be-used",
+    "query": "AndPreprocessorOperatorsShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.3.2": [
+   {
+    "id": "cpp/misra/macro-parameter-following-hash",
+    "query": "MacroParameterFollowingHash.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.3.3": [
+   {
+    "id": "cpp/misra/a-mixed-use-macro-argument-subject-to-expansion",
+    "query": "AMixedUseMacroArgumentSubjectToExpansion.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.3.4": [
+   {
+    "id": "cpp/misra/unparenthesized-macro-argument",
+    "query": "UnparenthesizedMacroArgument.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.3.5": [
+   {
+    "id": "cpp/misra/tokens-that-look-like-directives-in-a-macro-argument",
+    "query": "TokensThatLookLikeDirectivesInAMacroArgument.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 19.6.1": [
+   {
+    "id": "cpp/misra/disallowed-use-of-pragma",
+    "query": "DisallowedUseOfPragma.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.2.1": [
+   {
+    "id": "cpp/misra/atof-atoi-atol-and-atoll-used",
+    "query": "AtofAtoiAtolAndAtollUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.2.2": [
+   {
+    "id": "cpp/misra/unsafe-string-handling-functions",
+    "query": "UnsafeStringHandlingFunctions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.2.3": [
+   {
+    "id": "cpp/misra/banned-system-function",
+    "query": "BannedSystemFunction.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.2.4": [
+   {
+    "id": "cpp/misra/macro-offsetof-shall-not-be-used",
+    "query": "MacroOffsetofShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.6.1": [
+   {
+    "id": "cpp/misra/dynamic-memory-should-not-be-used",
+    "query": "DynamicMemoryShouldNotBeUsed.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.6.2": [
+   {
+    "id": "cpp/misra/dynamic-memory-managed-manually",
+    "query": "DynamicMemoryManagedManually.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.6.3": [
+   {
+    "id": "cpp/misra/advanced-memory-management-used",
+    "query": "AdvancedMemoryManagementUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.6.4": [
+   {
+    "id": "cpp/misra/global-sized-operator-delete-shall-be-defined",
+    "query": "GlobalSizedOperatorDeleteShallBeDefined.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/global-unsized-operator-delete-shall-be-defined",
+    "query": "GlobalUnsizedOperatorDeleteShallBeDefined.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "system"
+   }
+  ],
+  "Rule 21.6.5": [
+   {
+    "id": "cpp/misra/pointer-to-an-incomplete-class-type-deleted",
+    "query": "PointerToAnIncompleteClassTypeDeleted.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.10.1": [
+   {
+    "id": "cpp/misra/no-variadic-function-macros",
+    "query": "NoVariadicFunctionMacros.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.10.2": [
+   {
+    "id": "cpp/misra/no-csetjmp-header",
+    "query": "NoCsetjmpHeader.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 21.10.3": [
+   {
+    "id": "cpp/misra/csignal-facilities-used",
+    "query": "CsignalFacilitiesUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/csignal-types-shall-not-be-used",
+    "query": "CsignalTypesShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 22.3.1": [
+   {
+    "id": "cpp/misra/assert-macro-used-with-a-constant-expression",
+    "query": "AssertMacroUsedWithAConstantExpression.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 22.4.1": [
+   {
+    "id": "cpp/misra/invalid-assignment-to-errno",
+    "query": "InvalidAssignmentToErrno.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 23.11.1": [
+   {
+    "id": "cpp/misra/use-smart-ptr-factory-functions",
+    "query": "UseSmartPtrFactoryFunctions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 24.5.1": [
+   {
+    "id": "cpp/misra/character-handling-function-restrictions",
+    "query": "CharacterHandlingFunctionRestrictions.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 24.5.2": [
+   {
+    "id": "cpp/misra/no-memory-functions-from-c-string",
+    "query": "NoMemoryFunctionsFromCString.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 25.5.1": [
+   {
+    "id": "cpp/misra/locale-global-function-not-allowed",
+    "query": "LocaleGlobalFunctionNotAllowed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 25.5.2": [
+   {
+    "id": "cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const",
+    "query": "PointersReturnedByLocaleFunctionsMustBeUsedAsConst.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 25.5.3": [
+   {
+    "id": "cpp/misra/call-to-setlocale-invalidates-old-pointers-misra",
+    "query": "CallToSetlocaleInvalidatesOldPointersMisra.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra",
+    "query": "CallToSetlocaleInvalidatesOldPointersWarnMisra.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 26.3.1": [
+   {
+    "id": "cpp/misra/vector-should-not-be-specialized-with-bool",
+    "query": "VectorShouldNotBeSpecializedWithBool.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 28.3.1": [
+   {
+    "id": "cpp/misra/non-const-predicate-function-object",
+    "query": "NonConstPredicateFunctionObject.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   },
+   {
+    "id": "cpp/misra/predicate-with-persistent-side-effects",
+    "query": "PredicateWithPersistentSideEffects.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ],
+  "Rule 28.6.1": [
+   {
+    "id": "cpp/misra/std-move-with-non-const-lvalue",
+    "query": "StdMoveWithNonConstLvalue.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 28.6.2": [
+   {
+    "id": "cpp/misra/forwarding-references-and-forward-not-used-together",
+    "query": "ForwardingReferencesAndForwardNotUsedTogether.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 28.6.3": [
+   {
+    "id": "cpp/misra/object-used-while-in-potentially-moved-from-state",
+    "query": "ObjectUsedWhileInPotentiallyMovedFromState.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 28.6.4": [
+   {
+    "id": "cpp/misra/potentially-erroneous-container-usage",
+    "query": "PotentiallyErroneousContainerUsage.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 30.0.1": [
+   {
+    "id": "cpp/misra/cstdio-functions-shall-not-be-used",
+    "query": "CstdioFunctionsShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/cstdio-macros-shall-not-be-used",
+    "query": "CstdioMacrosShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   },
+   {
+    "id": "cpp/misra/cstdio-types-shall-not-be-used",
+    "query": "CstdioTypesShallNotBeUsed.ql",
+    "audit": false,
+    "decidable": true,
+    "scope": "tu"
+   }
+  ],
+  "Rule 30.0.2": [
+   {
+    "id": "cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning",
+    "query": "ReadsAndWritesOnStreamNotSeparatedByPositioning.ql",
+    "audit": false,
+    "decidable": false,
+    "scope": "system"
+   }
+  ]
+ }
+}

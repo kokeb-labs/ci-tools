@@ -1,0 +1,4 @@
+guideline: Rule 21.6.4
+notes: The unsized global operator delete replaced alone; the ok file replaces neither.
+codeql:
+  queries: [cpp/misra/global-sized-operator-delete-shall-be-defined]

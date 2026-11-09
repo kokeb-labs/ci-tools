@@ -1,0 +1,3 @@
+guideline: Rule 21.2.4
+codeql:
+  queries: [cpp/misra/macro-offsetof-shall-not-be-used]

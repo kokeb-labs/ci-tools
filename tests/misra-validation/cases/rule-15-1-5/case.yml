@@ -1,0 +1,3 @@
+guideline: Rule 15.1.5
+codeql:
+  queries: [cpp/misra/initializer-list-constructor-is-the-only-constructor]

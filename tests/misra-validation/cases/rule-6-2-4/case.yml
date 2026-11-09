@@ -1,0 +1,7 @@
+guideline: Rule 6.2.4
+clang-tidy: {check: misc-definitions-in-headers}
+codeql:
+  queries: [cpp/misra/violations-of-one-definition-rule-misra]
+notes: >-
+  The matrix adds .ipp to the header extensions; clang-tidy 20 takes that as the top-level HeaderFileExtensions
+  option, which this suite does not set, so only .hpp is exercised here.

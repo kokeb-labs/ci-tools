@@ -1,0 +1,4 @@
+guideline: Rule 21.10.2
+clang-tidy: {check: cert-err52-cpp}
+codeql:
+  queries: [cpp/misra/no-csetjmp-header]

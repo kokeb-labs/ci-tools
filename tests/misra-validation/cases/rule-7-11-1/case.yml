@@ -1,0 +1,4 @@
+guideline: Rule 7.11.1
+clang-tidy: {check: modernize-use-nullptr}
+codeql:
+  queries: [cpp/misra/nullptr-not-the-only-form-of-the-null-pointer-constant]

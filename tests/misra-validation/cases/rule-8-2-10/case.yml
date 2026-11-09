@@ -1,0 +1,8 @@
+guideline: Rule 8.2.10
+codeql:
+  queries: [cpp/misra/functions-call-themselves-either-directly-or-indirectly]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports the loop counter increment `++d`, whose operands are not constant, whenever its range analysis cannot bound them

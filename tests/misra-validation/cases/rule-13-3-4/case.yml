@@ -1,0 +1,3 @@
+guideline: Rule 13.3.4
+codeql:
+  queries: [cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr]

@@ -1,0 +1,9 @@
+guideline: Rule 15.0.2
+codeql:
+  queries: [cpp/misra/invalid-signature-for-special-member-function]
+other_findings:
+  - query: cpp/misra/implicit-declaration-of-copy-constructor
+    why: >-
+      misfire: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared, so a
+      class that declares all five special members (= default) with a user-declared destructor is reported as using
+      the deprecated implicit copy; an explicitly defaulted member is user-declared and not deprecated.

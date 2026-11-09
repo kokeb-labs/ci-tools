@@ -1,0 +1,6 @@
+guideline: Rule 8.2.9
+notes: >-
+  The violation builds with RTTI on (the CodeQL build); our builds use -fno-rtti, see rule-8-2-9. A const-qualified
+  operand is not reported: see rule-8-2-9-const.
+codeql:
+  queries: [cpp/misra/polymorphic-class-type-expression-in-typeid]

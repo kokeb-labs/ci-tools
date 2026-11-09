@@ -1,0 +1,5 @@
+guideline: Rule 19.3.2
+codeql:
+  queries: [cpp/misra/macro-parameter-following-hash]
+other_findings:
+  - {query: cpp/misra/and-preprocessor-operators-should-not-be-used, why: "true positive of Rule 19.3.1: the compliant form uses # on its own"}

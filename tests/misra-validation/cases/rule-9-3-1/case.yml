@@ -1,0 +1,4 @@
+guideline: Rule 9.3.1
+clang-tidy: {check: readability-braces-around-statements}
+codeql:
+  queries: [cpp/misra/loop-body-compound-condition, cpp/misra/switch-body-compound-condition]

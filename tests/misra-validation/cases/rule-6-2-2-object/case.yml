@@ -1,0 +1,6 @@
+guideline: Rule 6.2.2
+notes: >-
+  As for functions, the query compares global-namespace objects only. It reports the declaration on the later (or
+  same) line of each pair, so both bad files declare the object on line 4.
+codeql:
+  queries: [cpp/misra/incompatible-object-declarations-cpp]

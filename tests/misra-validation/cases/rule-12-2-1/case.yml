@@ -1,0 +1,3 @@
+guideline: Rule 12.2.1
+codeql:
+  queries: [cpp/misra/bit-fields-should-not-be-declared-misra-cpp]

@@ -1,0 +1,5 @@
+guideline: Rule 19.3.5
+codeql:
+  queries: [cpp/misra/tokens-that-look-like-directives-in-a-macro-argument]
+other_findings:
+  - {query: cpp/misra/function-like-macros-defined, why: "true positive of Rule 19.0.2: the compliant form of this guideline needs a function-like macro"}

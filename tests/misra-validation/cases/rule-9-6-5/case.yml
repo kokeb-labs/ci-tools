@@ -1,0 +1,5 @@
+guideline: Rule 9.6.5
+gcc: {flag: return-type}
+clang: {flag: return-type}
+codeql:
+  queries: [cpp/misra/non-void-function-shall-return-a-value-on-all-paths]

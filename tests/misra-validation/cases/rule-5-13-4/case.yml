@@ -1,0 +1,3 @@
+guideline: Rule 5.13.4
+codeql:
+  queries: [cpp/misra/unsigned-integer-literals-not-appropriately-suffixed]

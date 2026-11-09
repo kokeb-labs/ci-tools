@@ -1,0 +1,4 @@
+guideline: Rule 11.3.1
+clang-tidy: {check: cppcoreguidelines-avoid-c-arrays}
+codeql:
+  queries: [cpp/misra/variable-declared-array-type]

@@ -1,0 +1,5 @@
+guideline: Rule 19.2.2
+notes: An #include not followed by a quoted or bracketed name is a compile error.
+gcc: {error: "#include' expects"}
+clang: {error: "expected \"FILENAME\" or <FILENAME>"}
+compiles: false

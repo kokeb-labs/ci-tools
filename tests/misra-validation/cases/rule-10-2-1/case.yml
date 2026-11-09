@@ -1,0 +1,3 @@
+guideline: Rule 10.2.1
+codeql:
+  queries: [cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type]

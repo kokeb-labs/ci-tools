@@ -1,0 +1,5 @@
+guideline: Rule 21.6.5
+gcc: {flag: delete-incomplete}
+clang: {flag: delete-incomplete}
+codeql:
+  queries: [cpp/misra/pointer-to-an-incomplete-class-type-deleted]

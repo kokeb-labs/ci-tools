@@ -1,0 +1,5 @@
+guideline: Rule 18.1.1
+notes: Not applicable (no exceptions); the compiler makes any throw a hard error with -fno-exceptions.
+gcc: {error: "exception handling disabled"}
+clang: {error: "cannot use 'throw' with exceptions disabled"}
+compiles: false

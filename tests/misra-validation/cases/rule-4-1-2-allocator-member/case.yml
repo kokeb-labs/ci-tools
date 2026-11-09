@@ -1,0 +1,7 @@
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/use-of-deprecated-std-allocator-member]
+known_misses:
+  - query: cpp/misra/use-of-deprecated-std-allocator-member
+    why: >-
+      not exercisable in C++20: the deprecated std::allocator members (address, max_size, construct, destroy, rebind, pointer, reference and the two-argument allocate) are removed from libstdc++ and libc++ in C++20 mode, so code that uses them does not compile. The query also matches only alias-declaration members, while both libraries declare value_type, size_type and difference_type with typedef.

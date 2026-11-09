@@ -1,0 +1,4 @@
+guideline: Rule 21.2.1
+clang-tidy: {check: cert-err34-c}
+codeql:
+  queries: [cpp/misra/atof-atoi-atol-and-atoll-used]

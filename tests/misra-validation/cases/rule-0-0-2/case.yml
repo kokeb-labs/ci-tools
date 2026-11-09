@@ -1,0 +1,3 @@
+guideline: Rule 0.0.2
+codeql:
+  queries: [cpp/misra/invariant-condition]

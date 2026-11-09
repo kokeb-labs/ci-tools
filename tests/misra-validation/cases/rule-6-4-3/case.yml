@@ -1,0 +1,5 @@
+guideline: Rule 6.4.3
+codeql:
+  queries:
+    - cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this
+    - cpp/misra/name-shall-be-referred-using-a-qualified-id-or-this-audit

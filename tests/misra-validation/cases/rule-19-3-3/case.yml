@@ -1,0 +1,5 @@
+guideline: Rule 19.3.3
+codeql:
+  queries: [cpp/misra/a-mixed-use-macro-argument-subject-to-expansion]
+other_findings:
+  - {query: cpp/misra/and-preprocessor-operators-should-not-be-used, why: "true positive of Rule 19.3.1: a mixed-use parameter needs #"}

@@ -1,0 +1,6 @@
+guideline: Rule 5.13.5
+clang-tidy:
+  check: readability-uppercase-literal-suffix
+  options: {readability-uppercase-literal-suffix.NewSuffixes: "L;LL;UL;ULL"}
+codeql:
+  queries: [cpp/misra/lowercase-l-starts-in-literal-suffix]

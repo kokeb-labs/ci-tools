@@ -1,0 +1,4 @@
+guideline: Rule 22.3.1
+clang-tidy: {check: misc-static-assert}
+codeql:
+  queries: [cpp/misra/assert-macro-used-with-a-constant-expression]

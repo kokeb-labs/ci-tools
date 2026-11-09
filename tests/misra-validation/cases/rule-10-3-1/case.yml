@@ -1,0 +1,4 @@
+guideline: Rule 10.3.1
+clang-tidy: {check: google-build-namespaces}
+codeql:
+  queries: [cpp/misra/unnamed-namespaces-in-header-files]

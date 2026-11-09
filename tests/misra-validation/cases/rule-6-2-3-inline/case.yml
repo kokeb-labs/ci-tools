@@ -1,0 +1,4 @@
+guideline: Rule 6.2.3
+codeql:
+  queries: [cpp/misra/duplicate-inline-function-definitions]
+notes: Each bad file defines one inline function and includes a .inc copy of the other's, so each carries a result.

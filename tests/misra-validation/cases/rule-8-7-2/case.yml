@@ -1,0 +1,3 @@
+guideline: Rule 8.7.2
+codeql:
+  queries: [cpp/misra/pointer-difference-taken-between-different-arrays]

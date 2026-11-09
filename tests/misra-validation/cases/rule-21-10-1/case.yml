@@ -1,0 +1,8 @@
+guideline: Rule 21.10.1
+clang-tidy: {check: cppcoreguidelines-pro-type-vararg}
+codeql:
+  queries: [cpp/misra/no-variadic-function-macros]
+other_findings:
+  - query: cpp/misra/no-conversion-from-bool
+    why: "misfire: the Rule 7.0.1 query reports binding the literal true to std::count's const bool& parameter
+      as a conversion from bool; no bool is converted to a number."

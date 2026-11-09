@@ -1,0 +1,6 @@
+guideline: Rule 6.0.4
+codeql:
+  queries: [cpp/misra/non-global-function-main]
+notes: The ok file is the program entry point itself, the one place a function may be called main.
+other_findings:
+  - {query: cpp/misra/missing-catch-all-exception-handler-in-main, why: "Rule 18.3.1, not applicable here: our code builds with -fno-exceptions, so main cannot have a try block"}

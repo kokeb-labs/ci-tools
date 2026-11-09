@@ -1,0 +1,3 @@
+guideline: Rule 6.2.3
+codeql:
+  queries: [cpp/misra/template-specialization-wrong-location]

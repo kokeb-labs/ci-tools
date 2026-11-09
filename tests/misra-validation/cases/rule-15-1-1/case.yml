@@ -1,0 +1,8 @@
+guideline: Rule 15.1.1
+codeql:
+  queries: [cpp/misra/objects-dynamic-type-used-from-constructor-or-destructor]
+other_findings:
+  - query: cpp/misra/member-specifiers-not-used-appropriately
+    why: >-
+      misfire: the pack's Rule 13.3.1 query reports the implicitly declared destructor of a class derived from a
+      polymorphic base for lacking override; nothing was written that could carry the specifier.

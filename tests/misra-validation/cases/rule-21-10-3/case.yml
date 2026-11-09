@@ -1,0 +1,7 @@
+guideline: Rule 21.10.3
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(signal|raise)$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/csignal-facilities-used, cpp/misra/csignal-types-shall-not-be-used]

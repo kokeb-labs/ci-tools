@@ -1,0 +1,3 @@
+guideline: Rule 11.6.2
+codeql:
+  queries: [cpp/misra/value-of-an-object-must-not-be-read-before-it-has-been-set]

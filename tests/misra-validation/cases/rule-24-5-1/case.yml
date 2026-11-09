@@ -1,0 +1,8 @@
+guideline: Rule 24.5.1
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    # Every <cctype> and <cwctype> function.
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?isw?(alnum|alpha|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit)$,,banned by the MISRA C++ profile;^::(std::)?tow?(lower|upper)$,,banned by the MISRA C++ profile;^::(std::)?(iswctype|wctype|towctrans|wctrans)$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/character-handling-function-restrictions]

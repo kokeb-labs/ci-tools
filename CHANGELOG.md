@@ -15,6 +15,20 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- `ru-misra`: MISRA C++:2023 analysis with the CodeQL coding-standards pack (2.62.0, CLI 2.21.4) and the Kokeb C++20
+  profile pack on traced host and Cortex-M builds, the handbook's deviation records applied through the pack's
+  deviation mechanism (a marker must cite a record and deviate a finding of its guideline), clang-tidy's validated
+  checks and cppcheck on the same compile databases, and a per-guideline report (step summary, SARIF, JSON keyed by
+  guideline, CSV). Levels `high` and `safety`. Every scan analyses a canary and fails on incomplete extraction. The
+  first job refuses private repositories without an Advanced Security licence (CodeQL terms). Needs `contents: read`.
+- Tool validation of the MISRA toolchain (`docs/tool-validation/plan.md`): requirements derived from the compliance
+  matrix and the pack, a seeded-violation and compliant case per requirement (`tests/misra-validation/`), a
+  traceability page, an anomaly log, and a validation report attached to each release. The self-CI fails when a
+  tool-decided guideline has no passing test, or when the toolchain changes without re-validation.
+- `codeql/kokeb-cpp20`: the own C++20 profile query pack, with KB-CPP-046 (Result types are `[[nodiscard]]`).
+
 ## [1.12.0] - 2026-11-08
 
 ### Added

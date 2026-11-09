@@ -1,0 +1,6 @@
+guideline: Rule 8.2.11
+notes: >-
+  CodeQL only: a trivially copyable argument through an ellipsis is compliant, so the query must stay silent;
+  clang-tidy reports every variadic call (a superset) and is not claimed here.
+codeql:
+  queries: [cpp/misra/inappropriate-argument-type-passed-via-ellipsis]

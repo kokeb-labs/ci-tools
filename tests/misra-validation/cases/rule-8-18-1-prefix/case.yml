@@ -1,0 +1,9 @@
+guideline: Rule 8.18.1
+notes: Records a false negative of the pack.
+codeql:
+  queries: [cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp]
+known_misses:
+  - query: cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp
+    why: >-
+      union members that start at the same offset but differ in size (a 16-bit member assigned to the 32-bit one)
+      are not reported: the overlap test only covers identical, strictly nested or partly shifted ranges

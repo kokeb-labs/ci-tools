@@ -1,0 +1,7 @@
+guideline: Rule 24.5.2
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?mem(cpy|move|cmp|chr)$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/no-memory-functions-from-c-string]

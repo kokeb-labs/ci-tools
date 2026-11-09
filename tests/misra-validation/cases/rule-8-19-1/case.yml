@@ -1,0 +1,8 @@
+guideline: Rule 8.19.1
+codeql:
+  queries: [cpp/misra/comma-operator-should-not-be-used]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
+      reports the run-time increments `++a` and `++b`, whose operands are not constant, whenever its range analysis cannot bound them

@@ -1,0 +1,3 @@
+guideline: Rule 30.0.2
+codeql:
+  queries: [cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning]

@@ -1,0 +1,5 @@
+guideline: Rule 18.3.3
+notes: Not applicable (no exceptions); -fno-exceptions makes the construct a hard error. Seeded with a constructor function-try-block handler reads a member.
+gcc: {error: "exception handling disabled"}
+clang: {error: "cannot use '(throw|try)' with exceptions disabled"}
+compiles: false

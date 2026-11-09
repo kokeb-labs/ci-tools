@@ -1,0 +1,4 @@
+guideline: Rule 21.2.3
+clang-tidy: {check: cert-env33-c}
+codeql:
+  queries: [cpp/misra/banned-system-function]

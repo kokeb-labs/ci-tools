@@ -1,0 +1,7 @@
+guideline: Rule 25.5.1
+clang-tidy:
+  check: bugprone-unsafe-functions
+  options:
+    bugprone-unsafe-functions.CustomFunctions: "^::(std::)?setlocale$,,banned by the MISRA C++ profile;^::std::locale::global$,,banned by the MISRA C++ profile"
+codeql:
+  queries: [cpp/misra/locale-global-function-not-allowed]

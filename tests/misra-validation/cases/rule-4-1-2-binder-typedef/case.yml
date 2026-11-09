@@ -1,0 +1,7 @@
+guideline: Rule 4.1.2
+codeql:
+  queries: [cpp/misra/use-of-deprecated-function-binder-typedef-member]
+known_misses:
+  - query: cpp/misra/use-of-deprecated-function-binder-typedef-member
+    why: >-
+      false negative for our toolchains: the query matches only alias-declaration (using) members declared in the function object itself; libstdc++ declares result_type and the argument typedefs with typedef in the std::binary_function / std::unary_function base, and libc++ removes them in C++20 mode.

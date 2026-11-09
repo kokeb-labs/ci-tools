@@ -1,0 +1,3 @@
+guideline: Rule 5.13.3
+codeql:
+  queries: [cpp/misra/octal-constants-used]

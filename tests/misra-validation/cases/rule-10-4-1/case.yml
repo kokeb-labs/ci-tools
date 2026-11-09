@@ -1,0 +1,4 @@
+guideline: Rule 10.4.1
+clang-tidy: {check: hicpp-no-assembler}
+codeql:
+  queries: [cpp/misra/asm-declaration-shall-not-be-used]

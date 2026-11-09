@@ -1,0 +1,3 @@
+guideline: Rule 21.6.3
+codeql:
+  queries: [cpp/misra/advanced-memory-management-used]

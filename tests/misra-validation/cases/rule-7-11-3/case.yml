@@ -1,0 +1,3 @@
+guideline: Rule 7.11.3
+codeql:
+  queries: [cpp/misra/function-pointer-conversion-context]

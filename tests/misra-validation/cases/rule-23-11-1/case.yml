@@ -1,0 +1,7 @@
+guideline: Rule 23.11.1
+codeql:
+  queries: [cpp/misra/use-smart-ptr-factory-functions]
+other_findings:
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1 (advisory): the compliant form still allocates; this guideline is about
+      how the owner is created."

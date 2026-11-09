@@ -1,0 +1,6 @@
+guideline: Rule 6.0.2
+codeql:
+  queries: [cpp/misra/external-linkage-array-without-explicit-size-misra]
+other_findings:
+  - {query: cpp/misra/variable-declared-array-type, why: "true positive of Rule 11.3.1: the guideline is about built-in arrays, so the compliant example still declares one"}
+  - {query: cpp/misra/global-variable-used, why: "misfire: an array of const elements is reported as a non-const global; no element can be modified"}

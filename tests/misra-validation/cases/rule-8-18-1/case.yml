@@ -1,0 +1,5 @@
+guideline: Rule 8.18.1
+codeql:
+  queries:
+    - cpp/misra/object-copied-to-an-overlapping-object-misra-cpp
+    - cpp/misra/object-assigned-to-an-overlapping-object-misra-cpp

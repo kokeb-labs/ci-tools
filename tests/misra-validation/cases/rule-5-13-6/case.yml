@@ -1,0 +1,11 @@
+guideline: Rule 5.13.6
+notes: >-
+  On an LP64 host a literal with one L is long, never long long, so the query cannot fire on a host build;
+  on ILP32 targets (the MCUs) a large single-L literal is long long, which a host analysis does not see.
+codeql:
+  queries: [cpp/misra/long-long-literal-with-single-l-suffix]
+known_misses:
+  - query: cpp/misra/long-long-literal-with-single-l-suffix
+    why: >-
+      not exercisable on the LP64 host build: a single-L literal is never long long there. The violation exists
+      only on ILP32 targets, which the CodeQL database (built for the host) does not model.

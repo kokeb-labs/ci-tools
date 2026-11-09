@@ -1,0 +1,8 @@
+guideline: Rule 25.5.2
+notes: CodeQL only - a write through the subscript operator instead of unary *.
+codeql:
+  queries: [cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const]
+known_misses:
+  - query: cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const
+    why: "the sink is only *p = ..., ++*p or p->m = ...; a write through p[i] = ... is an array expression and is
+      not reported."

@@ -1,0 +1,9 @@
+guideline: Rule 8.2.9
+notes: Records a false negative of the pack; our builds are protected by -fno-rtti (rule-8-2-9).
+codeql:
+  queries: [cpp/misra/polymorphic-class-type-expression-in-typeid]
+known_misses:
+  - query: cpp/misra/polymorphic-class-type-expression-in-typeid
+    why: >-
+      typeid of a const-qualified polymorphic object is not reported: the query takes the operand's type without
+      stripping cv-qualifiers, so `const Shape` is not seen as a class

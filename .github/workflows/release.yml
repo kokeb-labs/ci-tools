@@ -40,6 +40,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write  # tag, create the release and move the major tag
+      actions: read  # download the tool validation report of the self-CI run that released
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         # Credentials stay in the checkout: this job pushes tags.
@@ -118,6 +119,37 @@ jobs:
             args+=(--prerelease --latest=false)
           fi
           gh release create "${args[@]}"
+
+      # The MISRA toolchain's validation report of the self-CI run this release comes from (docs/tool-validation/
+      # plan.md, "Records"): the record an auditor reads, attached to the release it validates.
+      - name: Download the tool validation report
+        id: validation
+        if: ${{ steps.tag.outputs.tag != '' && github.event_name == 'workflow_run' }}
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: tool-validation
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/tool-validation
+
+      - name: Attach the tool validation report
+        if: ${{ steps.tag.outputs.tag != '' && github.event_name == 'workflow_run' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          DOWNLOADED: ${{ steps.validation.outcome }}
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/tool-validation"
+          if [ "$DOWNLOADED" != "success" ] || [ ! -f "$dir/validation-report.md" ]; then
+            echo "::error::the self-CI run has no tool-validation artifact: the release has no validation report"
+            exit 1
+          fi
+          cp "$dir/validation-report.md" "$RUNNER_TEMP/tool-validation-report-$TAG.md"
+          cp "$dir/validation-record.json" "$RUNNER_TEMP/tool-validation-record-$TAG.json"
+          gh release upload "$TAG" "$RUNNER_TEMP/tool-validation-report-$TAG.md" \
+            "$RUNNER_TEMP/tool-validation-record-$TAG.json" --clobber
 
       - name: Move the major tag
         if: ${{ steps.tag.outputs.tag != '' && steps.tag.outputs.prerelease == 'false' }}
