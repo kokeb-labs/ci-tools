@@ -2,3 +2,9 @@
 guideline: Dir 5.7.2
 codeql:
   queries: [cpp/misra/sections-of-code-should-not-be-commented-out]
+seeded:
+  - "statements left in consecutive // comments"
+  - "an if statement left in a block comment"
+  - "a single assignment left in a // comment between live statements"
+near_misses:
+  - "prose comments that mention a mask, a shift and a section number without being code"

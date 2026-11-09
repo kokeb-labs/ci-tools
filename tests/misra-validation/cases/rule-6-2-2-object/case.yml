@@ -5,3 +5,8 @@ notes: >-
   same) line of each pair, so both bad files declare the object on line 4.
 codeql:
   queries: [cpp/misra/incompatible-object-declarations-cpp]
+seeded:
+  - "an external object declared as int32_t in one translation unit and int64_t in another"
+near_misses:
+  - "one inline constexpr object in a header"
+  - "same-named objects of different types in different namespaces"

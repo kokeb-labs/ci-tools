@@ -4,3 +4,11 @@ notes: >-
   False negative found: an infinite value converted to a fixed-width alias (static_cast<std::int32_t>) is not reported, only a conversion to a built-in integer type; every conversion in our code goes to a fixed-width alias.
 codeql:
   queries: [cpp/misra/possible-misuse-of-infinite-floating-point-value]
+seeded:
+  - "double quotient whose divisor may be zero converted to int (static_cast<int>)"
+  - "a possibly infinite quotient used as the divisor of another division"
+  - "float quotient over an unchecked item count converted to int"
+  - "the same flow inside a const member function, converted to long"
+near_misses:
+  - "quotient taken only after both operands are checked finite and the divisor non-zero, range-checked before the conversion"
+  - "a bounded, finite input divided by a non-zero constant before the conversion"

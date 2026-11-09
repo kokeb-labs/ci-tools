@@ -5,3 +5,9 @@ codeql:
 other_findings:
   - {query: cpp/misra/variable-declared-array-type, why: "true positive of Rule 11.3.1: the guideline is about built-in arrays, so the compliant example still declares one"}
   - {query: cpp/misra/global-variable-used, why: "misfire: an array of const elements is reported as a non-const global; no element can be modified"}
+seeded:
+  - "an extern array of integers declared without a size"
+  - "an extern array of pointers declared without a size"
+near_misses:
+  - "an extern array declared with its size"
+  - "extern arrays of pointers and integers with sizes"

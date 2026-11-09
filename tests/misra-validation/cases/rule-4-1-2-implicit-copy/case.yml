@@ -2,3 +2,9 @@
 guideline: Rule 4.1.2
 codeql:
   queries: [cpp/misra/implicit-declaration-of-copy-constructor]
+seeded:
+  - "implicit copy constructor used on a class with a user destructor"
+  - "implicit copy constructor used on a class with a user copy assignment"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "a rule-of-zero struct copied implicitly"

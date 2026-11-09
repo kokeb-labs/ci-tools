@@ -1,0 +1,16 @@
+---
+guideline: Rule 13.3.4
+notes: Two pointer-to-member variables compared with each other; one may hold a virtual member.
+codeql:
+  queries:
+    - cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr
+known_misses:
+  - query: cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr
+    kind: false-negative
+    why: The query reports a comparison only when one operand is the address of a virtual member itself (&Device::start);
+      two pointer-to-member variables compared with each other are not reported, although either may hold a virtual
+      member.
+seeded:
+  - two pointer-to-member variables of a class with virtual members compared with !=
+near_misses:
+  - a pointer-to-member variable compared with nullptr

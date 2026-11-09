@@ -5,3 +5,16 @@ notes: >-
   clang-tidy reports every variadic call (a superset) and is not claimed here.
 codeql:
   queries: [cpp/misra/inappropriate-argument-type-passed-via-ellipsis]
+seeded:
+  - "a polymorphic object passed through an ellipsis"
+  - "an object with a user-provided copy assignment passed through an ellipsis"
+near_misses:
+  - "a trivially copyable integer through an ellipsis"
+  - "a pointer through an ellipsis"
+  - "an enumerator through an ellipsis"
+other_findings:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      misfire (cortex-m only): on arm-none-eabi std::int32_t and std::uint32_t are long and unsigned long, so the
+      query reports an int (or unsigned int) value assigned to them; both types have the same size and signedness
+      on that target, so the conversion cannot change the value.

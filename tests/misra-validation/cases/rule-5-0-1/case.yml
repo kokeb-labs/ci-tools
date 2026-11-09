@@ -2,3 +2,11 @@
 guideline: Rule 5.0.1
 codeql:
   queries: [cpp/misra/trigraph-like-sequences-should-not-be-used]
+seeded:
+  - "??- in a string literal"
+  - "??= in a string literal"
+  - "??( and ??) in one literal"
+  - "??/ in a literal"
+near_misses:
+  - "a question mark followed by a space"
+  - "?? at the end of a literal"

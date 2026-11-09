@@ -7,3 +7,11 @@ other_findings:
     why: >-
       misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
       reports the run-time increments `++a` and `++b`, whose operands are not constant, whenever its range analysis cannot bound them
+seeded:
+  - "the comma operator in a return expression"
+  - "the comma operator in a for-loop increment"
+  - "the comma operator in a condition"
+near_misses:
+  - "commas separating function arguments"
+  - "commas in a declaration list of template arguments"
+  - "commas in a braced initialiser"

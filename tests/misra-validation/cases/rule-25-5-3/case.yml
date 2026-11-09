@@ -9,3 +9,8 @@ codeql:
   queries:
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
     - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+seeded:
+  - "the first getenv result compared after a second getenv call"
+  - "a getenv result stored in an object"
+near_misses:
+  - "the values passed as parameters (no function with a static result buffer is called)"

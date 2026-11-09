@@ -6,3 +6,10 @@ notes: >-
   The query also reports the implicitly declared destructor of a derived class whose base destructor is virtual
   ("~Fake overrides a base function but lacks override or final"), which source code cannot annotate: a misfire. The
   ok file therefore declares the destructor explicitly with override.
+seeded:
+  - an overrider marked only virtual (bad.cpp)
+  - an overrider marked virtual and override (bad_both.cpp)
+  - an overrider with no specifier (bad_bare.cpp)
+near_misses:
+  - override on the overrider and the destructor (ok.hpp)
+  - final alone on an overrider (ok_near.hpp)

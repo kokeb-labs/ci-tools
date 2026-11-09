@@ -4,3 +4,10 @@ gcc: {message: "unknown escape sequence"}
 clang: {flag: unknown-escape-sequence}
 codeql:
   queries: [cpp/misra/backslash-character-misuse]
+seeded:
+  - "\\q in a string literal"
+  - "\\k in a character literal"
+  - "\\c in a string literal"
+near_misses:
+  - "escaped backslash and \\n"
+  - "\\t, \\?, \\x41 and \\0"

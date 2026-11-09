@@ -2,3 +2,13 @@
 guideline: Rule 6.9.2
 codeql:
   queries: [cpp/misra/avoid-standard-integer-type-names]
+seeded:
+  - "long and int in a signature"
+  - "unsigned short for a local"
+  - "short and unsigned data members"
+  - "long long and unsigned char in a signature"
+near_misses:
+  - "fixed-width aliases"
+  - "char used for characters"
+  - "bool and std::size_t"
+  - "auto deduced from a fixed-width value"

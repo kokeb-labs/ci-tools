@@ -2,3 +2,10 @@
 guideline: Rule 0.2.1
 codeql:
   queries: [cpp/misra/unused-limited-visibility-variable]
+seeded:
+  - "a block-scope local never referenced"
+  - "an internal-linkage namespace-scope variable never referenced"
+  - "a local inside a lambda never referenced"
+near_misses:
+  - "a const local used in an expression"
+  - "a local referenced only through a lambda capture and sizeof"

@@ -7,3 +7,11 @@ other_findings:
     why: >-
       misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
       reports `0U - value` with a run-time operand (the deliberate modular negation), whose operands are not constant, whenever its range analysis cannot bound them
+seeded:
+  - "unary minus on a std::uint32_t"
+  - "unary minus on an unsigned literal (-1U)"
+  - "unary minus on a std::uint64_t"
+  - "unary minus on an unsigned type in a template"
+near_misses:
+  - "0U - value written as a subtraction"
+  - "unary minus on a signed constant"

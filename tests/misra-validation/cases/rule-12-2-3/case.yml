@@ -4,3 +4,13 @@ codeql:
   queries: [cpp/misra/signed-integer-named-bit-field-have-a-length-of-one-bit]
 other_findings:
   - {query: cpp/misra/bit-fields-should-not-be-declared-misra-cpp, why: "true positive of Rule 12.2.1: the case needs a bit-field to exist"}
+  - query: cpp/misra/bit-field-shall-have-an-appropriate-type
+    why: >-
+      misfire (cortex-m only): the Rule 12.2.2 query rejects a std::uint32_t bit-field on arm-none-eabi, where the
+      type is unsigned long; it is an unsigned integer type, which the guideline allows.
+seeded:
+  - a named one-bit signed int bit-field (bad.cpp)
+  - a named one-bit signed char bit-field (bad_signedchar.cpp)
+near_misses:
+  - a one-bit unsigned field (ok.hpp)
+  - an unsigned one-bit field next to a wider unsigned field (ok.hpp)

@@ -5,3 +5,12 @@ clang-tidy:
   options: {hicpp-multiway-paths-covered.WarnOnMissingElse: true}
 codeql:
   queries: [cpp/misra/if-else-if-end-condition]
+seeded:
+  - a two-armed else-if chain without else (bad.cpp)
+  - a three-armed chain without else (bad_three.cpp)
+  - a chain without else nested in a loop (bad_nested.cpp)
+near_misses:
+  - chain ending in an else holding only a comment (ok.hpp)
+  - a plain if with no else at all (ok_near.hpp)
+  - if/else without else-if (ok_near.hpp)
+  - a chain whose final else holds a nested if (ok_near.hpp)

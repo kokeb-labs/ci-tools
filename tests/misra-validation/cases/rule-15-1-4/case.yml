@@ -2,3 +2,9 @@
 guideline: Rule 15.1.4
 codeql:
   queries: [cpp/misra/non-static-member-not-init-before-use]
+seeded:
+  - constructor that leaves a scalar member uninitialised
+  - second constructor that forgets a member the first one initialises
+near_misses:
+  - every member initialised in the initializer list or by a default member initializer
+  - member initialised only through a delegating constructor

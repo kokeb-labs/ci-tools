@@ -2,3 +2,10 @@
 guideline: Rule 13.3.4
 codeql:
   queries: [cpp/misra/potentially-virtual-pointer-only-compares-to-nullptr]
+seeded:
+  - a pointer to a virtual member compared with == against another (bad.cpp)
+  - the same comparison with != (bad_notequal.cpp)
+near_misses:
+  - a pointer to a virtual member compared with nullptr via != (ok.hpp)
+  - comparison with nullptr via == (ok_near.hpp)
+  - pointers to non-virtual members compared with each other (ok_near.hpp)

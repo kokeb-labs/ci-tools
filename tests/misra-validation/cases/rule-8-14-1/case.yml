@@ -7,3 +7,12 @@ other_findings:
     why: >-
       misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
       reports the run-time increment `++port.reads`, whose operands are not constant, whenever its range analysis cannot bound them
+seeded:
+  - "an increment of a persistent object in the right operand of &&"
+  - "an assignment to a persistent object in the right operand of ||"
+  - "a call with a persistent side effect in the right operand of &&"
+  - "a volatile read in the right operand of &&"
+near_misses:
+  - "a side effect in the left operand"
+  - "a pure function call in the right operand"
+  - "the side effect moved to its own statement"

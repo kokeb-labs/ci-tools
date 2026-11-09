@@ -7,3 +7,12 @@ other_findings:
     why: >-
       misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
       reports the loop counter increment `++d`, whose operands are not constant, whenever its range analysis cannot bound them
+seeded:
+  - "direct recursion of a free function"
+  - "mutual recursion of two functions"
+  - "recursion through a member function"
+  - "a three-function cycle"
+near_misses:
+  - "an overload that delegates to a different overload (no cycle)"
+  - "loops instead of recursion"
+  - "a chain of calls without a cycle"

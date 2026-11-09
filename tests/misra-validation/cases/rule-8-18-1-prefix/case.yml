@@ -8,3 +8,7 @@ known_misses:
     why: >-
       union members that start at the same offset but differ in size (a 16-bit member assigned to the 32-bit one)
       are not reported: the overlap test only covers identical, strictly nested or partly shifted ranges
+seeded:
+  - "a union member assigned from a smaller sibling at the same offset"
+near_misses:
+  - "separate struct members instead of a union"

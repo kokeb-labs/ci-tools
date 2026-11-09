@@ -25,7 +25,13 @@ dispositions point here by item id.
 | R-8.18.1 | No assignment between overlapping objects (union members of different sizes) | Unions are banned by Rule 12.3.1; review any deviation of it |
 | R-12.2.3 | No one-bit signed bit-field through a fixed-width alias | Bit-fields are banned by Rule 12.2.1; review any deviation of it |
 | R-21.6.4 | A replaced global `operator delete` has both the sized and the unsized form | Drivers never replace it (no heap) |
+| R-10.0.1 | One declarator per declaration, also when the declarators have initialisers | The pack's query misses lists with initialisers |
+| R-13.3.4 | Pointers to virtual member functions are compared only with `nullptr` | The query sees only `&Class::fn` operands, not variables |
+| R-19.0.3 | Every `#include` comes before any other code, using-declarations included | The query misses an `#include` after a using-declaration |
+| R-21.6.2 | No `new[]`/`delete[]` managed by hand | The query sees only single-object `new`/`delete` |
+| R-21.6.3 | No `std::construct_at`, `std::destroy_at` or `std::uninitialized_*` | The query looks for them in a header named `memory` only |
 | R-22.4.1 | `errno` is only ever reset to zero | The query does not see glibc's `errno` macro |
+| R-28.6.2 | An `auto&&` parameter of a generic lambda is passed on with `std::forward` | The query sees function-template parameters only |
 | R-26.3.1 | No `std::vector<bool>`, also not `const` or by reference | Drivers use no `std::vector` (no heap) |
 
 Next: [Tool validation plan](plan.md)

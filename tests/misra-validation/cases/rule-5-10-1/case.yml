@@ -2,3 +2,12 @@
 guideline: Rule 5.10.1
 codeql:
   queries: [cpp/misra/poorly-formed-identifier]
+seeded:
+  - "a function name starting with two underscores"
+  - "a parameter name starting with underscore and a capital"
+  - "a function name with a double underscore inside"
+  - "a member name starting with underscore and a capital"
+near_misses:
+  - "a plain lower-case name"
+  - "a trailing underscore on a member"
+  - "a single underscore between words"

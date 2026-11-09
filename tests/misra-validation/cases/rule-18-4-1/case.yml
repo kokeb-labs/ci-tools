@@ -2,3 +2,17 @@
 guideline: Rule 18.4.1
 codeql:
   queries: [cpp/misra/exception-unfriendly-function-must-be-noexcept]
+other_findings:
+  - query: cpp/misra/implicit-declaration-of-copy-constructor
+    why: >-
+      misfire: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared, so a
+      class that declares its special members (= default) is reported as using the deprecated implicit copy; an
+      explicitly defaulted member is user-declared and not deprecated.
+seeded:
+  - move constructor and move assignment without noexcept
+  - member swap without noexcept
+  - destructor declared noexcept(false)
+near_misses:
+  - noexcept moves and an implicitly noexcept destructor
+  - copy assignment without noexcept, which the guideline does not require
+  - defaulted move members, noexcept by the compiler

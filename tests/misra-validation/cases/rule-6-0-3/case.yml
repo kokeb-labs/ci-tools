@@ -2,3 +2,11 @@
 guideline: Rule 6.0.3
 codeql:
   queries: [cpp/misra/global-namespace-declarations]
+seeded:
+  - "a struct in the global namespace"
+  - "a function in the global namespace"
+  - "an enumeration in the global namespace"
+  - "a type alias in the global namespace"
+near_misses:
+  - "a struct and function in a named namespace"
+  - "an enumeration, alias and namespace alias in a named namespace"

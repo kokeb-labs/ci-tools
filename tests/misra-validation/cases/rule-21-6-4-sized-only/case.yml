@@ -20,3 +20,7 @@ other_findings:
     why: "true positive of Rule 21.6.2: the replacement releases memory with std::free."
   - query: cpp/misra/dynamic-memory-should-not-be-used
     why: "true positive of Rule 21.6.1: a replacement operator delete releases heap memory by definition."
+seeded:
+  - "the sized global operator delete replaced without the unsized one"
+near_misses:
+  - "both the sized and the unsized global operator delete replaced together"

@@ -2,3 +2,12 @@
 guideline: Rule 10.1.1
 codeql:
   queries: [cpp/misra/pointer-or-ref-param-not-const]
+seeded:
+  - a non-const reference parameter that is only read (bad.cpp)
+  - a pointer parameter to a pointee that is only read (bad_pointer.cpp)
+  - a member function's non-const reference parameter that is only read (bad_member.cpp)
+near_misses:
+  - const reference for read, non-const for write (ok.hpp)
+  - a pointer parameter whose pointee is written (ok_near.hpp)
+  - a non-const reference handed to a function that modifies it (ok_near.hpp)
+  - parameters passed by value (ok_near.hpp)

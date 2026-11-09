@@ -2,3 +2,8 @@
 guideline: Rule 6.4.2
 codeql:
   queries: [cpp/misra/definition-shall-be-considered-for-unqualified-lookup]
+seeded:
+  - "a using-declaration that precedes a later overload, which a call then misses"
+near_misses:
+  - "the using-declaration after every overload"
+  - "a second overload set completed before its using-declaration"

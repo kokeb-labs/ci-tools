@@ -2,3 +2,8 @@
 guideline: Rule 15.1.2
 codeql:
   queries: [cpp/misra/initialize-all-virtual-base-classes]
+seeded:
+  - converting constructor that leaves its base out of the initializer list
+  - copy constructor that default-initialises the base instead of copying it
+near_misses:
+  - constructor naming its base in the initializer list

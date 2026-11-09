@@ -2,3 +2,12 @@
 guideline: Rule 6.8.4
 codeql:
   queries: [cpp/misra/member-functions-refqualified]
+seeded:
+  - "a const reference to a member returned without ref-qualifier"
+  - "a reference to *this returned without ref-qualifier"
+  - "a pointer to a member returned without ref-qualifier"
+  - "a non-const reference to a member returned without ref-qualifier"
+near_misses:
+  - "const& and deleted const&& overloads"
+  - "an & ref-qualified member returning *this"
+  - "a member returning by value"

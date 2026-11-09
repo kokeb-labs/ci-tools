@@ -5,3 +5,10 @@ notes: >-
   clang-tidy check reports every const_cast (a superset), which is why it is not claimed here.
 codeql:
   queries: [cpp/misra/cast-removes-const-or-volatile-from-pointer-or-reference]
+seeded:
+  - "const_cast removing volatile from a pointed-to object"
+  - "const_cast removing const and volatile together"
+near_misses:
+  - "const_cast adding const"
+  - "const_cast adding volatile"
+  - "const_cast adding const and volatile"

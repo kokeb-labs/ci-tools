@@ -8,3 +8,7 @@ known_misses:
     why: >-
       a cast of a volatile (or const) object to a non-volatile reference is not reported: the query looks for the
       qualifier below a pointer or reference type, but the operand of the cast is the object itself
+seeded:
+  - "const_cast removing volatile from an object bound to a reference"
+near_misses:
+  - "the volatile object read through a const volatile reference"

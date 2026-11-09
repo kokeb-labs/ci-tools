@@ -6,3 +6,14 @@ codeql:
 notes: >-
   The matrix adds .ipp to the header extensions; clang-tidy 20 takes that as the top-level HeaderFileExtensions
   option, which this suite does not set, so only .hpp is exercised here.
+seeded:
+  - "a non-inline function defined in a header"
+  - "a const object with a separate extern declaration defined in a header"
+  - "a non-inline full specialisation of a function template"
+  - "a non-inline variable"
+  - "a static data member defined in a header"
+near_misses:
+  - "an inline function and an inline constexpr variable"
+  - "a function template"
+  - "a class template with a full specialisation"
+  - "a static constexpr data member"

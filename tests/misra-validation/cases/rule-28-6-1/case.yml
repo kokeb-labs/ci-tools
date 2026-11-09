@@ -2,3 +2,10 @@
 guideline: Rule 28.6.1
 codeql:
   queries: [cpp/misra/std-move-with-non-const-lvalue]
+seeded:
+  - "std::move of a const reference parameter"
+  - "std::move of a member in a const member function"
+  - "std::move of a const T& in a function template"
+near_misses:
+  - "std::move of a by-value parameter"
+  - "std::move of a member in an rvalue-qualified, non-const member function"

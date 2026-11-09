@@ -2,3 +2,9 @@
 guideline: Rule 4.1.2
 codeql:
   queries: [cpp/misra/use-of-deprecated-temporary-buffers]
+seeded:
+  - "std::get_temporary_buffer and std::return_temporary_buffer in a function"
+  - "the same calls inside a function template"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "a user function named get_temporary_buffer over caller storage"

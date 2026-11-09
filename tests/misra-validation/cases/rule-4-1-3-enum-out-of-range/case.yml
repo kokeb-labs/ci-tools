@@ -2,3 +2,15 @@
 guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/out-of-range-enum-cast-critical-unspecified-behavior]
+other_findings:
+  - {query: cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type, why: "true positive of Rule 10.2.1: the near miss needs an enumeration without a fixed underlying type"}
+  - {query: cpp/misra/unscoped-enumerations-should-not-be-declared, why: "true positive of Rule 10.2.2: the near miss needs an unscoped enumeration"}
+  - {query: cpp/misra/unscoped-enum-without-fixed-underlying-type-used, why: "true positive of Rule 10.2.3: the near miss casts a value to that enumeration"}
+seeded:
+  - "7 cast to an enumeration whose values are 0..1"
+  - "9 cast to an enumeration whose range is 0..3"
+  - "-1 cast to an enumeration with no negative values"
+near_misses:
+  - "a scoped enumeration chosen from enumerators"
+  - "200 cast to an enumeration with a fixed uint8_t underlying type"
+  - "1 cast to an unfixed enumeration whose range includes it"

@@ -2,3 +2,17 @@
 guideline: Rule 9.5.1
 codeql:
   queries: [cpp/misra/legacy-for-statements-should-be-simple]
+seeded:
+  - counter also changed in the body (bad.cpp)
+  - bound changed in the body (bad_bound.cpp)
+  - two counters in one for (bad_twocounters.cpp)
+  - floating-point counter (bad_float.cpp)
+near_misses:
+  - one integer counter stepped by ++ against a plain bound (ok.hpp)
+  - a counting-down loop (ok_near.hpp)
+  - a counter stepped by a constant (ok_near.hpp)
+  - a const bound computed before the loop (ok_near.hpp)
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: 'misfire: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions'

@@ -2,3 +2,10 @@
 guideline: Rule 8.3.2
 codeql:
   queries: [cpp/misra/built-in-unary-plus-operator-should-not-be-used]
+seeded:
+  - "unary plus on a std::uint8_t (forces promotion)"
+  - "unary plus on a std::int32_t"
+  - "unary plus converting a lambda to a function pointer"
+near_misses:
+  - "binary + between operands"
+  - "compound += on an object"

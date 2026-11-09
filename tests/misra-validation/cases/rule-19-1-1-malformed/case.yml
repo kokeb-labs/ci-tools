@@ -11,3 +11,8 @@ known_misses:
     why: >-
       The query only reports defined forms that are compile errors (no operand, or a non-identifier operand); a
       build that compiles cannot contain one, so CodeQL never sees it here. The compiler claim above decides it.
+seeded:
+  - defined with empty parentheses
+  - defined applied to a number
+near_misses:
+  - defined naming one identifier, in parentheses

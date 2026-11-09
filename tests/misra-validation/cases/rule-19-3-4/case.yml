@@ -3,4 +3,15 @@ guideline: Rule 19.3.4
 codeql:
   queries: [cpp/misra/unparenthesized-macro-argument]
 other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: >-
+      misfire: the pack's Rule 8.20.1 query reports v * 2U with a run-time operand; the guideline covers operations
+      whose operands are constant expressions.
   - {query: cpp/misra/function-like-macros-defined, why: "true positive of Rule 19.0.2: the compliant form of this guideline needs a function-like macro"}
+seeded:
+  - parameter as an operand of * without parentheses
+  - parameter as the operand of unary minus without parentheses
+  - parameter compared with < without parentheses
+near_misses:
+  - every expression use of the parameter parenthesised
+  - parameter used only as a function argument, which needs no parentheses

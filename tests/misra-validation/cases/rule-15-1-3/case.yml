@@ -3,3 +3,17 @@ guideline: Rule 15.1.3
 clang-tidy: {check: google-explicit-constructor}
 codeql:
   queries: [cpp/misra/non-explicit-conversion-member]
+other_findings:
+  - query: cpp/misra/implicit-declaration-of-copy-constructor
+    why: >-
+      misfire: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared, so a
+      class that declares its special members (= default) is reported as using the deprecated implicit copy; an
+      explicitly defaulted member is user-declared and not deprecated.
+seeded:
+  - single-argument constructor that is not explicit
+  - non-explicit conversion operator
+  - constructor callable with one argument because the second has a default
+near_misses:
+  - explicit converting constructor and explicit conversion operator
+  - copy and move constructors, which are never marked explicit
+  - constructor with two required parameters

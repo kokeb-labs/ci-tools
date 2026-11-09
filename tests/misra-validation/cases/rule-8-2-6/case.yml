@@ -2,3 +2,12 @@
 guideline: Rule 8.2.6
 codeql:
   queries: [cpp/misra/int-to-pointer-cast-prohibited]
+seeded:
+  - "an integer constant cast to a pointer"
+  - "a C-style cast of an integer to a pointer"
+  - "an std::uintptr_t variable cast to a pointer"
+  - "a void* cast to an object pointer"
+near_misses:
+  - "an object pointer converted to void* (allowed)"
+  - "an address kept as an integer, never converted"
+  - "nullptr for an empty pointer"

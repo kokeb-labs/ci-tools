@@ -2,3 +2,10 @@
 guideline: Rule 0.0.1
 codeql:
   queries: [cpp/misra/unreachable-statement]
+seeded:
+  - "a statement after an unconditional return"
+  - "a statement after break in a loop body"
+  - "a statement after return inside a lambda"
+near_misses:
+  - "single exit with the branch assigning the result"
+  - "a return inside one branch followed by reachable code"

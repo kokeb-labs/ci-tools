@@ -4,3 +4,12 @@ gcc: {flag: unused-parameter}
 clang: {flag: unused-parameter}
 codeql:
   queries: [cpp/misra/unused-parameter-misra-cpp]
+seeded:
+  - "a named parameter of a free function never read"
+  - "a named parameter of a member function never read"
+  - "a named lambda parameter never read"
+  - "a named parameter of an instantiated function template never read"
+near_misses:
+  - "an unused parameter left unnamed"
+  - "a member function leaving the parameter it does not need unnamed"
+  - "a parameter read only inside a lambda the function calls"

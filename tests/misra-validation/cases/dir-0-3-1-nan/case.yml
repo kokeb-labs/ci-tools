@@ -2,3 +2,10 @@
 guideline: Dir 0.3.1
 codeql:
   queries: [cpp/misra/possible-misuse-of-nan-floating-point-value]
+seeded:
+  - "possibly-NaN quotient (0/0) compared with >"
+  - "possibly-NaN quotient tested with =="
+  - "possibly-NaN quotient compared with >= inside a lambda"
+near_misses:
+  - "quotient compared only after finite, non-zero operands are established"
+  - "an explicit isnan test guarding the comparison"

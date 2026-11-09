@@ -2,3 +2,15 @@
 guideline: Rule 10.0.1
 codeql:
   queries: [cpp/misra/use-single-global-or-member-declarators, cpp/misra/use-single-local-declarators]
+seeded:
+  - two members and two locals in one declaration each (bad.cpp)
+  - two declarators in a for-init statement and in a member declaration (bad_forinit.cpp)
+  - a pointer and an object in one local declaration, two namespace-scope objects in one declaration (bad_pointer.cpp)
+near_misses:
+  - one declarator per declaration (ok.hpp)
+  - a for-init with a single declarator (ok_near.hpp)
+  - several parameters in one function declaration (not a declaration list) (ok_near.hpp)
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: 'misfire: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions'

@@ -2,3 +2,10 @@
 guideline: Rule 8.2.4
 codeql:
   queries: [cpp/misra/casts-between-a-pointer-to-function-and-any-other-type]
+seeded:
+  - "a function pointer cast to void*"
+  - "a cast between two function pointer types"
+  - "a void* cast to a function pointer"
+near_misses:
+  - "a function pointer kept in its own type"
+  - "a function pointer compared with nullptr"

@@ -1,0 +1,17 @@
+---
+guideline: Rule 4.1.2
+notes: >-
+  The rule-of-five form with every special member explicitly defaulted. Nothing is implicitly declared, yet the
+  pack's query reports it; kept apart from rule-4-1-2-implicit-copy so that case stays proven.
+codeql:
+  queries: [cpp/misra/implicit-declaration-of-copy-constructor]
+known_misses:
+  - query: cpp/misra/implicit-declaration-of-copy-constructor
+    kind: false-positive
+    why: >-
+      An explicitly defaulted copy constructor (= default) is counted as implicitly declared, so a class that
+      declares all five special members = default together with its destructor is reported.
+seeded:
+  - "implicit copy constructor used on a class with a user destructor"
+near_misses:
+  - "a class declaring the destructor and all copy and move operations = default, then copied"

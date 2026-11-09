@@ -14,6 +14,8 @@ A case is a directory under cases/ (or under codeql/<pack>/validation/ for the o
     clang: {flag: unused-parameter}  # or message: <regex> (no option name), or error: <regex> (a hard error)
     clang-tidy: {check: readability-braces-around-statements, options: {}, config: {}}
     codeql: {queries: [cpp/misra/unused-parameter-misra-cpp]}
+    seeded: [...]                    # each violating form the bad files seed, edge cases included (one line each)
+    near_misses: [...]               # each compliant form in the ok files that resembles a violation
     targets: [host, cortex-m]        # where the files must build and CodeQL must hold (default: both)
     compiles: false                  # bad files are hard errors by design (no CodeQL claim can be proven then)
     other_findings: [{query, why}]   # reviewed results of OTHER queries on ok files; why "misfire: ..." = false positive
@@ -72,7 +74,7 @@ HEADER_EXT = (".hpp", ".ipp")
 SOURCE_EXT = (".cpp",) + HEADER_EXT
 TOOLS = ("gcc", "clang", "clang-tidy", "codeql")
 CASE_KEYS = {"guideline", "gcc", "clang", "clang-tidy", "codeql", "other_findings", "compiles", "notes",
-             "known_misses", "targets"}
+             "known_misses", "targets", "seeded", "near_misses"}
 
 
 def load_toolchain() -> dict:
@@ -555,6 +557,11 @@ def cmd_record(args) -> int:
             problems.append(f"anomaly {a['id']} ({a['case']} {a['rule_id']}) is no longer recorded by its case: "
                             "close it in the log")
 
+    # Every case states what it seeds and which near misses it holds, so a reviewer can judge the test's strength.
+    for c in cases:
+        for key in ("seeded", "near_misses"):
+            if not c.get(key):
+                problems.append(f"{c['name']}: case.yml lists no {key}")
     targets_of = {c["name"]: c["targets"] for c in cases}
     for r in reqs:
         runs = [x for x in results if x["tool"] == r["tool"] and x["id"] == r["rule_id"]

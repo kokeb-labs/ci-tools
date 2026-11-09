@@ -2,3 +2,13 @@
 guideline: Rule 0.2.3
 codeql:
   queries: [cpp/misra/unused-type-with-limited-visibility]
+seeded:
+  - "an unused private nested struct"
+  - "an unused struct in an unnamed namespace"
+  - "an unused block-scope struct"
+  - "an unused block-scope type alias"
+  - "an unused enumeration in an unnamed namespace"
+near_misses:
+  - "a private type used by a data member"
+  - "a private type used only as the return type of a called private function"
+  - "a block-scope struct that is instantiated and read"

@@ -3,3 +3,8 @@ guideline: Rule 21.6.4
 notes: The unsized global operator delete replaced alone; the ok file replaces neither.
 codeql:
   queries: [cpp/misra/global-sized-operator-delete-shall-be-defined]
+seeded:
+  - "the unsized global operator delete replaced without the sized one"
+near_misses:
+  - "no replacement of any global allocation function"
+  - "a plain struct handled by value"

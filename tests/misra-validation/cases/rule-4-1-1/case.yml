@@ -2,3 +2,11 @@
 guideline: Rule 4.1.1
 codeql:
   queries: [cpp/misra/compiler-language-extensions-used]
+seeded:
+  - "a GNU function attribute (__attribute__((noinline)))"
+  - "a GNU builtin (__builtin_expect)"
+  - "a GNU statement expression"
+  - "a GNU type attribute (__attribute__((packed)))"
+near_misses:
+  - "the standard attribute [[nodiscard]]"
+  - "alignas instead of a packing attribute"

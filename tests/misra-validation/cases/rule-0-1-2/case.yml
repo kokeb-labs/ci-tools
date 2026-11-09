@@ -2,3 +2,12 @@
 guideline: Rule 0.1.2
 codeql:
   queries: [cpp/misra/unused-return-value-misra-cpp]
+seeded:
+  - "a free function's result dropped"
+  - "a member function's result dropped"
+  - "a lambda call's result dropped"
+near_misses:
+  - "result cast to void with a comment"
+  - "result used as the return value"
+  - "a void function called for its effect"
+  - "a result used inside a condition"

@@ -1,0 +1,18 @@
+---
+guideline: Dir 15.8.1
+notes: >-
+  The copy-and-swap form handles self-assignment (a self-copy swaps a copy of the same value back), but the pack's
+  query accepts only an explicit this != &other test. The main case dir-15-8-1 proves detection.
+codeql:
+  queries: [cpp/misra/copy-and-move-assignments-shall-handle-self-assignment]
+known_misses:
+  - query: cpp/misra/copy-and-move-assignments-shall-handle-self-assignment
+    kind: false-positive
+    why: >-
+      Copy assignment through a local copy and std::swap, and move assignment by std::swap, are reported as not
+      handling self-assignment; both are self-assignment safe. The query recognises only a this != &other guard.
+seeded:
+  - copy assignment that overwrites state before copying, with no self-assignment test
+near_misses:
+  - copy assignment through a local copy and std::swap (copy-and-swap inside the function)
+  - move assignment by std::swap of the members

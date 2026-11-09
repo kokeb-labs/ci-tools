@@ -2,3 +2,10 @@
 guideline: Rule 9.5.2
 codeql:
   queries: [cpp/misra/for-range-initializer-at-most-one-function-call]
+seeded:
+  - a member call on a call result in the range initializer (bad.cpp)
+  - one call's result passed to another call (bad_nested.cpp)
+near_misses:
+  - a named range (ok.hpp)
+  - exactly one call in the range initializer (ok_near.hpp)
+  - a member access, not a call, after the one call (ok_near.hpp)

@@ -2,3 +2,16 @@
 guideline: Rule 21.6.1
 codeql:
   queries: [cpp/misra/dynamic-memory-should-not-be-used]
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: "misfire: the Rule 8.20.1 query reports ++used_ although used_ < slots_.size() is checked first and the
+      operand is not a constant expression."
+seeded:
+  - "new of a single object"
+  - "std::malloc"
+  - "an array new-expression"
+  - "std::realloc and std::calloc"
+  - "std::vector growing with push_back"
+near_misses:
+  - "std::array with automatic storage"
+  - "a pool of our own whose member allocate hands out fixed slots"

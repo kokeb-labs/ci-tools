@@ -1,0 +1,21 @@
+---
+guideline: Rule 9.3.1
+notes: The if and else bodies of Rule 9.3.1. The pack's two queries cover iteration and switch bodies only, so clang-tidy
+  decides the selection-statement part.
+clang-tidy:
+  check: readability-braces-around-statements
+codeql:
+  queries:
+    - cpp/misra/loop-body-compound-condition
+known_misses:
+  - query: cpp/misra/loop-body-compound-condition
+    kind: false-negative
+    why: 'The pack has no query for unbraced if and else bodies: its Rule 9.3.1 queries cover loop and switch bodies
+      only, so an unbraced if or else is not reported by CodeQL.'
+seeded:
+  - an if body that is a single statement
+  - an else body that is a single statement
+  - an unbraced if nested in a braced loop
+near_misses:
+  - else if chains with braced bodies
+  - braced if/else

@@ -3,3 +3,12 @@ guideline: Rule 7.11.1
 clang-tidy: {check: modernize-use-nullptr}
 codeql:
   queries: [cpp/misra/nullptr-not-the-only-form-of-the-null-pointer-constant]
+seeded:
+  - "NULL in an initialisation"
+  - "a literal 0 as a null pointer"
+  - "a literal 0 returned as a pointer"
+  - "NULL passed as a pointer argument"
+  - "a pointer compared with a literal 0"
+near_misses:
+  - "nullptr in every pointer context"
+  - "a literal 0 used as an integer next to pointer code"

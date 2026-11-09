@@ -4,7 +4,19 @@ clang-tidy: {check: cppcoreguidelines-macro-usage}
 codeql:
   queries: [cpp/misra/function-like-macros-defined]
 other_findings:
+  - query: cpp/misra/non-explicit-conversion-member
+    why: >-
+      misfire: the pack's Rule 15.1.3 query reports the conversion-to-function-pointer operator the compiler gives
+      a capture-less lambda's closure type; nobody declared it and it cannot be marked explicit.
   - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
     why: >-
       misfire: the pack's Rule 8.20.1 query reports unsigned arithmetic on run-time operands; the guideline covers
       operations whose operands are constant expressions.
+seeded:
+  - function-like macro with one parameter
+  - function-like macro with no parameters
+  - variadic function-like macro
+near_misses:
+  - constexpr function replacing the macro
+  - constexpr lambda with a macro-like purpose
+  - include guard, the one object-like macro the check allows

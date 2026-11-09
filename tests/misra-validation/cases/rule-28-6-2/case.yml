@@ -2,3 +2,10 @@
 guideline: Rule 28.6.2
 codeql:
   queries: [cpp/misra/forwarding-references-and-forward-not-used-together]
+seeded:
+  - "a forwarding reference passed on as an lvalue"
+  - "a forwarding reference passed on with std::move"
+near_misses:
+  - "std::forward<T> of the forwarding reference"
+  - "a const T& template parameter"
+  - "auto&& in a range-for"

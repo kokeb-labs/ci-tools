@@ -2,3 +2,12 @@
 guideline: Rule 4.6.1
 codeql:
   queries: [cpp/misra/memory-usage-not-sequenced]
+seeded:
+  - "i = i++ + 1U (two writes)"
+  - "f(i++, i++) (two writes in arguments)"
+  - "i + i++ (read and write)"
+  - "a[i] = i++ (index read and write)"
+  - "f(i, ++i) (read and write in arguments)"
+near_misses:
+  - "compound assignments in separate statements"
+  - "distinct objects read and written in one call"

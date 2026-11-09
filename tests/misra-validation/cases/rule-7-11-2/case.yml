@@ -3,3 +3,11 @@ guideline: Rule 7.11.2
 clang-tidy: {check: cppcoreguidelines-pro-bounds-array-to-pointer-decay}
 codeql:
   queries: [cpp/misra/array-passed-as-function-argument-decay-to-a-pointer]
+seeded:
+  - "a local built-in array passed to a pointer parameter"
+  - "a member built-in array passed to a pointer parameter"
+  - "a built-in array passed to a function template deducing T*"
+near_misses:
+  - "a std::array passed through std::span"
+  - "a std::array passed by reference"
+  - "the pointer obtained explicitly with .data()"

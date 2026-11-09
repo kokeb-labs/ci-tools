@@ -3,3 +3,9 @@ guideline: Rule 21.10.2
 clang-tidy: {check: cert-err52-cpp}
 codeql:
   queries: [cpp/misra/no-csetjmp-header]
+seeded:
+  - "setjmp and std::longjmp through <csetjmp>"
+  - "setjmp and longjmp through <setjmp.h> with a static jmp_buf"
+near_misses:
+  - "a status returned to the caller"
+  - "a dispatch table of our own named jump_table"

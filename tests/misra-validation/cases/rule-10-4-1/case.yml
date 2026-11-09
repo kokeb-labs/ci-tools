@@ -3,3 +3,10 @@ guideline: Rule 10.4.1
 clang-tidy: {check: hicpp-no-assembler}
 codeql:
   queries: [cpp/misra/asm-declaration-shall-not-be-used]
+seeded:
+  - asm volatile with a clobber list (bad.cpp)
+  - the __asm__ __volatile__ spelling (bad_spelling.cpp)
+  - asm with an input/output operand (bad_operands.cpp)
+near_misses:
+  - std::atomic_signal_fence (ok.hpp)
+  - std::atomic_thread_fence and a function named like assembly (ok_near.hpp)

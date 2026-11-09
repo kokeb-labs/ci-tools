@@ -6,3 +6,15 @@ notes: >-
   Two declarations of one external function with different return types, in two translation units. The query only
   compares entities of the global namespace (ExternalIdentifiers); the same mismatch inside a named namespace is not
   reported, so the seeded declarations sit in the global namespace.
+seeded:
+  - "an external function declared with int32_t and int64_t return types in two translation units"
+near_misses:
+  - "one declaration in one header"
+  - "overloads with different parameter types"
+  - "a repeated identical declaration"
+other_findings:
+  - query: cpp/misra/numeric-assignment-type-mismatch
+    why: >-
+      misfire (cortex-m only): on arm-none-eabi std::int32_t and std::uint32_t are long and unsigned long, so the
+      query reports an int (or unsigned int) value assigned to them; both types have the same size and signedness
+      on that target, so the conversion cannot change the value.

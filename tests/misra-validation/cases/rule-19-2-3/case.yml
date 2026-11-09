@@ -2,3 +2,9 @@
 guideline: Rule 19.2.3
 codeql:
   queries: [cpp/misra/chars-that-should-not-occur-in-header-file-name]
+seeded:
+  - quoted header name containing an apostrophe
+  - bracketed header name containing an apostrophe
+near_misses:
+  - header names of letters, digits, underscores and dots
+  - header names with dashes and a version dot (kv-plain.v2.hpp)

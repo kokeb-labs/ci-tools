@@ -2,3 +2,8 @@
 guideline: Rule 28.3.1
 codeql:
   queries: [cpp/misra/non-const-predicate-function-object, cpp/misra/predicate-with-persistent-side-effects]
+seeded:
+  - "a function object whose call operator is not const and counts calls"
+  - "a predicate function that increments a namespace-scope counter"
+near_misses:
+  - "a predicate function object with a const call operator and no side effects"

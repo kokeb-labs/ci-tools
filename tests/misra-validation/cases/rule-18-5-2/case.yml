@@ -2,3 +2,9 @@
 guideline: Rule 18.5.2
 codeql:
   queries: [cpp/misra/avoid-program-terminating-functions]
+seeded:
+  - std::abort and std::exit
+  - std::terminate and std::_Exit
+near_misses:
+  - the fault returned to the caller
+  - a member function of our own type named abort (a transfer is cancelled, the program is not)

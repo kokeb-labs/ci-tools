@@ -3,3 +3,10 @@ guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/possible-data-race-between-threads]
 targets: [host]  # std::thread is not available on the bare-metal toolchain
+other_findings:
+  - {query: cpp/misra/dynamic-memory-should-not-be-used, why: "true positive of Rule 21.6.1 (advisory): std::thread allocates its state; the compliant form of this guideline needs two threads"}
+seeded:
+  - "a namespace-scope counter written by one thread and read by another without a lock"
+near_misses:
+  - "no shared object at all"
+  - "a counter shared through std::atomic"

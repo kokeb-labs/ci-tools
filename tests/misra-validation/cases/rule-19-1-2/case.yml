@@ -4,3 +4,9 @@ notes: The pack does not implement this guideline (compiler checked), and an #if
 gcc: {error: "unterminated #if"}
 clang: {error: "unterminated conditional directive"}
 compiles: false
+seeded:
+  - '#if group left open at the end of the file'
+  - '#ifdef group left open at the end of the file'
+near_misses:
+  - '#if group opened and closed in the file'
+  - 'nested #if / #ifdef groups, each closed in the file'

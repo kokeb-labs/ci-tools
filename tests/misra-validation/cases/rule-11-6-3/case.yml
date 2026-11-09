@@ -2,3 +2,10 @@
 guideline: Rule 11.6.3
 codeql:
   queries: [cpp/misra/non-unique-enumeration-constant]
+seeded:
+  - an implicit enumerator equal to a later explicit one (bad.cpp)
+  - an implicit enumerator equal to an earlier explicit one (bad_later.cpp)
+near_misses:
+  - all values distinct (ok.hpp)
+  - all values implicit (ok_near.hpp)
+  - two explicit, deliberately equal values (an alias) (ok_near.hpp)

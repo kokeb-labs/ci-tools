@@ -2,3 +2,12 @@
 guideline: Rule 7.0.5
 codeql:
   queries: [cpp/misra/no-signedness-change-from-promotion]
+seeded:
+  - "two std::uint8_t operands added (promoted to int)"
+  - "std::uint16_t operands multiplied"
+  - "~ applied to a std::uint8_t"
+  - "a std::uint8_t shifted left"
+  - "an unsigned compared with a signed operand"
+near_misses:
+  - "operands widened to std::uint32_t with static_cast before the arithmetic"
+  - "std::uint32_t operands (no promotion)"

@@ -2,3 +2,8 @@
 guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/null-pointer-to-member-access-undefined-behavior]
+seeded:
+  - "a null pointer to data member dereferenced"
+near_misses:
+  - "a member pointer initialised to a member"
+  - "a member pointer checked against nullptr before use"

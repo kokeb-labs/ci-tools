@@ -9,3 +9,8 @@ codeql:
   queries: [cpp/misra/inherited-overridable-member-function]
 other_findings:
   - {query: cpp/misra/member-specifiers-not-used-appropriately, why: "misfire: reports the implicitly declared destructor of the final class, which has no declaration that could carry override"}
+seeded:
+  - "an override of one virtual overload that hides the other (declared pure, overrider defined out of class)"
+near_misses:
+  - "overriding every overload"
+  - "a using-declaration of the base overloads next to the one override"

@@ -3,3 +3,17 @@ guideline: Rule 9.3.1
 clang-tidy: {check: readability-braces-around-statements}
 codeql:
   queries: [cpp/misra/loop-body-compound-condition, cpp/misra/switch-body-compound-condition]
+seeded:
+  - unbraced for and switch bodies, and an unbraced if (bad.cpp)
+  - unbraced while body; switch whose body is a lone default label (bad_while.cpp)
+  - unbraced do-while body; unbraced inner for nested in a braced outer for (bad_do.cpp)
+  - unbraced range-for body (bad_rangefor.cpp)
+near_misses:
+  - braced for, if and switch with braced case blocks (ok.hpp)
+  - else if chains (an if directly after else needs no extra braces) (ok_near.hpp)
+  - empty braced loop bodies and braced do-while (ok_near.hpp)
+  - braced range-for and braced while (ok_near.hpp)
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: 'misfire: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions'

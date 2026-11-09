@@ -8,3 +8,9 @@ other_findings:
       misfire: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared, so a
       class that declares all five special members (= default) with a user-declared destructor is reported as using
       the deprecated implicit copy; an explicitly defaulted member is user-declared and not deprecated.
+seeded:
+  - copy assignment taking a non-const reference and returning by value
+  - copy constructor taking a non-const reference
+near_misses:
+  - conventional ref-qualified copy and move assignments
+  - an assignment operator from another type, which is not a special member

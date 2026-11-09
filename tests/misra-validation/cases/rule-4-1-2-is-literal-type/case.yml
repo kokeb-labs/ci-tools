@@ -2,3 +2,8 @@
 guideline: Rule 4.1.2
 codeql:
   queries: [cpp/misra/use-of-deprecated-is-literal-type-traits]
+seeded:
+  - "std::is_literal_type<T>::value in a function"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "std::is_trivially_copyable_v and std::is_standard_layout_v"

@@ -2,3 +2,11 @@
 guideline: Rule 9.6.4
 codeql:
   queries: [cpp/misra/function-declared-with-the-noreturn-attribute-return]
+seeded:
+  - an explicit return on one path (bad.cpp)
+  - falling off the end after a loop that can end (bad_falloff.cpp)
+  - a [[noreturn]] member function that returns (bad_member.cpp)
+near_misses:
+  - an infinite loop on every path (ok.hpp)
+  - a [[noreturn]] function that only calls another [[noreturn]] function (ok_near.hpp)
+  - an ordinary void function that returns normally (ok_near.hpp)

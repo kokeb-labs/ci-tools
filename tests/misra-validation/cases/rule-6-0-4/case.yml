@@ -5,3 +5,10 @@ codeql:
 notes: The ok file is the program entry point itself, the one place a function may be called main.
 other_findings:
   - {query: cpp/misra/missing-catch-all-exception-handler-in-main, why: "Rule 18.3.1, not applicable here: our code builds with -fno-exceptions, so main cannot have a try block"}
+seeded:
+  - "a function named main in a named namespace"
+  - "a member function named main"
+  - "a function named main in a nested namespace"
+near_misses:
+  - "the global int main(), the program entry point"
+  - "functions named main_loop and run_main"

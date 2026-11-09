@@ -2,3 +2,12 @@
 guideline: Rule 11.6.1
 codeql:
   queries: [cpp/misra/uninitialized-variable]
+seeded:
+  - a local assigned on both branches after an uninitialised declaration (bad.cpp)
+  - an uninitialised local in a loop body (bad_loop.cpp)
+  - an uninitialised pointer local (bad_pointer.cpp)
+near_misses:
+  - initialised at the declaration (ok.hpp)
+  - value-initialised with {} (ok_near.hpp)
+  - a class object initialised by its default constructor (ok_near.hpp)
+  - std::array value-initialised with {} (ok_near.hpp)

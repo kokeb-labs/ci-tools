@@ -529,7 +529,7 @@ def cmd_report(a) -> int:
     unused = {}
     for cfg in configs:
         for s in cfg.get("unused_scopes", []):
-            unused.setdefault((s["file"], s["start"], s["query"]), []).append(cfg["name"])
+            unused.setdefault((s["file"], s["start"], s["query"]), set()).add(cfg["name"])
     marker_errors = list(marks["marker_errors"])
     for (f, line, q), cfgs in sorted(unused.items()):
         if len(cfgs) == len([c for c in configs if "scopes" in c]):

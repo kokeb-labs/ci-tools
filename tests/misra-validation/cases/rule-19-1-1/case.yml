@@ -5,3 +5,9 @@ gcc: {flag: expansion-to-defined}
 clang: {flag: expansion-to-defined}
 codeql:
   queries: [cpp/misra/defined-operator-expanded-in-if-directive]
+seeded:
+  - '#if expanding a macro that produces defined(X)'
+  - '#if expanding a macro that produces defined X without parentheses (defined KV_SAFE)'
+near_misses:
+  - defined written directly in both standard forms
+  - 'defined combined with ! and && in #if and #elif'

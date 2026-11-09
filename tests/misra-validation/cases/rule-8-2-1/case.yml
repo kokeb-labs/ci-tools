@@ -3,3 +3,10 @@ guideline: Rule 8.2.1
 clang-tidy: {check: fuchsia-virtual-inheritance}
 codeql:
   queries: [cpp/misra/virtual-base-class-cast-to-derived]
+seeded:
+  - "reinterpret_cast from a pointer to a virtual base to the derived class"
+  - "reinterpret_cast from a pointer to a const virtual base to the derived class"
+  - "reinterpret_cast from a reference to a virtual base to the derived class"
+near_misses:
+  - "static_cast downcast from a non-virtual base"
+  - "an implicit upcast from derived to base"

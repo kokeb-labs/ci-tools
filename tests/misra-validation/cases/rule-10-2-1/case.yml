@@ -2,3 +2,10 @@
 guideline: Rule 10.2.1
 codeql:
   queries: [cpp/misra/enumeration-not-defined-with-an-explicit-underlying-type]
+seeded:
+  - a namespace-scope scoped enum without a fixed type (bad.cpp)
+  - a class-member scoped enum without a fixed type (bad_member.cpp)
+near_misses:
+  - a scoped enum with std::uint8_t (ok.hpp)
+  - an opaque declaration with the type, then its definition (ok_near.hpp)
+  - a class-member scoped enum with a fixed type (ok_near.hpp)

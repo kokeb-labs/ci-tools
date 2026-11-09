@@ -2,3 +2,8 @@
 guideline: Dir 15.8.1
 codeql:
   queries: [cpp/misra/copy-and-move-assignments-shall-handle-self-assignment]
+seeded:
+  - copy assignment that overwrites state before copying, with no self-assignment test
+  - hand-written move assignment that clears the source, so a self-move loses the value
+near_misses:
+  - copy and move assignments guarded by this != &other

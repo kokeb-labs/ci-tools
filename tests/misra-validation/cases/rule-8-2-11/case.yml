@@ -3,3 +3,9 @@ guideline: Rule 8.2.11
 clang-tidy: {check: cppcoreguidelines-pro-type-vararg}
 codeql:
   queries: [cpp/misra/inappropriate-argument-type-passed-via-ellipsis]
+seeded:
+  - "a class with a user-provided copy constructor through an ellipsis"
+  - "a class with a user-provided copy assignment through an ellipsis"
+near_misses:
+  - "a variadic function template (parameter pack) instead of an ellipsis"
+  - "overloads with fixed parameters"

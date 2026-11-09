@@ -2,3 +2,10 @@
 guideline: Rule 8.1.2
 codeql:
   queries: [cpp/misra/implicit-captures-disallowed-in-non-transient-lambda]
+seeded:
+  - "a stored lambda with [=] capturing a local implicitly"
+  - "a stored lambda with [&] capturing a local implicitly"
+  - "a stored lambda with a default capture plus an explicit one"
+near_misses:
+  - "a stored lambda listing each capture by name"
+  - "a [&] lambda invoked immediately (transient)"

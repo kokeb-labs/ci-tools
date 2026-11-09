@@ -2,3 +2,11 @@
 guideline: Rule 6.5.1
 codeql:
   queries: [cpp/misra/external-linkage-not-declared-in-header-file-misra]
+seeded:
+  - "an external function defined in a source file with no header declaration"
+  - "an external object defined in a source file with no header declaration"
+  - "a second external function with no header declaration"
+near_misses:
+  - "an external function declared in a header"
+  - "an external const object declared in a header and defined in the source"
+  - "an inline function in the header"

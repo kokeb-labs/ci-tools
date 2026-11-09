@@ -3,3 +3,10 @@ guideline: Rule 22.3.1
 clang-tidy: {check: misc-static-assert}
 codeql:
   queries: [cpp/misra/assert-macro-used-with-a-constant-expression]
+seeded:
+  - "assert on a sizeof comparison"
+  - "assert on a constexpr constant in a template"
+  - "assert on a sizeof comparison inside a lambda"
+near_misses:
+  - "static_assert for the compile-time fact"
+  - "a run-time check function of our own named assert_channel"

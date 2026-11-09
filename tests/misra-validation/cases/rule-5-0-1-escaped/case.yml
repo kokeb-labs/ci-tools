@@ -1,0 +1,15 @@
+---
+guideline: Rule 5.0.1
+notes: The escape sequence \? is the way to write ?? followed by a trigraph character without the source holding the sequence.
+codeql:
+  queries: [cpp/misra/trigraph-like-sequences-should-not-be-used]
+known_misses:
+  - query: cpp/misra/trigraph-like-sequences-should-not-be-used
+    kind: false-positive
+    why: >-
+      The query inspects the literal's value after escape processing, so "?\?=" (no trigraph-like sequence in the
+      source) is reported as if it were "??=".
+seeded:
+  - "??= in a string literal"
+near_misses:
+  - "?\\?= written with an escaped question mark"

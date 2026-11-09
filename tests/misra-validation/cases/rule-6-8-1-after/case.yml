@@ -2,3 +2,9 @@
 guideline: Rule 6.8.1
 codeql:
   queries: [cpp/misra/object-accessed-after-lifetime-misra]
+seeded:
+  - "a pointer to a block-scope local dereferenced after the block"
+  - "a pointer to a loop-body local dereferenced after the loop"
+near_misses:
+  - "a pointer used while its object lives"
+  - "a pointer to a loop-body local used inside the same iteration"

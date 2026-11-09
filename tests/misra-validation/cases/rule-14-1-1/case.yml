@@ -2,3 +2,10 @@
 guideline: Rule 14.1.1
 codeql:
   queries: [cpp/misra/private-and-public-data-members-mixed]
+seeded:
+  - class with a public and a private data member
+  - struct with a public data member next to a protected one
+near_misses:
+  - class whose data members are all private, with public accessors
+  - struct whose data members are all public
+  - class with private data plus a public static constexpr member (not a non-static data member)

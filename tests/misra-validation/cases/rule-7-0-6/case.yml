@@ -2,3 +2,13 @@
 guideline: Rule 7.0.6
 codeql:
   queries: [cpp/misra/numeric-assignment-type-mismatch]
+seeded:
+  - "narrowing std::int32_t to std::int16_t in an initialisation"
+  - "std::int32_t to std::uint32_t (signedness change) in an initialisation"
+  - "a narrowing argument passed to a std::int16_t parameter"
+  - "a narrowing return from a std::int16_t function"
+  - "a float assigned to an integer"
+near_misses:
+  - "the same type on both sides"
+  - "an explicit static_cast for the deliberate change"
+  - "a widening assignment of the same signedness (std::int16_t to std::int32_t)"

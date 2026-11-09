@@ -2,3 +2,8 @@
 guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/uninitialized-static-pointer-to-member-undefined-behavior]
+seeded:
+  - "a zero-initialised (null) static member pointer applied to an object"
+near_misses:
+  - "a local constexpr member pointer to a member"
+  - "a static constexpr member pointer initialised to a member"

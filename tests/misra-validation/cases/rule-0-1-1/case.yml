@@ -2,3 +2,11 @@
 guideline: Rule 0.1.1
 codeql:
   queries: [cpp/misra/unnecessary-write-to-local-object]
+seeded:
+  - "a local overwritten before its first value is read"
+  - "the same inside a lambda body"
+  - "an initial value replaced before any read"
+near_misses:
+  - "a value written on one path only, read on both"
+  - "a write read by a compound assignment"
+  - "a local written through a reference parameter, then read"

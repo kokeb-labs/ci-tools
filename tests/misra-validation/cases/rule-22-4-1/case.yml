@@ -6,3 +6,9 @@ known_misses:
   - query: cpp/misra/invalid-assignment-to-errno
     why: "isErrno() only matches a variable named errno or __errno; glibc defines errno as a macro over a call
       (*__errno_location()), the macOS SDK over (*__error()), so no assignment to errno is ever reported there."
+seeded:
+  - "errno set to EBUSY"
+  - "errno set to a parameter and changed with +="
+near_misses:
+  - "errno reset to zero"
+  - "errno read into a local before it is reset"

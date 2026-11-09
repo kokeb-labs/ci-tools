@@ -2,3 +2,10 @@
 guideline: Rule 19.6.1
 codeql:
   queries: [cpp/misra/disallowed-use-of-pragma]
+seeded:
+  - '#pragma GCC diagnostic'
+  - _Pragma operator
+  - '#pragma once in a header'
+near_misses:
+  - 'an include guard instead of #pragma once'
+  - identifiers and strings containing the word pragma

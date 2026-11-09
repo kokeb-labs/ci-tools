@@ -2,3 +2,12 @@
 guideline: Rule 11.3.2
 codeql:
   queries: [cpp/misra/declaration-of-an-object-indirections-level]
+seeded:
+  - a three-level pointer parameter (bad.cpp)
+  - a three-level pointer local (bad_local.cpp)
+  - a three-level pointer member (bad_member.cpp)
+near_misses:
+  - a reference instead of a pointer (ok.hpp)
+  - exactly two levels of pointer (ok_near.hpp)
+  - a pointer to const pointer to const (two levels, both const) (ok_near.hpp)
+  - two non-const levels used to write the target (ok_near.hpp)

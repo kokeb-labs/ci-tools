@@ -2,3 +2,11 @@
 guideline: Rule 5.13.4
 codeql:
   queries: [cpp/misra/unsigned-integer-literals-not-appropriately-suffixed]
+seeded:
+  - "0x80000000 without U (unsigned int)"
+  - "0xFFFF'FFFF with digit separators and no U"
+  - "an unsigned hex literal as a template argument without U"
+near_misses:
+  - "0x80000000U"
+  - "0x7FFFFFFF, which is a signed int"
+  - "0xFFFF'FFFFU"

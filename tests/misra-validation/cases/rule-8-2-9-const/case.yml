@@ -8,3 +8,7 @@ known_misses:
     why: >-
       typeid of a const-qualified polymorphic object is not reported: the query takes the operand's type without
       stripping cv-qualifiers, so `const Shape` is not seen as a class
+seeded:
+  - "typeid on const polymorphic references"
+near_misses:
+  - "the kind as an explicit member"

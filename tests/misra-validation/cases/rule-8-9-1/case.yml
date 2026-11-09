@@ -2,3 +2,10 @@
 guideline: Rule 8.9.1
 codeql:
   queries: [cpp/misra/pointer-compared-between-different-arrays]
+seeded:
+  - "< between pointers into two different arrays"
+  - ">= between pointers into two different arrays"
+  - "> between pointers into two different member arrays"
+near_misses:
+  - "== between pointers into different arrays (allowed)"
+  - "< between pointers into the same array"

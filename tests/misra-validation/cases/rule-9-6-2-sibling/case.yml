@@ -1,0 +1,18 @@
+---
+guideline: Rule 9.6.2
+notes: A goto whose label is in a sibling block at a shallower depth. The query compares nesting depths only.
+clang-tidy:
+  check: cppcoreguidelines-avoid-goto
+codeql:
+  queries:
+    - cpp/misra/goto-reference-a-label-in-surrounding-block
+known_misses:
+  - query: cpp/misra/goto-reference-a-label-in-surrounding-block
+    kind: false-negative
+    why: The query reports a goto only when the label is at the same or a greater statement depth; a label in a
+      sibling block that is shallower than the goto (goto inside for/if, label in a later while body) does not surround
+      the goto but is not reported.
+seeded:
+  - a goto inside a for/if to a label in the body of a later sibling while loop
+near_misses:
+  - break, continue and early return instead of goto

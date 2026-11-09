@@ -6,3 +6,10 @@ clang-tidy:
     bugprone-unsafe-functions.CustomFunctions: "^::(std::)?mem(cpy|move|cmp|chr)$,,banned by the MISRA C++ profile"
 codeql:
   queries: [cpp/misra/no-memory-functions-from-c-string]
+seeded:
+  - "std::memcpy and std::memcmp"
+  - "memmove (unqualified) and ::memchr through <string.h>"
+  - "std::memcpy inside a function template"
+near_misses:
+  - "copy assignment and operator== of std::array"
+  - "std::copy, std::equal and std::find"

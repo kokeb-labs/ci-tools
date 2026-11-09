@@ -9,3 +9,13 @@ other_findings:
     why: >-
       misfire: Rule 8.20.1 is about unsigned arithmetic whose operands are constant expressions; the pack also
       reports `(high << 8U) + low` with run-time operands, whose operands are not constant, whenever its range analysis cannot bound them
+seeded:
+  - "<< with an unparenthesised + operand"
+  - "sizeof applied without parentheses"
+  - "& and | mixed without parentheses"
+  - "<< with an unparenthesised - operand"
+  - "sizeof without parentheses on a dereference"
+near_misses:
+  - "each operand of a different-precedence operator parenthesised"
+  - "a chain of the same operator (a + b + c)"
+  - "sizeof(expression) with parentheses"

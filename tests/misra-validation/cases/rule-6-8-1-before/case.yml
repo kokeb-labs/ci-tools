@@ -2,3 +2,8 @@
 guideline: Rule 6.8.1
 codeql:
   queries: [cpp/misra/object-accessed-before-lifetime-misra]
+seeded:
+  - "an uninitialised pointer dereferenced"
+near_misses:
+  - "a pointer initialised to a live object"
+  - "a pointer initialised from a conditional choosing between two live objects"

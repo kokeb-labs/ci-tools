@@ -2,3 +2,9 @@
 guideline: Rule 6.4.2
 codeql:
   queries: [cpp/misra/inherited-non-overridable-member-function]
+seeded:
+  - "a derived overload hiding an inherited non-virtual function"
+  - "a derived overload hiding two inherited overloads"
+near_misses:
+  - "a using-declaration bringing the base overloads into scope"
+  - "a derived member with a different name"

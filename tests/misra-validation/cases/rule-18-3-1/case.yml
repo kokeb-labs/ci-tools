@@ -4,3 +4,9 @@ notes: Not applicable (no exceptions); -fno-exceptions makes the construct a har
 gcc: {error: "exception handling disabled"}
 clang: {error: "cannot use '(throw|try)' with exceptions disabled"}
 compiles: false
+seeded:
+  - main with a try block that catches one type only
+  - main without any try block around its work
+near_misses:
+  - errors returned as values (an enum status)
+  - identifiers and strings that only contain the words throw, try and catch (throttle, retry, catch_up)

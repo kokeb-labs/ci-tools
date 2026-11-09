@@ -2,3 +2,14 @@
 guideline: Rule 7.0.2
 codeql:
   queries: [cpp/misra/no-implicit-bool-conversion]
+seeded:
+  - "an integer used directly as an if condition"
+  - "a pointer used directly as an if condition"
+  - "an integer as a while condition"
+  - "an integer as the condition of the conditional operator"
+  - "logical not applied to an integer"
+  - "integers as operands of &&"
+near_misses:
+  - "comparisons (!= 0, != nullptr) as conditions"
+  - "a bool variable as a condition"
+  - "a loop condition written as a comparison with zero"

@@ -2,3 +2,12 @@
 guideline: Rule 5.13.2
 codeql:
   queries: [cpp/misra/non-terminated-escape-sequences]
+seeded:
+  - "a hex escape followed by a letter"
+  - "an octal escape followed by a letter"
+  - "a hex escape followed by a non-hex letter"
+near_misses:
+  - "a hex escape ended by splitting the literal"
+  - "a hex escape followed by another escape"
+  - "an octal escape at the end of the literal"
+  - "a hex escape that is the whole character literal"

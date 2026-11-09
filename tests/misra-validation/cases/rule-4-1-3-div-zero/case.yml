@@ -2,3 +2,11 @@
 guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/division-by-zero-undefined-behavior]
+seeded:
+  - "unsigned division by a constant zero"
+  - "unsigned remainder by a constant zero"
+  - "signed division by a constexpr zero"
+near_misses:
+  - "division guarded by a non-zero test"
+  - "division by a non-zero constant"
+  - "remainder after an early return excludes zero"

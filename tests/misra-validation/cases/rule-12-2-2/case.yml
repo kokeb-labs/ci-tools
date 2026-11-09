@@ -1,15 +1,25 @@
 ---
 guideline: Rule 12.2.2
 notes: >-
-  The query takes the compiler from the extractor's --mimic argument and matches it against "%gcc", "%g++", "%clang"
-  and "%clang++". A versioned or generic name (g++-14, clang++-18, c++) is an unsupported compiler, and then only
-  explicitly signed or unsigned int and bool are accepted: a bit-field of std::uint8_t is reported although it is an
-  unsigned integer type (a misfire against our reading of the guideline). Under a plain g++ or clang++ name the query
-  accepts every integral and enumeration type and so reports nothing, the seeded int included. The self-CI builds
-  with g++-14, the strict mode; this ok file uses std::uint32_t (unsigned int), which passes in both modes.
+  The query decides the allowed types from the compiler the extractor saw (its --mimic argument, matched against
+  %gcc, %g++, %clang and %clang++). Under the names the suite and ru-misra use (g++ on the host, arm-none-eabi-g++
+  for Cortex-M) it is in its GCC mode. On the host that mode accepts std::uint32_t (unsigned int); on arm-none-eabi,
+  where std::uint32_t is unsigned long, it reports it: a false positive recorded for cortex-m only.
 codeql:
   queries: [cpp/misra/bit-field-shall-have-an-appropriate-type]
 other_findings:
   - {query: cpp/misra/bit-fields-should-not-be-declared-misra-cpp, why: "true positive of Rule 12.2.1: the case needs a bit-field to exist"}
 # Also seen: a bit-field of std::int32_t (int) is reported in the strict mode, because plain int is not
 # "explicitly signed"; our matrix allows only unsigned types and bool, so that report agrees with our profile.
+seeded:
+  - plain int and plain char bit-fields (bad.cpp)
+  - a plain char bit-field alone (bad_char.cpp)
+near_misses:
+  - unsigned int and bool bit-fields (ok.hpp)
+known_misses:
+  - query: cpp/misra/bit-field-shall-have-an-appropriate-type
+    kind: false-positive
+    targets: [cortex-m]
+    why: >-
+      A std::uint32_t bit-field (unsigned long on arm-none-eabi) is reported on the Cortex-M database; it is an unsigned
+      integer type, which the guideline allows. The seeded plain int and char bit-fields are reported on both targets.

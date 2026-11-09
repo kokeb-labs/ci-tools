@@ -6,3 +6,8 @@ known_misses:
   - query: cpp/misra/use-of-deprecated-function-binder-typedef-member
     why: >-
       false negative for our toolchains: the query matches only alias-declaration (using) members declared in the function object itself; libstdc++ declares result_type and the argument typedefs with typedef in the std::binary_function / std::unary_function base, and libc++ removes them in C++20 mode.
+seeded:
+  - "std::plus<int>::result_type used as a type (removed binder typedef)"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "a user function object with its own result_type alias"

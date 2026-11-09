@@ -1,0 +1,17 @@
+---
+guideline: Rule 15.1.2
+notes: >-
+  A delegating constructor cannot have other initializers; its target names the base. The main case rule-15-1-2
+  proves detection.
+codeql:
+  queries: [cpp/misra/initialize-all-virtual-base-classes]
+known_misses:
+  - query: cpp/misra/initialize-all-virtual-base-classes
+    kind: false-positive
+    why: >-
+      A delegating constructor (Derived() : Derived(1U)) is reported for not calling the base constructor, although
+      the language forbids a base initializer there and the delegated-to constructor initialises the base.
+seeded:
+  - converting constructor that leaves its base out of the initializer list
+near_misses:
+  - delegating constructor, which initialises the base through the constructor it delegates to

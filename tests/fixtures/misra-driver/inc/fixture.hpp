@@ -15,10 +15,11 @@ struct [[nodiscard]] Result {
 };
 
 // A register read: the cast is the deviated construct of MD-CPP-003 (Rule 8.2.5) and MD-CPP-004 (Rule 8.2.6), two
-// deviated findings, cited in the two comment forms.
+// deviated findings. The NOLINT that MD-CPP-003 asks for ends with the record id, which also deviates the CodeQL
+// finding; the next-line marker deviates the other.
 inline std::uint32_t read_register(std::uintptr_t address) {
   // codeql::misra_deviation_next_line(MD-CPP-004)
-  return *reinterpret_cast<volatile std::uint32_t*>(address);  // codeql::misra_deviation(MD-CPP-003)
+  return *reinterpret_cast<volatile std::uint32_t*>(address);  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast) MD-CPP-003
 }
 
 // Rule 9.3.1 (an undeviated violation): the loop body is not a compound statement.

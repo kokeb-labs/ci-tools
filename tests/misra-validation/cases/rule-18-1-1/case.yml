@@ -4,3 +4,9 @@ notes: Not applicable (no exceptions); the compiler makes any throw a hard error
 gcc: {error: "exception handling disabled"}
 clang: {error: "cannot use 'throw' with exceptions disabled"}
 compiles: false
+seeded:
+  - throwing the address of a static object
+  - throwing a pointer to a dynamically allocated object
+near_misses:
+  - errors returned as values (an enum status)
+  - identifiers and strings that only contain the words throw, try and catch (throttle, retry, catch_up)

@@ -2,3 +2,9 @@
 guideline: Rule 30.0.2
 codeql:
   queries: [cpp/misra/reads-and-writes-on-stream-not-separated-by-positioning]
+seeded:
+  - "a read then a write with no positioning call (parameter and local stream)"
+  - "a read then a write on a stream member"
+near_misses:
+  - "seekp between the read and the write"
+  - "seekg between a write and the following read"

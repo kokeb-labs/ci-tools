@@ -7,3 +7,14 @@ clang-tidy:
     bugprone-unsafe-functions.CustomFunctions: "^::(std::)?(str|wcs)[a-z]+$,,banned by the MISRA C++ profile"
 codeql:
   queries: [cpp/misra/unsafe-string-handling-functions]
+seeded:
+  - "strlen, strcpy and strtol through <cstring>/<cstdlib>"
+  - "wcslen and wcstoul (the wide forms)"
+  - "strncmp and strtoul unqualified through the C headers"
+  - "strchr inside a lambda passed to a template"
+  - "the address of std::strlen taken into a function pointer"
+  - "std::strcmp called through a using-declaration"
+near_misses:
+  - "std::string_view::size and starts_with"
+  - "a function of our own named strip (prefix str, not a C function)"
+  - "std::char_traits<char>::length"

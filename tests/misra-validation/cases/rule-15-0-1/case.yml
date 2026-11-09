@@ -8,3 +8,10 @@ other_findings:
       misfire: the pack's Rule 4.1.2 query counts an explicitly defaulted copy member as implicitly declared, so a
       class that declares all five special members (= default) with a user-declared destructor is reported as using
       the deprecated implicit copy; an explicitly defaulted member is user-declared and not deprecated.
+seeded:
+  - copy constructor written by hand while the other special members are defaulted
+  - user-provided destructor with implicitly declared copy and move members
+near_misses:
+  - every special member declared and defaulted
+  - every copy and move member deleted (a non-copyable handle)
+  - an aggregate that declares no special member at all (rule of zero)

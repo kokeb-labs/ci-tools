@@ -5,3 +5,10 @@ clang-tidy:
   options: {readability-uppercase-literal-suffix.NewSuffixes: "L;LL;UL;ULL"}
 codeql:
   queries: [cpp/misra/lowercase-l-starts-in-literal-suffix]
+seeded:
+  - "a lower-case l suffix"
+  - "a lower-case ul suffix"
+  - "a lower-case ll suffix"
+near_misses:
+  - "the upper-case L, UL and LL suffixes"
+  - "a U suffix alone"

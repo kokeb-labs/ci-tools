@@ -2,3 +2,10 @@
 guideline: Rule 6.8.3
 codeql:
   queries: [cpp/misra/automatic-storage-assigned-to-object-greater-lifetime]
+seeded:
+  - "a local's address stored in a member of a caller's object"
+  - "a local's address stored through an output pointer"
+  - "a local's address stored in a namespace-scope pointer"
+near_misses:
+  - "a member pointer set from a reference to a longer-lived object"
+  - "a local's address kept in a local of the same scope"

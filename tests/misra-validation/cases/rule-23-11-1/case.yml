@@ -6,3 +6,10 @@ other_findings:
   - query: cpp/misra/dynamic-memory-should-not-be-used
     why: "true positive of Rule 21.6.1 (advisory): the compliant form still allocates; this guideline is about
       how the owner is created."
+seeded:
+  - "unique_ptr and shared_ptr constructed from a new-expression"
+  - "unique_ptr::reset(new ...)"
+  - "unique_ptr<T[]> constructed from new[]"
+near_misses:
+  - "std::make_unique and std::make_shared"
+  - "empty owners and an owner assigned from make_unique"

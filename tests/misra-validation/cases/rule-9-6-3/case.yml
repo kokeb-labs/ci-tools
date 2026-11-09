@@ -4,3 +4,12 @@ notes: Our matrix raises Rule 9.6.1 to required, so no goto exists at all; cppco
 clang-tidy: {check: cppcoreguidelines-avoid-goto}
 codeql:
   queries: [cpp/misra/goto-shall-jump-to-label-declared-later-in-the-function]
+seeded:
+  - a backward goto forming a loop (bad.cpp)
+  - a backward goto out of a nested block (bad_nested.cpp)
+near_misses:
+  - 'no goto at all: break, continue and early return instead (ok.hpp, ok_near.hpp)'
+other_findings:
+  - query: cpp/misra/unsigned-operation-with-constant-operands-wraps
+    why: 'misfire: the Rule 8.20.1 query reports unsigned arithmetic on run-time operands (a loop counter or accumulator
+      increment); the guideline covers operations whose operands are constant expressions'

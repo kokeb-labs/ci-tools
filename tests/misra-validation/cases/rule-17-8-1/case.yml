@@ -2,3 +2,9 @@
 guideline: Rule 17.8.1
 codeql:
   queries: [cpp/misra/function-templates-explicitly-specialized]
+seeded:
+  - explicit specialisation of a namespace-scope function template
+  - explicit specialisation of a member function template
+near_misses:
+  - a plain overload instead of a specialisation
+  - explicit specialisation of a class template, which the guideline allows

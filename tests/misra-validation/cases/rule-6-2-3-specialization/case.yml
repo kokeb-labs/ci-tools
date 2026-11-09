@@ -2,3 +2,10 @@
 guideline: Rule 6.2.3
 codeql:
   queries: [cpp/misra/template-specialization-wrong-location]
+seeded:
+  - "an explicit specialisation in a source file other than the primary template's"
+  - "a second explicit specialisation there"
+  - "a partial specialisation there"
+near_misses:
+  - "explicit specialisation next to the primary template"
+  - "explicit and partial specialisations in the primary's header"

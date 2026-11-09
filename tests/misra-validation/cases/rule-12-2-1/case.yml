@@ -2,3 +2,10 @@
 guideline: Rule 12.2.1
 codeql:
   queries: [cpp/misra/bit-fields-should-not-be-declared-misra-cpp]
+seeded:
+  - named unsigned bit-fields (bad.cpp)
+  - a bool bit-field member of a class (bad_bool.cpp)
+  - an unnamed padding bit-field (bad_unnamed.cpp)
+near_misses:
+  - masks and shifts on a plain integer (ok.hpp)
+  - a whole-word member holding flags, read with masks (ok_near.hpp)

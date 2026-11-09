@@ -2,3 +2,10 @@
 guideline: Rule 8.2.7
 codeql:
   queries: [cpp/misra/no-pointer-to-integral-cast]
+seeded:
+  - "reinterpret_cast of a pointer to std::uintptr_t"
+  - "reinterpret_cast of a pointer to std::intptr_t"
+  - "a C-style cast of a pointer to an integer"
+near_misses:
+  - "the distance between two elements as std::ptrdiff_t (no cast)"
+  - "pointers compared, not converted"

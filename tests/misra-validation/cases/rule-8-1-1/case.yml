@@ -2,3 +2,10 @@
 guideline: Rule 8.1.1
 codeql:
   queries: [cpp/misra/non-transient-lambda-implicitly-captures-this]
+seeded:
+  - "a stored lambda with [&] that uses a member (this captured implicitly)"
+  - "a stored lambda with [=] that uses a member (this captured implicitly)"
+near_misses:
+  - "a stored lambda listing this explicitly"
+  - "a [&] lambda invoked immediately (transient)"
+  - "a stored lambda that uses no member"

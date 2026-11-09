@@ -2,3 +2,9 @@
 guideline: Rule 19.0.3
 codeql:
   queries: [cpp/misra/include-directives-preceded-by-preprocessor-directives]
+seeded:
+  - '#include after a declaration'
+  - '#include inside a namespace, after a declaration in it'
+near_misses:
+  - 'every #include before the first declaration'
+  - '#include after other directives (#define, #if) and comments, which the guideline allows'

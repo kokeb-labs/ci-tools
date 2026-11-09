@@ -2,3 +2,11 @@
 guideline: Rule 10.2.2
 codeql:
   queries: [cpp/misra/unscoped-enumerations-should-not-be-declared]
+seeded:
+  - an unscoped enum with a fixed type (bad.cpp)
+  - an anonymous unscoped enum (bad_anonymous.cpp)
+  - an unscoped enum without a fixed type (bad_untyped.cpp)
+near_misses:
+  - a scoped enum (ok.hpp)
+  - enum struct, the other spelling of a scoped enum (ok_near.hpp)
+  - inline constexpr constants instead of an anonymous enum (ok_near.hpp)

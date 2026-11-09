@@ -1,0 +1,16 @@
+---
+guideline: Rule 25.5.3
+notes: CodeQL only - strerror instead of getenv; the ok file calls it twice in a compliant order.
+codeql:
+  queries:
+    - cpp/misra/call-to-setlocale-invalidates-old-pointers-misra
+    - cpp/misra/call-to-setlocale-invalidates-old-pointers-warn-misra
+other_findings:
+  - query: cpp/misra/unsafe-string-handling-functions
+    why: "true positive of Rule 21.2.2: strerror is one of the banned str* functions; this case shows only the
+      call order of Rule 25.5.3 (getenv, the other function of the order queries, is covered by rule-25-5-3)."
+seeded:
+  - "strerror's first result used after a second call"
+  - "a strerror result stored in a struct member"
+near_misses:
+  - "two strerror calls whose results are each used before the next call"

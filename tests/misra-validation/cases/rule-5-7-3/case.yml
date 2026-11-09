@@ -4,3 +4,10 @@ gcc: {flag: comment}
 clang: {flag: comment}
 codeql:
   queries: [cpp/misra/line-splicing-used-in-comments]
+seeded:
+  - "a // comment ending in a backslash that swallows a function"
+  - "the same splice hiding a statement in a function body"
+near_misses:
+  - "a plain // comment"
+  - "backslashes in the middle of a // comment"
+  - "a // comment ending with a slash"

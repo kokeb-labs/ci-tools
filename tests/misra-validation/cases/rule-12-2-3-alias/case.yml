@@ -11,3 +11,7 @@ known_misses:
 other_findings:
   - {query: cpp/misra/bit-fields-should-not-be-declared-misra-cpp, why: "true positive of Rule 12.2.1: the case needs a bit-field to exist"}
   - {query: cpp/misra/bit-field-shall-have-an-appropriate-type, why: "misfire: std::uint8_t is an unsigned integer type; reported only because g++-14 is not recognised as GCC (see the rule-12-2-2 notes)"}
+seeded:
+  - a named one-bit bit-field of std::int8_t (bad.cpp)
+near_misses:
+  - a one-bit std::uint8_t field (ok.hpp)

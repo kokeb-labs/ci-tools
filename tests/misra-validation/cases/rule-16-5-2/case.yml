@@ -3,3 +3,9 @@ guideline: Rule 16.5.2
 clang-tidy: {check: google-runtime-operator}
 codeql:
   queries: [cpp/misra/address-of-operator-overloaded]
+seeded:
+  - member overload of unary operator&
+  - non-member overload of unary operator&
+near_misses:
+  - a named accessor that returns the address of the storage
+  - binary operator& overloaded on a flag type

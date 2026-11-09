@@ -2,3 +2,10 @@
 guideline: Rule 26.3.1
 codeql:
   queries: [cpp/misra/vector-should-not-be-specialized-with-bool]
+seeded:
+  - "a local std::vector<bool>"
+  - "std::vector<bool> behind a type alias"
+  - "std::vector<bool> as a class member"
+near_misses:
+  - "std::array<bool, N>"
+  - "std::bitset<N>"

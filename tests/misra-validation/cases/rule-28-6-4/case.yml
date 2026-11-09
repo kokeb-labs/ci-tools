@@ -6,3 +6,14 @@ other_findings:
   - query: cpp/misra/cstdio-functions-shall-not-be-used
     why: "misfire: the Rule 30.0.1 query matches functions by name (hasGlobalOrStdName on the name remove), so the
       <algorithm> template std::remove(first, last, value) is reported as the <cstdio> remove(const char*)."
+  - query: cpp/misra/non-explicit-conversion-member
+    why: "misfire: the Rule 15.1.3 query reports the implicit conversion to a function pointer of a captureless
+      lambda's closure type; nothing was written, and no conversion can be declared explicit there."
+seeded:
+  - "std::remove and std::unique results discarded"
+  - "vector::empty result discarded"
+  - "std::remove_if, unique_ptr::release and array::empty results discarded"
+near_misses:
+  - "std::remove's result used for the new end"
+  - "std::fill (no result)"
+  - "std::remove_if's and empty's results used"

@@ -1,0 +1,17 @@
+---
+guideline: Rule 21.6.2
+notes: CodeQL only - the array forms new[] and delete[] managed by hand.
+codeql:
+  queries: [cpp/misra/dynamic-memory-managed-manually]
+known_misses:
+  - query: cpp/misra/dynamic-memory-managed-manually
+    why: "An array new-expression whose result is released with delete[] is not reported, while the
+      single-object new and delete of rule-21-6-2 are; the query does not cover the array forms."
+other_findings:
+  - query: cpp/misra/dynamic-memory-should-not-be-used
+    why: "true positive of Rule 21.6.1 (advisory): the compliant form still allocates; this guideline is about
+      who owns the allocation."
+seeded:
+  - "new[] of an int array released with delete[] by hand"
+near_misses:
+  - "std::make_unique of an array owned by unique_ptr<T[]>"

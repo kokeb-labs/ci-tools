@@ -2,3 +2,16 @@
 guideline: Rule 9.4.2
 codeql:
   queries: [cpp/misra/appropriate-structure-of-switch-statement]
+seeded:
+  - fall-through from one clause into the next and no default (bad.cpp)
+  - no default label although every clause breaks (bad_nodefault.cpp)
+  - a switch with a single branch (bad_onebranch.cpp)
+  - an enum switch without default that misses an enumerator (bad_enummissing.cpp)
+  - a case label nested inside an if block in the switch (bad_nestedlabel.cpp)
+near_misses:
+  - every clause breaks, default last (ok.hpp)
+  - consecutive labels sharing one clause (ok_near.hpp)
+  - default first (ok_near.hpp)
+  - a clause body in its own braced block ending in break (ok_near.hpp)
+  - clauses that end in return instead of break (ok_near.hpp)
+  - an enum switch covering every enumerator, with no default (ok_near.hpp)

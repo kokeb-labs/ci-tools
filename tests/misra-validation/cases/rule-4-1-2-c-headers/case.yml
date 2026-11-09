@@ -2,3 +2,10 @@
 guideline: Rule 4.1.2
 codeql:
   queries: [cpp/misra/use-of-deprecated-c-headers]
+seeded:
+  - "#include <cstdbool>"
+  - "#include <ciso646>"
+  - "#include <cstdalign>"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "#include <climits>, <cstddef> and <cstdint>, which are not deprecated"

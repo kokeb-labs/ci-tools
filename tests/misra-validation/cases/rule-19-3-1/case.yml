@@ -2,3 +2,10 @@
 guideline: Rule 19.3.1
 codeql:
   queries: [cpp/misra/and-preprocessor-operators-should-not-be-used]
+seeded:
+  - 'stringising operator #'
+  - 'token-pasting operator ##'
+  - '## pasting onto __VA_ARGS__'
+near_misses:
+  - names and strings written out
+  - 'a string literal that contains # and ## characters'

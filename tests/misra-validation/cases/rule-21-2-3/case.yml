@@ -3,3 +3,10 @@ guideline: Rule 21.2.3
 clang-tidy: {check: cert-env33-c}
 codeql:
   queries: [cpp/misra/banned-system-function]
+seeded:
+  - "std::system with a command string"
+  - "::system through <stdlib.h>"
+  - "system(nullptr), the shell probe"
+near_misses:
+  - "a function that performs the reset itself"
+  - "a member function of our own named system"

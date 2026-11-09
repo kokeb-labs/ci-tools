@@ -2,3 +2,9 @@
 guideline: Rule 4.1.3
 codeql:
   queries: [cpp/misra/array-deleted-through-pointer-of-incorrect-type]
+seeded:
+  - "an array of Derived deleted through a Base pointer"
+  - "the same deletion inside a helper taking a Base pointer"
+near_misses:
+  - "no dynamic array at all"
+  - "elements of a std::array of the derived type viewed through a base reference"

@@ -2,3 +2,10 @@
 guideline: Rule 6.9.1
 codeql:
   queries: [cpp/misra/type-aliases-declaration]
+seeded:
+  - "an alias in the declaration, the plain type in the definition"
+  - "the plain type in the declaration, the alias in the definition"
+  - "a member function declared with the alias and defined with the plain type"
+near_misses:
+  - "the alias in both declarations"
+  - "two aliases, each consistent across its declarations"

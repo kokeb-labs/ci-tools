@@ -1,0 +1,19 @@
+---
+guideline: Rule 19.1.1
+notes: >-
+  The same macro-generated defined as rule-19-1-1, evaluated by #elif. The compilers report it; the pack's query
+  looks at #if only.
+gcc: {flag: expansion-to-defined}
+clang: {flag: expansion-to-defined}
+codeql:
+  queries: [cpp/misra/defined-operator-expanded-in-if-directive]
+known_misses:
+  - query: cpp/misra/defined-operator-expanded-in-if-directive
+    kind: false-negative
+    why: >-
+      A macro that expands to defined(X) in the controlling expression of #elif is not reported (the #if form is,
+      in rule-19-1-1). -Wexpansion-to-defined reports both, so the compilers decide this aspect.
+seeded:
+  - "#elif expanding a macro that produces defined(X)"
+near_misses:
+  - "defined written directly in #elif"

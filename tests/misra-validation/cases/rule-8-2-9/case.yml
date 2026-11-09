@@ -6,3 +6,9 @@ notes: >-
 gcc: {error: "cannot use 'typeid' with '-fno-rtti'"}
 clang: {error: "use of typeid requires '?-frtti'?"}
 compiles: false
+seeded:
+  - "typeid on a polymorphic reference"
+  - "typeid on a dereferenced pointer to a polymorphic class"
+near_misses:
+  - "the kind as an explicit member"
+  - "a virtual function returning the kind"

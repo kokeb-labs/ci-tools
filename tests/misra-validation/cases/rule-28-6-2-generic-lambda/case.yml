@@ -1,0 +1,17 @@
+---
+guideline: Rule 28.6.2
+notes: CodeQL only - the forwarding reference is the auto&& parameter of a generic lambda.
+codeql:
+  queries: [cpp/misra/forwarding-references-and-forward-not-used-together]
+known_misses:
+  - query: cpp/misra/forwarding-references-and-forward-not-used-together
+    why: "A generic lambda's auto&& parameter passed on without std::forward is not reported; only the T&&
+      parameters of function templates (rule-28-6-2) are."
+other_findings:
+  - query: cpp/misra/non-explicit-conversion-member
+    why: "misfire: the Rule 15.1.3 query reports the implicit conversion to a function pointer of a captureless
+      generic lambda's closure type; nothing was written, and no conversion can be declared explicit there."
+seeded:
+  - "a generic lambda's auto&& parameter passed on as an lvalue"
+near_misses:
+  - "a generic lambda forwarding its auto&& parameter with std::forward<decltype(p)>"

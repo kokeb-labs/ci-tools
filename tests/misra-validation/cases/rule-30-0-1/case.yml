@@ -10,3 +10,10 @@ codeql:
     - cpp/misra/cstdio-functions-shall-not-be-used
     - cpp/misra/cstdio-macros-shall-not-be-used
     - cpp/misra/cstdio-types-shall-not-be-used
+seeded:
+  - "std::printf, std::fopen, std::fclose, std::FILE and EOF"
+  - "fputs, ::puts, FILE and EOF through <stdio.h>"
+  - "std::snprintf, BUFSIZ and a std::FILE parameter"
+near_misses:
+  - "std::to_chars into a caller-owned buffer"
+  - "a class of our own with members named puts and print"

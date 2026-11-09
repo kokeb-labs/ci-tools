@@ -2,3 +2,10 @@
 guideline: Rule 4.1.2
 codeql:
   queries: [cpp/misra/use-of-deprecated-str-stream-class]
+seeded:
+  - "std::istrstream as a parameter type"
+  - "std::strstreambuf as a parameter type"
+  - "std::ostrstream as a parameter type"
+near_misses:
+  - "a plain class with an explicit constructor and a const accessor (no deprecated feature)"
+  - "text read through std::string_view"

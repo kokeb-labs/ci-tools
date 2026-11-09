@@ -3,3 +3,8 @@ guideline: Rule 25.5.2
 notes: CodeQL only - the ok file calls getenv and keeps the result behind a pointer to const.
 codeql:
   queries: [cpp/misra/pointers-returned-by-locale-functions-must-be-used-as-const]
+seeded:
+  - "a member of localeconv's result assigned through ->"
+near_misses:
+  - "getenv's result kept behind a pointer to const"
+  - "localeconv's result read through a pointer to const"

@@ -2,3 +2,9 @@
 guideline: Rule 19.2.1
 codeql:
   queries: [cpp/misra/include-outside-guard]
+seeded:
+  - '#include before the include guard opens'
+  - '#include after the include guard closes'
+near_misses:
+  - '#include inside the guard'
+  - comments before the guard, which the guideline allows

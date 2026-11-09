@@ -2,3 +2,11 @@
 guideline: Rule 9.2.1
 codeql:
   queries: [cpp/misra/no-standalone-type-cast-expression]
+seeded:
+  - static_cast to a class type as an expression statement (bad.cpp)
+  - functional-notation brace conversion Guard{level}; as a statement (bad_functional.cpp)
+  - the same cast statement inside a lambda body (bad_lambda.cpp)
+near_misses:
+  - the object is named, so it lives for its scope (ok.hpp)
+  - a discarded result cast to void (ok_near.hpp)
+  - a cast to a class type used as the operand of a return, not as a statement (ok_near.hpp)

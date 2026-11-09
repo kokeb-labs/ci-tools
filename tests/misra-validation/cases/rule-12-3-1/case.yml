@@ -2,3 +2,11 @@
 guideline: Rule 12.3.1
 codeql:
   queries: [cpp/misra/union-keyword-used]
+seeded:
+  - a named union viewing a word as bytes (bad.cpp)
+  - an anonymous union member (bad_anonymous.cpp)
+  - a union template (bad_template.cpp)
+near_misses:
+  - shifts and masks instead of a union (ok.hpp)
+  - std::bit_cast between same-size types (ok_near.hpp)
+  - a struct holding both members side by side (ok_near.hpp)
