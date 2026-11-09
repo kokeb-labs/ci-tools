@@ -1313,7 +1313,7 @@
 <h1 id="ru-build">ru-build<a class="headerlink" href="#ru-build" title="Permanent link">&para;</a></h1>
 <p>Build every ESP32 example app of a repository across ESP-IDF versions and build types, upload the firmware and
 report its size on pull requests.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/aecc361017aca40c75ab34b9328c29a2939ef237/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/2cdbfa5278dd638162518beb7895fd9e750ca7e5/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">---</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ESP32 examples build</span>
@@ -1376,6 +1376,12 @@ report its size on pull requests.</p>
 <td>Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type.</td>
 </tr>
 <tr>
+<td><code>idf_install</code></td>
+<td>string</td>
+<td><code>native</code></td>
+<td>How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf image through espressif/esp-idf-ci-action, as before.</td>
+</tr>
+<tr>
 <td><code>max_dec_total</code></td>
 <td>string</td>
 <td><code>0</code></td>
@@ -1415,12 +1421,20 @@ report its size on pull requests.</p>
 <ul>
 <li><strong><code>generate-matrix</code></strong> checks out with submodules, finds the project tools (below), runs <code>generate_matrix.py</code>
   and outputs the matrix.</li>
-<li><strong><code>build</code></strong> frees runner disk space, checks out, restores the pip cache (skipped with <code>clean_build</code>), installs
-  the tools' <code>requirements.txt</code>, pulls <code>espressif/idf:&lt;version&gt;</code> (4 attempts, 10 / 30 / 60 s apart), runs
-  <code>build_app.sh</code> inside the image with <code>espressif/esp-idf-ci-action</code> and uploads the build folder.</li>
-<li><strong><code>size-report</code></strong> downloads every <code>fw-*</code> artifact, writes a size table from <code>size.info</code> / <code>size.txt</code>, comments
-  it on the pull request and enforces <code>max_dec_total</code> when it is not <code>0</code>.</li>
+<li><strong><code>build</code></strong> builds every build type of one app and IDF version (<code>group_build_types</code>): it checks out, restores
+  the pip and compiler (ccache) caches (skipped with <code>clean_build</code>) and installs the tools' <code>requirements.txt</code>.
+  With <code>idf_install: native</code> (default) it resolves the IDF version to a commit, restores <code>~/esp-idf</code> and
+  <code>~/.espressif</code> for the matrix target from the cache keyed by that commit (or clones the IDF and runs
+  <code>install.sh &lt;target&gt;</code> once when the key is new), installs a pinned, hash-checked ccache and runs <code>build_app.sh</code>
+  for each build type. With <code>idf_install: docker</code> it frees runner disk space when short, pulls
+  <code>espressif/idf:&lt;version&gt;</code> (4 attempts, 10 / 30 / 60 s apart) and runs <code>build_app.sh</code> inside the image with
+  <code>espressif/esp-idf-ci-action</code>. Either way it uploads the build folders.</li>
 </ul>
+<p>Measured on driver-pcal9555 (Debug and Release of one app): native, warm cache, 93 s per job; native, new IDF
+  commit, about 190 s; docker with a warm ccache, 175 s. The image is 9.4 GB for every target; the native cache
+  holds one target, about 1.1 GB.
+- <strong><code>size-report</code></strong> downloads every <code>fw-*</code> artifact, writes a size table from <code>size.info</code> / <code>size.txt</code>, comments
+  it on the pull request and enforces <code>max_dec_total</code> when it is not <code>0</code>.</p>
 <p>The caller grants the union: <code>contents: read</code> and <code>pull-requests: write</code>. See the
 <a href="../permissions/">permissions contract</a>.</p>
 <h2 id="finding-the-project-tools">Finding the project tools<a class="headerlink" href="#finding-the-project-tools" title="Permanent link">&para;</a></h2>
