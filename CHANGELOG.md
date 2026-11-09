@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.12.1] - 2026-11-08
+
+### Fixed
+
+- `ru-build`: the native build no longer downloads ccache on every run. The pinned, hash-checked binary is kept in
+  the Actions cache by version; a download retries on every error with a delay, and one that still fails falls back
+  to the runner's ccache package with a warning. GitHub release downloads returning HTTP 504 had failed whole
+  ESP32 jobs.
+
 ## [1.12.0] - 2026-11-08
 
 ### Added
