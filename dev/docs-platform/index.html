@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://kokeb-labs.github.io/ci-tools/latest/docs-platform/">
       
       
-        <link rel="prev" href="../ru-repo-checks/">
+        <link rel="prev" href="../tool-validation/review-checklist/">
       
       
         <link rel="next" href="../MIGRATING-TO-MKDOCS/">
@@ -426,6 +426,28 @@
   
   
   
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tool-validation/plan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tool validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -645,6 +667,8 @@
       
         
       
+        
+      
     
     
     
@@ -819,6 +843,67 @@
       
   
   
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../tool-validation/plan/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool validation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -850,10 +935,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   
@@ -871,8 +956,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1280,7 +1365,7 @@
 <tbody>
 <tr>
 <td>Theme package</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
 <td><code>theme: kokeb</code> (brand, layout, components, light and dark), <code>plugins: [kokeb]</code> (Markdown dialect, validation, repository links, figures, page checks), figkit, the <code>kokeb-docs</code> command and the pinned toolchain</td>
 </tr>
 <tr>
@@ -1290,12 +1375,12 @@
 </tr>
 <tr>
 <td>Template</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
 <td>The skeleton of a driver site; the self-CI builds it</td>
 </tr>
 <tr>
 <td>Migration tool</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
 <td>The mechanical move from Jekyll, with a <code>--check</code> dry run</td>
 </tr>
 <tr>
@@ -1391,7 +1476,7 @@ Markdown extensions, strict validation and the version selector.</p>
 </tr>
 </tbody>
 </table>
-<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
+<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
 writes the catalogue, the permissions table and every inputs and jobs table from the workflow files.</p>
 <h2 id="preview-a-site-locally">Preview a site locally<a class="headerlink" href="#preview-a-site-locally" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>.venv/bin/activate
@@ -1447,7 +1532,7 @@ the repository moves onto the package like this:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../ru-repo-checks/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ru-repo-checks (all in one job)">
+          <a href="../tool-validation/review-checklist/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Review checklist">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1457,7 +1542,7 @@ the repository moves onto the package like this:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                ru-repo-checks (all in one job)
+                Review checklist
               </div>
             </div>
           </a>

@@ -97,6 +97,10 @@
          <lastmod>2026-11-09</lastmod>
     </url>
     <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-misra/</loc>
+         <lastmod>2026-11-09</lastmod>
+    </url>
+    <url>
          <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-mkdocs-publish/</loc>
          <lastmod>2026-11-09</lastmod>
     </url>
@@ -134,6 +138,18 @@
     </url>
     <url>
          <loc>https://kokeb-labs.github.io/ci-tools/latest/diagrams/</loc>
+         <lastmod>2026-11-09</lastmod>
+    </url>
+    <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/tool-validation/plan/</loc>
+         <lastmod>2026-11-09</lastmod>
+    </url>
+    <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/tool-validation/review-checklist/</loc>
+         <lastmod>2026-11-09</lastmod>
+    </url>
+    <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/tool-validation/traceability/</loc>
          <lastmod>2026-11-09</lastmod>
     </url>
 </urlset>

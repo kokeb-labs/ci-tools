@@ -430,6 +430,28 @@
     
     
       <li class="md-tabs__item">
+        <a href="../tool-validation/plan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tool validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="../docs-platform/" class="md-tabs__link">
           
   
@@ -614,6 +636,8 @@
   
     
     
+      
+        
       
         
       
@@ -850,6 +874,67 @@
   
   
   
+    <a href="../tool-validation/plan/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool validation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
     <a href="../docs-platform/" class="md-nav__link">
       
   
@@ -913,7 +998,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -935,14 +1020,14 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_7" id="__nav_7_label" tabindex="">
+              <label class="md-nav__link md-nav__link--active" for="__nav_8" id="__nav_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1094,13 +1179,13 @@ committed figure no longer matches the code. Each figure below lists the files i
 <details class="kb-figure-desc">
 <summary>Figure description and sources</summary>
 <p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-with-artifacts, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
-<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
+<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
 </details>
-<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
+<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
 <p>Drawn from:</p>
 <ul>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></li>
 </ul>
 
 

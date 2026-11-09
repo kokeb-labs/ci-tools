@@ -432,6 +432,28 @@
     
     
       <li class="md-tabs__item">
+        <a href="../tool-validation/plan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tool validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="../docs-platform/" class="md-tabs__link">
           
   
@@ -614,6 +636,8 @@
   
     
     
+      
+        
       
         
       
@@ -1016,6 +1040,67 @@
   
   
   
+    <a href="../tool-validation/plan/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool validation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
     <a href="../docs-platform/" class="md-nav__link">
       
   
@@ -1180,7 +1265,7 @@
 
 <h1 id="ensure-tools-directory">ensure-tools-directory<a class="headerlink" href="#ensure-tools-directory" title="Permanent link">&para;</a></h1>
 <p>Find espidf-tools in a checkout, or clone it, from a job of your own.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/e081c485e2dbf1dccaea4239c602dee322c35e21/.github/actions/ensure-tools-directory/action.yml"><code>.github/actions/ensure-tools-directory/action.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/actions/ensure-tools-directory/action.yml"><code>.github/actions/ensure-tools-directory/action.yml</code></a></p>
 <p><code>ru-build</code> runs the same script inline: a reusable workflow cannot use an action of its own repository at the
 caller's ref, so <code>uses: ...@main</code> inside it would run <code>main</code>'s copy for callers pinned to <code>@v1</code>. The self-CI fails
 when the two copies differ. Use the action only in jobs you write yourself.</p>

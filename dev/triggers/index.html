@@ -432,6 +432,28 @@
     
     
       <li class="md-tabs__item">
+        <a href="../tool-validation/plan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tool validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="../docs-platform/" class="md-tabs__link">
           
   
@@ -823,6 +845,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code-scanning-untrusted-checkout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code scanning: untrusted checkout
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -847,6 +880,8 @@
   
     
     
+      
+        
       
         
       
@@ -1083,6 +1118,67 @@
   
   
   
+    <a href="../tool-validation/plan/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool validation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
     <a href="../docs-platform/" class="md-nav__link">
       
   
@@ -1231,6 +1327,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code-scanning-untrusted-checkout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code scanning: untrusted checkout
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1309,6 +1416,14 @@ chose.</p>
 <p>Repositories made from driver-template follow the same rule: their workflow files have no <code>workflow_dispatch</code>
 either. An ESP-IDF clean build needs no manual input: the caches are keyed by IDF commit and source, and
 <code>gh cache delete --all</code> empties them when a clean build is wanted.</p>
+<h2 id="code-scanning-untrusted-checkout">Code scanning: untrusted checkout<a class="headerlink" href="#code-scanning-untrusted-checkout" title="Permanent link">&para;</a></h2>
+<p>Code scanning runs <code>security-and-quality</code>, which includes <code>actions/untrusted-checkout/medium</code>. That query reports
+every <code>actions/checkout</code> whose <code>ref:</code> names a ref, SHA or head in a workflow a pull request can start; it cannot
+tell a pinned ci-tools or handbook commit from a pull request's branch. Every reusable workflow here checks out that
+way by design, and what the query warns about (a self-hosted runner, a cache or artifact that a privileged workflow
+later trusts) is ruled out by this trigger policy, GitHub-hosted runners, read-only tokens and
+<code>persist-credentials: false</code>. <code>.github/codeql/codeql-config.yml</code> therefore excludes the medium variant, with this
+reasoning, and keeps <code>actions/untrusted-checkout/high</code> (privileged triggers), which reports any regression.</p>
 
 
 
