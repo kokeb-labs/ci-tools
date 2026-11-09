@@ -799,6 +799,8 @@
       
         
       
+        
+      
     
     
     
@@ -1192,7 +1194,7 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
   in <a href="https://github.com/kokeb-labs/ci-tools/tree/main/packages/kokeb-mkdocs-theme"><code>packages/kokeb-mkdocs-theme</code></a>,
   checks it, audits it and publishes it, versioned or not (<a href="docs-platform/">platform guide</a>).</li>
 <li><strong>ESP-IDF firmware.</strong> <a href="ru-build/"><code>ru-build</code></a> builds every app of <code>app_config.yml</code> across ESP-IDF versions
-  and build types with a size report; <a href="ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a> ships the
+  and build types with a size report; <a href="ru-release-firmware/"><code>ru-release-firmware</code></a> ships the
   tested firmware (<a href="esp-idf-quickstart/">ESP-IDF quickstart</a>).</li>
 <li><strong>Organisation checks.</strong> <a href="dco/"><code>dco</code></a> fails a pull request with an unsigned commit;
   <a href="org-standard-check/"><code>org-standard-check</code></a> checks the required root files and the MIT licence.</li>
@@ -1293,8 +1295,13 @@ third-party action is pinned to a commit SHA, so <code>@v1</code> pins everythin
 <td><code>contents: write</code></td>
 </tr>
 <tr>
+<td><a href="ru-release-firmware/"><code>ru-release-firmware.yml</code></a></td>
+<td>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit, in public and private repositories.</td>
+<td><code>actions: read</code>, <code>contents: write</code></td>
+</tr>
+<tr>
 <td><a href="ru-release-with-artifacts/"><code>ru-release-with-artifacts.yml</code></a></td>
-<td>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit.</td>
+<td>Deprecated: use <a href="ru-release-firmware/"><code>ru-release-firmware</code></a>, which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that <code>ru-build</code> built for the same commit.</td>
 <td><code>contents: write</code></td>
 </tr>
 <tr>

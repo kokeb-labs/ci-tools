@@ -732,6 +732,8 @@
       
         
       
+        
+      
     
     
     
@@ -817,6 +819,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ru-release-firmware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-release-firmware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ru-release-with-artifacts/" class="md-nav__link">
         
   
@@ -824,7 +854,7 @@
   <span class="md-ellipsis">
     
   
-    ru-release-with-artifacts
+    ru-release-with-artifacts (deprecated)
   
 
     
@@ -1265,7 +1295,7 @@
 
 <h1 id="ensure-tools-directory">ensure-tools-directory<a class="headerlink" href="#ensure-tools-directory" title="Permanent link">&para;</a></h1>
 <p>Find espidf-tools in a checkout, or clone it, from a job of your own.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/actions/ensure-tools-directory/action.yml"><code>.github/actions/ensure-tools-directory/action.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/.github/actions/ensure-tools-directory/action.yml"><code>.github/actions/ensure-tools-directory/action.yml</code></a></p>
 <p><code>ru-build</code> runs the same script inline: a reusable workflow cannot use an action of its own repository at the
 caller's ref, so <code>uses: ...@main</code> inside it would run <code>main</code>'s copy for callers pinned to <code>@v1</code>. The self-CI fails
 when the two copies differ. Use the action only in jobs you write yourself.</p>
@@ -1365,7 +1395,7 @@ when the folder is missing and cloning is not allowed.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../ru-release-with-artifacts/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ru-release-with-artifacts">
+          <a href="../ru-release-with-artifacts/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ru-release-with-artifacts (deprecated)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1375,7 +1405,7 @@ when the folder is missing and cloning is not allowed.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                ru-release-with-artifacts
+                ru-release-with-artifacts (deprecated)
               </div>
             </div>
           </a>

@@ -730,6 +730,8 @@
       
         
       
+        
+      
     
     
     
@@ -1172,20 +1174,20 @@ not redrawn, when the code changes. CI runs <code>kokeb-docs figures --check</co
 committed figure no longer matches the code. Each figure below lists the files it is drawn from.</p>
 <h2 id="from-push-to-release">From push to release<a class="headerlink" href="#from-push-to-release" title="Permanent link">&para;</a></h2>
 <figure class="kb-figure">
-<img src="workflow-flow.svg#only-light" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-with-artifacts downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863"><img src="workflow-flow.dark.svg#only-dark" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-with-artifacts downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863">
+<img src="workflow-flow.svg#only-light" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863"><img src="workflow-flow.dark.svg#only-dark" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863">
 <figcaption>From push to release</figcaption>
 </figure>
 
 <details class="kb-figure-desc">
 <summary>Figure description and sources</summary>
-<p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-with-artifacts, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
-<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
+<p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
+<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
 </details>
-<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
+<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
 <p>Drawn from:</p>
 <ul>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/952ff94b056a91456e1256d148e9285e2075006e/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
 </ul>
 
 

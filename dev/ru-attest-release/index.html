@@ -1293,6 +1293,8 @@
       
         
       
+        
+      
     
     
     
@@ -1696,7 +1698,8 @@
 <h1 id="ru-attest-release">ru-attest-release<a class="headerlink" href="#ru-attest-release" title="Permanent link">&para;</a></h1>
 <p>Sign build provenance for every file of a published release.</p>
 <p><code>ru-attest-release.yml</code> runs after <a href="../ru-release/"><code>ru-release</code></a> or
-<a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a>. It downloads the release's files, checks each against
+<a href="../ru-release-firmware/"><code>ru-release-firmware</code></a> (or the deprecated
+<a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a>). It downloads the release's files, checks each against
 the release's <code>SHA256SUMS</code>, and creates a
 <a href="https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations">GitHub artifact attestation</a>
 for every file that <code>SHA256SUMS</code> lists: an <a href="https://slsa.dev/">SLSA</a> build-provenance statement, signed through
@@ -1710,7 +1713,7 @@ workflows would break their existing callers.</p>
 <p>Add a job after the release job, in the same workflow:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">jobs</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">release</span><span class="p">:</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="c1"># ... ru-release or ru-release-with-artifacts ...</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="c1"># ... ru-release or ru-release-firmware ...</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">attest</span><span class="p">:</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release</span>
@@ -1773,7 +1776,7 @@ workflows would break their existing callers.</p>
 <p><code>gh attestation verify</code> checks that the file's digest was signed by this workflow, running for that repository,
 and prints the commit and the workflow run. Repeat it for each file you use.</p>
 <p>What it proves: the release workflow of the repository published these exact files at the tagged commit. The
-firmware zips are built by <code>ru-build</code> in CI and released by <code>ru-release-with-artifacts</code> only after that CI run
+firmware zips are built by <code>ru-build</code> in CI and released by <code>ru-release-firmware</code> only after that CI run
 passed on the tagged commit. The attestation is signed in the release job, not in the build job.</p>
 <h2 id="when-it-fails">When it fails<a class="headerlink" href="#when-it-fails" title="Permanent link">&para;</a></h2>
 <table>

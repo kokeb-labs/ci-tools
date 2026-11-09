@@ -1249,6 +1249,8 @@
       
         
       
+        
+      
     
     
     
@@ -1701,8 +1703,13 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 <td><code>contents: write</code></td>
 </tr>
 <tr>
+<td><a href="../ru-release-firmware/"><code>ru-release-firmware.yml</code></a></td>
+<td>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit, in public and private repositories.</td>
+<td><code>actions: read</code>, <code>contents: write</code></td>
+</tr>
+<tr>
 <td><a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts.yml</code></a></td>
-<td>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit.</td>
+<td>Deprecated: use <a href="../ru-release-firmware/"><code>ru-release-firmware</code></a>, which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that <code>ru-build</code> built for the same commit.</td>
 <td><code>contents: write</code></td>
 </tr>
 <tr>
@@ -1764,7 +1771,7 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 </tr>
 <tr>
 <td>builds ESP32 firmware with ESP-IDF</td>
-<td><a href="../ru-build/"><code>ru-build</code></a>, and <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a> to ship the tested firmware (<a href="../esp-idf-quickstart/">ESP-IDF quickstart</a>)</td>
+<td><a href="../ru-build/"><code>ru-build</code></a>, and <a href="../ru-release-firmware/"><code>ru-release-firmware</code></a> to ship the tested firmware (<a href="../esp-idf-quickstart/">ESP-IDF quickstart</a>)</td>
 </tr>
 <tr>
 <td>takes pull requests</td>
