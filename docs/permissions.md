@@ -23,16 +23,17 @@ read from the workflow files.
 | [`ru-ci-gate.yml`](ru-ci-gate.md) | `contents: read` | `gate`: `contents: read` |
 | [`ru-cpp-analysis.yml`](ru-cpp-analysis.md) | `contents: read` | `cppcheck`: `contents: read` |
 | [`ru-cpp-lint.yml`](ru-cpp-lint.md) | `contents: read` | `lint`: `contents: read` |
-| [`ru-cross-build.yml`](ru-cross-build.md) | `contents: read` | `plan`: none<br>`build`: `contents: read` |
+| [`ru-cross-build.yml`](ru-cross-build.md) | `contents: read` | `build-cores`: `contents: read`<br>`plan`: none<br>`build`: `contents: read` |
 | [`ru-docs-linkcheck.yml`](ru-docs-linkcheck.md) | `contents: read` | `link-check`: `contents: read` |
 | [`ru-docs-publish.yml`](ru-docs-publish.md) | `contents: write` | `input-validation`: none<br>`quality-checks`: `contents: read`<br>`version-detection`: `contents: read`<br>`build`: `contents: write` |
 | [`ru-handbook-check.yml`](ru-handbook-check.md) | `contents: read` | `check`: `contents: read` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | `contents: read` | `host`: `contents: read` |
-| [`ru-host-quality.yml`](ru-host-quality.md) | `contents: read` | `limits`: none<br>`complexity`: `contents: read`<br>`coverage`: `contents: read`<br>`sanitizers`: `contents: read`<br>`fuzz`: `contents: read` |
+| [`ru-host-quality.yml`](ru-host-quality.md) | `contents: read` | `gates`: `contents: read`<br>`complexity`: `contents: read`<br>`coverage`: `contents: read`<br>`sanitizers`: `contents: read`<br>`fuzz`: `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | `contents: read` | `markdownlint`: `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`deploy`: `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-release.yml`](ru-release.md) | `contents: write` | `release`: `contents: write` |
+| [`ru-repo-checks.yml`](ru-repo-checks.md) | `contents: read`, `pull-requests: read` | `checks`: `contents: read`, `pull-requests: read` |
 | [`ru-template-drift.yml`](ru-template-drift.md) | `contents: read` | `drift`: `contents: read` |
 | [`ru-yaml-lint.yml`](ru-yaml-lint.md) | `contents: read` | `yamllint`: `contents: read` |
 <!-- /generated -->

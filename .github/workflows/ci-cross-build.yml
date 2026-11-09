@@ -4,7 +4,6 @@ name: 🧩 Cross-compile self-test
 # Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
 on:
   workflow_call:
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,3 +18,28 @@ jobs:
       source_dir: tests/fixtures/host-ci
       build_target: calc
       cores: "cortex-m0plus cortex-m3 cortex-m4f cortex-m7f cortex-m33f"
+
+  # per_core_jobs: true, one job per core as before 1.11.0.
+  fixture-per-core:
+    uses: ./.github/workflows/ru-cross-build.yml
+    permissions:
+      contents: read
+    with:
+      source_dir: tests/fixtures/host-ci
+      build_target: calc
+      cores: "cortex-m0plus cortex-m4f"
+      per_core_jobs: true
+
+  cores-reported:
+    needs: [fixture-all-cores, fixture-per-core]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Both layouts report the cores they built
+        env:
+          ALL: ${{ needs.fixture-all-cores.outputs.cores }}
+          PER_CORE: ${{ needs.fixture-per-core.outputs.cores }}
+        run: |
+          echo "one job: ${ALL}; per core: ${PER_CORE}"
+          test "$ALL" = '["cortex-m0plus", "cortex-m3", "cortex-m4f", "cortex-m7f", "cortex-m33f"]'
+          test "$PER_CORE" = '["cortex-m0plus", "cortex-m4f"]'

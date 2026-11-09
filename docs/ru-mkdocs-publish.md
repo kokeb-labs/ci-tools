@@ -93,7 +93,6 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read

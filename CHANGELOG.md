@@ -15,6 +15,37 @@ that heading.
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-11-08
+
+### Added
+
+- `ru-repo-checks`: DCO, the organisation standard, Markdown lint, the handbook rules, template drift, cppcheck and
+  YAML lint as steps of one job, with the same scripts, pinned actions, failure rules and summaries as `dco`,
+  `org-standard-check`, `ru-markdown-lint`, `ru-handbook-check`, `ru-template-drift`, `ru-cpp-analysis` and
+  `ru-yaml-lint`. DCO runs first, before any checkout, and passes with nothing to check outside a pull request, so
+  the gate needs no `allow_skipped` for it. Needs `contents: read` and `pull-requests: read`. The self-CI
+  (`check_repo_checks.py`) fails when a copied step differs from its single workflow. The single workflows stay.
+- `ru-cross-build`: input `per_core_jobs` (default `false`) keeps one job per core.
+- `ru-host-quality`: input `separate_jobs` (default `false`) keeps one job per check.
+
+- Trigger policy (`docs/triggers.md`), enforced by the self-CI (`check_triggers.py`): workflows
+  start only from `push`, `pull_request`, `merge_group` and `workflow_call`, with `release.yml`'s `workflow_run` as
+  the one exception.
+
+### Changed
+
+- The self-test callers (`ci-*.yml`) and the mkdocs-site template no longer have a `workflow_dispatch` trigger: a
+  manual run is a re-run. A dispatched run executes in the default branch's context and can write the cache that
+  runs on `main` restore, which made every checkout of a pinned ci-tools or driver-template commit a CodeQL
+  `actions/cache-poisoning/poisonable-step` finding. The examples in the docs drop it too.
+- `ru-cross-build`: every core is built in one job, one after the other, each in its own build directory and log
+  group; a core that fails does not stop the others. The toolchain is downloaded once, and a private repository
+  is billed one rounded-up job instead of four (the plan job and one per core).
+- `ru-host-quality`: complexity, coverage and sanitizers run as steps of one job, each still running when another
+  failed, with the same limits, summaries, artifacts and outputs; the `limits` job is gone (each job resolves the
+  limits itself). Fuzzing stays a job of its own and no longer waits for the limits job. A private repository is
+  billed one rounded-up job instead of four.
+
 ## [1.10.0] - 2026-11-08
 
 ### Added

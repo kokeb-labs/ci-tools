@@ -4,7 +4,6 @@ name: 🔍 C++ Lint CI
 # Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
 on:
   workflow_call:
-  workflow_dispatch:
 
 permissions:
   contents: read

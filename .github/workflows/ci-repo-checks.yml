@@ -1,0 +1,77 @@
+---
+name: 🧾 Repository checks self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it; runnable alone with workflow_dispatch.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # This repository through every check, with the settings its single-check self-tests use: everything passes.
+  # Template drift only warns here (ci-tools has no .kokeb/template.yml).
+  this-repository:
+    uses: ./.github/workflows/ru-repo-checks.yml
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      org_standard_extra_files: CONTRIBUTING.md
+      markdown_globs: 'docs/** *.md **/*.md'
+      handbook_path: tests/fixtures/handbook/good-driver
+      cppcheck_paths: "cpp-ci-test/src cpp-ci-test/include"
+      cppcheck_artifact_name: cppcheck-report-repo-checks
+      yaml_paths: '.github/workflows/*.yml,**/*.yml,**/*.yaml'
+      yaml_exclude_patterns: '.git/**,node_modules/**,venv/**,.venv/**,_site/**,**/espidf-tools/**'
+
+  this-repository-passed:
+    needs: this-repository
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: No check failed, and the handbook and YAML figures were reported
+        env:
+          FAILED: ${{ needs.this-repository.outputs.failed }}
+          HANDBOOK_ERRORS: ${{ needs.this-repository.outputs.handbook_errors }}
+          YAML_RESULT: ${{ needs.this-repository.outputs.yaml_result }}
+          MARKDOWN_RESULT: ${{ needs.this-repository.outputs.markdown_result }}
+        run: |
+          echo "failed='${FAILED}' handbook_errors=${HANDBOOK_ERRORS} yaml=${YAML_RESULT} markdown=${MARKDOWN_RESULT}"
+          test -z "$FAILED"
+          test "$HANDBOOK_ERRORS" = 0
+          test "$YAML_RESULT" = success
+          test "$MARKDOWN_RESULT" = success
+
+  # Known-bad fixtures with enforce and strict off: the findings are counted, and the job still passes.
+  findings:
+    uses: ./.github/workflows/ru-repo-checks.yml
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      run_dco: false
+      run_org_standard: false
+      run_markdown_lint: false
+      run_template_drift: false
+      run_yaml_lint: false
+      handbook_path: tests/fixtures/handbook/bad-driver
+      handbook_enforce: false
+      cppcheck_paths: "tests/fixtures/cpp-findings"
+      cppcheck_artifact_name: cppcheck-report-repo-checks-negative
+
+  findings-reported:
+    needs: findings
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: The handbook errors and cppcheck findings were counted
+        env:
+          FAILED: ${{ needs.findings.outputs.failed }}
+          HANDBOOK_ERRORS: ${{ needs.findings.outputs.handbook_errors }}
+          CPPCHECK_FINDINGS: ${{ needs.findings.outputs.cppcheck_findings }}
+        run: |
+          echo "failed='${FAILED}' handbook_errors=${HANDBOOK_ERRORS} cppcheck_findings=${CPPCHECK_FINDINGS}"
+          test -z "$FAILED"
+          test "${HANDBOOK_ERRORS:-0}" -ge 3
+          test "${CPPCHECK_FINDINGS:-0}" -gt 0

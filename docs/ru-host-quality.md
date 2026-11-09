@@ -3,13 +3,22 @@
 Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets
 for each assurance level (ADR-0020).
 
-`ru-host-quality.yml` runs three independent jobs:
+`ru-host-quality.yml` runs three independent checks:
 
-| Job | Tool | Measures | Fails when |
+| Check | Tool | Measures | Fails when |
 | --- | --- | --- | --- |
 | **complexity** | lizard 1.24.1 | Modified cyclomatic complexity (a whole `switch` counts once), lines of code and parameters of every function in `library_paths` | a function is over a limit |
 | **coverage** | GCC 14 `--coverage`, gcovr 8.7 | Line, branch and, when the level asks for it, MC/DC coverage (`-fcondition-coverage`) of `library_paths` by the tests | a figure is below its floor |
 | **sanitizers** | clang, AddressSanitizer and UndefinedBehaviorSanitizer | The tests built with `-fsanitize=address,undefined -fno-sanitize-recover=all` | any report, or a failing test |
+
+They run as steps of one job. Each check runs whether or not an earlier one failed, fails the job on its own
+limits, writes its own summary and uploads its own report artifact (`<artifact_name>-complexity`,
+`<artifact_name>-coverage`), as separate jobs would; a private repository is billed one job, rounded up to a whole
+minute, instead of four. `separate_jobs: true` runs each check in a job of its own, with the same steps.
+
+With `fuzz_cmake_args` set, libFuzzer (clang 18, ASan, UBSan) runs every `fuzz_<name>` target for the level's
+seconds (60, 120, 600), seeded from `tests/fuzz/corpus/fuzz_<name>/` and a cached corpus. Fuzzing is long, so it is
+always a job of its own, in parallel with the checks above.
 
 Python tools are installed from pinned versions checked against their SHA-256 hashes, and each version was at
 least three weeks old when it was pinned.

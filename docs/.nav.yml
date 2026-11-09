@@ -6,6 +6,7 @@ nav:
       - ESP-IDF quickstart: esp-idf-quickstart.md
       - Versioning: VERSIONING.md
       - Permissions contract: permissions.md
+      - Trigger policy: triggers.md
   - Workflows:
       - Catalogue: workflows.md
       - ru-ci-gate (CI gate): ru-ci-gate.md
@@ -30,6 +31,7 @@ nav:
       - dco (sign-off): dco.md
       - org-standard-check: org-standard-check.md
       - ru-template-drift: ru-template-drift.md
+      - ru-repo-checks (all in one job): ru-repo-checks.md
   - Docs platform:
       - Platform guide: docs-platform.md
       - Migrating to MkDocs: MIGRATING-TO-MKDOCS.md
