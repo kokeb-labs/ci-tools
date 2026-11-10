@@ -235,8 +235,12 @@ jobs:
       - name: Install Doxygen
         if: ${{ inputs.doxygen_config != '' }}
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq doxygen graphviz
+          echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+          for attempt in 1 2 3; do
+            if sudo timeout 180 apt-get update -qq && sudo timeout 600 apt-get install -y -qq doxygen graphviz; then break; fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::apt-get failed"; exit 1; fi
+            sleep 10
+          done
 
       - name: Build the API reference
         if: ${{ inputs.doxygen_config != '' }}
@@ -386,7 +390,8 @@ jobs:
           set -euo pipefail
           cd "$RUNNER_TEMP"
           # Compressed as GitHub Pages sends it, so the budget measures the published page (kokeb-docs serve).
-          kokeb-docs serve site 8765 &
+          # Output detached: a background process holding the step's output open keeps the step running to its timeout.
+          kokeb-docs serve site 8765 >/dev/null 2>&1 &
           sleep 1
           python3 - <<'PY'
           import json, os

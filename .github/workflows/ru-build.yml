@@ -385,7 +385,8 @@ jobs:
               mkdir -p "$dir" && install -m 0755 "${name}/ccache" "$dir/ccache"
             else
               echo "::warning::could not download ccache ${CCACHE_VERSION}; using the runner's ccache package"
-              sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ccache
+              echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+              sudo timeout 180 apt-get update -q && sudo timeout 600 apt-get install -y -q --no-install-recommends ccache
               mkdir -p "$dir" && ln -sf "$(command -v ccache)" "$dir/ccache"
             fi
           fi
