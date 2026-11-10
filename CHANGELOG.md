@@ -15,6 +15,14 @@ that heading.
 
 ## [Unreleased]
 
+## [1.14.2] - 2026-11-10
+
+### Fixed
+
+- `ru-mkdocs-publish`: the Lighthouse step no longer runs to its 20-minute timeout. 1.14.1 started
+  `kokeb-docs serve` in the background with its output attached to the step, and the runner waits for every
+  process holding that output; the server's output now goes to `/dev/null`, as the previous `http.server` line did.
+
 ## [1.14.1] - 2026-11-10
 
 ### Fixed

@@ -386,7 +386,8 @@ jobs:
           set -euo pipefail
           cd "$RUNNER_TEMP"
           # Compressed as GitHub Pages sends it, so the budget measures the published page (kokeb-docs serve).
-          kokeb-docs serve site 8765 &
+          # Output detached: a background process holding the step's output open keeps the step running to its timeout.
+          kokeb-docs serve site 8765 >/dev/null 2>&1 &
           sleep 1
           python3 - <<'PY'
           import json, os
