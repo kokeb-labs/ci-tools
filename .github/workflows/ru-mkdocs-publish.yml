@@ -235,8 +235,8 @@ jobs:
       - name: Install Doxygen
         if: ${{ inputs.doxygen_config != '' }}
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq doxygen graphviz
+          sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -qq
+          sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -qq doxygen graphviz
 
       - name: Build the API reference
         if: ${{ inputs.doxygen_config != '' }}
