@@ -1505,7 +1505,7 @@ checked in both, embedded with <code>&lt;!-- figure: chip-pinout --&gt;</code> l
 </span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">GND</span><span class="p p-Indicator">,</span><span class="nt"> kind</span><span class="p">:</span><span class="w"> </span><span class="nv">ground</span><span class="p p-Indicator">,</span><span class="nt"> nodes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">U1.GND</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">U2.GND</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">C1.2</span><span class="p p-Indicator">]}</span>
 </span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">SCLK</span><span class="p p-Indicator">,</span><span class="nt"> nodes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">U1.SCLK</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">U2.SCK</span><span class="p p-Indicator">]}</span>
 </span></code></pre></div>
-<p>The template site's <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/templates/mkdocs-site/docs/hardware.yml"><code>docs/hardware.yml</code></a> is a complete example.</p>
+<p>The template site's <a href="https://github.com/kokeb-labs/ci-tools/blob/c15a1a142d9951293a9de57e6c07956fefef5c42/templates/mkdocs-site/docs/hardware.yml"><code>docs/hardware.yml</code></a> is a complete example.</p>
 <h3 id="keys">Keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -1539,7 +1539,7 @@ checked in both, embedded with <code>&lt;!-- figure: chip-pinout --&gt;</code> l
 <tr>
 <td><code>package</code></td>
 <td>yes</td>
-<td><code>type</code> (<code>SOIC-8</code>, <code>TSSOP-24</code>, <code>QFN-24</code>), <code>pins</code> (the exposed pad not counted), <code>exposed_pad</code>, <code>ref</code>; <code>layout</code> (<code>dual</code>, <code>quad</code>) is guessed from the type; <code>sides</code> lists the pins of each side counter-clockwise (left top to bottom, bottom left to right, right bottom to top, top right to left) for a package the layout does not describe (<code>SOT-23-5</code>)</td>
+<td><code>type</code> (<code>SOIC-8</code>, <code>TSSOP-24</code>, <code>QFN-24</code>), <code>pins</code> (the exposed pad not counted), <code>exposed_pad</code>, <code>ref</code>; <code>layout</code> (<code>dual</code>, <code>quad</code>) is guessed from the type, vendor forms included (<code>PG-DSO-36</code>, <code>HTSSOP-28</code>, <code>HVQFN-24</code>, <code>TQFN-38</code>); <code>sides</code> lists the pins of each side counter-clockwise (left top to bottom, bottom left to right, right bottom to top, top right to left) for a package the layout does not describe (<code>SOT-23-5</code>)</td>
 </tr>
 <tr>
 <td><code>hooks</code></td>
@@ -1564,11 +1564,12 @@ checked in both, embedded with <code>&lt;!-- figure: chip-pinout --&gt;</code> l
 </tbody>
 </table>
 <p>Pin <code>type</code> is one of <code>power</code>, <code>ground</code>, <code>bus</code>, <code>digital-in</code>, <code>digital-out</code>, <code>digital-io</code>, <code>open-drain</code>, <code>analog</code>,
-<code>power-out</code> (a load output) and <code>nc</code>; each has a colour in the pinout. A part <code>kind</code> is <code>chip</code> (the documented
-chip, exactly one per circuit), <code>mcu</code>, <code>ic</code>, <code>connector</code> (these list their <code>pins</code>), or a two-pin part: <code>resistor</code>,
-<code>capacitor</code>, <code>polarized-capacitor</code>, <code>inductor</code>, <code>solenoid</code>, <code>diode</code>, <code>zener</code>, <code>led</code>, <code>crystal</code>, <code>fuse</code>, whose pins
-are <code>1</code> and <code>2</code> (<code>A</code>/<code>K</code> and <code>+</code>/<code>-</code> work too). A net <code>kind</code> is <code>signal</code> (the default), <code>supply</code> or <code>ground</code>. A
-node is <code>PART.PIN</code>; pins of the chip that share a name (GND on several package pins) are one node.</p>
+<code>power-out</code> (a load output) and <code>nc</code>; each has its own colour in the pinout, told apart in both themes. A part
+<code>kind</code> is <code>chip</code> (the documented chip, exactly one per circuit), <code>mcu</code>, <code>ic</code>, <code>connector</code> (these list their
+<code>pins</code>), or a two-pin part: <code>resistor</code>, <code>capacitor</code>, <code>polarized-capacitor</code>, <code>inductor</code>, <code>solenoid</code>, <code>diode</code>,
+<code>zener</code>, <code>led</code>, <code>crystal</code>, <code>fuse</code>, whose pins are <code>1</code> and <code>2</code> (<code>A</code>/<code>K</code> and <code>+</code>/<code>-</code> work too). A net <code>kind</code> is
+<code>signal</code> (the default), <code>supply</code> or <code>ground</code>. A node is <code>PART.PIN</code>; pins of the chip that share a name (GND on
+several package pins) are one node.</p>
 <p>Every pin, block, link, part or net may carry <code>unverified: &lt;why&gt;</code>: a fact that could not be confirmed in the
 datasheet. The table gives it a footnote and the figures an asterisk with the reason under the figure, so a guess
 never reads as a fact.</p>
@@ -1582,8 +1583,10 @@ never reads as a fact.</p>
 <li>A block that names an unknown pin, two blocks in one cell, a link to an unknown block.</li>
 <li>A circuit node whose part or pin does not exist; a pin on two nets; a net with fewer than two nodes; a pin on no
   net that is not listed under <code>unused</code> (pins of type <code>nc</code> excepted).</li>
-<li>A figure with figkit problems: text under 4.5:1 contrast in either theme, overlapping text, a wire through a part
-  or a label, a pin drawn on the wrong side of the package.</li>
+<li>A figure with figkit problems: text under 4.5:1 contrast in either theme, overlapping text, text on any stroke of
+  a symbol (a part, a supply or ground, a pin stub, a no-connect cross), a wire through a part or a label, a link
+  line through another link's label, a pin drawn on the wrong side of the package. A block title word too wide for
+  its card first breaks after a <code>/</code> or <code>-</code> and then shrinks; only a word that still does not fit is a problem.</li>
 </ul>
 <h2 id="how-the-figures-are-drawn">How the figures are drawn<a class="headerlink" href="#how-the-figures-are-drawn" title="Permanent link">&para;</a></h2>
 <p>The renderers are pure Python in the theme package (<code>kokeb_mkdocs_theme/hardware/</code>), with no dependency beyond
@@ -1592,10 +1595,12 @@ PyYAML, no network and no browser; the same file always gives the same bytes.</p
 <li><strong>Pinout.</strong> Pins counter-clockwise from pin 1, the way datasheets number them: on a dual package down the left
   and up the right, on a quad package also along the bottom and the top (names read bottom to top there).</li>
 <li><strong>Block diagram.</strong> Blocks sit in the grid cells their <code>at</code> names; pins stand on the chip outline, left or right of
-  their block. Links and pin wires are routed like the circuit's wires.</li>
+  their block. Links and pin wires are routed like the circuit's wires. Links into one face of a block share it out,
+  each on the side toward its other end; a link label sits on its own line, or beside it, never on another line.</li>
 <li><strong>Circuit.</strong> Parts are placed by their role, the way reference designs are drawn: supply pins up with their
   decoupling and supply symbol, ground pins down, MCU-facing pins on the left with the MCU level with them, pull-ups
-  above the wires, loads in lanes to the right, connectors at the far right. A part no pattern places goes in a row
+  above the wires, loads in lanes to the right (each lane as tall as its parts and their labels draw), connectors at
+  the far right. A part no pattern places goes in a row
   under the circuit. Supplies and grounds are symbols where they are used.</li>
 <li><strong>Router.</strong> Every other wire is routed by A* on an 8 px grid: orthogonal, never through a part body or a label,
   crossings only at right angles and never at a bend, junction dots where three wires meet and never four. Bends
