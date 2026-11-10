@@ -22,10 +22,10 @@ that heading.
 - `ru-mkdocs-publish`: the Lighthouse step no longer runs to its 20-minute timeout. 1.14.1 started
   `kokeb-docs serve` in the background with its output attached to the step, and the runner waits for every
   process holding that output; the server's output now goes to `/dev/null`, as the previous `http.server` line did.
-- Every `apt-get update` and `apt-get install` in the reusable workflows runs under `timeout 600` with
-  `Acquire::Retries=3` and `Acquire::http::Timeout=30`, so a stalled package mirror fails the attempt (and the
-  existing retry loops try again) instead of holding the job until its timeout: a fuzz job sat in `apt-get update`
-  for its whole hour.
+- Every `apt-get update` and `apt-get install` in the reusable workflows is bounded and retried: an apt
+  configuration sets `Acquire::Retries 3` and 20-second HTTP and HTTPS timeouts, `update` runs under
+  `timeout 180` and `install` under `timeout 600`, and each install is tried three times. A stalled package mirror
+  then costs minutes, not the job: a fuzz job sat in `apt-get update` for its whole hour.
 
 ## [1.14.1] - 2026-11-10
 

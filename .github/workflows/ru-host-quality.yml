@@ -273,7 +273,8 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
-            if sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -q && sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -q --no-install-recommends gcc-14 g++-14 cmake ninja-build; then
+            echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+            if sudo timeout 180 apt-get update -q && sudo timeout 600 apt-get install -y -q --no-install-recommends gcc-14 g++-14 cmake ninja-build; then
               break
             fi
             if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
@@ -399,7 +400,8 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
-            if sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -q && sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -q --no-install-recommends clang cmake ninja-build; then
+            echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+            if sudo timeout 180 apt-get update -q && sudo timeout 600 apt-get install -y -q --no-install-recommends clang cmake ninja-build; then
               break
             fi
             if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi
@@ -502,8 +504,9 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
-            if sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -q &&
-              sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -q --no-install-recommends clang-18 libclang-rt-18-dev cmake ninja-build; then
+            echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+            if sudo timeout 180 apt-get update -q &&
+              sudo timeout 600 apt-get install -y -q --no-install-recommends clang-18 libclang-rt-18-dev cmake ninja-build; then
               break
             fi
             if [ "$attempt" -eq 3 ]; then echo "::error::apt-get install failed"; exit 1; fi

@@ -873,7 +873,8 @@ jobs:
               mkdir -p "$dir" && install -m 0755 "$RUNNER_TEMP/doxygen-${DOXYGEN_VERSION}/bin/doxygen" "$dir/doxygen"
             else
               echo "::warning::could not download Doxygen ${DOXYGEN_VERSION}; using the runner's doxygen package"
-              sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -q && sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -q --no-install-recommends doxygen
+              echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+              sudo timeout 180 apt-get update -q && sudo timeout 600 apt-get install -y -q --no-install-recommends doxygen
               mkdir -p "$dir" && ln -sf "$(command -v doxygen)" "$dir/doxygen"
             fi
           fi
@@ -897,8 +898,12 @@ jobs:
           steps.doxygen-check.outputs.doxygen_needed == 'true' &&
           steps.graphviz-check.outputs.graphviz_available == 'false'
         run: |
-          sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update -qq
-          sudo timeout 600 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y -qq graphviz
+          echo 'Acquire::Retries "3"; Acquire::http::Timeout "20"; Acquire::https::Timeout "20";' | sudo tee /etc/apt/apt.conf.d/99-timeouts >/dev/null
+          for attempt in 1 2 3; do
+            if sudo timeout 180 apt-get update -qq && sudo timeout 600 apt-get install -y -qq graphviz; then break; fi
+            if [ "$attempt" -eq 3 ]; then echo "::error::apt-get failed"; exit 1; fi
+            sleep 10
+          done
       # Language Runtime Setup with Comprehensive Caching
       # =============================================================================
       - name: Setup Ruby (bundler cache)
