@@ -193,7 +193,8 @@ jobs:
       - name: Install the theme package from this commit
         run: python -m pip install ./packages/kokeb-mkdocs-theme
 
-      # Plugin versioning switch, publish-root against a scratch remote, screenshots page selection, the root 404.
+      # Plugin versioning switch, publish-root against a scratch remote, screenshots page selection, the root 404,
+      # the compressing server the Lighthouse step uses.
       - name: Unit tests of the theme package
         working-directory: packages/kokeb-mkdocs-theme
         run: |

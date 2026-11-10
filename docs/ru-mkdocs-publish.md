@@ -39,7 +39,7 @@ the permissions of every job of a called workflow before the run starts, whateve
 | Job | Permissions | Steps |
 | --- | --- | --- |
 | `build` | `contents: read` | Check out (plus `submodule_paths`), install the theme, run `check_commands` (`kokeb-docs check`), `mkdocs build --strict`, Doxygen into `api/` (with the Kokeb Labs API stylesheet when the Doxyfile has none), lychee `--offline --include-fragments` on the merged site, upload `docs-site` |
-| `quality` | `contents: read` | Lighthouse CI (median of 3 runs, mobile emulation) on the home page and the first navigation pages against `lighthouse_budgets`, upload `lighthouse-report`; Playwright screenshots at 375 and 1280 px, light and dark, upload `docs-screenshots` |
+| `quality` | `contents: read` | Lighthouse CI (median of 3 runs, mobile emulation; the site served gzip-compressed as GitHub Pages serves it, by `kokeb-docs serve`) on the home page and the first navigation pages against `lighthouse_budgets`, upload `lighthouse-report`; Playwright screenshots at 375 and 1280 px, light and dark, upload `docs-screenshots` |
 | `deploy` | `contents: write` | Versioned: prune the pre-MkDocs site from `gh-pages` (`prune_legacy`), `mike deploy`, add the API reference to the version folder, `mike set-default latest`, root `404.html`, push (never force). Unversioned: `kokeb-docs publish-root` commits the built site as the whole branch, push (never force) |
 
 Every action is pinned to a commit SHA with its version in a comment.
@@ -170,6 +170,6 @@ GitHub Pages must serve the `gh-pages` branch from `/` (**Settings > Pages > Bui
 | The strict build fails | A warning: a broken link or anchor, a page missing from `.nav.yml`, Jekyll front matter, a page without `# Title`, an image without alt text, a link to a repository file that does not exist |
 | Drift checks fail | A figure or generated table no longer matches the code: run `kokeb-docs figures` / `kokeb-docs gen` and commit |
 | lychee fails | A broken link or anchor in the built site, the API reference included |
-| Lighthouse fails | A score under budget; the `lighthouse-report` artifact names the audits |
+| Lighthouse fails | A score under budget; the `lighthouse-report` artifact names the audits. Reproduce it locally on the built site with `kokeb-docs serve site 8765` and `npx lighthouse http://127.0.0.1:8765/<page>/` |
 | Old pages still served at the root | The first publish has not run yet, or `prune_legacy` is false |
 | The site shows the README rendered by Jekyll | Pages serves a branch other than `gh-pages`, or **GitHub Actions** |

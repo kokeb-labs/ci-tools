@@ -15,6 +15,17 @@ that heading.
 
 ## [Unreleased]
 
+## [1.14.1] - 2026-11-10
+
+### Fixed
+
+- `ru-mkdocs-publish`: Lighthouse measures the site as GitHub Pages serves it. The budget step served the built
+  site with `python3 -m http.server`, which sends no compression, so each page was scored on two to three times
+  the bytes a reader downloads (a quickstart page: 449 KiB instead of 173 KiB) and the performance score fell
+  below 0.8 on a slow runner (0.75 to 0.78 on the same page that scores 0.98 compressed). The new
+  `kokeb-docs serve SITE PORT` sends HTML, CSS, JavaScript, JSON, SVG and XML gzip-compressed, as Pages does;
+  the budgets are unchanged.
+
 ## [1.14.0] - 2026-11-09
 
 ### Added
