@@ -19,7 +19,7 @@ that heading.
 
 ### Added
 
-- Chip hardware diagrams in the theme package (`kokeb_mkdocs_theme/hardware/`, [guide](docs/chip-diagrams.md)): a
+- Chip hardware diagrams in the theme package (`kokeb_mkdocs_theme/hardware/`, guide: `docs/chip-diagrams.md`): a
   driver describes its chip once in `docs/hardware.yml` (package, every pin with its type, voltage domain, function
   and driver hook, the internal blocks, reference circuits, a datasheet section and page on every fact) and gets
   the figures `chip-pinout`, `chip-blocks` and `chip-circuit-<id>` (light and dark, drawn by a pure-Python
