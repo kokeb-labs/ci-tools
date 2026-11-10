@@ -385,7 +385,9 @@ jobs:
         run: |
           set -euo pipefail
           cd "$RUNNER_TEMP"
-          python3 -m http.server 8765 --bind 127.0.0.1 --directory site >/dev/null 2>&1 &
+          # Compressed as GitHub Pages sends it, so the budget measures the published page (kokeb-docs serve).
+          kokeb-docs serve site 8765 &
+          sleep 1
           python3 - <<'PY'
           import json, os
           urls = ["http://127.0.0.1:8765/" + p.removesuffix("index.html") for p in os.environ["PAGES"].split()]

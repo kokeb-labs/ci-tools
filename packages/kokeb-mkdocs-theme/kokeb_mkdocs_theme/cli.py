@@ -7,6 +7,7 @@
     kokeb-docs check                     both checks, as CI runs them before the build
     kokeb-docs screenshots SITE OUT      phone and desktop screenshots, light and dark, of a built site
     kokeb-docs pages SITE                the pages CI audits: the home page and the first navigation pages
+    kokeb-docs serve SITE PORT           serve a built site on 127.0.0.1 as GitHub Pages does (gzip for text)
     kokeb-docs publish-root SITE         commit SITE as the whole deployment branch (unversioned sites)
 
 -f/--config CONFIG (before or after the command) names the site configuration, e.g. ``_config/mkdocs.yml``; the
@@ -82,6 +83,10 @@ def main(argv: list[str] | None = None) -> int:
 
         print("\n".join(pages(pathlib.Path(rest[0]))))
         return 0
+    if cmd == "serve":
+        from . import serve
+
+        return serve.main(rest)
     if cmd == "publish-root":
         from . import publish
 
