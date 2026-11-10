@@ -104,8 +104,8 @@ jobs:
           command -v cmake >/dev/null || missing+=(cmake)
           command -v ninja >/dev/null || missing+=(ninja-build)
           if [ "${#missing[@]}" -gt 0 ]; then
-            apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=30)
-            timeout 600 sudo apt-get "${apt_opts[@]}" update -q
+            apt_opts=(-o Acquire::Retries=3 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20)
+            timeout 180 sudo apt-get "${apt_opts[@]}" update -q
             timeout 600 sudo apt-get "${apt_opts[@]}" install -y -q --no-install-recommends "${missing[@]}"
           fi
           cmake --version | head -1
