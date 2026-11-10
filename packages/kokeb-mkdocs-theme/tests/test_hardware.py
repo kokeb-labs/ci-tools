@@ -14,7 +14,7 @@ import unittest
 
 import yaml
 
-from kokeb_mkdocs_theme.hardware import model, netlist, render
+from kokeb_mkdocs_theme.hardware import common, model, netlist, render
 from kokeb_mkdocs_theme.hardware.router import Grid, RouteError
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -249,7 +249,7 @@ class FiguresTest(unittest.TestCase):
         f = Fig("t", "t", alt="t")
         f.text(0, 20, "one label")
         f.text(10, 22, "another label")
-        render.layout_problems(f, [], [])
+        common.layout_problems(f, [], [])
         self.assertTrue(any("overlaps text" in p for p in f.problems()))
 
     def test_circuit_places_parts_by_role(self):

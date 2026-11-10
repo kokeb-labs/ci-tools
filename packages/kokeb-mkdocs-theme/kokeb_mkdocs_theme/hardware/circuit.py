@@ -28,8 +28,8 @@ from dataclasses import dataclass, field
 
 from ..figkit import Box, Fig, text_width
 from . import symbols as S
+from .common import UNVERIFIED_MARK, layout_problems, unverified_note
 from .model import PIN_TYPES, Circuit, Hardware, Net
-from .render import UNVERIFIED_MARK, layout_problems, unverified_note
 from .router import Grid, RouteError
 
 G = S.G
@@ -702,7 +702,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
     lx = chip_x
     for part in plan.loose:
         if part.two_pin:
-            p = place_two(part.id, lx, low + 4 * G, True)
+            place_two(part.id, lx, low + 4 * G, True)
             lx += _g(10 * G)
         else:
             continue
