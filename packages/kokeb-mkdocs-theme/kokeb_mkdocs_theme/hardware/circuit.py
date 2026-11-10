@@ -38,6 +38,7 @@ HOOK_TONE = {"spi": "blue", "i2c": "blue", "uart": "blue", "gpio-out": "teal", "
 HOOK_LABEL = {"blue": "bus hook (SPI, I2C, UART)", "teal": "GPIO output hook", "amber": "GPIO input hook",
               "violet": "other hook"}
 HOOK_SIZE = 12
+LANE_GAP = 3  # px between what one lane paints and the next
 
 
 def _g(v: float) -> float:
@@ -276,6 +277,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
     mcu = mcus[0] if mcus else None
     bodies: list[tuple[Box, str]] = []
     labels: list[Box] = []
+    inks: list[tuple[Box, str]] = []  # every stroke of every symbol, for the text check
     terms: dict[str, list] = {}  # routing net -> [(x, y, side)]
     nc_points: list[tuple[float, float]] = []
     tones: set[str] = set()
@@ -294,24 +296,27 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
     rname = max([text_width(cp.name, S.PIN_NAME, 400, True) for cp in plan.right] + [0])
     title_w = max(text_width(hw.chip, 15, 700), text_width(U.id, S.LABEL))
     pitch = 3 * G
-    # Right lanes: room above and below each lane.
+    # Right lanes: room above and below each lane. A chain needs what its parts paint above the wire (the symbol
+    # and its label) and below it, measured, plus a small gap.
     lane_up, lane_dn = {}, {}
     for cp in plan.right:
         up, dn = 1.5 * G, 1.5 * G
         chain = plan.chains.get(cp.name) or []
         end = plan.chain_end.get(cp.name)
         if chain:
-            up = 2.5 * G
+            ext = [_extent(parts[pid]) for pid, *_r in chain]
+            up = max(2.5 * G, max(a for a, _b in ext) + LANE_GAP)
+            dn = max(dn, max(b for _a, b in ext) + LANE_GAP)
             if end is not None and end.kind == "ground":
-                dn = 3 * G
+                dn = max(dn, 3 * G)
             if end is not None and end.kind == "supply":
-                up = 4 * G
+                up = max(up, 4 * G)
         if cp.net is not None and cp.net.kind == "ground":
-            dn = 3 * G
+            dn = max(dn, 3 * G)
         if cp.net is not None and cp.net.kind == "supply":
-            up = 4 * G
+            up = max(up, 4 * G)
         if plan.shunts.get(cp.name):
-            dn = 10 * G
+            dn = max(dn, 10 * G)
         lane_up[cp.name], lane_dn[cp.name] = up, dn
     # Lanes of consecutive pins on one supply or ground net share a symbol: only the outer lane needs its room.
     for a, b in zip(plan.right, plan.right[1:]):
@@ -443,6 +448,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
     chip = S.box_symbol(fig, U.id, chip_x, ct, W, H, sides, hw.chip, U.id, fill="card", stroke="brand.strong",
                         title_tone="brand.text", positions=pos, mono=True)
     bodies.append((chip.body, f"the {hw.chip}"))
+    inks.extend((b, f"the {hw.chip}") for b in chip.ink)
     labels += chip.labels
     placed_boxes = [(chip.body, 2.5)]
 
@@ -472,6 +478,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
         mcu_p = S.box_symbol(fig, mcu.id, mcu_x, _g(y0), mcu_w, _g(y1 - y0), msides, mcu.label or "MCU", mcu.id,
                              fill="paper", stroke="ink2", positions=mpos, mono=True, title_at="top")
         bodies.append((mcu_p.body, "the MCU"))
+        inks.extend((b, "the MCU") for b in mcu_p.ink)
         labels += mcu_p.labels
         placed_boxes.append((mcu_p.body, 2.5))
 
@@ -490,12 +497,14 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
         attached.append((x, y))
         s = S.supply(fig, x, y, net.label or net.name, sid=key)
         labels.extend(s.labels)
+        inks.extend((b, f"the {net.label or net.name} supply") for b in s.ink)
         small.append((s.body, 0.5))
         return s
 
     def attach_ground(x: float, y: float, key: str):
         attached.append((x, y))
         g = S.ground(fig, x, y, sid=key)
+        inks.extend((b, "a ground") for b in g.ink)
         small.append((g.body, 0.5))
         return g
 
@@ -505,6 +514,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
         note = UNVERIFIED_MARK if part.unverified else ""
         p = S.two_pin(fig, pid, part.kind, x, y, vertical, part.value, note, flip=first != "1")
         bodies.append((p.body, f"{pid}"))
+        inks.extend((b, pid) for b in p.ink)
         labels.extend(p.labels)
         small.append((p.body, 0.75))
         for n, pin in p.pins.items():
@@ -693,6 +703,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
                          part.label or part.kind, part.id, fill="paper", stroke="ink2", mono=True, title_at="top",
                          positions={("L", n): 6 * G + k * pitch for k, (n, _l) in enumerate(part.pins)})
         bodies.append((p.body, part.id))
+        inks.extend((b, part.id) for b in p.ink)
         labels.extend(p.labels)
         placed_boxes.append((p.body, 2.5))
         for n, pin in p.pins.items():
@@ -734,7 +745,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
             have.add((round(pin[0], 1), round(pin[1], 1)))
 
     for x, y in nc_points:
-        S.no_connect(fig, x, y)
+        inks.append((S.no_connect(fig, x, y), "a no-connect mark"))
 
     # ---- route
     max_x = max([b.r for b, _n in bodies] + [lb.r for lb in labels] + [lane_end])
@@ -785,7 +796,7 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
     for p in problems:
         fig.problem(p)
     # Wires stop at pin ends: a wire must not cross into a symbol (the stubs belong to the symbols).
-    layout_problems(fig, bodies, wires)
+    layout_problems(fig, bodies, wires, inks)
     return {
         "min_y": min_y,
         "max_x": max_x,
@@ -797,6 +808,14 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
         "pins": pins_of,
         "plan": plan,
     }
+
+
+def _extent(part) -> tuple[float, float]:
+    """How far a two-pin part laid along a lane paints above and below its wire, its label included."""
+    scratch = Fig("measure", "m", alt="m")
+    p = S.two_pin(scratch, part.id, part.kind, 0, 0, False, part.value, UNVERIFIED_MARK if part.unverified else "")
+    boxes = p.ink + p.labels
+    return -min(b.y for b in boxes), max(b.b for b in boxes)
 
 
 def _span(pins) -> float:

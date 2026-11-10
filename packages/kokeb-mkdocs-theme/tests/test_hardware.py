@@ -293,6 +293,182 @@ class FiguresTest(unittest.TestCase):
         self.assertEqual(pins[("D1", "1")][1], pins[("U1", "ALERT")][1])
 
 
+# A capacitor lane to a supply above a load between two chip pins: found by a driver, where the load's label was
+# drawn on the capacitor's plates.
+LANE_REPRO = """
+schema: 1
+chip: REPRO
+documents: [{id: ds, name: Repro}]
+refs: {p: {doc: ds, section: "1", page: 1}}
+package: {type: SOIC-8, pins: 8, ref: p}
+hooks: [{id: t, call: "Transfer()", kind: spi}]
+pins:
+  - {number: 1, name: SCK, type: bus, hook: t, domain: VM, function: x, ref: p}
+  - {number: 2, name: GND, type: ground, domain: VM, function: x, ref: p}
+  - {number: 3, name: NC1, type: nc, domain: VM, function: x, ref: p}
+  - {number: 7, name: NC2, type: nc, domain: VM, function: x, ref: p}
+  - {number: 5, name: OUTB, type: power-out, domain: VM, function: x, ref: p}
+  - {number: 6, name: OUTA, type: power-out, domain: VM, function: x, ref: p}
+  - {number: 4, name: VCP, type: analog, domain: VM, function: x, ref: p}
+  - {number: 8, name: VM, type: power, domain: VM, function: x, ref: p}
+circuits:
+  - id: c
+    title: Repro
+    ref: p
+    parts:
+      - {id: U1, kind: chip}
+      - {id: U2, kind: mcu, pins: [SCK, GND]}
+      - {id: C1, kind: capacitor, value: 1 µF}
+      - {id: L1, kind: solenoid}
+    nets:
+      - {name: VM, kind: supply, nodes: [U1.VM, C1.2]}
+      - {name: GND, kind: ground, nodes: [U1.GND, U2.GND]}
+      - {name: SCK, nodes: [U1.SCK, U2.SCK]}
+      - {name: VCP, nodes: [U1.VCP, C1.1]}
+      - {name: A, nodes: [U1.OUTA, L1.1]}
+      - {name: B, nodes: [U1.OUTB, L1.2]}
+"""
+
+
+def crowded_links() -> dict:
+    """Two links into the top of one block, one of them turning in from the side (a driver's 'supply faults' and
+    'f_SYS' into its central logic)."""
+    d = base()
+    d["block_diagram"]["blocks"] = [
+        {"id": "psu", "label": "Power supply", "at": [0, 1], "pins": ["VDD", "GND"],
+         "detail": "undervoltage and overvoltage detection, " * 3},
+        {"id": "pll", "label": "PLL", "detail": "with clock watchdog", "at": [1, 0], "side": "left"},
+        {"id": "logic", "label": "Central logic", "at": [0, 2], "pins": ["CS_N", "SCLK", "RESET_N"],
+         "detail": "states, faults, direct drive, " * 6},
+        {"id": "ch", "label": "Channels", "at": [1, 2], "side": "right"},
+        {"id": "out", "label": "Power stages", "at": [2, 2], "side": "right", "pins": ["ALERT"]},
+    ]
+    d["block_diagram"]["links"] = [{"from": "psu", "to": "logic", "label": "supply faults"},
+                                   {"from": "pll", "to": "logic", "label": "f_SYS"},
+                                   {"from": "logic", "to": "ch", "label": "setpoints"}]
+    return d
+
+
+class LayoutRegressionTest(unittest.TestCase):
+    def test_lane_label_clears_the_capacitor_above(self):
+        from unittest import mock
+
+        from kokeb_mkdocs_theme.hardware import circuit
+
+        hw = parse(yaml.safe_load(LANE_REPRO))
+        fig = render.build(hw, "chip-circuit-c")
+        self.assertEqual(fig.problems(), [])
+        pins = fig.routing["pins"]
+        # L1's label sits below C1's lower plate, with room to spare.
+        self.assertGreaterEqual(pins[("L1", "1")][1] - pins[("C1", "1")][1], 5 * 8)
+        # With the old lane room (nothing measured) the label lands on the plates, and the check says so.
+        with mock.patch.object(circuit, "_extent", lambda part: (0.0, 0.0)):
+            old = render.build(parse(yaml.safe_load(LANE_REPRO)), "chip-circuit-c").problems()
+        self.assertIn("text 'L1' overlaps the symbol of C1", old)
+
+    def test_text_on_a_symbol_is_a_problem(self):
+        from kokeb_mkdocs_theme.figkit import Fig
+        from kokeb_mkdocs_theme.hardware import symbols
+
+        f = Fig("t", "t", alt="t")
+        p = symbols.two_pin(f, "C9", "capacitor", 40, 40, False, "1 µF")
+        f.text(60, 52, "label")  # across the plates, below the wire
+        common.layout_problems(f, [], [], [(b, "C9") for b in p.ink])
+        self.assertIn("text 'label' overlaps the symbol of C9", f.problems())
+
+    def test_links_into_one_face_spread_and_labels_stay_clear(self):
+        from unittest import mock
+
+        hw = parse(crowded_links())
+        fig = render.build(hw, "chip-blocks")
+        self.assertEqual(fig.problems(), [])
+        ends = {(ln.src, ln.dst): pts[-1] for ln, pts in fig.links}
+        # Both arrive on the top of the logic block, 5G apart rather than the 3G minimum.
+        self.assertEqual(ends[("psu", "logic")][1], ends[("pll", "logic")][1])
+        self.assertGreaterEqual(abs(ends[("psu", "logic")][0] - ends[("pll", "logic")][0]), 5 * 8)
+        # f_SYS comes from the right, so it takes the port right of the other.
+        self.assertGreater(ends[("pll", "logic")][0], ends[("psu", "logic")][0])
+
+        def on_another_line(fig, pts, text, taken, lines):
+            (x0, y0), (x1, y1) = lines[-1]
+            return fig.edge_label((x0 + x1) / 2, (y0 + y1) / 2, text)
+
+        with mock.patch.object(render, "_label_spot", on_another_line):
+            bad = render.build(parse(crowded_links()), "chip-blocks").problems()
+        self.assertTrue(any("runs through the label" in p for p in bad), bad)
+
+
+class ColourTest(unittest.TestCase):
+    @staticmethod
+    def lab(hex_colour: str) -> tuple[float, float, float]:
+        """CIE L*a*b* (D65) of a hex colour."""
+        h = hex_colour.lstrip("#")
+        rgb = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+        r, g, b = (c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in rgb)
+        x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047
+        y = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883
+
+        def f(t: float) -> float:
+            return t ** (1 / 3) if t > 0.008856 else 7.787 * t + 16 / 116
+
+        return 116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))
+
+    def test_pin_types_are_told_apart_in_both_themes(self):
+        from kokeb_mkdocs_theme.figkit import theme
+
+        tones = {t: tone for t, (tone, _label) in model.PIN_TYPES.items()}
+        for th in theme.THEMES:
+            labs = {t: self.lab(theme.resolve(f"{tone}.strong", th)) for t, tone in tones.items()}
+            names = sorted(labs)
+            for i, a in enumerate(names):
+                for b in names[i + 1:]:
+                    de = sum((p - q) ** 2 for p, q in zip(labs[a], labs[b])) ** 0.5
+                    self.assertGreaterEqual(de, 25, f"{th}: {a} and {b} are only {de:.1f} apart (CIE76)")
+
+    def test_every_tone_text_reads_on_its_tint(self):
+        from kokeb_mkdocs_theme.figkit import MIN_CONTRAST, theme
+
+        for tone in theme.TONES:
+            for th in theme.THEMES:
+                ratio = theme.contrast(theme.resolve(f"{tone}.text", th), theme.resolve(f"{tone}.tint", th))
+                self.assertGreaterEqual(ratio, MIN_CONTRAST, f"{tone} {th}")
+
+
+class PackageAndTitleTest(unittest.TestCase):
+    def test_vendor_package_names_are_recognised(self):
+        dual = ["PG-DSO-36", "PG-TSDSO-14", "P-DSO-20", "SOIC-8", "SO-8", "SSOP-24", "TSSOP-20", "HTSSOP-28",
+                "DSO-14", "MSOP-10", "TDSON-8"]
+        quad = ["PG-VQFN-48", "PG-TQFP-48", "QFN-16", "VQFN-32", "HVQFN-24", "TQFN-38", "WQFN-20", "QFP-44",
+                "LQFP-64"]
+        for t in dual:
+            self.assertEqual(model._guess_layout(t), "dual", t)
+        for t in quad:
+            self.assertEqual(model._guess_layout(t), "quad", t)
+        self.assertEqual(model._guess_layout("BGA-64"), "")
+        d = base()
+        d["package"]["type"] = "PG-DSO-8"
+        self.assertEqual(parse(d).package.layout, "dual")
+
+    def test_long_card_title_words_wrap_or_shrink(self):
+        from kokeb_mkdocs_theme.figkit import Fig
+        from kokeb_mkdocs_theme.figkit.core import fit_title
+
+        self.assertEqual(fit_title("I2C-bus/SMBus interface", 80, 15, 13)[0], ["I2C-bus/", "SMBus", "interface"])
+        self.assertEqual(fit_title("Two half-bridges", 80, 15, 13)[0], ["Two half-", "bridges"])
+        # A word with no break in it shrinks before it fails.
+        from kokeb_mkdocs_theme.figkit import text_width
+
+        lines, size = fit_title("Watchdog", text_width("Watchdog", 15, 700) - 4, 15, 13)
+        self.assertEqual((lines, 13 <= size < 15), (["Watchdog"], True))
+        f = Fig("t", "t", alt="t")
+        f.card(0, 0, 96, "I2C-bus/SMBus")
+        f.card(200, 0, 96, "half-bridges")
+        self.assertEqual(f.problems(), [])
+        f.card(400, 0, 40, "Supercalifragilistic")
+        self.assertTrue(any("wider than its card" in p for p in f.problems()))
+
+
 class RouterTest(unittest.TestCase):
     def test_route_avoids_blocks_and_crosses_at_right_angles(self):
         g = Grid(0, 0, 30, 30, 8)

@@ -15,6 +15,22 @@ that heading.
 
 ## [Unreleased]
 
+## [1.15.1] - 2026-11-10
+
+### Fixed
+
+- Chip circuit figures: a right-side lane is as tall as its parts and their labels draw, so a load's label no longer
+  lands on the capacitor in the lane above. The layout check now reports any text on a symbol's strokes (parts,
+  supply and ground symbols, pin stubs, no-connect crosses), so this cannot pass `kokeb-docs hardware --check`.
+- Chip block diagrams: links into one face of a block spread over it, each toward its other end, and a link label
+  is placed clear of every other link and pin wire; a line through another link's label is reported.
+- Pin type colours: `analog`, `power-out` and `nc` get their own figkit tones (`magenta`, `brown`, `stone`), so
+  every pin type has a distinct colour in light and dark (before, `analog` and `power-out` were the same and
+  matched `open-drain` in dark).
+- Package types with a vendor prefix or variant (`PG-DSO-36`, `P-DSO-20`, `TSDSO`, `HVQFN`, `WQFN`, `TQFN`) are
+  recognised, so they no longer need an explicit `layout`.
+- figkit cards: a title word too wide for its card breaks after a `/` or `-`, then shrinks, before it is a problem.
+
 ## [1.15.0] - 2026-11-10
 
 ### Added

@@ -19,7 +19,7 @@
 <path d="M388 249.8 L500 249.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)" marker-start="url(#fk-arrow-rail)"/>
 <path d="M820 249.8 L708 249.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
 <path d="M600 309.8 L600 349.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
-<path d="M388 393.8 L394 393.8 Q400 393.8 400 387.8 L400 281.8 Q400 273.8 408 273.8 L500 273.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M388 393.8 L394 393.8 Q400 393.8 400 387.8 L400 289.8 Q400 281.8 408 281.8 L500 281.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
 <rect x="184" y="201.8" width="200" height="104" rx="10" fill="#13233A" stroke="#60A5FA" stroke-width="1.4"/>
 <rect x="184" y="209.8" width="4" height="88" rx="2" fill="#60A5FA"/>
 <rect x="504" y="201.8" width="200" height="104" rx="10" fill="#2A2113" stroke="#F4B942" stroke-width="1.4"/>
@@ -75,8 +75,8 @@
 <text x="764" y="254.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">result</text>
 <rect x="561.8" y="319.8" width="76.5" height="20" rx="10" fill="#0E131A"/>
 <text x="600" y="334.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">thresholds</text>
-<rect x="378.5" y="323.8" width="43" height="20" rx="10" fill="#0E131A"/>
-<text x="400" y="338.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">reset</text>
+<rect x="378.5" y="327.8" width="43" height="20" rx="10" fill="#0E131A"/>
+<text x="400" y="342.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">reset</text>
 <rect x="32" y="489.2" width="14" height="14" rx="4" fill="#321820" stroke="#FB7185" stroke-width="1.4"/>
 <text x="54" y="500.8" font-size="12.5" fill="#9AA6B5">power</text>
 <rect x="117.6" y="489.2" width="14" height="14" rx="4" fill="#1B232E" stroke="#94A3B8" stroke-width="1.4"/>
