@@ -1825,7 +1825,7 @@ a versioned site with <a href="https://github.com/jimporter/mike">mike</a>, with
 says what its pages contain.</p>
 <h2 id="where-the-theme-comes-from">Where the theme comes from<a class="headerlink" href="#where-the-theme-comes-from" title="Permanent link">&para;</a></h2>
 <p>The theme, the plugin, figkit and the pinned toolchain are the <code>kokeb-mkdocs-theme</code> package in
-<a href="https://github.com/kokeb-labs/ci-tools/blob/5ed91fcfda4d990cfde90bd08696c77fb359d241/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a>. Every job installs it with pip from
+<a href="https://github.com/kokeb-labs/ci-tools/blob/3171a8c702b8a0de84c0dca8d3330a0b906f02a7/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a>. Every job installs it with pip from
 <strong>the commit this workflow runs from</strong> (the <code>job</code> context's <code>workflow_repository</code> and <code>workflow_sha</code>), so a caller
 pinned to <code>@v1</code> builds with the theme released in <code>v1</code>, and a branch under review builds with that branch's theme.
 <code>theme_ref</code> overrides the ref. A repository's own <code>requirements-docs.txt</code>, if it has one, is installed afterwards
@@ -1891,7 +1891,7 @@ the permissions of every job of a called workflow before the run starts, whateve
 <tr>
 <td><code>quality</code></td>
 <td><code>contents: read</code></td>
-<td>Lighthouse CI (median of 3 runs, mobile emulation) on the home page and the first navigation pages against <code>lighthouse_budgets</code>, upload <code>lighthouse-report</code>; Playwright screenshots at 375 and 1280 px, light and dark, upload <code>docs-screenshots</code></td>
+<td>Lighthouse CI (median of 3 runs, mobile emulation; the site served gzip-compressed as GitHub Pages serves it, by <code>kokeb-docs serve</code>) on the home page and the first navigation pages against <code>lighthouse_budgets</code>, upload <code>lighthouse-report</code>; Playwright screenshots at 375 and 1280 px, light and dark, upload <code>docs-screenshots</code></td>
 </tr>
 <tr>
 <td><code>deploy</code></td>
@@ -2180,7 +2180,7 @@ as it is, so the current site stays up.</p>
 </tr>
 <tr>
 <td>Lighthouse fails</td>
-<td>A score under budget; the <code>lighthouse-report</code> artifact names the audits</td>
+<td>A score under budget; the <code>lighthouse-report</code> artifact names the audits. Reproduce it locally on the built site with <code>kokeb-docs serve site 8765</code> and <code>npx lighthouse http://127.0.0.1:8765/&lt;page&gt;/</code></td>
 </tr>
 <tr>
 <td>Old pages still served at the root</td>
