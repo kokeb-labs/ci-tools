@@ -4,7 +4,8 @@
 
     kokeb-docs figures [--check] [ids]   build (or check) the figkit figures under docs/diagrams/figures/
     kokeb-docs gen [--check|--list]      fill (or check) the <!-- generated: name --> regions
-    kokeb-docs check                     both checks, as CI runs them before the build
+    kokeb-docs hardware [--check] ...    validate docs/hardware.yml, export a circuit (--kicad-netlist OUT)
+    kokeb-docs check                     all of these checks, as CI runs them before the build
     kokeb-docs screenshots SITE OUT      phone and desktop screenshots, light and dark, of a built site
     kokeb-docs pages SITE                the pages CI audits: the home page and the first navigation pages
     kokeb-docs serve SITE PORT           serve a built site on 127.0.0.1 as GitHub Pages does (gzip for text)
@@ -45,7 +46,13 @@ def _check() -> int:
 
     root = repo_root()
     rc = 0
-    if (root / "docs/diagrams/figures").is_dir():
+    if (root / "docs/hardware.yml").is_file():
+        from .hardware import cli as hardware
+
+        rc |= hardware.main(["--check"])
+        if rc:
+            return rc  # the figures and the regions are drawn from the same file
+    if (root / "docs/diagrams/figures").is_dir() or (root / "docs/hardware.yml").is_file():
         from .figkit import build
 
         rc |= build.main(["--check"])
@@ -76,6 +83,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import gen
 
         return gen.main(rest)
+    if cmd == "hardware":
+        from .hardware import cli as hardware
+
+        return hardware.main(rest)
     if cmd == "check":
         return _check()
     if cmd == "pages":

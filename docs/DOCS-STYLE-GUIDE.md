@@ -95,6 +95,28 @@ driver uses. A board uses `class="kb-chip kb-chip--board"` with MCU, power input
   refuses text under 4.5:1 contrast in either theme, overlaps and missing alt text; `kokeb-docs figures --check`
   fails CI when the code changed and the figure did not. Embed with `<!-- figure: <id> -->` / `<!-- /figure -->`.
 - **Mermaid** for sequences and state machines.
+- **Chip figures** (pinout, block diagram, application circuit) are not written as modules: they are drawn from
+  `docs/hardware.yml` ([Chip hardware](#chip-hardware)).
+
+### Chip hardware
+
+Every driver describes its chip once, in `docs/hardware.yml` ([Chip diagrams](chip-diagrams.md)), and its Hardware
+page shows, in this order:
+
+1. **The pinout** (`<!-- figure: chip-pinout -->`): the package from the top, pins on the sides and in the order
+   of the datasheet, pin 1 marked, coloured by electrical type, each pin's port hook beside it.
+2. **The pin table** (`<!-- generated: chip-pins -->`): pin, name, type and domain, function, driver hook, what to
+   do when unused, datasheet section and page. No hand-written pin table next to it.
+3. **The block diagram** (`<!-- figure: chip-blocks -->`), from the datasheet's own, with the pins that reach each
+   block.
+4. **The application circuit** (`<!-- figure: chip-circuit-<id> -->`) and its parts
+   (`<!-- generated: chip-parts -->`): MCU, supplies, decoupling, pull-ups, loads and sense resistors as schematic
+   symbols, every MCU wire labelled with the hook that drives it (`GpioSet(CtrlPin::Reset)`). A second circuit
+   (the minimal wiring, a variant) is a second entry under `circuits`.
+
+Every fact cites the datasheet section and printed page. A value the datasheet does not give (a pull-up chosen by
+the application, an example load) carries `unverified` with the reason, and the page shows it as such. The
+reference circuit can be exported for a board design with `kokeb-docs hardware --kicad-netlist`.
 
 ### How a figure reads
 
@@ -142,7 +164,7 @@ cells short; long prose goes under the table.
 | Home | `index.md` | Hero (what, one-sentence why, buttons), the "no platform code" paragraph, chip card, "What you get" (5-7 bullets, each linking its page), navigation cards |
 | Quickstart | `quickstart.md` | Safety note if it moves hardware; wiring table; add the driver; the port (compiled); a ~15-line example (compiled); what each step does; a "if it does not work" table |
 | Installation | `installation.md` | Requirements; submodule; CMake target and options; ESP-IDF component; build layout; version; compile-time switches |
-| Hardware | `hardware.md` | Pin table(s) with directions; control pins; bus settings table (mode, speed, frame, timing); a timing diagram or Mermaid sequence for the protocol; power ranges; errata that affect the host; evaluation boards; reference documents table |
+| Hardware | `hardware.md` | The chip figures and the pin table from `docs/hardware.yml` ([below](#chip-hardware)): pinout, generated pin table, block diagram, application circuit and its parts; control pins; bus settings table (mode, speed, frame, timing); a timing diagram or Mermaid sequence for the protocol; power ranges; errata that affect the host; evaluation boards; reference documents table |
 | Architecture | `architecture.md` | The layer figure (core, communication interface, platform port); a table of layers with files; one call traced through the layers (Mermaid); design choices (CRTP, no heap); source map |
 | API guide | `api-guide.md` | Task-oriented, compiled snippets: the shape of the API (subsystems table); initialise; configure; read; write; batch or stream if any; raw register / parameter access; errors and faults (a table of signals); tuning |
 | API reference | `api-reference.md` | Button to `api/index.html`; a "start here" table of the five most useful Doxygen pages |
@@ -222,7 +244,7 @@ duplicated API tables (that is the site's job).
 | Check | Where | Fails on |
 | --- | --- | --- |
 | `mkdocs build --strict` | PR CI | broken links and anchors, pages missing from the nav, no H1, Jekyll front matter, Liquid, a page colliding with `api/`, an image without alt text or file |
-| `kokeb-docs check` | PR CI | a figure or generated region that no longer matches the code |
+| `kokeb-docs check` | PR CI | an invalid `docs/hardware.yml`; a figure or generated region that no longer matches the code |
 | Host build of `tests/docs/` | PR CI (repository) | a snippet that does not compile |
 | lychee offline | PR CI | a broken link or anchor in the built site, API included |
 | Lighthouse | PR CI | performance, accessibility, best practices or SEO under budget |

@@ -211,12 +211,20 @@ def _figure(m: re.Match, page_dir: str, page: str) -> str:
             out += [e["description"], ""]
         if e.get("sources"):
             root = posixpath.relpath(".", posixpath.join("docs", page_dir))
+
+            def link(path: str) -> str:
+                # A file the site publishes (docs/hardware.yml) is linked within the site, the rest via GitHub.
+                if path.startswith("docs/") and _in_site(path[len("docs/"):]):
+                    return posixpath.relpath(path[len("docs/"):], page_dir or ".")
+                return posixpath.join(root, path)
+
             items = []
             for s in e["sources"]:
                 path = s.split(":", 1)[0]
                 rest = s[len(path) + 1 :]
-                items.append(f"[`{path}`]({posixpath.join(root, path)})" + (f" `{rest}`" if rest else ""))
-            items.append(f"figure module [`{e['source']}`]({posixpath.join(root, e['source'])})")
+                items.append(f"[`{path}`]({link(path)})" + (f" `{rest}`" if rest else ""))
+            if e["source"] not in [s.split(":", 1)[0] for s in e["sources"]]:
+                items.append(f"figure module [`{e['source']}`]({link(e['source'])})")
             out += ["Drawn from: " + "; ".join(items) + ".", ""]
         out += ["</details>", ""]
     return "\n".join(out)

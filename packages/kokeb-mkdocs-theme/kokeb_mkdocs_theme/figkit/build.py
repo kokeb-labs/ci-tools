@@ -9,6 +9,10 @@ A figure is a Python module ``docs/diagrams/figures/<id>.py``:
 * ``SOURCES`` (optional) lists the files a hand-placed figure is drawn from.
 * The module docstring's ``Reads:`` paragraph is the long description shown under the figure.
 
+A repository with ``docs/hardware.yml`` also gets the chip figures drawn from it, with no module to write:
+``chip-pinout``, ``chip-blocks`` (when the file has a block diagram) and ``chip-circuit-<id>`` for each circuit
+(see ``kokeb_mkdocs_theme.hardware``). They are built, embedded and checked exactly like the others.
+
 Outputs, all committed: ``docs/diagrams/<id>.svg`` and ``<id>.dark.svg``, ``docs/diagrams/data/<id>.json``,
 ``docs/diagrams/figures.json`` (title, alt text, description and sources, read by the site hook) and the figure
 catalogue ``docs/diagrams/index.md``. A page embeds a figure with a marker pair, which this script fills with a
@@ -74,11 +78,52 @@ sys.path[:0] = [str(ROOT / "tools/docs"), str(FIG_DIR)]
 MARKER = re.compile(r"(<!-- figure: (?P<id>[a-z0-9-]+) -->)(?P<body>.*?)(<!-- /figure -->)", re.S)
 
 
+HARDWARE = ROOT / "docs/hardware.yml"
+_hw_cache: dict = {}
+
+
+def _hardware():
+    """The parsed docs/hardware.yml, or None when the repository has none."""
+    if not HARDWARE.is_file():
+        return None
+    if "hw" not in _hw_cache:
+        from ..hardware import model
+
+        try:
+            _hw_cache["hw"] = model.load(ROOT)
+        except model.HardwareError as e:
+            raise SystemExit("[figures] " + "\n[figures] ".join(e.problems)) from e
+    return _hw_cache["hw"]
+
+
+def hardware_ids() -> list[str]:
+    hw = _hardware()
+    if hw is None:
+        return []
+    from ..hardware import render
+
+    return render.figure_ids(hw)
+
+
 def fig_ids() -> list[str]:
-    return sorted(p.stem for p in FIG_DIR.glob("*.py") if not p.stem.startswith("_"))
+    mods = sorted(p.stem for p in FIG_DIR.glob("*.py") if not p.stem.startswith("_")) if FIG_DIR.is_dir() else []
+    hw = hardware_ids()
+    clash = sorted(set(mods) & set(hw))
+    if clash:
+        raise SystemExit(f"[figures] {', '.join(clash)}: the id of a figure drawn from docs/hardware.yml; rename the "
+                         "module")
+    return sorted(mods + hw)
 
 
 def load(fid: str):
+    if fid in hardware_ids():
+        from ..hardware import render
+
+        hw = _hardware()
+        fig = render.build(hw, fid)
+        fig.source = "docs/hardware.yml"
+        fig.sources = ["docs/hardware.yml"] + sorted({h.source for h in hw.hooks.values() if h.source})
+        return fig, None
     spec = importlib.util.spec_from_file_location(f"figure_{fid.replace('-', '_')}", FIG_DIR / f"{fid}.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -124,6 +169,14 @@ def entry(fig) -> dict:
     }
 
 
+def _link(path: str) -> str:
+    """Link from the catalogue to a repository file. A data file the site publishes (``docs/hardware.yml``) is linked
+    within the site; anything else through the repository root, which the site hook sends to GitHub."""
+    if path.startswith("docs/") and path.endswith((".yml", ".yaml")) and not path.startswith("docs/diagrams/"):
+        return posixpath.relpath(path, "docs/diagrams")
+    return f"../../{path}"
+
+
 def catalogue(index: dict) -> str:
     lines = [
         "# Figures",
@@ -138,14 +191,15 @@ def catalogue(index: dict) -> str:
     for fid, e in index.items():
         embed = f"<!-- figure: {fid} -->{picture(fid, e, CATALOGUE)}<!-- /figure -->"
         lines += [f"## {e['title']}", "", embed, ""]
-        lines += [f"Figure module: [`{e['source']}`](../../{e['source']})", ""]
+        what = "Hardware description" if e["source"].endswith(".yml") else "Figure module"
+        lines += [f"{what}: [`{e['source']}`]({_link(e['source'])})", ""]
         if e["sources"]:
             lines += ["Drawn from:", ""]
             for s in e["sources"]:
                 path = s.split(":", 1)[0]
                 rest = s[len(path) :]
                 # Symbol first: the link is one long unbreakable token, so it goes last (Markdown line-length lint).
-                lines.append(f"- {f'`{rest[1:]}` in ' if rest else ''}[`{path}`](../../{path})")
+                lines.append(f"- {f'`{rest[1:]}` in ' if rest else ''}[`{path}`]({_link(path)})")
             lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 

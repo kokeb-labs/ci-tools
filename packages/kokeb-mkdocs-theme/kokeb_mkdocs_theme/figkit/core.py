@@ -209,12 +209,23 @@ class Fig:
         mono: bool = False,
         layer: str = "label",
         header: bool = False,
+        rotate: int = 0,
     ) -> Box:
-        """One line of text with its baseline at ``y``. ``bg`` is the paint under it, for the contrast check."""
+        """One line of text with its baseline at ``y``. ``bg`` is the paint under it, for the contrast check.
+
+        ``rotate=-90`` turns the text about (x, y) to read bottom to top (a pin name on the top or bottom side of a
+        package); the box returned and checked is the rotated one.
+        """
         size = size or self.k["card_body"]
         w = text_width(s, size, weight, mono)
         x0 = x if anchor == "start" else (x - w / 2 if anchor == "middle" else x - w)
         bb = Box(x0, y - size * 0.8, w, size * 1.05)
+        if rotate:
+            if rotate != -90:
+                raise ValueError("figkit text: only rotate=-90 is supported")
+            # Along the text runs up from y; across it the glyphs sit left of x (ascent) and a little right (descent).
+            off = x0 - x
+            bb = Box(x - size * 0.8, y - off - w, size * 1.05, w)
         if s.strip():
             self._min_size = min(self._min_size, size)
             self._texts.append((bb, color, bg, s, size))
@@ -225,10 +236,14 @@ class Fig:
         fam = f' font-family="{MONO}"' if mono else ""
         anc = "" if anchor == "start" else f' text-anchor="{anchor}"'
         wt = "" if weight == 400 else f' font-weight="{weight}"'
+        rot = f' transform="rotate({rotate} {_f(X)} {_f(Y)})"' if rotate else ""
         self._put(
             layer,
-            f'<text x="{_f(X)}" y="{_f(Y)}" font-size="{_f(size)}"{wt}{fam}{anc} fill="{C(color)}">{escape(s)}</text>',
+            f'<text x="{_f(X)}" y="{_f(Y)}" font-size="{_f(size)}"{wt}{fam}{anc}{rot} fill="{C(color)}">{escape(s)}'
+            f'</text>',
         )
+        if rotate:
+            self._grow(bb.b)
         return bb
 
     def rect(
@@ -259,6 +274,33 @@ class Fig:
         d = " ".join(f"{'M' if i == 0 else 'L'}{_f(self._X(px))} {_f(self._Y(py))}" for i, (px, py) in enumerate(pts))
         da = f' stroke-dasharray="{dash}"' if dash else ""
         self._put(layer, f'<path d="{d}" fill="none" stroke="{C(color)}" stroke-width="{_f(sw)}"{da}/>')
+
+    def circle(self, cx: float, cy: float, r: float, fill: str | None = "card", stroke: str | None = None,
+               sw: float = 1.0, layer: str = "node") -> Box:
+        st = f' stroke="{C(stroke)}" stroke-width="{_f(sw)}"' if stroke else ""
+        fl = C(fill) if fill else "none"
+        self._put(layer, f'<circle cx="{_f(self._X(cx))}" cy="{_f(self._Y(cy))}" r="{_f(r)}" fill="{fl}"{st}/>')
+        self._grow(cy + r)
+        return Box(cx - r, cy - r, 2 * r, 2 * r)
+
+    def path(self, cmds: Sequence[tuple], stroke: str | None = "ink2", fill: str | None = None, sw: float = 1.0,
+             layer: str = "node", cap: str = "round", join: str = "round") -> None:
+        """A path in body coordinates: ``("M", x, y)``, ``("L", x, y)``, ``("A", r, x, y, sweep)`` and ``("Z",)``."""
+        d = []
+        for c in cmds:
+            if c[0] in ("M", "L"):
+                d.append(f"{c[0]}{_f(self._X(c[1]))} {_f(self._Y(c[2]))}")
+                self._grow(c[2])
+            elif c[0] == "A":
+                d.append(f"A{_f(c[1])} {_f(c[1])} 0 0 {int(c[4])} {_f(self._X(c[2]))} {_f(self._Y(c[3]))}")
+                self._grow(c[3])
+            elif c[0] == "Z":
+                d.append("Z")
+            else:
+                raise ValueError(f"figkit path: unknown command {c[0]!r}")
+        st = f' stroke="{C(stroke)}" stroke-width="{_f(sw)}" stroke-linecap="{cap}" stroke-linejoin="{join}"' \
+            if stroke else ""
+        self._put(layer, f'<path d="{" ".join(d)}" fill="{C(fill) if fill else "none"}"{st}/>')
 
     # ------------------------------------------------------------------ building blocks
 

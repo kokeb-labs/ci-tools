@@ -67,6 +67,7 @@ repository links, figures and generated regions resolve as they would with a roo
 | `kokeb_mkdocs_theme/plugin.py` | Defaults, Markdown extensions, validation, build-input exclusion, page checks |
 | `kokeb_mkdocs_theme/hooks.py` | Repository links to GitHub, API links, figure embeds, raw-HTML rebase, image and alt-text gate |
 | `kokeb_mkdocs_theme/figkit/` | Code-sourced SVG figures, light and dark from one layout, contrast-checked |
+| `kokeb_mkdocs_theme/hardware/` | Chip pinout, block diagram and application circuits from `docs/hardware.yml`, the grid router, the KiCad netlist export |
 | `kokeb_mkdocs_theme/gen.py`, `generators/` | `<!-- generated: name -->` regions; built in: `examples` (from `examples/*/app_config.yml`) |
 | `kokeb_mkdocs_theme/screenshots.py` | Phone / desktop, light / dark screenshots of a built site |
 | `kokeb_mkdocs_theme/publish.py` | `publish-root`: an unversioned site as the whole deployment branch |
@@ -78,7 +79,8 @@ repository links, figures and generated regions resolve as they would with a roo
 kokeb-docs [-f CONFIG] COMMAND        CONFIG: the site configuration (default: nearest mkdocs.yml or _config/mkdocs.yml)
 kokeb-docs figures [--check] [ids]   build (or check) docs/diagrams/figures/*.py
 kokeb-docs gen [--check|--list]      fill (or check) generated regions (built-in + tools/docs/generators/)
-kokeb-docs check                     both checks, as CI runs them
+kokeb-docs hardware [--check]        validate docs/hardware.yml; --kicad-netlist OUT exports a circuit
+kokeb-docs check                     all checks, as CI runs them
 kokeb-docs screenshots SITE OUT      needs the [screenshots] extra and `playwright install chromium`
 kokeb-docs pages SITE                the pages CI audits
 kokeb-docs publish-root SITE         commit SITE as the whole deployment branch (unversioned sites)
