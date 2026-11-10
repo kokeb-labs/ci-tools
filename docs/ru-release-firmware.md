@@ -121,7 +121,7 @@ in Debug and Release overwrite each other, and could pass GitHub's limit of 1,00
 ### Check a download
 
 ```bash
-gh release download v1.2.0 -R kokeb-labs/driver-as5047u -D v1.2.0
+gh release download v1.2.0 -R kokeb-labs-drivers/driver-as5047u -D v1.2.0
 cd v1.2.0 && sha256sum -c SHA256SUMS        # macOS: shasum -a 256 -c SHA256SUMS
 ```
 
