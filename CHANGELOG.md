@@ -15,6 +15,22 @@ that heading.
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-11-10
+
+### Added
+
+- Chip hardware diagrams in the theme package (`kokeb_mkdocs_theme/hardware/`, guide: `docs/chip-diagrams.md`): a
+  driver describes its chip once in `docs/hardware.yml` (package, every pin with its type, voltage domain, function
+  and driver hook, the internal blocks, reference circuits, a datasheet section and page on every fact) and gets
+  the figures `chip-pinout`, `chip-blocks` and `chip-circuit-<id>` (light and dark, drawn by a pure-Python
+  orthogonal router with real schematic symbols, each MCU wire labelled with the port hook that drives it), the
+  generated regions `chip-pins` and `chip-parts`, and `kokeb-docs hardware`: `--check` validates the schema, pin
+  numbers, citations, hooks (against the port header when `source` and `symbol` are given) and every circuit
+  endpoint, `--kicad-netlist OUT --circuit ID` exports a circuit as a deterministic KiCad netlist, `--svg DIR`
+  writes the figures anywhere. `kokeb-docs check` runs the hardware check first, and `kokeb-docs figures --check`
+  drift-checks the chip figures with the others. The template site shows the fictional XMPL100.
+- figkit: `Fig.circle()`, `Fig.path()` and `Fig.text(rotate=-90)`.
+
 ## [1.14.2] - 2026-11-10
 
 ### Fixed

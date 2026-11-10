@@ -42,6 +42,7 @@ nav:
       - Platform guide: docs-platform.md
       - Migrating to MkDocs: MIGRATING-TO-MKDOCS.md
       - Style guide: DOCS-STYLE-GUIDE.md
+      - Chip diagrams: chip-diagrams.md
   - Reference:
       - How this repository tests itself: self-ci.md
       - Figures: diagrams/index.md

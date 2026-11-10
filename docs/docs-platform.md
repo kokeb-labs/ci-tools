@@ -11,6 +11,7 @@ The pieces every Kokeb Labs documentation site is built from, where each one liv
 | Template | [`templates/mkdocs-site`](../templates/mkdocs-site/mkdocs.yml) | The skeleton of a driver site; the self-CI builds it |
 | Migration tool | [`tools/docs-migrate.py`](../tools/docs-migrate.py) | The mechanical move from Jekyll, with a `--check` dry run |
 | Guides | [Migrating to MkDocs](MIGRATING-TO-MKDOCS.md), [Style guide](DOCS-STYLE-GUIDE.md) | The procedure, and what the pages contain |
+| Chip diagrams | [`kokeb_mkdocs_theme/hardware`](chip-diagrams.md) | Pinout, block diagram, application circuits, pin table and KiCad netlist from one `docs/hardware.yml` |
 
 A repository carries no CSS, templates, hooks or requirements file for its site. The workflow installs the theme
 package from its own commit, so a caller pinned to `@v1` builds with the theme released in `v1`.
@@ -51,7 +52,8 @@ Markdown extensions, strict validation and the version selector.
 | --- | --- |
 | `kokeb-docs figures [--check]` | Builds (or checks) the figkit figures under `docs/diagrams/figures/` |
 | `kokeb-docs gen [--check]` | Fills (or checks) `<!-- generated: name -->` regions; repository generators live in `tools/docs/generators/` |
-| `kokeb-docs check` | Both checks, as CI runs them |
+| `kokeb-docs hardware [--check]` | Validates `docs/hardware.yml`; `--kicad-netlist OUT --circuit ID` exports a circuit, `--svg DIR` writes the chip figures anywhere ([Chip diagrams](chip-diagrams.md)) |
+| `kokeb-docs check` | All three checks, as CI runs them: the hardware file first, then the figures (the chip figures included) and the regions |
 | `kokeb-docs screenshots SITE OUT` | Phone and desktop screenshots, light and dark (needs the `[screenshots]` extra) |
 | `kokeb-docs publish-root SITE` | Commits a built site as the whole deployment branch (unversioned sites) |
 
