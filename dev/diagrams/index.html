@@ -917,6 +917,8 @@
       
         
       
+        
+      
     
     
     
@@ -1181,13 +1183,13 @@ committed figure no longer matches the code. Each figure below lists the files i
 <details class="kb-figure-desc">
 <summary>Figure description and sources</summary>
 <p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
-<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/9ea4e1d302165af241e6669009eac30110fd8ee0/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/9ea4e1d302165af241e6669009eac30110fd8ee0/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/9ea4e1d302165af241e6669009eac30110fd8ee0/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
+<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
 </details>
-<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/9ea4e1d302165af241e6669009eac30110fd8ee0/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
+<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
 <p>Drawn from:</p>
 <ul>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/9ea4e1d302165af241e6669009eac30110fd8ee0/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/9ea4e1d302165af241e6669009eac30110fd8ee0/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/348106da12af26f47dbb01d20d87ac09439c1117/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
 </ul>
 
 

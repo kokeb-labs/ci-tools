@@ -16,7 +16,7 @@
         <link rel="prev" href="../MIGRATING-TO-MKDOCS/">
       
       
-        <link rel="next" href="../self-ci/">
+        <link rel="next" href="../chip-diagrams/">
       
       
         
@@ -919,6 +919,8 @@
       
         
       
+        
+      
     
     
     
@@ -1165,6 +1167,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#chip-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chip hardware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#how-a-figure-reads" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1311,6 +1324,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chip-diagrams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chip diagrams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1484,6 +1525,17 @@
   
     <nav class="md-nav" aria-label="Figures">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chip-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chip hardware
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#how-a-figure-reads" class="md-nav__link">
@@ -1808,7 +1860,27 @@ driver uses. A board uses <code>class="kb-chip kb-chip--board"</code> with MCU, 
   refuses text under 4.5:1 contrast in either theme, overlaps and missing alt text; <code>kokeb-docs figures --check</code>
   fails CI when the code changed and the figure did not. Embed with <code>&lt;!-- figure: &lt;id&gt; --&gt;</code> / <code>&lt;!-- /figure --&gt;</code>.</li>
 <li><strong>Mermaid</strong> for sequences and state machines.</li>
+<li><strong>Chip figures</strong> (pinout, block diagram, application circuit) are not written as modules: they are drawn from
+  <code>docs/hardware.yml</code> (<a href="#chip-hardware">Chip hardware</a>).</li>
 </ul>
+<h3 id="chip-hardware">Chip hardware<a class="headerlink" href="#chip-hardware" title="Permanent link">&para;</a></h3>
+<p>Every driver describes its chip once, in <code>docs/hardware.yml</code> (<a href="../chip-diagrams/">Chip diagrams</a>), and its Hardware
+page shows, in this order:</p>
+<ol>
+<li><strong>The pinout</strong> (<code>&lt;!-- figure: chip-pinout --&gt;</code>): the package from the top, pins on the sides and in the order
+   of the datasheet, pin 1 marked, coloured by electrical type, each pin's port hook beside it.</li>
+<li><strong>The pin table</strong> (<code>&lt;!-- generated: chip-pins --&gt;</code>): pin, name, type and domain, function, driver hook, what to
+   do when unused, datasheet section and page. No hand-written pin table next to it.</li>
+<li><strong>The block diagram</strong> (<code>&lt;!-- figure: chip-blocks --&gt;</code>), from the datasheet's own, with the pins that reach each
+   block.</li>
+<li><strong>The application circuit</strong> (<code>&lt;!-- figure: chip-circuit-&lt;id&gt; --&gt;</code>) and its parts
+   (<code>&lt;!-- generated: chip-parts --&gt;</code>): MCU, supplies, decoupling, pull-ups, loads and sense resistors as schematic
+   symbols, every MCU wire labelled with the hook that drives it (<code>GpioSet(CtrlPin::Reset)</code>). A second circuit
+   (the minimal wiring, a variant) is a second entry under <code>circuits</code>.</li>
+</ol>
+<p>Every fact cites the datasheet section and printed page. A value the datasheet does not give (a pull-up chosen by
+the application, an example load) carries <code>unverified</code> with the reason, and the page shows it as such. The
+reference circuit can be exported for a board design with <code>kokeb-docs hardware --kicad-netlist</code>.</p>
 <h3 id="how-a-figure-reads">How a figure reads<a class="headerlink" href="#how-a-figure-reads" title="Permanent link">&para;</a></h3>
 <p>Most confusing diagrams mix up what an arrow means or which way to read. Every figure follows these rules:</p>
 <ul>
@@ -1872,7 +1944,7 @@ cells short; long prose goes under the table.</p>
 <tr>
 <td>Hardware</td>
 <td><code>hardware.md</code></td>
-<td>Pin table(s) with directions; control pins; bus settings table (mode, speed, frame, timing); a timing diagram or Mermaid sequence for the protocol; power ranges; errata that affect the host; evaluation boards; reference documents table</td>
+<td>The chip figures and the pin table from <code>docs/hardware.yml</code> (<a href="#chip-hardware">below</a>): pinout, generated pin table, block diagram, application circuit and its parts; control pins; bus settings table (mode, speed, frame, timing); a timing diagram or Mermaid sequence for the protocol; power ranges; errata that affect the host; evaluation boards; reference documents table</td>
 </tr>
 <tr>
 <td>Architecture</td>
@@ -1988,7 +2060,7 @@ duplicated API tables (that is the site's job).</p>
 <tr>
 <td><code>kokeb-docs check</code></td>
 <td>PR CI</td>
-<td>a figure or generated region that no longer matches the code</td>
+<td>an invalid <code>docs/hardware.yml</code>; a figure or generated region that no longer matches the code</td>
 </tr>
 <tr>
 <td>Host build of <code>tests/docs/</code></td>
@@ -2066,13 +2138,13 @@ duplicated API tables (that is the site's job).</p>
         
         
           
-          <a href="../self-ci/" class="md-footer__link md-footer__link--next" aria-label="Next: How this repository tests itself">
+          <a href="../chip-diagrams/" class="md-footer__link md-footer__link--next" aria-label="Next: Chip diagrams">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                How this repository tests itself
+                Chip diagrams
               </div>
             </div>
             <div class="md-footer__button md-icon">
