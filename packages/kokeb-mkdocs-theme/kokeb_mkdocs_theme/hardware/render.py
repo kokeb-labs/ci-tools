@@ -12,7 +12,7 @@ from __future__ import annotations
 import math
 
 from ..figkit import Box, Fig, text_width
-from .common import UNVERIFIED_MARK, layout_problems, unverified_note
+from .common import UNVERIFIED_MARK, seg_hits, layout_problems, unverified_note
 from .model import PIN_TYPES, Hardware, Pin
 
 MONO = True
@@ -313,8 +313,8 @@ def blocks(hw: Hardware) -> Fig:
                     fig.text(ex + 14, yy + lsz * 0.36, pin_text(name), size=lsz, weight=600, mono=MONO)
                 pin_ends.append((b.id, name, (ex + (7 if side == "left" else -7), yy), side, tone))
     # Ports on block sides. A pin enters level with its pad. A link leaves and enters at the same height (or the
-    # same x, between stacked blocks) when the two sides overlap, so it runs straight; ports on one side stay 3G
-    # apart.
+    # same x, between stacked blocks) when the two sides overlap, so it runs straight. Ports on one side stay 3G
+    # apart; links into the same face spread over it (a share of the face each), each toward its other end.
     def port(bid: str, side: str, v: float):
         bx = boxes[bid]
         if side == "left":
@@ -330,28 +330,46 @@ def blocks(hw: Hardware) -> Fig:
         lo, hi = (bx.y, bx.b) if side in ("left", "right") else (bx.x, bx.r)
         return list(range(math.ceil((lo + G) / G) * G, math.floor((hi - G) / G) * G + 1, G))
 
-    used_at: dict[tuple[str, str], list[float]] = {}
+    used_at: dict[tuple[str, str], list[tuple[float, bool]]] = {}  # (block, side) -> [(offset, is a link)]
     where: dict = {}
     for k, (bid, name, pt, side, tone) in enumerate(pin_ends):
         sp = span(bid, side)
         v = min(max(pt[1], sp[0]), sp[-1])
         where[("pin", k, 1)] = port(bid, side, v)
-        used_at.setdefault((bid, side), []).append(v)
+        used_at.setdefault((bid, side), []).append((v, False))
+
+    def faces(ln) -> tuple[str, str]:
+        a, b = boxes[ln.src], boxes[ln.dst]
+        dx, dy = b.cx - a.cx, b.cy - a.cy
+        if abs(dx) >= abs(dy) and not (a.x < b.cx < a.r):
+            return ("right", "left") if dx > 0 else ("left", "right")
+        return ("bottom", "top") if dy > 0 else ("top", "bottom")
+
+    sides_of = [faces(ln) for ln in hw.links]
+    on_face: dict[tuple[str, str], int] = {}
+    for ln, (sa, sb) in zip(hw.links, sides_of):
+        on_face[(ln.src, sa)] = on_face.get((ln.src, sa), 0) + 1
+        on_face[(ln.dst, sb)] = on_face.get((ln.dst, sb), 0) + 1
+
+    def link_gap(bid: str, side: str) -> float:
+        sp = span(bid, side)
+        return max(3 * G, math.floor((sp[-1] - sp[0] + 2 * G) / (on_face[(bid, side)] + 1) / G) * G)
 
     def free(bid: str, side: str, v: float) -> bool:
-        return all(abs(v - u) >= 3 * G for u in used_at.get((bid, side), []))
+        gap = link_gap(bid, side)
+        return all(abs(v - u) >= (gap if link else 3 * G) for u, link in used_at.get((bid, side), []))
 
     def centre(bid: str, side: str) -> float:
         bx = boxes[bid]
         return bx.cy if side in ("left", "right") else bx.cx
 
+    def nearest(cands: list[int], bid: str, side: str, toward: float) -> int:
+        # Closest to the middle of the face; of two equally close, the one toward the link's other end.
+        c = centre(bid, side)
+        return min(cands, key=lambda v: (abs(v - c), abs(v - toward), v))
+
     for i, ln in enumerate(hw.links):
-        a, b = boxes[ln.src], boxes[ln.dst]
-        dx, dy = b.cx - a.cx, b.cy - a.cy
-        if abs(dx) >= abs(dy) and not (a.x < b.cx < a.r):
-            sa, sb = ("right", "left") if dx > 0 else ("left", "right")
-        else:
-            sa, sb = ("bottom", "top") if dy > 0 else ("top", "bottom")
+        sa, sb = sides_of[i]
         both = [v for v in span(ln.src, sa) if v in set(span(ln.dst, sb)) and free(ln.src, sa, v)
                 and free(ln.dst, sb, v)]
         mid = (centre(ln.src, sa) + centre(ln.dst, sb)) / 2
@@ -360,12 +378,12 @@ def blocks(hw: Hardware) -> Fig:
         else:
             ca = [v for v in span(ln.src, sa) if free(ln.src, sa, v)] or span(ln.src, sa)
             cb = [v for v in span(ln.dst, sb) if free(ln.dst, sb, v)] or span(ln.dst, sb)
-            va = min(ca, key=lambda v: (abs(v - centre(ln.src, sa)), v))
-            vb = min(cb, key=lambda v: (abs(v - centre(ln.dst, sb)), v))
+            va = nearest(ca, ln.src, sa, centre(ln.dst, sb))
+            vb = nearest(cb, ln.dst, sb, centre(ln.src, sa))
         where[("link", i, 0)] = port(ln.src, sa, va)
         where[("link", i, 1)] = port(ln.dst, sb, vb)
-        used_at.setdefault((ln.src, sa), []).append(va)
-        used_at.setdefault((ln.dst, sb), []).append(vb)
+        used_at.setdefault((ln.src, sa), []).append((va, True))
+        used_at.setdefault((ln.dst, sb), []).append((vb, True))
     wires = []
     # Every port is a terminal before anything is routed, so no wire runs through a port drawn later.
     pin_cells, link_cells = [], []
@@ -395,7 +413,7 @@ def blocks(hw: Hardware) -> Fig:
         fig.line(pts, color=f"{tone}.strong", sw=1.8, layer="edge")
         fig.circle(edge[0], edge[1], 3, fill=f"{tone}.strong", layer="label")
         wires += list(zip(pts, pts[1:]))
-    paths = []
+    paths = []  # (link, its points)
     for i, ln in enumerate(hw.links):
         (p0, s0, e0), (p1, s1, e1) = where[("link", i, 0)], where[("link", i, 1)]
         a, b = link_cells[i]
@@ -407,12 +425,25 @@ def blocks(hw: Hardware) -> Fig:
         # Pull the arrow ends 4 px off the cards, as figkit's connect() does.
         paths.append((ln, _inset(_dedupe([e0] + _corners(grid, f"link:{i}", a, b) + [e1]), 4)))
     taken = list(boxes.values())
-    for ln, pts in paths:
+    link_labels = []  # (label box, text, index in paths)
+    for k, (ln, pts) in enumerate(paths):
         fig.edge(pts, tone="rail", arrow="both" if ln.both else "end")
+    for k, (ln, pts) in enumerate(paths):
         if ln.label:
             text = ln.label + (UNVERIFIED_MARK if ln.unverified else "")
-            box = _label_spot(fig, pts, text, taken)
+            others = wires + [s for j, (_l, q) in enumerate(paths) if j != k for s in zip(q, q[1:])]
+            box = _label_spot(fig, pts, text, taken, others)
             taken.append(box)
+            link_labels.append((box, text, k))
+    # A line through a label it does not belong to reads as part of that label's link.
+    for box, text, k in link_labels:
+        inner = Box(box.x + 1, box.y + 1, box.w - 2, box.h - 2)
+        for j, (ln, q) in enumerate(paths):
+            if j != k and any(seg_hits(_seg_box(a, b), inner) for a, b in zip(q, q[1:])):
+                fig.problem(f"the link {ln.src} to {ln.dst} runs through the label {text!r}")
+        if any(seg_hits(_seg_box(a, b), inner) for a, b in wires):
+            fig.problem(f"a pin wire runs through the label {text!r}")
+    fig.links = paths  # for the tests
     fig._grow(rb)
     unverified_note(fig, ([f"the diagram: {hw.blocks_unverified}"] if hw.blocks_unverified else [])
                     + [f"{b.label}: {b.unverified}" for b in hw.blocks if b.unverified]
@@ -426,20 +457,38 @@ def blocks(hw: Hardware) -> Fig:
     return fig
 
 
-def _label_spot(fig: Fig, pts, text: str, taken: list[Box]) -> Box:
-    """Put an edge label on the middle of a segment of its edge, longest segment first, where it covers no card and
-    no other label; the middle of the longest segment when no place is free (figkit then reports it)."""
+def _label_spot(fig: Fig, pts, text: str, taken: list[Box], lines: list) -> Box:
+    """Put an edge label on its edge, where it covers no card, no other label and no other line (``lines``: the
+    segments of the other links and the pin wires). On the middle of a segment first, longest segment first; then
+    beside a segment; the middle of the longest segment when no place is free (the figure then reports it)."""
     size = fig.k["edge_label"]
     w, h = text_width(text, size, 500) + 12, size + 8
     segs = sorted(zip(pts, pts[1:]), key=lambda s: -(abs(s[1][0] - s[0][0]) + abs(s[1][1] - s[0][1])))
+
+    def ok(cx: float, cy: float) -> bool:
+        box = Box(cx - w / 2 - 4, cy - h / 2 - 4, w + 8, h + 8)
+        return not any(box.overlaps(t) for t in taken) and not any(
+            seg_hits(_seg_box(a, b), box) for a, b in lines)
+
+    spots = []
+    for frac in (0.5, 0.3, 0.7):
+        spots += [(x0 + (x1 - x0) * frac, y0 + (y1 - y0) * frac) for (x0, y0), (x1, y1) in segs]
     for frac in (0.5, 0.3, 0.7):
         for (x0, y0), (x1, y1) in segs:
             cx, cy = x0 + (x1 - x0) * frac, y0 + (y1 - y0) * frac
-            box = Box(cx - w / 2 - 4, cy - h / 2 - 4, w + 8, h + 8)
-            if not any(box.overlaps(t) for t in taken):
-                return fig.edge_label(cx, cy, text)
+            if abs(x1 - x0) < 0.5:  # vertical: left or right of the line, clear of the arrow head
+                spots += [(cx - w / 2 - 6, cy), (cx + w / 2 + 6, cy)]
+            else:
+                spots += [(cx, cy - h / 2 - 6), (cx, cy + h / 2 + 6)]
+    for cx, cy in spots:
+        if ok(cx, cy):
+            return fig.edge_label(cx, cy, text)
     (x0, y0), (x1, y1) = segs[0]
     return fig.edge_label((x0 + x1) / 2, (y0 + y1) / 2, text)
+
+
+def _seg_box(a, b) -> Box:
+    return Box(min(a[0], b[0]), min(a[1], b[1]), abs(b[0] - a[0]), abs(b[1] - a[1]))
 
 
 def _corners(grid, net: str, a, b) -> list[tuple[float, float]]:

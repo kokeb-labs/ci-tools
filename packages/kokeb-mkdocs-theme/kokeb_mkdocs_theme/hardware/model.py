@@ -72,9 +72,9 @@ PIN_TYPES: dict[str, tuple[str, str]] = {
     "digital-out": ("green", "digital out"),
     "digital-io": ("violet", "digital in/out"),
     "open-drain": ("amber", "open drain"),
-    "analog": ("brand", "analog"),
-    "power-out": ("brand", "power output"),
-    "nc": ("slate", "not connected"),
+    "analog": ("magenta", "analog"),
+    "power-out": ("brown", "power output"),
+    "nc": ("stone", "not connected"),
 }
 HOOK_KINDS = ("spi", "i2c", "uart", "gpio-out", "gpio-in", "irq", "other")
 NET_KINDS = ("signal", "supply", "ground")
@@ -94,8 +94,11 @@ TWO_PIN = {
 PIN_ALIASES = {"A": "1", "K": "2", "+": "1", "-": "2"}
 PART_KINDS = (*TWO_PIN, "chip", "mcu", "ic", "connector")
 LAYOUTS = ("dual", "quad")
-_DUAL = re.compile(r"^(H?T?V?S?SOP|SOIC|SO|DSO|PDIP|DIP|SOT|TSOT|DFN|SON|WSON|USON|MSOP|TSSOP|HTSSOP|VSSOP|SSOP|PSOP)")
-_QUAD = re.compile(r"^(H?W?V?W?QFN|UQFN|TQFN|VQFN|HWQFN|QFP|LQFP|TQFP|PQFP|MLF|LGA)")
+# Package names: a vendor prefix (Infineon's PG-DSO-36, P-DSO-20), then up to three letters of variant (thin,
+# shrink, heat-sink, very thin: TSSOP, HTSSOP, TSDSO, HVQFN, WQFN, LQFP) before the family.
+_VENDOR = re.compile(r"^(?:PG|P)-")
+_DUAL = re.compile(r"^[A-Z]{0,3}(?:SOIC|SOP|DSO|DIP|SON|DFN|SOT|SO)")
+_QUAD = re.compile(r"^[A-Z]{0,3}(?:QFN|QFP|MLF|LGA|LFCSP)")
 
 
 class HardwareError(Exception):
@@ -342,7 +345,7 @@ def _documents(root: pathlib.Path, data: dict, ctx: _Ctx) -> dict[str, dict]:
 
 
 def _guess_layout(ptype: str) -> str:
-    t = ptype.upper().replace(" ", "")
+    t = _VENDOR.sub("", ptype.upper().replace(" ", ""))
     if _QUAD.match(t):
         return "quad"
     if _DUAL.match(t):

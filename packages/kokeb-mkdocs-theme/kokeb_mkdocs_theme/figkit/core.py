@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import math
 import pathlib
+import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from xml.sax.saxutils import escape
@@ -80,6 +81,50 @@ def wrap(s: str, width: float, size: float, weight: int = 400, mono: bool = Fals
                 cur = cand
         out.append(cur)
     return out
+
+
+def _wrap_at_breaks(s: str, width: float, size: float, weight: int = 400) -> list[str]:
+    """Like ``wrap``, but a word too wide for a line on its own also breaks after a ``/`` or a ``-`` in it."""
+    atoms: list[tuple[str, str]] = []  # (glue before, piece)
+    for word in s.split(" "):
+        pieces = [word]
+        if text_width(word, size, weight) > width:
+            pieces = [p for p in re.split(r"(?<=[/-])", word) if p]
+        atoms += [(" " if k == 0 else "", p) for k, p in enumerate(pieces)]
+    out: list[str] = []
+    cur = ""
+    for glue, piece in atoms:
+        cand = f"{cur}{glue}{piece}" if cur else piece
+        if cur and text_width(cand, size, weight) > width:
+            out.append(cur)
+            cur = piece
+        else:
+            cur = cand
+    out.append(cur)
+    return out
+
+
+def fit_title(s: str, width: float, size: float, min_size: float, weight: int = 700) -> tuple[list[str], float]:
+    """Lines and size for a title in ``width``: word-wrapped; else also broken after ``/`` and ``-``; else shrunk
+    in half-pixel steps down to ``min_size``. When nothing fits, the broken lines at ``size`` (the caller reports
+    them)."""
+
+    def fits(lines: list[str], sz: float) -> bool:
+        return all(text_width(t, sz, weight) <= width + 0.5 for t in lines)
+
+    lines = wrap(s, width, size, weight)
+    if fits(lines, size):
+        return lines, size
+    broken = _wrap_at_breaks(s, width, size, weight)
+    if fits(broken, size):
+        return broken, size
+    sz = size - 0.5
+    while sz >= min_size - 1e-9:
+        lines = _wrap_at_breaks(s, width, sz, weight)
+        if fits(lines, sz):
+            return lines, sz
+        sz -= 0.5
+    return broken, size
 
 
 def _f(v: float) -> str:
@@ -398,15 +443,16 @@ class Fig:
         fill = f"{tone}.tint" if accent else "card"
         inner_w = w - 2 * pad - 6
         tag_w = self.pill_width(tag) + 8 if tag else 0
-        t_lines = wrap(title, inner_w - tag_w, k["card_title"], 700)
+        # A long word breaks after a / or a -, or the title shrinks, before it is a problem.
+        t_lines, tsz = fit_title(title, inner_w - tag_w, k["card_title"], k["card_body"])
         for t in t_lines:
-            if text_width(t, k["card_title"], 700) > inner_w - tag_w + 0.5:
+            if text_width(t, tsz, 700) > inner_w - tag_w + 0.5:
                 self.problem(f"card title {t!r} is wider than its card")
         s_lines = wrap(sub, inner_w, k["small"]) if sub else []
         body = []
         for ln in lines:
             body += wrap(ln, inner_w, k["mono"] if mono else k["card_body"], 400, mono)
-        th, sh, bh = k["card_title"] * 1.3, k["small"] * 1.35, (k["mono"] if mono else k["card_body"]) * 1.45
+        th, sh, bh = tsz * 1.3, k["small"] * 1.35, (k["mono"] if mono else k["card_body"]) * 1.45
         need = pad + len(t_lines) * th + (len(s_lines) * sh + 2 if s_lines else 0) + (6 + len(body) * bh if body else 0)
         need += pad - 4
         hh = h if h is not None else math.ceil(need)
@@ -422,11 +468,11 @@ class Fig:
         if center:
             tx, anchor = x + w / 2 + 3, "middle"
         if center and not (s_lines or body):
-            cy = y + (hh - len(t_lines) * th) / 2 + k["card_title"] * 0.95
+            cy = y + (hh - len(t_lines) * th) / 2 + tsz * 0.95
         else:
-            cy = y + pad + k["card_title"] * 0.85
+            cy = y + pad + tsz * 0.85
         for t in t_lines:
-            self.text(tx, cy, t, size=k["card_title"], weight=700, color=f"{tone}.text" if accent else "ink", bg=fill,
+            self.text(tx, cy, t, size=tsz, weight=700, color=f"{tone}.text" if accent else "ink", bg=fill,
                       anchor=anchor)
             cy += th
         for s in s_lines:

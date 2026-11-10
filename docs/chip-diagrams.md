@@ -72,18 +72,19 @@ The template site's [`docs/hardware.yml`](../templates/mkdocs-site/docs/hardware
 | `chip` | yes | The part, as the docs name it |
 | `documents` | no | `{id, name, pdf, page_offset}` per document; leave it out when `docs/datasheets.yml` lists them |
 | `refs` | no | Named citations `{doc, section, page}`; `section` is the datasheet's own heading, `page` its printed page |
-| `package` | yes | `type` (`SOIC-8`, `TSSOP-24`, `QFN-24`), `pins` (the exposed pad not counted), `exposed_pad`, `ref`; `layout` (`dual`, `quad`) is guessed from the type; `sides` lists the pins of each side counter-clockwise (left top to bottom, bottom left to right, right bottom to top, top right to left) for a package the layout does not describe (`SOT-23-5`) |
+| `package` | yes | `type` (`SOIC-8`, `TSSOP-24`, `QFN-24`), `pins` (the exposed pad not counted), `exposed_pad`, `ref`; `layout` (`dual`, `quad`) is guessed from the type, vendor forms included (`PG-DSO-36`, `HTSSOP-28`, `HVQFN-24`, `TQFN-38`); `sides` lists the pins of each side counter-clockwise (left top to bottom, bottom left to right, right bottom to top, top right to left) for a package the layout does not describe (`SOT-23-5`) |
 | `hooks` | yes | The port hooks a pin can map to: `id`, `call` (as the reader writes it), `kind` (`spi`, `i2c`, `uart`, `gpio-out`, `gpio-in`, `irq`, `other`); with `source` and `symbol` the check fails when the symbol is no longer in that header |
 | `pins` | yes | One entry per package pin: `number` (or `EP` for the exposed pad), `name`, `type`, `domain` (the supply that sets its levels), `function`, `hook`, `unused` (what to do with it when unused), `ref` |
 | `block_diagram` | no | `ref`, `blocks` (`id`, `label`, `detail`, `at: [column, row]`, `pins`, `tone`, `side`), `links` (`from`, `to`, `label`, `both`) |
 | `circuits` | no | `id` (names the figure), `title`, `description`, `ref`, `parts`, `nets`, `unused` |
 
 Pin `type` is one of `power`, `ground`, `bus`, `digital-in`, `digital-out`, `digital-io`, `open-drain`, `analog`,
-`power-out` (a load output) and `nc`; each has a colour in the pinout. A part `kind` is `chip` (the documented
-chip, exactly one per circuit), `mcu`, `ic`, `connector` (these list their `pins`), or a two-pin part: `resistor`,
-`capacitor`, `polarized-capacitor`, `inductor`, `solenoid`, `diode`, `zener`, `led`, `crystal`, `fuse`, whose pins
-are `1` and `2` (`A`/`K` and `+`/`-` work too). A net `kind` is `signal` (the default), `supply` or `ground`. A
-node is `PART.PIN`; pins of the chip that share a name (GND on several package pins) are one node.
+`power-out` (a load output) and `nc`; each has its own colour in the pinout, told apart in both themes. A part
+`kind` is `chip` (the documented chip, exactly one per circuit), `mcu`, `ic`, `connector` (these list their
+`pins`), or a two-pin part: `resistor`, `capacitor`, `polarized-capacitor`, `inductor`, `solenoid`, `diode`,
+`zener`, `led`, `crystal`, `fuse`, whose pins are `1` and `2` (`A`/`K` and `+`/`-` work too). A net `kind` is
+`signal` (the default), `supply` or `ground`. A node is `PART.PIN`; pins of the chip that share a name (GND on
+several package pins) are one node.
 
 Every pin, block, link, part or net may carry `unverified: <why>`: a fact that could not be confirmed in the
 datasheet. The table gives it a footnote and the figures an asterisk with the reason under the figure, so a guess
@@ -99,8 +100,10 @@ never reads as a fact.
 - A block that names an unknown pin, two blocks in one cell, a link to an unknown block.
 - A circuit node whose part or pin does not exist; a pin on two nets; a net with fewer than two nodes; a pin on no
   net that is not listed under `unused` (pins of type `nc` excepted).
-- A figure with figkit problems: text under 4.5:1 contrast in either theme, overlapping text, a wire through a part
-  or a label, a pin drawn on the wrong side of the package.
+- A figure with figkit problems: text under 4.5:1 contrast in either theme, overlapping text, text on any stroke of
+  a symbol (a part, a supply or ground, a pin stub, a no-connect cross), a wire through a part or a label, a link
+  line through another link's label, a pin drawn on the wrong side of the package. A block title word too wide for
+  its card first breaks after a `/` or `-` and then shrinks; only a word that still does not fit is a problem.
 
 ## How the figures are drawn
 
@@ -110,10 +113,12 @@ PyYAML, no network and no browser; the same file always gives the same bytes.
 - **Pinout.** Pins counter-clockwise from pin 1, the way datasheets number them: on a dual package down the left
   and up the right, on a quad package also along the bottom and the top (names read bottom to top there).
 - **Block diagram.** Blocks sit in the grid cells their `at` names; pins stand on the chip outline, left or right of
-  their block. Links and pin wires are routed like the circuit's wires.
+  their block. Links and pin wires are routed like the circuit's wires. Links into one face of a block share it out,
+  each on the side toward its other end; a link label sits on its own line, or beside it, never on another line.
 - **Circuit.** Parts are placed by their role, the way reference designs are drawn: supply pins up with their
   decoupling and supply symbol, ground pins down, MCU-facing pins on the left with the MCU level with them, pull-ups
-  above the wires, loads in lanes to the right, connectors at the far right. A part no pattern places goes in a row
+  above the wires, loads in lanes to the right (each lane as tall as its parts and their labels draw), connectors at
+  the far right. A part no pattern places goes in a row
   under the circuit. Supplies and grounds are symbols where they are used.
 - **Router.** Every other wire is routed by A* on an 8 px grid: orthogonal, never through a part body or a label,
   crossings only at right angles and never at a bend, junction dots where three wires meet and never four. Bends

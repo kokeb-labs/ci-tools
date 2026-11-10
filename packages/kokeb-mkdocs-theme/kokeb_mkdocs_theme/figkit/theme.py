@@ -43,6 +43,11 @@ TONES: dict[str, dict[str, tuple[str, str, str, str]]] = {
     "rose": {"light": ("#DB2752", "#9F1239", "#FFEEF2", "#F5BECB"), "dark": ("#FB7185", "#FECDD3", "#321820", "#6E3141")},
     "green": {"light": ("#15803D", "#14532D", "#EAF7EF", "#B2E2C2"), "dark": ("#4ADE80", "#BBF7D0", "#11281A", "#285A3A")},
     "slate": {"light": ("#64748B", "#334155", "#F1F4F8", "#CBD5E1"), "dark": ("#94A3B8", "#E2E8F0", "#1B232E", "#3A4656")},
+    # Three more hues so each chip pin type has its own colour (hardware.model.PIN_TYPES): far enough from the tones
+    # above, and from each other, in both themes. stone is a pale warm grey, for a pin that is not connected.
+    "magenta": {"light": ("#A21CAF", "#86198F", "#FDF0FF", "#F0C6F7"), "dark": ("#F0ABFC", "#F5D0FE", "#2E1533", "#6B2E73")},
+    "brown": {"light": ("#7C4A1E", "#6B3F17", "#F8F1EA", "#DCC3A8"), "dark": ("#D6A26B", "#F1D5B5", "#2A1F14", "#66492C")},
+    "stone": {"light": ("#B5AFA9", "#57534E", "#F6F5F4", "#DDD9D5"), "dark": ("#57534E", "#D6D3D1", "#1F1D1B", "#3F3B37")},
 }
 
 PARTS = ("strong", "text", "tint", "soft")
