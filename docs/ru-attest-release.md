@@ -56,9 +56,9 @@ jobs:
 ## Check a download
 
 ```bash
-gh release download v1.2.0 -R kokeb-labs/driver-as5047u -D v1.2.0 && cd v1.2.0
+gh release download v1.2.0 -R kokeb-labs-drivers/driver-as5047u -D v1.2.0 && cd v1.2.0
 sha256sum -c SHA256SUMS
-gh attestation verify as5047u-1.2.0.tar.gz -R kokeb-labs/driver-as5047u \
+gh attestation verify as5047u-1.2.0.tar.gz -R kokeb-labs-drivers/driver-as5047u \
   --signer-workflow kokeb-labs/ci-tools/.github/workflows/ru-attest-release.yml
 ```
 
