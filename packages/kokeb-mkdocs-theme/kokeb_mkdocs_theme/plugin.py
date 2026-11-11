@@ -3,8 +3,8 @@
 A site's ``mkdocs.yml`` only names the site and the repository; this plugin fills in the rest, so every site has the
 same Markdown dialect, the same validation and the same versioning without copying configuration around:
 
-* **Defaults** (a value the site sets wins): ``site_url`` (``https://<org>.github.io/<repo>/latest/``, the canonical
-  address of every page), ``repo_name``, ``edit_uri`` (``edit/main/docs/``), ``copyright``, ``extra.version``
+* **Defaults** (a value the site sets wins): ``site_url`` (``https://<owner>.github.io/<repo>/latest/``, the canonical
+  address of every page, for a repository of the organisation or of a sibling ``<org>-*`` one), ``repo_name``, ``edit_uri`` (``edit/main/docs/``), ``copyright``, ``extra.version``
   (mike, default ``latest``), ``extra.social`` and ``extra.generator: false``.
 * **Markdown extensions**: snippets (``--8<-- "tests/docs/x.cpp:section"`` includes code the repository compiles,
   paths from the repository root: the folder of ``mkdocs.yml``, or the folder that holds ``docs_dir`` when the
@@ -86,6 +86,12 @@ def _extensions() -> dict[str, dict]:
     }
 
 
+def sibling_org(owner: str, org: str) -> bool:
+    """Whether ``owner`` is ``org`` itself or one of its sibling organisations, named ``<org>-<anything>``."""
+    owner, org = owner.lower(), org.lower()
+    return owner == org or owner.startswith(f"{org}-")
+
+
 def versioned_setting(option: bool | None, org_site: bool) -> bool:
     """Whether the site is versioned: the environment wins, then the plugin option, then the kind of repository."""
     env = os.environ.get("KOKEB_DOCS_VERSIONED", "").strip().lower()
@@ -124,6 +130,10 @@ class KokebPlugin(BasePlugin[KokebConfig]):
             log.warning("theme is %r: use `theme: {name: kokeb}` for the Kokeb Labs look", config.theme.name)
 
         m = re.search(r"github\.com/([^/]+)/([^/#?]+)", config.repo_url or "")
+        # A repository of the organisation or of a sibling organisation (``<org>-drivers``) is published on its own
+        # owner's Pages host: https://<owner>.github.io/<repo>/.
+        if m and sibling_org(m.group(1), org):
+            org = m.group(1).lower()
         org_site = bool(m) and m.group(2).removesuffix(".git").lower() == f"{org}.github.io"
         versioned = versioned_setting(self.config.versioned, org_site)
         self.versioned = versioned

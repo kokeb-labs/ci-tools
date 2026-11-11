@@ -15,6 +15,17 @@ that heading.
 
 ## [Unreleased]
 
+## [1.15.2] - 2026-11-11
+
+### Fixed
+
+- **Docs theme: sibling organisations.** A repository owned by a sibling organisation named `<org>-*` (such as
+  `kokeb-labs-drivers`) now gets the same defaults as one owned by the organisation: `site_url` on its owner's
+  Pages host (`https://<owner>.github.io/<repo>/latest/`), the absolute "Go to the latest version" link of the
+  older-version banner, and the organisation link. Before, these were left unset for such a repository, so the
+  banner link was relative (`../..`), pointed outside the built site and failed the offline link check on every
+  page, and the sitemap and canonical addresses were missing.
+
 ## [1.15.1] - 2026-11-10
 
 ### Fixed
