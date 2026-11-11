@@ -15,7 +15,7 @@ import unittest.mock
 from mkdocs.commands.build import build
 from mkdocs.config import load_config
 
-from kokeb_mkdocs_theme.plugin import versioned_setting
+from kokeb_mkdocs_theme.plugin import sibling_org, versioned_setting
 
 FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
 
@@ -56,6 +56,24 @@ class SiteTest(unittest.TestCase):
         with tmp:
             self.assertEqual(cfg.site_url, "https://kokeb-labs.github.io/driver-example/latest/")
             self.assertEqual(cfg.extra["version"]["provider"], "mike")
+
+    def test_sibling_org_repo_site(self):
+        # A driver in kokeb-labs-drivers is served from that organisation's Pages host; the "latest version" link
+        # of the older-version banner is absolute, so it never points outside the built site.
+        cfg, site, tmp = built("sibling-org-site", {"KOKEB_DOCS_VERSIONED": ""})
+        with tmp:
+            self.assertEqual(cfg.site_url, "https://kokeb-labs-drivers.github.io/driver-example/latest/")
+            self.assertEqual(cfg.extra["kokeb"]["site_root"], "https://kokeb-labs-drivers.github.io/driver-example/")
+            self.assertEqual(cfg.extra["kokeb"]["org_url"], "https://github.com/kokeb-labs-drivers")
+            page = (site / "index.html").read_text()
+            self.assertIn('href="https://kokeb-labs-drivers.github.io/driver-example/"><strong>Go to the latest', page)
+            self.assertNotIn('href="../', page.split("md-banner--warning", 1)[-1].split("</aside>", 1)[0])
+
+    def test_sibling_org_rule(self):
+        self.assertTrue(sibling_org("kokeb-labs", "kokeb-labs"))
+        self.assertTrue(sibling_org("Kokeb-Labs-Drivers", "kokeb-labs"))
+        self.assertFalse(sibling_org("kokeb-labsx", "kokeb-labs"))
+        self.assertFalse(sibling_org("someone-else", "kokeb-labs"))
 
     def test_workflow_switch_unversions_a_repo_site(self):
         cfg, site, tmp = built("repo-site", {"KOKEB_DOCS_VERSIONED": "false"})
