@@ -527,9 +527,10 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$REF_TYPE" = tag ] && [[ "$REF_NAME" =~ ^v[0-9]+\.[0-9]+.*- ]]; then
-            # A pre-release (vX.Y.Z-rc.N) publishes under its own tag and never takes `latest`, nor overwrites the
-            # docs of the minor it leads up to.
-            { echo "version=$REF_NAME"; echo "aliases="; } >> "$GITHUB_OUTPUT"
+            # A pre-release (vX.Y.Z-rc.N) publishes under its own tag and never takes `latest` from a version that
+            # holds it, nor overwrites the docs of the minor it leads up to. When it is the first publish, no
+            # version holds `latest` yet, so it claims it: the site root and the canonical /latest/ links resolve.
+            { echo "version=$REF_NAME"; echo "aliases="; echo "claim_latest=true"; } >> "$GITHUB_OUTPUT"
           elif [ "$REF_TYPE" = tag ] && [[ "$REF_NAME" =~ ^v([0-9]+)\.([0-9]+) ]]; then
             if [ "$RELEASE_VERSION" = minor ]; then
               version="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
@@ -588,7 +589,7 @@ jobs:
             git worktree remove --force "$RUNNER_TEMP/prune"
           fi
           if [ "$CLAIM_LATEST" = true ]; then
-            # Take the latest alias only if no release holds it yet.
+            # Take the latest alias only if no other version holds it yet.
             holder=$(mike list --config-file "$CONFIG" --branch "$BRANCH" 2>/dev/null \
               | grep -E "\[.*\b$LATEST\b.*\]" | awk '{print $1}' || true)
             if [ -z "$holder" ] || [ "$holder" = "$VERSION" ]; then
