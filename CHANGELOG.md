@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.15.3] - 2026-11-11
+
+### Fixed
+
+- **`ru-mkdocs-publish`: a pre-release as the first publish.** When a `vX.Y.Z-rc.N` tag was the first publish of
+  a site, no version held the `latest` alias, so `mike set-default latest` failed and nothing was published. A
+  pre-release now claims `latest` when no other version holds it, as a default-branch publish already does; it
+  never takes `latest` from a version that holds it, and a final release still moves it.
+
 ## [1.15.2] - 2026-11-11
 
 ### Fixed
