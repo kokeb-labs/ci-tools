@@ -1486,7 +1486,7 @@
 <h1 id="ru-release-firmware">ru-release-firmware<a class="headerlink" href="#ru-release-firmware" title="Permanent link">&para;</a></h1>
 <p>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit,
 in public and private repositories.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/c15a1a142d9951293a9de57e6c07956fefef5c42/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/c45a2f171823ee10f1f2a2d26e609716328596bf/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></p>
 <p>It replaces <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a>, with the same inputs and behaviour. The
 difference is one permission: its job asks for <code>actions: read</code> as well as <code>contents: write</code>, so it can find the
 tagged commit's CI run in a private repository.</p>
@@ -1658,7 +1658,7 @@ for <code>tag_name</code> (default: the pushed tag) with generated notes and tho
 1.7.0 did, attached thousands of files (an ESP-IDF build folder holds about 1,500), let files with the same name
 in Debug and Release overwrite each other, and could pass GitHub's limit of 1,000 files per release.</p>
 <h3 id="check-a-download">Check a download<a class="headerlink" href="#check-a-download" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gh<span class="w"> </span>release<span class="w"> </span>download<span class="w"> </span>v1.2.0<span class="w"> </span>-R<span class="w"> </span>kokeb-labs/driver-as5047u<span class="w"> </span>-D<span class="w"> </span>v1.2.0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gh<span class="w"> </span>release<span class="w"> </span>download<span class="w"> </span>v1.2.0<span class="w"> </span>-R<span class="w"> </span>kokeb-labs-drivers/driver-as5047u<span class="w"> </span>-D<span class="w"> </span>v1.2.0
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>v1.2.0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>SHA256SUMS<span class="w">        </span><span class="c1"># macOS: shasum -a 256 -c SHA256SUMS</span>
 </span></code></pre></div>
 <p>Every line must say <code>OK</code>. To flash a firmware zip: unzip it, go to the build folder inside and run

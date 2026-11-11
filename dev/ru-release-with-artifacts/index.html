@@ -1486,7 +1486,7 @@
 <h1 id="ru-release-with-artifacts">ru-release-with-artifacts<a class="headerlink" href="#ru-release-with-artifacts" title="Permanent link">&para;</a></h1>
 <p>Deprecated: use <a href="../ru-release-firmware/"><code>ru-release-firmware</code></a>, which also works in private repositories. This
 one creates a GitHub Release for a tag with the firmware that <code>ru-build</code> built for the same commit.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/c15a1a142d9951293a9de57e6c07956fefef5c42/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/c45a2f171823ee10f1f2a2d26e609716328596bf/.github/workflows/ru-release-with-artifacts.yml"><code>.github/workflows/ru-release-with-artifacts.yml</code></a></p>
 <div class="admonition warning">
 <p class="admonition-title">Fails in private repositories</p>
 <p>Its job asks only for <code>contents: write</code>. In a private repository that token cannot list the build workflow's
@@ -1645,7 +1645,7 @@ repository. A private repository refuses those reads with <code>Resource not acc
 1.7.0 did, attached thousands of files (an ESP-IDF build folder holds about 1,500), let files with the same name
 in Debug and Release overwrite each other, and could pass GitHub's limit of 1,000 files per release.</p>
 <h3 id="check-a-download">Check a download<a class="headerlink" href="#check-a-download" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gh<span class="w"> </span>release<span class="w"> </span>download<span class="w"> </span>v1.2.0<span class="w"> </span>-R<span class="w"> </span>kokeb-labs/driver-as5047u<span class="w"> </span>-D<span class="w"> </span>v1.2.0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gh<span class="w"> </span>release<span class="w"> </span>download<span class="w"> </span>v1.2.0<span class="w"> </span>-R<span class="w"> </span>kokeb-labs-drivers/driver-as5047u<span class="w"> </span>-D<span class="w"> </span>v1.2.0
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>v1.2.0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>-c<span class="w"> </span>SHA256SUMS<span class="w">        </span><span class="c1"># macOS: shasum -a 256 -c SHA256SUMS</span>
 </span></code></pre></div>
 <p>Every line must say <code>OK</code>. To flash a firmware zip: unzip it, go to the build folder inside and run
