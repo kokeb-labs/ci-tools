@@ -705,7 +705,7 @@ class ChipCardTest(unittest.TestCase):
         shutil.copytree(TEMPLATE, site)
         if outline:
             shutil.copy(FIXTURE / "hardware.yml", site / "docs/hardware.yml")
-        shutil.copy(FIXTURE / "README.md", site / "README.md")
+        shutil.copy(FIXTURE / "README.md.fixture", site / "README.md")
         return site
 
     def test_card_and_figure_are_written_and_checked(self):
