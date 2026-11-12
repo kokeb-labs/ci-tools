@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="863" viewBox="0 0 1200 863" role="img" aria-labelledby="workflow-flow-title workflow-flow-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="workflow-flow-title">From push to release</title>
+<desc id="workflow-flow-desc">Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release.</desc>
+<defs><marker id="fk-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8893A2"/></marker></defs>
+<rect x="0.5" y="0.5" width="1199" height="862" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="46.8" font-size="16" font-weight="700" letter-spacing="1.2" fill="#7A360E">WORKFLOWS</text>
+<text x="32" y="85.6" font-size="32" font-weight="700" fill="#0E1726">From push to release</text>
+<text x="32" y="115.4" font-size="18" fill="#566070">Firmware is built once, on every push. A version tag only ships what was already built.</text>
+<rect x="32" y="131.4" width="1136" height="1" fill="#E2E7EE"/>
+<rect x="32" y="149.4" width="1136" height="206.2" rx="16" fill="#F1F4F8" stroke="#CBD5E1" stroke-width="1.2"/>
+<rect x="32" y="594.6" width="1136" height="206.2" rx="16" fill="#F1F4F8" stroke="#CBD5E1" stroke-width="1.2"/>
+<path d="M382.7 276.6 L430.7 276.6" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M769.3 276.6 L817.3 276.6" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M600 339.6 L600 415.6" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#fk-arrow-rail)"/>
+<path d="M600 534.6 L600 658.8" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#fk-arrow-rail)"/>
+<path d="M769.3 721.8 L817.3 721.8" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<rect x="48" y="217.6" width="330.7" height="118" rx="12" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<rect x="48" y="225.6" width="4" height="102" rx="2" fill="#9A4A17"/>
+<rect x="434.7" y="217.6" width="330.7" height="118" rx="12" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<rect x="434.7" y="225.6" width="4" height="102" rx="2" fill="#9A4A17"/>
+<rect x="821.3" y="217.6" width="330.7" height="118" rx="12" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<rect x="821.3" y="225.6" width="4" height="102" rx="2" fill="#9A4A17"/>
+<rect x="434.7" y="419.6" width="330.7" height="111" rx="12" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
+<rect x="434.7" y="427.6" width="4" height="95" rx="2" fill="#64748B"/>
+<rect x="48" y="662.8" width="330.7" height="102.3" rx="12" fill="#F1F4F8" stroke="#CBD5E1" stroke-width="1"/>
+<rect x="434.7" y="662.8" width="330.7" height="118" rx="12" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<rect x="434.7" y="670.8" width="4" height="102" rx="2" fill="#9A4A17"/>
+<rect x="821.3" y="662.8" width="330.7" height="118" rx="12" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
+<rect x="821.3" y="670.8" width="4" height="102" rx="2" fill="#64748B"/>
+<text x="48" y="178.4" font-size="17" font-weight="700" fill="#334155">EVERY PUSH AND PULL REQUEST</text>
+<text x="48" y="201.6" font-size="16" fill="#334155">your esp32-examples-build-ci.yml calls ru-build.yml</text>
+<text x="72" y="252.6" font-size="20" font-weight="700" fill="#7A360E">generate-matrix</text>
+<text x="72" y="283.2" font-size="17" fill="#2B3442">checks out espidf-tools</text>
+<text x="72" y="307.9" font-size="17" fill="#2B3442">app_config.yml becomes a matrix</text>
+<text x="458.7" y="252.6" font-size="20" font-weight="700" fill="#7A360E">build</text>
+<text x="458.7" y="283.2" font-size="17" fill="#2B3442">one job per matrix entry</text>
+<text x="458.7" y="307.9" font-size="17" fill="#2B3442">in the espressif/idf image</text>
+<rect x="706.9" y="231.6" width="44.5" height="26" rx="13" fill="#FBEFE6" stroke="#E9C3A6" stroke-width="1"/>
+<text x="714.9" y="249.7" font-size="16" font-weight="700" fill="#7A360E">× N</text>
+<text x="845.3" y="252.6" font-size="20" font-weight="700" fill="#7A360E">size-report</text>
+<text x="845.3" y="283.2" font-size="17" fill="#2B3442">comments a size table</text>
+<text x="845.3" y="307.9" font-size="17" fill="#2B3442">optional size budget</text>
+<rect x="1060.1" y="231.6" width="77.9" height="26" rx="13" fill="#FBEFE6" stroke="#E9C3A6" stroke-width="1"/>
+<text x="1068.1" y="249.7" font-size="16" font-weight="700" fill="#7A360E">PR only</text>
+<text x="458.7" y="454.6" font-size="20" font-weight="700" fill="#334155">fw-* artifacts</text>
+<text x="458.7" y="477.2" font-size="16" fill="#334155">one per entry, kept 7 days</text>
+<text x="458.7" y="505.4" font-size="16" font-family="'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" fill="#2B3442">fw-&lt;app&gt;-&lt;idf&gt;-&lt;type&gt;</text>
+<rect x="561.8" y="365.6" width="76.5" height="24" rx="12" fill="#FFFFFF"/>
+<text x="600" y="383.4" font-size="16" font-weight="500" text-anchor="middle" fill="#566070">uploads</text>
+<text x="48" y="623.6" font-size="17" font-weight="700" fill="#334155">A VERSION TAG V*.*.*</text>
+<text x="48" y="646.8" font-size="16" fill="#334155">your release.yml calls ru-release-firmware.yml</text>
+<text x="66" y="695.2" font-size="17" fill="#334155">No rebuild: the release ships the</text>
+<text x="66" y="719.9" font-size="17" fill="#334155">firmware CI already built and</text>
+<text x="66" y="744.5" font-size="17" fill="#334155">tested.</text>
+<text x="458.7" y="697.8" font-size="20" font-weight="700" fill="#7A360E">release</text>
+<text x="458.7" y="728.4" font-size="17" fill="#2B3442">finds the fw-* artifacts</text>
+<text x="458.7" y="753.1" font-size="17" fill="#2B3442">of the tagged commit</text>
+<text x="845.3" y="697.8" font-size="20" font-weight="700" fill="#334155">GitHub Release</text>
+<text x="845.3" y="728.4" font-size="17" fill="#2B3442">generated notes</text>
+<text x="845.3" y="753.1" font-size="17" fill="#2B3442">every firmware attached</text>
+<rect x="549.6" y="566.1" width="100.8" height="24" rx="12" fill="#FFFFFF"/>
+<text x="600" y="583.8" font-size="16" font-weight="500" text-anchor="middle" fill="#566070">downloads</text>
+<rect x="32" y="813.2" width="14" height="14" rx="4" fill="#FBEFE6" stroke="#9A4A17" stroke-width="1.4"/>
+<text x="54" y="827.8" font-size="16" fill="#566070">job in ci-tools</text>
+<rect x="186.9" y="813.2" width="14" height="14" rx="4" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
+<text x="208.9" y="827.8" font-size="16" fill="#566070">kept by GitHub</text>
+<path d="M352.8 821.2L382.8 821.2" fill="none" stroke="#8893A2" stroke-width="2.2" marker-end="url(#fk-arrow-rail)"/>
+<text x="396.8" y="827.8" font-size="16" fill="#566070">runs next</text>
+<path d="M495.6 821.2L525.6 821.2" fill="none" stroke="#8893A2" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#fk-arrow-rail)"/>
+<text x="539.6" y="827.8" font-size="16" fill="#566070">passes files</text>
+</svg>

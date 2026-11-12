@@ -1,0 +1,3914 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Reusable GitHub Actions workflows for the Kokeb Labs organisation: C/C++ lint and analysis, host builds, ESP-IDF firmware builds, the documentation platform, link and lint checks, DCO and organisation-standard checks, releases and a single required CI gate.">
+      
+      
+      
+        <link rel="canonical" href="https://kokeb-labs.github.io/ci-tools/latest/changelog/">
+      
+      
+        <link rel="prev" href="../diagrams/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/kokeb/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Changelog - CI Tools</title>
+      
+    
+    
+  
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M0%208a8%208%200%201%201%2016%200A8%208%200%200%201%200%208m8-6.5a6.5%206.5%200%201%200%200%2013%206.5%206.5%200%200%200%200-13M6.5%207.75A.75.75%200%200%201%207.25%207h1a.75.75%200%200%201%20.75.75v2.75h.25a.75.75%200%200%201%200%201.5h-2a.75.75%200%200%201%200-1.5h.25v-2h-.25a.75.75%200%200%201-.75-.75M8%206a1%201%200%201%201%200-2%201%201%200%200%201%200%202%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%201.5c-2.363%200-4%201.69-4%203.75%200%20.984.424%201.625.984%202.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621%201.49a.75.75%200%200%201-1.484.211c-.04-.282-.163-.547-.37-.847a9%209%200%200%200-.542-.68q-.126-.149-.268-.32C3.201%207.75%202.5%206.766%202.5%205.25%202.5%202.31%204.863%200%208%200s5.5%202.31%205.5%205.25c0%201.516-.701%202.5-1.328%203.259q-.142.172-.268.319c-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751%200%200%201-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848q.113-.133.213-.253c.561-.679.985-1.32.985-2.304%200-2.06-1.637-3.75-4-3.75M5.75%2012h4.5a.75.75%200%200%201%200%201.5h-4.5a.75.75%200%200%201%200-1.5M6%2015.25a.75.75%200%200%201%20.75-.75h2.5a.75.75%200%200%201%200%201.5h-2.5a.75.75%200%200%201-.75-.75%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M6.457%201.047c.659-1.234%202.427-1.234%203.086%200l6.082%2011.378A1.75%201.75%200%200%201%2014.082%2015H1.918a1.75%201.75%200%200%201-1.543-2.575Zm1.763.707a.25.25%200%200%200-.44%200L1.698%2013.132a.25.25%200%200%200%20.22.368h12.164a.25.25%200%200%200%20.22-.368Zm.53%203.996v2.5a.75.75%200%200%201-1.5%200v-2.5a.75.75%200%200%201%201.5%200M9%2011a1%201%200%201%201-2%200%201%201%200%200%201%202%200%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M9.504.43a1.516%201.516%200%200%201%202.437%201.713L10.415%205.5h2.123c1.57%200%202.346%201.909%201.22%203.004l-7.34%207.142a1.25%201.25%200%200%201-.871.354h-.302a1.25%201.25%200%200%201-1.157-1.723L5.633%2010.5H3.462c-1.57%200-2.346-1.909-1.22-3.004zm1.047%201.074L3.286%208.571A.25.25%200%200%200%203.462%209H6.75a.75.75%200%200%201%20.694%201.034l-1.713%204.188%206.982-6.793A.25.25%200%200%200%2012.538%207H9.25a.75.75%200%200%201-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005%200-.009.004%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5%205.782V2.5h-.25a.75.75%200%200%201%200-1.5h6.5a.75.75%200%200%201%200%201.5H11v3.282l3.666%205.76C15.619%2013.04%2014.543%2015%2012.767%2015H3.233c-1.776%200-2.852-1.96-1.899-3.458Zm-2.4%206.565a.75.75%200%200%200%20.633%201.153h9.534a.75.75%200%200%200%20.633-1.153L12.225%2010.5h-8.45ZM9.5%202.5h-3V6c0%20.143-.04.283-.117.403L4.73%209h6.54L9.617%206.403A.75.75%200%200%201%209.5%206Z%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M1.75%202.5h10.5a.75.75%200%200%201%200%201.5H1.75a.75.75%200%200%201%200-1.5m4%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5m0%205h8.5a.75.75%200%200%201%200%201.5h-8.5a.75.75%200%200%201%200-1.5M2.5%207.75v6a.75.75%200%200%201-1.5%200v-6a.75.75%200%200%201%201.5%200%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+  <link rel="stylesheet" href="../assets/kokeb/kokeb.css">
+
+    
+      
+    
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="../assets/kokeb/fonts.css">
+  <noscript><link rel="stylesheet" href="../assets/kokeb/fonts.css"></noscript>
+
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+  
+  <meta name="theme-color" content="#0e1726" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b2140" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kokeb Labs">
+  <meta property="og:title" content="Changelog - CI Tools">
+  <meta property="og:description" content="Reusable GitHub Actions workflows for the Kokeb Labs organisation: C/C++ lint and analysis, host builds, ESP-IDF firmware builds, the documentation platform, link and lint checks, DCO and organisation-standard checks, releases and a single required CI gate.">
+  <meta property="og:url" content="https://kokeb-labs.github.io/ci-tools/latest/changelog/">
+  <meta name="twitter:card" content="summary">
+  <script>
+(function () {
+  if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
+  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
+      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
+  var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
+  var stub = {
+    initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
+    render: function (id, text) {
+      var el = null, pres = document.querySelectorAll("pre.mermaid:not([data-kb-mermaid])");
+      for (var i = 0; i < pres.length && !el; i++) if (pres[i].textContent === text) el = pres[i];
+      if (el) el.setAttribute("data-kb-mermaid", "");
+      return near(el).then(load).then(function (m) { return m.render(id, text); });
+    }
+  };
+  function load() {
+    return loading || (loading = new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.src = SRC;
+      s.integrity = SRI;
+      s.crossOrigin = "anonymous";
+      s.onload = function () {
+        real = window.mermaid;
+        window.mermaid = stub;
+        real.initialize(config);
+        resolve(real);
+      };
+      s.onerror = function () { loading = null; reject(new Error("Mermaid did not load")); };
+      document.head.appendChild(s);
+    }));
+  }
+  // One observer for the diagrams still waiting: on the screen only until the reader engages, then a screen ahead.
+  function watch() {
+    if (io) io.disconnect();
+    io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) release(function (w) { return w.el === e.target; });
+      });
+    }, { rootMargin: ahead ? "100% 0px" : "0px" });
+    waiting.forEach(function (w) { io.observe(w.el); });
+  }
+  function release(which) {
+    waiting = waiting.filter(function (w) {
+      if (!which(w)) return true;
+      io.unobserve(w.el);
+      w.go();
+      return false;
+    });
+  }
+  function near(el) {
+    if (real || !el || !("IntersectionObserver" in window)) return Promise.resolve();
+    return new Promise(function (resolve) {
+      waiting.push({ el: el, go: resolve });
+      if (io) io.observe(el); else watch();
+    });
+  }
+  function engaged() {
+    ENGAGE.forEach(function (t) { window.removeEventListener(t, engaged, true); });
+    ahead = true;
+    if (io) watch();
+  }
+  ENGAGE.forEach(function (t) { window.addEventListener(t, engaged, { capture: true, passive: true }); });
+  window.addEventListener("beforeprint", function () { if (io) release(function () { return true; }); });
+  window.mermaid = stub;
+})();
+</script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You are reading the documentation of an older version.
+  <a href="https://kokeb-labs.github.io/ci-tools/"><strong>Go to the latest version.</strong></a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="CI Tools" class="md-header__button md-logo" aria-label="CI Tools" data-md-component="logo">
+      
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" class="kb-mark">
+    <g transform="translate(1.28 1.28) scale(0.12000)"><path d="M232,66 Q265.29,246.71 446,280 Q265.29,313.29 232,494 Q198.71,313.29 18,280 Q198.71,246.71 232,66 Z" fill="#F4B942"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#0E1726" stroke="#0E1726" stroke-width="24" stroke-linejoin="round"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#D9773B"/></g>
+  </svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          
+          <a class="kb-org" href="https://kokeb-labs.github.io/" title="All Kokeb Labs documentation">Kokeb Labs</a>
+          <span class="kb-org__sep" aria-hidden="true">/</span>
+          <span class="md-ellipsis">
+            CI Tools
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Follow the system theme"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Follow the system theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kokeb-labs/ci-tools" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kokeb-labs/ci-tools
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../quickstart/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Get started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../workflows/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Workflows
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../ru-build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  ESP-IDF
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../dco/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Organisation checks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tool-validation/plan/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tool validation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../docs-platform/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Docs platform
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../self-ci/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="CI Tools" class="md-nav__button md-logo" aria-label="CI Tools" data-md-component="logo">
+      
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" class="kb-mark">
+    <g transform="translate(1.28 1.28) scale(0.12000)"><path d="M232,66 Q265.29,246.71 446,280 Q265.29,313.29 232,494 Q198.71,313.29 18,280 Q198.71,246.71 232,66 Z" fill="#F4B942"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#0E1726" stroke="#0E1726" stroke-width="24" stroke-linejoin="round"/><path d="M386,38 Q399.69,112.31 474,126 Q399.69,139.69 386,214 Q372.31,139.69 298,126 Q372.31,112.31 386,38 Z" fill="#D9773B"/></g>
+  </svg>
+
+    </a>
+    CI Tools
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kokeb-labs/ci-tools" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kokeb-labs/ci-tools
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../quickstart/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Get started
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../workflows/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../ru-build/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ESP-IDF
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../dco/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organisation checks
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../tool-validation/plan/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool validation
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../docs-platform/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs platform
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../diagrams/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../self-ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How this repository tests itself
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [Unreleased]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1160---2026-11-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.16.0] - 2026-11-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.16.0] - 2026-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1153---2026-11-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.3] - 2026-11-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.3] - 2026-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1152---2026-11-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.2] - 2026-11-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.2] - 2026-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1151---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.1] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.1] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1150---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.0] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.0] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1142---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.14.2] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.14.2] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1141---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.14.1] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.14.1] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1140---2026-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.14.0] - 2026-11-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.14.0] - 2026-11-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1130---2026-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.13.0] - 2026-11-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.13.0] - 2026-11-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1121---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.12.1] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.12.1] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1120---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.12.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.12.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1110---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.11.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.11.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1100---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.10.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.10.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#191---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.9.1] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.9.1] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#190---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.9.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.9.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#181---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.8.1] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.8.1] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#180---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.8.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.8.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#170---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.7.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.7.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#160---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.6.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.6.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#153---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.3] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.3] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#152---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.2] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.2] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#151---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.1] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.1] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#150---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#140---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.4.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.4.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#130---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.3.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.3.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#121---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.2.1] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.2.1] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#120---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.2.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.2.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.1.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.1.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#105---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.5] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.5] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.4] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.4] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.3] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.3] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102---2026-11-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.2] - 2026-11-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.2] - 2026-11-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.1] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.1] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100---2026-11-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.0] - 2026-11-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.0] - 2026-11-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [Unreleased]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1160---2026-11-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.16.0] - 2026-11-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.16.0] - 2026-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1153---2026-11-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.3] - 2026-11-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.3] - 2026-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1152---2026-11-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.2] - 2026-11-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.2] - 2026-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1151---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.1] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.1] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1150---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.15.0] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.15.0] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1142---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.14.2] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.14.2] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1141---2026-11-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.14.1] - 2026-11-10
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.14.1] - 2026-11-10">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1140---2026-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.14.0] - 2026-11-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.14.0] - 2026-11-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1130---2026-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.13.0] - 2026-11-09
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.13.0] - 2026-11-09">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1121---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.12.1] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.12.1] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1120---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.12.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.12.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1110---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.11.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.11.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1100---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.10.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.10.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#191---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.9.1] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.9.1] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#190---2026-11-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.9.0] - 2026-11-08
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.9.0] - 2026-11-08">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#181---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.8.1] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.8.1] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#180---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.8.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.8.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#170---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.7.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.7.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#160---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.6.0] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.6.0] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#153---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.3] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.3] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#152---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.2] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.2] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#151---2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.1] - 2026-11-07
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.1] - 2026-11-07">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#150---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.5.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.5.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#140---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.4.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.4.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#130---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.3.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.3.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#121---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.2.1] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.2.1] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#120---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.2.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.2.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.1.0] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.1.0] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#105---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.5] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.5] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.4] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.4] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.3] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.3] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102---2026-11-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.2] - 2026-11-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.2] - 2026-11-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#security_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#101---2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.1] - 2026-11-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.1] - 2026-11-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#100---2026-11-05" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.0.0] - 2026-11-05
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.0.0] - 2026-11-05">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/kokeb-labs/ci-tools/edit/main/docs/changelog.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<p>Every change to the reusable workflows, the theme package and the tools, newest first, from <code>CHANGELOG.md</code>.</p>
+<h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="1160---2026-11-11">[1.16.0] - 2026-11-11<a class="headerlink" href="#1160---2026-11-11" title="Permanent link">&para;</a></h2>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Docs theme: the chip at a glance in the README.</strong> <code>docs/hardware.yml</code> takes optional package data from the
+  datasheet, so a driver's README can show the module view without opening the docs: <code>package.outline</code>
+  (<code>length_mm</code>, <code>width_mm</code>, <code>height_mm</code>, <code>pitch_mm</code>, <code>ref</code>), <code>package.variants</code> (the other packages the chip is
+  sold in: <code>id</code>, <code>type</code>, <code>pins</code>, <code>size</code>, <code>ordering</code>, <code>note</code>, <code>ref</code>) and <code>supply</code> (<code>name</code>, <code>min_v</code>, <code>max_v</code>,
+  <code>ref</code>). <code>kokeb-docs hardware --check</code> refuses numbers that are not positive, a citation that does not resolve,
+  a variant id listed twice, a supply range upside down and pins that do not fit their edge at the pitch.</li>
+<li><strong>Docs theme: the <code>chip-outline</code> figure.</strong> When <code>package.outline</code> is given, <code>kokeb-docs figures</code> draws the
+  package body from above to scale, light and dark, with the pads (the pinout's colours, numbers and pin-1 dot),
+  arrows for length, width and pitch, a side view with the height and a size label. Leads reach out of a leaded
+  package and sit inside a leadless one.</li>
+<li><strong>Docs theme: the <code>chip-card</code> region.</strong> <code>&lt;!-- generated: chip-card --&gt;</code> in a README (written by
+  <code>kokeb-docs gen</code>, checked by <code>kokeb-docs check</code>) holds a table of package, pin count, body size, pin pitch and
+  supply range, and one of the other packages, each row with its datasheet citation. A chip without an outline or
+  variants still builds: the card leaves those rows out. Existing files are unchanged: every new field is optional
+  and the schema stays at 1.</li>
+</ul>
+<h2 id="1153---2026-11-11">[1.15.3] - 2026-11-11<a class="headerlink" href="#1153---2026-11-11" title="Permanent link">&para;</a></h2>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>ru-mkdocs-publish</code>: a pre-release as the first publish.</strong> When a <code>vX.Y.Z-rc.N</code> tag was the first publish of
+  a site, no version held the <code>latest</code> alias, so <code>mike set-default latest</code> failed and nothing was published. A
+  pre-release now claims <code>latest</code> when no other version holds it, as a default-branch publish already does; it
+  never takes <code>latest</code> from a version that holds it, and a final release still moves it.</li>
+</ul>
+<h2 id="1152---2026-11-11">[1.15.2] - 2026-11-11<a class="headerlink" href="#1152---2026-11-11" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Docs theme: sibling organisations.</strong> A repository owned by a sibling organisation named <code>&lt;org&gt;-*</code> (such as
+  <code>kokeb-labs-drivers</code>) now gets the same defaults as one owned by the organisation: <code>site_url</code> on its owner's
+  Pages host (<code>https://&lt;owner&gt;.github.io/&lt;repo&gt;/latest/</code>), the absolute "Go to the latest version" link of the
+  older-version banner, and the organisation link. Before, these were left unset for such a repository, so the
+  banner link was relative (<code>../..</code>), pointed outside the built site and failed the offline link check on every
+  page, and the sitemap and canonical addresses were missing.</li>
+</ul>
+<h2 id="1151---2026-11-10">[1.15.1] - 2026-11-10<a class="headerlink" href="#1151---2026-11-10" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_2">Fixed<a class="headerlink" href="#fixed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Chip circuit figures: a right-side lane is as tall as its parts and their labels draw, so a load's label no longer
+  lands on the capacitor in the lane above. The layout check now reports any text on a symbol's strokes (parts,
+  supply and ground symbols, pin stubs, no-connect crosses), so this cannot pass <code>kokeb-docs hardware --check</code>.</li>
+<li>Chip block diagrams: links into one face of a block spread over it, each toward its other end, and a link label
+  is placed clear of every other link and pin wire; a line through another link's label is reported.</li>
+<li>Pin type colours: <code>analog</code>, <code>power-out</code> and <code>nc</code> get their own figkit tones (<code>magenta</code>, <code>brown</code>, <code>stone</code>), so
+  every pin type has a distinct colour in light and dark (before, <code>analog</code> and <code>power-out</code> were the same and
+  matched <code>open-drain</code> in dark).</li>
+<li>Package types with a vendor prefix or variant (<code>PG-DSO-36</code>, <code>P-DSO-20</code>, <code>TSDSO</code>, <code>HVQFN</code>, <code>WQFN</code>, <code>TQFN</code>) are
+  recognised, so they no longer need an explicit <code>layout</code>.</li>
+<li>figkit cards: a title word too wide for its card breaks after a <code>/</code> or <code>-</code>, then shrinks, before it is a problem.</li>
+</ul>
+<h2 id="1150---2026-11-10">[1.15.0] - 2026-11-10<a class="headerlink" href="#1150---2026-11-10" title="Permanent link">&para;</a></h2>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Chip hardware diagrams in the theme package (<code>kokeb_mkdocs_theme/hardware/</code>, guide: <code>docs/chip-diagrams.md</code>): a
+  driver describes its chip once in <code>docs/hardware.yml</code> (package, every pin with its type, voltage domain, function
+  and driver hook, the internal blocks, reference circuits, a datasheet section and page on every fact) and gets
+  the figures <code>chip-pinout</code>, <code>chip-blocks</code> and <code>chip-circuit-&lt;id&gt;</code> (light and dark, drawn by a pure-Python
+  orthogonal router with real schematic symbols, each MCU wire labelled with the port hook that drives it), the
+  generated regions <code>chip-pins</code> and <code>chip-parts</code>, and <code>kokeb-docs hardware</code>: <code>--check</code> validates the schema, pin
+  numbers, citations, hooks (against the port header when <code>source</code> and <code>symbol</code> are given) and every circuit
+  endpoint, <code>--kicad-netlist OUT --circuit ID</code> exports a circuit as a deterministic KiCad netlist, <code>--svg DIR</code>
+  writes the figures anywhere. <code>kokeb-docs check</code> runs the hardware check first, and <code>kokeb-docs figures --check</code>
+  drift-checks the chip figures with the others. The template site shows the fictional XMPL100.</li>
+<li>figkit: <code>Fig.circle()</code>, <code>Fig.path()</code> and <code>Fig.text(rotate=-90)</code>.</li>
+</ul>
+<h2 id="1142---2026-11-10">[1.14.2] - 2026-11-10<a class="headerlink" href="#1142---2026-11-10" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-mkdocs-publish</code>: the Lighthouse step no longer runs to its 20-minute timeout. 1.14.1 started
+  <code>kokeb-docs serve</code> in the background with its output attached to the step, and the runner waits for every
+  process holding that output; the server's output now goes to <code>/dev/null</code>, as the previous <code>http.server</code> line did.</li>
+<li>Every <code>apt-get update</code> and <code>apt-get install</code> in the reusable workflows is bounded and retried: an apt
+  configuration sets <code>Acquire::Retries 3</code> and 20-second HTTP and HTTPS timeouts, <code>update</code> runs under
+  <code>timeout 180</code> and <code>install</code> under <code>timeout 600</code>, and each install is tried three times. A stalled package mirror
+  then costs minutes, not the job: a fuzz job sat in <code>apt-get update</code> for its whole hour.</li>
+</ul>
+<h2 id="1141---2026-11-10">[1.14.1] - 2026-11-10<a class="headerlink" href="#1141---2026-11-10" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_4">Fixed<a class="headerlink" href="#fixed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-mkdocs-publish</code>: Lighthouse measures the site as GitHub Pages serves it. The budget step served the built
+  site with <code>python3 -m http.server</code>, which sends no compression, so each page was scored on two to three times
+  the bytes a reader downloads (a quickstart page: 449 KiB instead of 173 KiB) and the performance score fell
+  below 0.8 on a slow runner (0.75 to 0.78 on the same page that scores 0.98 compressed). The new
+  <code>kokeb-docs serve SITE PORT</code> sends HTML, CSS, JavaScript, JSON, SVG and XML gzip-compressed, as Pages does;
+  the budgets are unchanged.</li>
+</ul>
+<h2 id="1140---2026-11-09">[1.14.0] - 2026-11-09<a class="headerlink" href="#1140---2026-11-09" title="Permanent link">&para;</a></h2>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-release-firmware</code>: the firmware release of <code>ru-release-with-artifacts</code>, with the same inputs and behaviour,
+  whose job asks for <code>actions: read</code> as well as <code>contents: write</code>. In a private repository the token without
+  <code>actions: read</code> cannot list the build workflow's runs, so the release failed in the download step with
+  <code>Resource not accessible by integration</code> (list workflow runs for a workflow). Callers grant
+  <code>actions: read</code> and <code>contents: write</code>.</li>
+</ul>
+<h3 id="deprecated">Deprecated<a class="headerlink" href="#deprecated" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-release-with-artifacts</code>: use <code>ru-release-firmware</code>; change the file name in <code>uses:</code> and grant <code>actions: read</code>
+  next to <code>contents: write</code>. It keeps working for existing callers, in public repositories, until the next major.
+  Its guide no longer claims that the token reads another run's artifacts without <code>actions: read</code>; that holds only
+  for public repositories.</li>
+</ul>
+<h2 id="1130---2026-11-09">[1.13.0] - 2026-11-09<a class="headerlink" href="#1130---2026-11-09" title="Permanent link">&para;</a></h2>
+<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-misra</code>: MISRA C++:2023 analysis with the CodeQL coding-standards pack (2.62.0, CLI 2.21.4) and the Kokeb C++20
+  profile pack on traced host and Cortex-M builds, the handbook's deviation records applied through the pack's
+  deviation mechanism (a marker must cite a record and deviate a finding of its guideline), clang-tidy's validated
+  checks and cppcheck on the same compile databases, and a per-guideline report (step summary, SARIF, JSON keyed by
+  guideline, CSV). Levels <code>high</code> and <code>safety</code>. Every scan analyses a canary and fails on incomplete extraction. The
+  first job refuses private repositories without an Advanced Security licence (CodeQL terms). Needs <code>contents: read</code>.</li>
+<li>Tool validation of the MISRA toolchain (<code>docs/tool-validation/plan.md</code>): requirements derived from the compliance
+  matrix and the pack, a seeded-violation and compliant case per requirement (<code>tests/misra-validation/</code>), a
+  traceability page, an anomaly log, and a validation report attached to each release. The self-CI fails when a
+  tool-decided guideline has no passing test, or when the toolchain changes without re-validation.</li>
+<li><code>codeql/kokeb-cpp20</code>: the own C++20 profile query pack, with KB-CPP-046 (Result types are <code>[[nodiscard]]</code>).</li>
+<li><code>ru-misra</code>: <code>open_source_prerelease</code> lets a private repository whose code is under the OSI licence in its LICENSE
+  file, and is to be published, run the analysis; the job prints the declaration as a warning.</li>
+<li>Code scanning of ci-tools moves to an advanced setup (<code>.github/workflows/codeql.yml</code>, <code>security-and-quality</code>) that
+  leaves out the test fixtures, which break rules on purpose and whose findings the self-CI asserts.</li>
+<li><code>ru-misra</code> passes <code>cmake_args</code> and <code>paths</code> to its scanner as <code>--option=value</code>, so a value that starts with <code>-D</code>
+  is not read as an option; the fixture self-test now passes one.</li>
+<li><code>ru-misra</code> gives CodeQL an explicit heap (the runner's memory less 2 GiB); the analysis ran out of memory on the
+  2-core runners of private repositories.</li>
+<li>A tool suppression must cite a deviation record only when it can silence a finding the matrix relies on (a
+  cppcheck suppression, a bare <code>NOLINT</code>, or one naming a validated clang-tidy check); <code>NOLINTEND</code> never needs one.</li>
+<li>A validated clang-tidy claim can carry <code>message:</code>, a regex the diagnostic must match to count: a check that
+  reports more than its guideline (cppcoreguidelines-macro-usage and object-like macros) decides only that part.</li>
+<li><code>ru-misra</code>'s extraction check skips a unit the build defines but never compiles (no object file: a target outside
+  <code>all</code>, such as a compile-fail test, or one the Cortex-M target does not build) and lists it as not analysed.</li>
+<li><code>ru-misra</code> reads the tool validation's anomaly log: at the high level, findings of a rule with a recorded false
+  positive are listed for review (with the anomaly ids) instead of failing the job; validated rules still fail.</li>
+<li>Tool validation: every seeded violation is marked (<code>// seeded</code>) and every claimed tool must report on that line,
+  so a bad file that seeds several forms proves each detection; an independent review of all cases against the
+  guidelines corrected the cases that tested the wrong thing and added the missing forms. New cases record the
+  misreadings of class-template code found by the first driver scans. The CodeQL databases are traced with
+  <code>-fno-exceptions -fno-rtti</code>, as the scans build; clang-tidy claims accept <code>known_misses</code>.</li>
+</ul>
+<h2 id="1121---2026-11-08">[1.12.1] - 2026-11-08<a class="headerlink" href="#1121---2026-11-08" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_5">Fixed<a class="headerlink" href="#fixed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-build</code>: the native build no longer downloads ccache on every run. The pinned, hash-checked binary is kept in
+  the Actions cache by version; a download retries on every error with a delay, and one that still fails falls back
+  to the runner's ccache package with a warning. GitHub release downloads returning HTTP 504 had failed whole
+  ESP32 jobs.</li>
+<li>Self-CI caches its pinned shellcheck and actionlint by version and hash and retries their download on any
+  error; <code>ru-cross-build</code> and <code>ru-docs-publish</code> retry their release downloads on any error (HTTP 5xx included).</li>
+<li><code>ru-docs-linkcheck</code> and <code>ru-mkdocs-publish</code> run lychee 0.24.2 installed by the job (pinned, SHA-256-checked,
+  kept in the Actions cache) instead of <code>lycheeverse/lychee-action</code>, which downloaded it from GitHub releases on every
+  run. Same arguments, same failure rule; the link report goes to the step summary.</li>
+<li><code>ru-docs-publish</code> (legacy): Doxygen 1.10.0 is kept in the Actions cache by version (falling back to the runner's
+  package with a warning when GitHub releases fail), and its link check runs the same cached lychee.</li>
+</ul>
+<h2 id="1120---2026-11-08">[1.12.0] - 2026-11-08<a class="headerlink" href="#1120---2026-11-08" title="Permanent link">&para;</a></h2>
+<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-build</code>: input <code>idf_install</code> (default <code>native</code>). The job installs ESP-IDF for the matrix target only (a shallow
+  clone and <code>install.sh &lt;target&gt;</code>, about 1.1 GB) and keeps it in the Actions cache keyed by the commit the IDF
+  version names, with a pinned, hash-checked ccache. A warm restore takes about 20 s, against 70 to 160 s to pull
+  the 9.4 GB <code>espressif/idf</code> image; a Debug and Release build of one app dropped from 175 s to 93 s.
+  <code>idf_install: docker</code> keeps the image and <code>espressif/esp-idf-ci-action</code>.</li>
+</ul>
+<h2 id="1110---2026-11-08">[1.11.0] - 2026-11-08<a class="headerlink" href="#1110---2026-11-08" title="Permanent link">&para;</a></h2>
+<h3 id="added_5">Added<a class="headerlink" href="#added_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-repo-checks</code>: DCO, the organisation standard, Markdown lint, the handbook rules, template drift, cppcheck and
+  YAML lint as steps of one job, with the same scripts, pinned actions, failure rules and summaries as <code>dco</code>,
+  <code>org-standard-check</code>, <code>ru-markdown-lint</code>, <code>ru-handbook-check</code>, <code>ru-template-drift</code>, <code>ru-cpp-analysis</code> and
+  <code>ru-yaml-lint</code>. DCO runs first, before any checkout, and passes with nothing to check outside a pull request, so
+  the gate needs no <code>allow_skipped</code> for it. Needs <code>contents: read</code> and <code>pull-requests: read</code>. The self-CI
+  (<code>check_repo_checks.py</code>) fails when a copied step differs from its single workflow. The single workflows stay.</li>
+<li><code>ru-cross-build</code>: input <code>per_core_jobs</code> (default <code>false</code>) keeps one job per core.</li>
+<li>
+<p><code>ru-host-quality</code>: input <code>separate_jobs</code> (default <code>false</code>) keeps one job per check.</p>
+</li>
+<li>
+<p>Trigger policy (<code>docs/triggers.md</code>), enforced by the self-CI (<code>check_triggers.py</code>): workflows
+  start only from <code>push</code>, <code>pull_request</code>, <code>merge_group</code> and <code>workflow_call</code>, with <code>release.yml</code>'s <code>workflow_run</code> as
+  the one exception.</p>
+</li>
+</ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The self-test callers (<code>ci-*.yml</code>) and the mkdocs-site template no longer have a <code>workflow_dispatch</code> trigger: a
+  manual run is a re-run. A dispatched run executes in the default branch's context and can write the cache that
+  runs on <code>main</code> restore, which made every checkout of a pinned ci-tools or driver-template commit a CodeQL
+  <code>actions/cache-poisoning/poisonable-step</code> finding. The examples in the docs drop it too.</li>
+<li><code>ru-cross-build</code>: every core is built in one job, one after the other, each in its own build directory and log
+  group; a core that fails does not stop the others. The toolchain is downloaded once, and a private repository
+  is billed one rounded-up job instead of four (the plan job and one per core).</li>
+<li><code>ru-host-quality</code>: complexity, coverage and sanitizers run as steps of one job, each still running when another
+  failed, with the same limits, summaries, artifacts and outputs; the <code>limits</code> job is gone (each job resolves the
+  limits itself). Fuzzing stays a job of its own and no longer waits for the limits job. A private repository is
+  billed one rounded-up job instead of four.</li>
+</ul>
+<h2 id="1100---2026-11-08">[1.10.0] - 2026-11-08<a class="headerlink" href="#1100---2026-11-08" title="Permanent link">&para;</a></h2>
+<h3 id="added_6">Added<a class="headerlink" href="#added_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-build</code>: input <code>group_build_types</code> (default <code>true</code>) builds every build type of an app and IDF version in one
+  job, so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. The job
+  name and artifact name list the build types together (<code>Debug Release</code>).</li>
+</ul>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-build</code>: ccache's directory is now kept between runs (<code>actions/cache</code>, skipped with <code>clean_build</code>). Before,
+  <code>IDF_CCACHE_ENABLE</code> left it inside the container and every build started cold.</li>
+<li><code>ru-build</code>: the runner's unused SDKs are removed in parallel, and only when less than 30 GB is free.</li>
+<li><code>ru-mkdocs-publish</code>: the Lighthouse and screenshots job caches pip's wheels, the <code>@lhci/cli</code> download and
+  Playwright's Chromium.</li>
+</ul>
+<h2 id="191---2026-11-08">[1.9.1] - 2026-11-08<a class="headerlink" href="#191---2026-11-08" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_6">Fixed<a class="headerlink" href="#fixed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-template-drift</code>: with <code>enforce: false</code> the job failed instead of warning when the scaffold printed only to
+  stderr (an empty report made the summary's <code>grep</code> fail). The scaffold's errors now reach the log and the summary.</li>
+</ul>
+<h2 id="190---2026-11-08">[1.9.0] - 2026-11-08<a class="headerlink" href="#190---2026-11-08" title="Permanent link">&para;</a></h2>
+<h3 id="added_7">Added<a class="headerlink" href="#added_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-template-drift</code>: compares the files driver-template manages (workflows, <code>_config/</code>, skills, CMake helpers)
+  with what the template makes today from the caller's <code>.kokeb/template.yml</code>, using the template's own
+  <code>scaffold.py --check-drift</code>. It warns by default; <code>enforce: true</code> fails on drift. The signed-release job had
+  already drifted: two drivers had it and the template did not.</li>
+</ul>
+<h2 id="181---2026-11-07">[1.8.1] - 2026-11-07<a class="headerlink" href="#181---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_7">Fixed<a class="headerlink" href="#fixed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-mkdocs-publish</code>: a pre-release tag (<code>vX.Y.Z-rc.N</code>) no longer takes the <code>latest</code> alias, and with
+  <code>release_version: minor</code> no longer overwrites the docs of its minor; it publishes under its own tag. The first
+  release candidate of driver-pcal9555 moved <code>latest</code> off <code>dev</code>, against the release standard.</li>
+</ul>
+<h2 id="180---2026-11-07">[1.8.0] - 2026-11-07<a class="headerlink" href="#180---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="added_8">Added<a class="headerlink" href="#added_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-attest-release</code>: signed build provenance (GitHub artifact attestation, SLSA, Sigstore) for every file of a
+  published release, after the files are checked against its <code>SHA256SUMS</code>. Callers add it as a job after
+  <code>ru-release</code> or <code>ru-release-with-artifacts</code> and grant <code>id-token: write</code> and <code>attestations: write</code>. Public
+  repositories, or GitHub Enterprise Cloud.</li>
+</ul>
+<h2 id="170---2026-11-07">[1.7.0] - 2026-11-07<a class="headerlink" href="#170---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="added_9">Added<a class="headerlink" href="#added_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-release</code> and <code>ru-release-with-artifacts</code> attach supply-chain files to every release: a source archive with a
+  stable checksum (<code>&lt;name&gt;-&lt;version&gt;.tar.gz</code>), an SPDX 2.3 SBOM (<code>&lt;name&gt;-&lt;version&gt;.spdx.json</code>: the repository,
+  its licence and tagged commit, each git submodule at its pinned commit, each firmware zip) and <code>SHA256SUMS</code>.
+  Built by the new <code>tools/release_assets/release_assets.py</code> (standard library only, unit-tested in the self-CI);
+  the checksums also go to the run summary. Signed provenance waits for public repositories
+  (<code>docs/ru-release-with-artifacts.md#provenance</code>).</li>
+</ul>
+<h3 id="changed_2">Changed<a class="headerlink" href="#changed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-release-with-artifacts</code> attaches one zip per firmware artifact, holding what flashes and debugs each ESP-IDF
+  build (<code>flasher_args.json</code>, <code>flash_args</code>, the files they flash, the app <code>.elf</code> and <code>.map</code>), instead of every file
+  of the build folders. The old upload sent about 2,900 files for a driver with a Debug and a Release build, past
+  GitHub's limit of 1,000 per release, and files of the same name in Debug and Release overwrote each other.</li>
+</ul>
+<h2 id="160---2026-11-07">[1.6.0] - 2026-11-07<a class="headerlink" href="#160---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="added_10">Added<a class="headerlink" href="#added_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-host-quality</code>: a <code>fuzz</code> job. With <code>fuzz_cmake_args</code> set (for example <code>-DMYCHIP_BUILD_FUZZERS=ON</code>), it builds
+  with clang 18 and libFuzzer, ASan and UBSan, and fuzzes every <code>fuzz_&lt;name&gt;</code> executable for <code>fuzz_seconds</code> (by
+  level: 60, 120, 600 s). Each target starts from its committed seeds in <code>tests/fuzz/corpus/fuzz_&lt;name&gt;/</code> plus a
+  corpus cached between runs. The step summary has runs, coverage edges and corpus size per target, and a failing
+  input is uploaded as <code>&lt;artifact_name&gt;-fuzz-crashes</code>. Without <code>fuzz_cmake_args</code> nothing changes.</li>
+</ul>
+<h2 id="153---2026-11-07">[1.5.3] - 2026-11-07<a class="headerlink" href="#153---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="changed_3">Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-handbook-check</code>: the rules snapshot follows the handbook's ADR-0021 (<code>EnsureInitialized()</code> is the one start-up
+  entry point: KB-CPP-043, KB-CPP-058, KB-CPP-059) and the new datasheet-trail rule KB-DOC-065.</li>
+</ul>
+<h2 id="152---2026-11-07">[1.5.2] - 2026-11-07<a class="headerlink" href="#152---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_8">Fixed<a class="headerlink" href="#fixed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-host-quality</code>: coverage merges the instances of a template (<code>gcovr --merge-lines</code>), so a line, branch or
+  condition counts as covered when any instance ran it. A header-only driver is compiled once per port type, and an
+  example's instance that runs only the happy path counted every failure path again, as uncovered: the AS5047U
+  driver measured 73.8 % of branches instead of 94.5 %.</li>
+</ul>
+<h2 id="151---2026-11-07">[1.5.1] - 2026-11-07<a class="headerlink" href="#151---2026-11-07" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_9">Fixed<a class="headerlink" href="#fixed_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-host-quality</code>: the complexity job now measures header-only implementation files (<code>.ipp</code>, <code>.tpp</code>, <code>.inl</code>).
+  lizard picks the files of a directory by extension and skipped them, so a driver whose code lives in
+  <code>src/&lt;chip&gt;.ipp</code> had its implementation unmeasured. The job lists every C and C++ file under <code>library_paths</code>
+  itself; the self-test fixture has a too-complex function in an <code>.ipp</code> file as well and must report both.</li>
+<li><code>ru-cpp-lint</code>: <code>extensions</code> defaults to <code>c,cpp,cc,cxx,h,hpp,ipp,tpp,inl</code>, so clang-format checks header-only
+  implementation files. clang-tidy skips those files as translation units and reports on them through the
+  sources that include them, as before. Callers that set <code>extensions</code> add <code>ipp</code> themselves.</li>
+</ul>
+<h2 id="150---2026-11-06">[1.5.0] - 2026-11-06<a class="headerlink" href="#150---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="added_11">Added<a class="headerlink" href="#added_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-handbook-check</code>: checks a repository against the Kokeb Labs handbook rules a script can decide. It reads the
+  <code>.kokeb/handbook.yml</code> declaration (handbook version, kind, assurance level, waivers) and checks the root layout,
+  <code>driver.yml</code> against the build settings, C++20 and no <code>file(GLOB)</code> in CMake, no heap, exceptions, RTTI or virtual
+  functions in driver code, the target library subset of headers, and no committed <code>sdkconfig</code> or datasheet. Each
+  finding names its rule, quotes its title and links to it; a rule still in its warning period warns, a waived
+  rule is a notice, and an expired waiver fails. The checker (<code>tools/handbook_check/</code>) and its snapshot of the
+  rules are fetched at this workflow's own commit; 15 unit tests and good and bad fixture repositories run under
+  the CI gate.</li>
+</ul>
+<h3 id="fixed_10">Fixed<a class="headerlink" href="#fixed_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>tools/docs-migrate.py</code>: a character range listed twice in the emoji pattern (CodeQL <code>py/overly-large-range</code>).</li>
+</ul>
+<h2 id="140---2026-11-06">[1.4.0] - 2026-11-06<a class="headerlink" href="#140---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="added_12">Added<a class="headerlink" href="#added_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-cross-build</code>: builds one CMake target for Cortex-M0+, M3, M4F, M7F and M33F cores with Arm's GNU toolchain
+  14.3.rel1 (pinned, SHA-256 checked; an Ubuntu mirror hung one install for 20 minutes), one job per core, with the caller's own warning and language flags, and reports
+  the objects' code and data size. A driver proves its code compiles for a microcontroller, not only on the host.</li>
+</ul>
+<h2 id="130---2026-11-06">[1.3.0] - 2026-11-06<a class="headerlink" href="#130---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="added_13">Added<a class="headerlink" href="#added_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-release-with-artifacts</code> takes a <code>commit</code> input: the commit whose CI artifacts are released, for callers that
+  release from a finished CI run (<code>workflow_run</code>), where <code>github.sha</code> is the default branch's head. It also checks
+  that the release tag points to that commit before releasing. The guide shows a caller that releases only after
+  CI passed on the tag.</li>
+</ul>
+<h3 id="fixed_11">Fixed<a class="headerlink" href="#fixed_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-build</code> no longer fails pull requests from forks: their token cannot comment, so the size comment is skipped
+  for them (and never fails the job), and the size table is always written to the run summary. On same-repository
+  pull requests the comment is updated on each push instead of added again.</li>
+</ul>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-yaml-lint</code> installs yamllint 1.38.0 pinned with SHA-256 hashes on <code>ubuntu-24.04</code>, instead of the latest
+  yamllint from an unpinned <code>pip install</code>.</li>
+<li><code>ru-host-ci</code> passes <code>artifact_name</code> through the environment instead of expanding it inside a shell command.</li>
+<li><code>ru-markdown-lint</code> with <code>use_docker: true</code> pulled <code>markdownlint/markdownlint-cli2:latest</code>, an image that does not
+  exist; it now uses the author's image <code>davidanson/markdownlint-cli2</code>, pinned to v0.23.3 by digest.</li>
+</ul>
+<h2 id="121---2026-11-06">[1.2.1] - 2026-11-06<a class="headerlink" href="#121---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="changed_4">Changed<a class="headerlink" href="#changed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-cpp-lint</code> runs clang-format 20.1.8 and clang-tidy 20.1.0 itself, from LLVM's builds on PyPI pinned with their
+  SHA-256, instead of cpp-linter-action. That action installed clang from LLVM's apt server, fetching and running its
+  install script as root without a pinned version or checksum, and the install hung for 20 minutes several times
+  a day. The job now needs only <code>contents: read</code>; <code>thread_comments</code> and <code>lines_changed_only</code> are accepted but
+  ignored (whole files are checked). Findings are annotations and a run-summary table, as before.</li>
+</ul>
+<h3 id="security_1">Security<a class="headerlink" href="#security_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The <code>cpp-linter/cpp-linter-action</code> and <code>hustcer/setup-nu</code> actions are no longer used, so they can leave the
+  organisation's allow-list.</li>
+</ul>
+<h2 id="120---2026-11-06">[1.2.0] - 2026-11-06<a class="headerlink" href="#120---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="added_14">Added<a class="headerlink" href="#added_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-host-quality</code>: complexity (lizard, modified cyclomatic complexity, length, parameters), coverage (GCC 14 and
+  gcovr: lines, branches and MC/DC from <code>-fcondition-coverage</code>) and AddressSanitizer/UndefinedBehaviorSanitizer
+  jobs, with the limits the Kokeb Labs handbook sets per assurance level (<code>level: standard | high | safety</code>). Tools
+  are pinned and hash-checked. Its self-test runs under the CI gate, including a fixture over every complexity
+  limit that must be reported.</li>
+</ul>
+<h2 id="110---2026-11-06">[1.1.0] - 2026-11-06<a class="headerlink" href="#110---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>A release waits for the whole self-CI on the merged commit (<code>release.yml</code> runs on <code>workflow_run</code> of
+  "🧪 Workflow Self-CI"). The self-tests of the reusable workflows (<code>ci-*.yml</code>) are now called from <code>ci-self.yml</code>, so
+  the required "CI gate" covers them: a red reusable workflow can neither merge nor reach <code>@v1</code>. The Markdown lint
+  self-test reports issues instead of fixing them in the runner.</li>
+<li><code>ru-cpp-lint</code> fails the job when clang-format or clang-tidy reports a finding (<code>fail_on_findings</code>, default true);
+  before, findings were only annotated and the job always passed. A new <code>cmake_args</code> input configures CMake with
+  <code>compile_commands.json</code>, so clang-tidy sees the project's include paths; without it clang-tidy could not find
+  the project's own headers. A <code>findings</code> output gives the count.</li>
+<li>
+<p><code>ru-cpp-analysis</code> runs cppcheck from Ubuntu's archive instead of the unpinned <code>ghcr.io/facthunder/cppcheck:latest</code>
+  image, no longer ignores cppcheck's own exit status, counts findings from the XML report (<code>strict</code> used to fail
+  on every run, because the report always has a header), defaults <code>std</code> to <code>c++20</code>, takes an <code>artifact_name</code>, and
+  has a <code>findings</code> output.</p>
+</li>
+<li>
+<p>Releases of this repository are cut from <code>CHANGELOG.md</code>: a pull request that should be released moves the
+  Unreleased entries to a new <code>## [X.Y.Z] - YYYY-MM-DD</code> section (<code>python .github/scripts/changelog.py bump patch</code>),
+  and merging it tags that version, publishes the section as the release notes and moves <code>v1</code>. Before, every merge
+  was tagged and the changelog was left behind. The self-CI checks that a new section is the next version, is
+  dated, and is a major when it has <code>### Breaking</code>.</p>
+</li>
+</ul>
+<h2 id="105---2026-11-06">[1.0.5] - 2026-11-06<a class="headerlink" href="#105---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_12">Fixed<a class="headerlink" href="#fixed_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The bundled fonts' <code>@font-face</code> rules moved from <code>kokeb.css</code> to <code>assets/kokeb/fonts.css</code>, which loads without
+  blocking the first paint (as Google Fonts did before). Referenced from the render-blocking stylesheet, the font
+  files sat on Lighthouse's critical path and the portal's performance score fell from about 0.89 to 0.78.</li>
+</ul>
+<h2 id="104---2026-11-06">[1.0.4] - 2026-11-06<a class="headerlink" href="#104---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="changed_6">Changed<a class="headerlink" href="#changed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Bundled fonts used <code>font-display: optional</code> without a preload. This did not restore the Lighthouse score and was
+  replaced in 1.0.5.</li>
+</ul>
+<h2 id="103---2026-11-06">[1.0.3] - 2026-11-06<a class="headerlink" href="#103---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="changed_7">Changed<a class="headerlink" href="#changed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The kokeb docs theme ships Inter and JetBrains Mono itself (variable woff2, SIL Open Font License) instead of
+  loading them from Google Fonts, so no Kokeb page sends a reader's address to Google. <code>ru-mkdocs-publish</code> copies
+  the fonts beside the Doxygen stylesheet for the API pages; the root 404 page uses system fonts.</li>
+</ul>
+<h3 id="security_2">Security<a class="headerlink" href="#security_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Mermaid, still loaded on demand from unpkg, is pinned to 11.17.2 and checked with Subresource Integrity, so a
+  changed file on the CDN is refused instead of run.</li>
+</ul>
+<h2 id="102---2026-11-05">[1.0.2] - 2026-11-05<a class="headerlink" href="#102---2026-11-05" title="Permanent link">&para;</a></h2>
+<h3 id="security_3">Security<a class="headerlink" href="#security_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ru-docs-publish</code> installs Doxygen from its own release, checked against a pinned SHA-256, and Graphviz with
+  apt, instead of two small third-party actions (<code>ssciwr/doxygen-install</code>, <code>tlylt/install-graphviz</code>).</li>
+</ul>
+<h2 id="101---2026-11-06">[1.0.1] - 2026-11-06<a class="headerlink" href="#101---2026-11-06" title="Permanent link">&para;</a></h2>
+<h3 id="changed_8">Changed<a class="headerlink" href="#changed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>figkit draws in the Kokeb palette (copper on light, star gold on dark), and its legend can explain solid and
+  dashed arrows. A region can put its caption on a second line.</li>
+<li>The workflow figure shows the push lane and the tag lane apart, with labelled arrows.</li>
+<li>The style guide says how a figure reads: one direction, a verb on every arrow, colour for ownership.</li>
+</ul>
+<h2 id="100---2026-11-05">[1.0.0] - 2026-11-05<a class="headerlink" href="#100---2026-11-05" title="Permanent link">&para;</a></h2>
+<p>First release of <code>kokeb-labs/ci-tools</code>.</p>
+<h3 id="added_15">Added<a class="headerlink" href="#added_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Reusable workflows for C/C++ (<code>ru-host-ci</code>, <code>ru-cpp-lint</code>, <code>ru-cpp-analysis</code>), documentation
+  (<code>ru-mkdocs-publish</code>, <code>ru-docs-publish</code>, <code>ru-docs-linkcheck</code>), Markdown and YAML lint (<code>ru-markdown-lint</code>,
+  <code>ru-yaml-lint</code>), releases (<code>ru-release</code>) and the single required check (<code>ru-ci-gate</code>).</li>
+<li>ESP-IDF firmware workflows in the same repository: <code>ru-build</code> (matrix build from <code>app_config.yml</code>, size report
+  and budget) and <code>ru-release-with-artifacts</code> (release with the tested firmware), plus the
+  <code>ensure-tools-directory</code> composite action. The build finds or clones
+  <a href="https://github.com/kokeb-labs/espidf-tools">espidf-tools</a>.</li>
+<li><code>dco.yml</code>: fails a pull request when a commit lacks a <code>Signed-off-by:</code> line matching its author.</li>
+<li><code>org-standard-check.yml</code>: fails when <code>README.md</code>, <code>LICENSE</code>, <code>CHANGELOG.md</code> or <code>.github/CODEOWNERS</code> is missing,
+  or when <code>LICENSE</code> is not the MIT licence.</li>
+<li><code>packages/kokeb-mkdocs-theme</code>: the documentation theme (<code>theme: kokeb</code>), plugin (<code>plugins: [kokeb]</code>), figkit and
+  the <code>kokeb-docs</code> command, with the pinned MkDocs toolchain. The colours sit in one palette block
+  (<code>--kb-palette-*</code> in <code>assets/kokeb/kokeb.css</code>).</li>
+<li>Self-CI: actionlint and shellcheck (pinned, SHA-256 verified), shellcheck of the composite action, the
+  permissions contract, the README inputs tables, breaking-change detection, unit tests of the checks (the CI gate,
+  the DCO script and the organisation-standard script included), the theme package's tests and the template site.</li>
+</ul>
+<h3 id="security_4">Security<a class="headerlink" href="#security_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Every reusable workflow sets <code>permissions: {}</code> at the top and the least each job needs; the self-CI enforces
+  both. Every checkout sets <code>persist-credentials: false</code> except the two jobs that push (the release tag and the
+  documentation branch).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../diagrams/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Figures">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Figures
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      
+<div class="md-copyright kb-footer">
+  <nav class="kb-footer__links" aria-label="Kokeb Labs">
+    <a href="https://kokeb-labs.github.io/">Kokeb Labs docs</a>
+    <a href="https://github.com/kokeb-labs">GitHub organisation</a>
+    
+      <a href="https://github.com/kokeb-labs/ci-tools">Source</a>
+      <a href="https://github.com/kokeb-labs/ci-tools/issues">Report an issue</a>
+      <a href="https://github.com/kokeb-labs/ci-tools/blob/main/LICENSE">License</a>
+    
+  </nav>
+  
+    <div class="md-copyright__highlight">Copyright &copy; Kokeb Labs contributors</div>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/kokeb-labs" target="_blank" rel="noopener" title="Kokeb Labs on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.top", "navigation.footer", "navigation.tracking", "navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../search/main.js"></script>
+      
+    
+  </body>
+</html>
