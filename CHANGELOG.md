@@ -15,6 +15,7 @@ that heading.
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ## [1.16.0] - 2026-11-11
 
 ### Added
@@ -35,6 +36,8 @@ that heading.
   variants still builds: the card leaves those rows out. Existing files are unchanged: every new field is optional
   and the schema stays at 1.
 
+=======
+>>>>>>> origin/main
 ## [1.15.3] - 2026-11-11
 
 ### Fixed
