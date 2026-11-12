@@ -21,6 +21,13 @@ Schema (version 1), in the order the file is usually written::
       layout: dual                        # optional: dual | quad, guessed from type
       sides: {left: [1, 2, 3], right: [4, 5]}   # optional, for packages the layout does not describe
       ref: pinout
+      outline:                            # optional: the body, from the package outline drawing
+        {length_mm: 4.9, width_mm: 3.9, height_mm: 1.75, pitch_mm: 1.27, ref: outline}
+                                          # height_ref / pitch_ref: when a value is cited elsewhere than ref
+      variants:                           # optional: the other packages the chip is sold in
+        - {id: dfn, type: DFN-8, pins: 8, size: "3.0 x 3.0 x 0.8 mm", ordering: "-DFN", note: "...", ref: order}
+    supply:                               # optional: the supply range(s), for the README chip card
+      - {name: VDD, min_v: 1.8, max_v: 3.6, ref: electrical}
     hooks:                                # the port hooks a pin can map to
       - {id: transfer, call: "Transfer()", kind: spi, source: inc/x_spi_interface.hpp, symbol: Transfer}
     pins:
@@ -52,6 +59,7 @@ The table and the figures mark it, so a guess never reads as a fact.
 
 from __future__ import annotations
 
+import math
 import pathlib
 import re
 from dataclasses import dataclass, field
@@ -94,6 +102,9 @@ TWO_PIN = {
 PIN_ALIASES = {"A": "1", "K": "2", "+": "1", "-": "2"}
 PART_KINDS = (*TWO_PIN, "chip", "mcu", "ic", "connector")
 LAYOUTS = ("dual", "quad")
+# Packages whose pads lie under the body or flush with its edge (no leads reaching out): the outline figure draws
+# their pads inside the body, and a leaded package's outside it.
+_LEADLESS = re.compile(r"^[A-Z]{0,3}(?:QFN|MLF|LGA|LFCSP|DFN|SON|BGA|CSP)")
 # Package names: a vendor prefix (Infineon's PG-DSO-36, P-DSO-20), then up to three letters of variant (thin,
 # shrink, heat-sink, very thin: TSSOP, HTSSOP, TSDSO, HVQFN, WQFN, LQFP) before the family.
 _VENDOR = re.compile(r"^(?:PG|P)-")
@@ -150,6 +161,46 @@ class Pin:
 
 
 @dataclass
+class Outline:
+    """The package body from the datasheet's package outline drawing. ``length_mm`` is the body edge pin 1 lies
+    along (the left edge of the drawing), ``width_mm`` the other; ``height_mm`` and ``pitch_mm`` are optional."""
+
+    length_mm: float
+    width_mm: float
+    ref: Ref
+    height_mm: float | None = None
+    pitch_mm: float | None = None
+    height_ref: Ref | None = None  # when the height comes from another place than the drawing (a table)
+    pitch_ref: Ref | None = None
+
+    def ref_of(self, what: str) -> Ref:
+        return (self.height_ref if what == "height" else self.pitch_ref) or self.ref
+
+
+@dataclass
+class Variant:
+    """Another package the chip is sold in (the datasheet's ordering information)."""
+
+    id: str
+    type: str
+    ref: Ref
+    pins: int | None = None
+    size: str = ""
+    ordering: str = ""
+    note: str = ""
+
+
+@dataclass
+class Supply:
+    """One supply range of the chip, as the electrical characteristics give it."""
+
+    min_v: float
+    max_v: float
+    ref: Ref
+    name: str = ""
+
+
+@dataclass
 class Package:
     type: str
     pins: int
@@ -157,6 +208,12 @@ class Package:
     sides: dict[str, list]
     ref: Ref
     exposed_pad: bool = False
+    outline: Outline | None = None
+    variants: list[Variant] = field(default_factory=list)
+
+    @property
+    def leadless(self) -> bool:
+        return bool(_LEADLESS.match(_VENDOR.sub("", self.type.upper().replace(" ", ""))))
 
 
 @dataclass
@@ -240,6 +297,7 @@ class Hardware:
     documents: dict[str, dict]
     source: str = SOURCE
     blocks_unverified: str = ""
+    supply: list[Supply] = field(default_factory=list)
 
     def pin(self, key: str | int) -> list[Pin]:
         """Pins named ``key`` (several for a repeated name such as GND), or the pin numbered ``key``."""
@@ -321,6 +379,87 @@ def _keys(ctx: _Ctx, d, path: str, allowed: set[str]) -> bool:
     return True
 
 
+def _number(ctx: _Ctx, d: dict, key: str, path: str, required: bool = False) -> float | None:
+    """A positive, finite number (millimetres or volts), or None when absent and optional."""
+    v = d.get(key)
+    if v is None:
+        if required:
+            ctx.bad(f"{path}.{key}", "missing")
+        return None
+    if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0:
+        ctx.bad(f"{path}.{key}", f"must be a positive number, not {v!r}")
+        return None
+    return float(v)
+
+
+def _outline(ctx: _Ctx, o, package: Package) -> Outline | None:
+    p = "package.outline"
+    if not _keys(ctx, o, p, {"length_mm", "width_mm", "height_mm", "pitch_mm", "ref", "height_ref",
+                                  "pitch_ref"}):
+        return None
+    length, width = _number(ctx, o, "length_mm", p, True), _number(ctx, o, "width_mm", p, True)
+    height, pitch = _number(ctx, o, "height_mm", p), _number(ctx, o, "pitch_mm", p)
+    ref = ctx.ref(o.get("ref"), f"{p}.ref")
+    if None in (length, width, ref):
+        return None
+    if pitch is not None and pitch >= min(length, width):
+        ctx.bad(f"{p}.pitch_mm", f"{pitch} mm is not smaller than the body ({length} x {width} mm)")
+    if pitch is not None:
+        for side, nums in package.sides.items():
+            span = (len(nums) - 1) * pitch
+            edge = length if side in ("left", "right") else width
+            if span > edge + 1e-9:
+                ctx.bad(f"{p}.pitch_mm", f"the {len(nums)} pins of the {side} side span {span:.2f} mm, more than "
+                        f"the {edge} mm edge (length_mm is the left edge, width_mm the top edge)")
+    href = ctx.ref(o["height_ref"], f"{p}.height_ref") if o.get("height_ref") is not None else None
+    pref = ctx.ref(o["pitch_ref"], f"{p}.pitch_ref") if o.get("pitch_ref") is not None else None
+    return Outline(length, width, ref, height, pitch, href, pref)
+
+
+def _variants(ctx: _Ctx, vs) -> list[Variant]:
+    out: list[Variant] = []
+    if not isinstance(vs, list):
+        ctx.bad("package.variants", "must be a list")
+        return out
+    for i, v in enumerate(vs):
+        p = f"package.variants[{i}]"
+        if not _keys(ctx, v, p, {"id", "type", "pins", "size", "ordering", "note", "ref"}):
+            continue
+        vid, vtype = ctx.need(v, "id", p), ctx.need(v, "type", p)
+        if vid and any(x.id == vid for x in out):
+            ctx.bad(f"{p}.id", f"variant {vid!r} is listed twice")
+        pins = v.get("pins")
+        if pins is not None and (isinstance(pins, bool) or not isinstance(pins, int) or pins < 1):
+            ctx.bad(f"{p}.pins", f"must be a pin count, not {pins!r}")
+            pins = None
+        for k in ("size", "ordering", "note"):
+            if v.get(k) is not None and not isinstance(v[k], (str, int, float)):
+                ctx.bad(f"{p}.{k}", f"must be text, not {type(v[k]).__name__}")
+        ref = ctx.ref(v.get("ref"), f"{p}.ref")
+        if vid and vtype and ref:
+            out.append(Variant(vid, vtype, ref, pins, str(v.get("size") or ""), str(v.get("ordering") or ""),
+                               str(v.get("note") or "")))
+    return out
+
+
+def _supply(ctx: _Ctx, ss) -> list[Supply]:
+    out: list[Supply] = []
+    if not isinstance(ss, list):
+        ctx.bad("supply", "must be a list of {name, min_v, max_v, ref}")
+        return out
+    for i, s in enumerate(ss):
+        p = f"supply[{i}]"
+        if not _keys(ctx, s, p, {"name", "min_v", "max_v", "ref"}):
+            continue
+        lo, hi = _number(ctx, s, "min_v", p, True), _number(ctx, s, "max_v", p, True)
+        if lo is not None and hi is not None and lo > hi:
+            ctx.bad(f"{p}.min_v", f"{lo} V is above max_v ({hi} V)")
+        ref = ctx.ref(s.get("ref"), f"{p}.ref")
+        if lo is not None and hi is not None and ref:
+            out.append(Supply(lo, hi, ref, str(s.get("name") or "")))
+    return out
+
+
 def _documents(root: pathlib.Path, data: dict, ctx: _Ctx) -> dict[str, dict]:
     docs: dict[str, dict] = {}
     ds = root / "docs/datasheets.yml"
@@ -385,7 +524,7 @@ def load(root: pathlib.Path | None = None, path: pathlib.Path | None = None) -> 
 def parse(data, root: pathlib.Path) -> Hardware:
     ctx = _Ctx({}, {})
     if not _keys(ctx, data, "(top)", {"schema", "chip", "documents", "refs", "package", "hooks", "pins",
-                                      "block_diagram", "circuits"}):
+                                      "block_diagram", "circuits", "supply"}):
         raise HardwareError(ctx.problems)
     if data.get("schema") != SCHEMA_VERSION:
         ctx.bad("schema", f"must be {SCHEMA_VERSION}, not {data.get('schema')!r}")
@@ -405,7 +544,8 @@ def parse(data, root: pathlib.Path) -> Hardware:
     # Package
     pk = data.get("package") or {}
     package = None
-    if _keys(ctx, pk, "package", {"type", "pins", "layout", "sides", "exposed_pad", "ref"}):
+    if _keys(ctx, pk, "package", {"type", "pins", "layout", "sides", "exposed_pad", "ref",
+                                   "outline", "variants"}):
         ptype = ctx.need(pk, "type", "package") or "?"
         n = pk.get("pins")
         if not isinstance(n, int) or n < 1:
@@ -431,6 +571,12 @@ def parse(data, root: pathlib.Path) -> Hardware:
             sides = {k: list(sides.get(k) or []) for k in allowed} if isinstance(sides, dict) else _sides(layout, n)
         package = Package(ptype, n, layout, sides, ctx.ref(pk.get("ref"), "package.ref") or Ref("?", "?", 1),
                           bool(pk.get("exposed_pad")))
+        if pk.get("outline") is not None:
+            package.outline = _outline(ctx, pk["outline"], package)
+        if pk.get("variants") is not None:
+            package.variants = _variants(ctx, pk["variants"])
+
+    supply = _supply(ctx, data["supply"]) if data.get("supply") is not None else []
 
     # Hooks
     hooks: dict[str, Hook] = {}
@@ -558,7 +704,7 @@ def parse(data, root: pathlib.Path) -> Hardware:
     if ctx.problems:
         raise HardwareError(ctx.problems)
     return Hardware(chip, package, hooks, pins, blocks, links, blocks_ref, circuits, ctx.docs,
-                    blocks_unverified=blocks_unverified)
+                    blocks_unverified=blocks_unverified, supply=supply)
 
 
 def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin]) -> Circuit | None:

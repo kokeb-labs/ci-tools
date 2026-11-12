@@ -2,6 +2,7 @@
 
 * ``model``   loads and validates the file (schema in its docstring and in ci-tools' ``docs/chip-diagrams.md``);
 * ``render``  draws the package pinout and the block diagram as figkit figures;
+* ``outline`` draws the to-scale package outline (``chip-outline``) from ``package.outline``;
 * ``circuit`` places and routes a reference circuit as a schematic figure;
 * ``router``  is the orthogonal grid router the figures use;
 * ``symbols`` draws the schematic symbols;
@@ -9,5 +10,5 @@
 * ``cli``     is ``kokeb-docs hardware``.
 
 The figures join the figkit build (``kokeb-docs figures``), the pin table the generated regions (``kokeb-docs gen``,
-region ``chip-pins``), and ``kokeb-docs check`` runs both plus ``kokeb-docs hardware --check``.
+regions ``chip-pins``, ``chip-parts`` and ``chip-card``), and ``kokeb-docs check`` runs both plus ``kokeb-docs hardware --check``.
 """

@@ -3,8 +3,11 @@
 * ``<!-- generated: chip-pins -->``: one row per package pin: number, name, electrical type and voltage domain,
   function, the driver hook that uses it, what to do with it when unused, and the datasheet section and page.
 * ``<!-- generated: chip-parts -->``: the parts of each reference circuit, with their value and what they connect.
+* ``<!-- generated: chip-card -->``: the chip at a glance for the README: package, pin count, body size, pitch,
+  supply range and, for a chip sold in several packages, the variants, each with its datasheet citation. A row
+  whose facts the file does not give is left out.
 
-The figures ``chip-pinout``, ``chip-blocks`` and ``chip-circuit-<id>`` come from the same file, so the table and
+The figures ``chip-pinout``, ``chip-outline``, ``chip-blocks`` and ``chip-circuit-<id>`` come from the same file, so the table and
 the figures cannot disagree. A file that fails validation stops the run with every problem listed.
 """
 
@@ -108,4 +111,43 @@ def parts(page) -> str:
     return "\n".join(out) + "\n"
 
 
-REGIONS = {"chip-pins": pins, "chip-parts": parts}
+def _mm(v: float) -> str:
+    return f"{v:.1f}" if abs(v * 10 - round(v * 10)) < 1e-9 else f"{v:.3f}".rstrip("0")
+
+
+def card(page) -> str:
+    hw = _load()
+    if hw is None:
+        return f"_No `{model.SOURCE}` in this repository._\n"
+    pk, o = hw.package, hw.package.outline
+    rows = [("Package", f"{_cell(pk.type)}" + (", exposed pad" if pk.exposed_pad else ""), ref_text(hw, pk.ref, True)),
+            ("Pins", str(pk.pins), ref_text(hw, pk.ref, True))]
+    if o:
+        dims = " x ".join(_mm(v) for v in (o.length_mm, o.width_mm, o.height_mm) if v)
+        cite = ref_text(hw, o.ref, True)
+        if o.height_mm and o.height_ref:
+            cite += f"; height {ref_text(hw, o.height_ref)}"
+        rows.append(("Body size", f"{dims} mm", cite))
+        if o.pitch_mm:
+            rows.append(("Pin pitch", f"{_mm(o.pitch_mm)} mm", ref_text(hw, o.ref_of("pitch"), True)))
+    if pk.variants:
+        rows.append(("Variants", ", ".join(f"`{_cell(v.id)}`" for v in pk.variants) + " (below)",
+                     ref_text(hw, pk.variants[0].ref, True)))
+    for s in hw.supply:
+        rows.append((f"Supply {_cell(s.name)}".strip(), f"{_mm(s.min_v)} V to {_mm(s.max_v)} V", ref_text(hw, s.ref, True)))
+    out = ["| | | Datasheet |", "| --- | --- | --- |"]
+    out += [f"| **{k}** | {v} | {r} |" for k, v, r in rows]
+    if pk.variants:
+        out += ["", "Also sold as:", "",
+                "| Variant | Package | Pins | Size | Ordering | Note | Datasheet |",
+                "| --- | --- | --- | --- | --- | --- | --- |"]
+        for v in pk.variants:
+            out.append(f"| `{_cell(v.id)}` | {_cell(v.type)} | {v.pins or '-'} | {_cell(v.size or '-')} | "
+                       f"{_cell(v.ordering or '-')} | {_cell(v.note or '-')} | {ref_text(hw, v.ref, True)} |")
+    more = f"; pins, circuits and the block diagram: [Hardware]({page.rel('docs/hardware.md')})" \
+        if (repo_root() / "docs/hardware.md").is_file() else ""
+    out += ["", f"From [`{model.SOURCE}`]({page.rel(model.SOURCE)}){more}."]
+    return "\n".join(out) + "\n"
+
+
+REGIONS = {"chip-pins": pins, "chip-parts": parts, "chip-card": card}

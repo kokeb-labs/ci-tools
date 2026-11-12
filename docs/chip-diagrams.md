@@ -11,10 +11,12 @@ module or generator of its own:
 | Output | Made by | Checked by |
 | --- | --- | --- |
 | `chip-pinout`: the package from the top, pins on their datasheet sides, pin 1 marked, coloured by type, each pin's port hook | `kokeb-docs figures` | `kokeb-docs figures --check` |
+| `chip-outline`: the package body from above, to scale, with its pads, dimension arrows (length, width, pitch), a side view with the height, and a size label; only when `package.outline` is given | `kokeb-docs figures` | `kokeb-docs figures --check` |
 | `chip-blocks`: the function blocks, their links and the pins that reach each block | `kokeb-docs figures` | `kokeb-docs figures --check` |
 | `chip-circuit-<id>`: each reference circuit as a schematic, MCU wires labelled with the hook that drives them | `kokeb-docs figures` | `kokeb-docs figures --check` |
 | `<!-- generated: chip-pins -->`: one row per pin with type, domain, function, hook, "if unused" and citation | `kokeb-docs gen` | `kokeb-docs gen --check` |
 | `<!-- generated: chip-parts -->`: the parts of each circuit with their values and nets | `kokeb-docs gen` | `kokeb-docs gen --check` |
+| `<!-- generated: chip-card -->`: the chip at a glance for the README: package, pin count, body size, pin pitch, supply range, and a table of the other packages it is sold in, each with its citation; a row the file does not give is left out | `kokeb-docs gen` | `kokeb-docs gen --check` |
 | A KiCad netlist of a circuit, for a schematic or PCB tool | `kokeb-docs hardware --kicad-netlist OUT --circuit ID` | `kokeb-docs hardware --check` |
 
 `kokeb-docs check`, which CI runs before every build, validates the file first and stops there when it is wrong,
@@ -30,10 +32,18 @@ refs:                                   # named citations; every fact cites one
   pinout: {doc: ds, section: "3 Pin configuration", page: 3}
   spi: {doc: ds, section: "6.2 SPI interface", page: 8}
   app: {doc: ds, section: "9 Application information", page: 20}
+  outline: {doc: ds, section: "10.1 Package outline", page: 24}
+  order: {doc: ds, section: "11 Ordering information", page: 26}
+  electrical: {doc: ds, section: "5 Electrical characteristics", page: 5}
 package:
   type: SOIC-8
   pins: 8
   ref: pinout
+  outline: {length_mm: 4.9, width_mm: 3.9, height_mm: 1.75, pitch_mm: 1.27, ref: outline}   # optional
+  variants:                             # optional: the other packages the chip is sold in
+    - {id: dfn, type: DFN-8, pins: 8, size: "3.0 x 3.0 x 0.8 mm", ordering: "XMPL100D", ref: order}
+supply:                                 # optional: feeds the README chip card
+  - {name: VDD, min_v: 1.8, max_v: 3.6, ref: electrical}
 hooks:
   - {id: transfer, call: "Transfer()", kind: spi, source: inc/xmpl100_spi_interface.hpp, symbol: Transfer}
   - {id: reset, call: "GpioSet(CtrlPin::Reset)", kind: gpio-out, source: inc/xmpl100_spi_interface.hpp,
@@ -73,6 +83,9 @@ The template site's [`docs/hardware.yml`](../templates/mkdocs-site/docs/hardware
 | `documents` | no | `{id, name, pdf, page_offset}` per document; leave it out when `docs/datasheets.yml` lists them |
 | `refs` | no | Named citations `{doc, section, page}`; `section` is the datasheet's own heading, `page` its printed page |
 | `package` | yes | `type` (`SOIC-8`, `TSSOP-24`, `QFN-24`), `pins` (the exposed pad not counted), `exposed_pad`, `ref`; `layout` (`dual`, `quad`) is guessed from the type, vendor forms included (`PG-DSO-36`, `HTSSOP-28`, `HVQFN-24`, `TQFN-38`); `sides` lists the pins of each side counter-clockwise (left top to bottom, bottom left to right, right bottom to top, top right to left) for a package the layout does not describe (`SOT-23-5`) |
+| `package.outline` | no | The body from the datasheet's package outline drawing: `length_mm` (the body edge pin 1 lies along, drawn as the left edge), `width_mm` (the other edge), `height_mm`, `pitch_mm` (the last two optional), `ref`; `height_ref` and `pitch_ref` when a value is cited elsewhere than the drawing (a mechanical-data table). All numbers are positive; the pins of a side must fit on its edge at the pitch |
+| `package.variants` | no | The other packages the chip is sold in, from the ordering information: `id` (unique), `type`, `pins`, `size` (text, `"3.0 x 3.0 x 0.8 mm"`), `ordering` (the part-number suffix or code), `note`, `ref`; only `id`, `type` and `ref` are required |
+| `supply` | no | The supply range or ranges: `name` (`VDD`), `min_v`, `max_v` (positive, `min_v` not above `max_v`), `ref`; shown on the chip card |
 | `hooks` | yes | The port hooks a pin can map to: `id`, `call` (as the reader writes it), `kind` (`spi`, `i2c`, `uart`, `gpio-out`, `gpio-in`, `irq`, `other`); with `source` and `symbol` the check fails when the symbol is no longer in that header |
 | `pins` | yes | One entry per package pin: `number` (or `EP` for the exposed pad), `name`, `type`, `domain` (the supply that sets its levels), `function`, `hook`, `unused` (what to do with it when unused), `ref` |
 | `block_diagram` | no | `ref`, `blocks` (`id`, `label`, `detail`, `at: [column, row]`, `pins`, `tone`, `side`), `links` (`from`, `to`, `label`, `both`) |
@@ -94,6 +107,9 @@ never reads as a fact.
 
 - A key the schema does not know, a missing required key, a value of the wrong type (with the path, e.g.
   `pins[3].type`).
+- An outline with a number that is not positive, missing `length_mm`, `width_mm` or `ref`, a pitch that does not fit
+  the pins on a side; a variant id listed twice or a variant pin count that is not a number; a supply range
+  with `min_v` above `max_v`; any of these citing an unknown `ref`.
 - A pin number listed twice, missing, or outside the package; an `EP` pin without `exposed_pad`.
 - A fact without a citation, a citation of an unknown document, a page that is not a number.
 - A pin whose `hook` is not under `hooks`; a hook whose `symbol` is not in its `source`.
@@ -112,6 +128,12 @@ PyYAML, no network and no browser; the same file always gives the same bytes.
 
 - **Pinout.** Pins counter-clockwise from pin 1, the way datasheets number them: on a dual package down the left
   and up the right, on a quad package also along the bottom and the top (names read bottom to top there).
+- **Outline.** The pinout's pads, colours, legend and pin-1 dot, on a body drawn at one scale (about 300 px across,
+  larger when a fine pitch needs it): a leaded package (SOIC, TSSOP, SOT, QFP) shows its leads reaching out of the
+  body, a leadless one (QFN, DFN, LGA) its pads inside the edge. Pads are centred on each side at the stated pitch,
+  an indication of where the pins are and not the land pattern, which the datasheet gives. The exposed pad is
+  dashed and not sized. Arrows give the length, width and pitch; with `height_mm` a side view at the same scale
+  gives the height. No `outline`, no figure.
 - **Block diagram.** Blocks sit in the grid cells their `at` names; pins stand on the chip outline, left or right of
   their block. Links and pin wires are routed like the circuit's wires. Links into one face of a block share it out,
   each on the side toward its other end; a link label sits on its own line, or beside it, never on another line.
@@ -143,11 +165,17 @@ open pin. There are no dates or time stamps, so the same circuit always gives th
    the hooks from the port header (`inc/*_interface.hpp`) with `source` and `symbol`; the blocks from the
    datasheet's block diagram; one circuit from its application section. Mark anything you could not confirm with
    `unverified`.
+   The outline and the variants come from the datasheet's package outline drawing (chapter "Package", "Package
+   outline" or "Mechanical data": the body in millimetres, the pitch, the height) and its ordering information
+   (the package options and their part-number suffixes). Leave out a number the text does not give.
 2. In `docs/hardware.md`, replace the hand-written pin table with `<!-- generated: chip-pins -->` and embed
    `<!-- figure: chip-pinout -->`, `<!-- figure: chip-blocks -->` and `<!-- figure: chip-circuit-<id> -->`, each
    closed by its end marker.
+   In the README, under "At a glance", embed `<!-- figure: chip-pinout -->`, `<!-- figure: chip-outline -->` (when
+   the file has an outline) and `<!-- figure: chip-blocks -->`, then add `<!-- generated: chip-card -->` for the
+   table: the chip's module view without opening the docs.
 3. Run `kokeb-docs hardware --check`, then `kokeb-docs figures && kokeb-docs gen`, and commit the SVGs,
-   `docs/diagrams/figures.json`, `docs/diagrams/index.md` and the page.
+   `docs/diagrams/figures.json`, `docs/diagrams/index.md`, the README and the page.
 4. `kokeb-docs check` and `mkdocs build --strict` pass locally; CI then keeps them current.
 
 Next: [Style guide](DOCS-STYLE-GUIDE.md#chip-hardware).
