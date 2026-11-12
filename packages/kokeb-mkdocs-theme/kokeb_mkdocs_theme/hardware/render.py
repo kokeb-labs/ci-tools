@@ -4,7 +4,8 @@ figkit's checks (contrast, fit, overlaps) and is drift-checked by ``kokeb-docs f
 figure. On top of figkit's checks each figure checks its own geometry (``layout_problems``): no two texts overlap,
 no wire runs through a part body or a text, every pin sits on the side the package puts it.
 
-Figure ids: ``chip-pinout``, ``chip-blocks`` and ``chip-circuit-<id>``.
+Figure ids: ``chip-pinout``, ``chip-outline`` (when ``package.outline`` is given, drawn by ``outline.py``),
+``chip-blocks`` and ``chip-circuit-<id>``.
 """
 
 from __future__ import annotations
@@ -20,6 +21,8 @@ MONO = True
 
 def figure_ids(hw: Hardware) -> list[str]:
     ids = ["chip-pinout"]
+    if hw.package.outline:
+        ids.append("chip-outline")
     if hw.blocks:
         ids.append("chip-blocks")
     ids += [f"chip-circuit-{c.id}" for c in hw.circuits]
@@ -29,6 +32,10 @@ def figure_ids(hw: Hardware) -> list[str]:
 def build(hw: Hardware, fid: str) -> Fig:
     if fid == "chip-pinout":
         return pinout(hw)
+    if fid == "chip-outline" and hw.package.outline:
+        from .outline import outline
+
+        return outline(hw)
     if fid == "chip-blocks":
         return blocks(hw)
     if fid.startswith("chip-circuit-"):

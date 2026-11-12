@@ -15,6 +15,26 @@ that heading.
 
 ## [Unreleased]
 
+## [1.16.0] - 2026-11-11
+
+### Added
+
+- **Docs theme: the chip at a glance in the README.** `docs/hardware.yml` takes optional package data from the
+  datasheet, so a driver's README can show the module view without opening the docs: `package.outline`
+  (`length_mm`, `width_mm`, `height_mm`, `pitch_mm`, `ref`), `package.variants` (the other packages the chip is
+  sold in: `id`, `type`, `pins`, `size`, `ordering`, `note`, `ref`) and `supply` (`name`, `min_v`, `max_v`,
+  `ref`). `kokeb-docs hardware --check` refuses numbers that are not positive, a citation that does not resolve,
+  a variant id listed twice, a supply range upside down and pins that do not fit their edge at the pitch.
+- **Docs theme: the `chip-outline` figure.** When `package.outline` is given, `kokeb-docs figures` draws the
+  package body from above to scale, light and dark, with the pads (the pinout's colours, numbers and pin-1 dot),
+  arrows for length, width and pitch, a side view with the height and a size label. Leads reach out of a leaded
+  package and sit inside a leadless one.
+- **Docs theme: the `chip-card` region.** `<!-- generated: chip-card -->` in a README (written by
+  `kokeb-docs gen`, checked by `kokeb-docs check`) holds a table of package, pin count, body size, pin pitch and
+  supply range, and one of the other packages, each row with its datasheet citation. A chip without an outline or
+  variants still builds: the card leaves those rows out. Existing files are unchanged: every new field is optional
+  and the schema stays at 1.
+
 ## [1.15.3] - 2026-11-11
 
 ### Fixed

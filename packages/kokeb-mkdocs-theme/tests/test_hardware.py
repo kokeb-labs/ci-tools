@@ -593,5 +593,167 @@ class TemplateSiteTest(unittest.TestCase):
             self.assertEqual(r.returncode, 2)
 
 
+FIXTURE = HERE / "fixtures/chip-outline"
+
+
+def with_outline() -> dict:
+    """The template's description with the package data of schema 1.16 (outline, variants, supply)."""
+    return yaml.safe_load((FIXTURE / "hardware.yml").read_text())
+
+
+class PackageDataTest(unittest.TestCase):
+    """package.outline, package.variants and supply: optional, validated, drawn and put on the chip card."""
+
+    def test_outline_variants_and_supply_load(self):
+        hw = parse(with_outline())
+        o = hw.package.outline
+        self.assertEqual((o.length_mm, o.width_mm, o.height_mm, o.pitch_mm), (4.9, 3.9, 1.75, 1.27))
+        self.assertEqual(o.ref_of("height").page, 5)
+        self.assertEqual(o.ref_of("pitch").page, 24)  # the drawing's, as no pitch_ref is given
+        self.assertEqual([v.id for v in hw.package.variants], ["dfn", "tssop"])
+        self.assertEqual(hw.supply[0].max_v, 3.6)
+        self.assertFalse(hw.package.leadless)
+        self.assertTrue(parse(quad()).package.leadless)
+
+    def test_a_chip_without_the_new_fields_is_unchanged(self):
+        hw = parse(base())
+        self.assertIsNone(hw.package.outline)
+        self.assertEqual((hw.package.variants, hw.supply), ([], []))
+        self.assertNotIn("chip-outline", render.figure_ids(hw))
+        self.assertIn("chip-outline", render.figure_ids(parse(with_outline())))
+
+    def test_numbers_must_be_positive(self):
+        for key, bad in (("length_mm", 0), ("width_mm", -2), ("height_mm", "1.75"), ("pitch_mm", True)):
+            d = with_outline()
+            d["package"]["outline"][key] = bad
+            self.assertTrue(any(f"package.outline.{key}" in x and "positive number" in x for x in problems(d)), key)
+        d = with_outline()
+        del d["package"]["outline"]["length_mm"]
+        self.assertTrue(any("package.outline.length_mm: missing" in x for x in problems(d)))
+
+    def test_refs_must_resolve(self):
+        for path in (("outline", "ref"), ("outline", "height_ref"), ("variants", 0, "ref")):
+            d = with_outline()
+            node = d["package"]
+            for k in path[:-1]:
+                node = node[k]
+            node[path[-1]] = "nowhere"
+            self.assertTrue(any("unknown citation 'nowhere'" in x for x in problems(d)), path)
+        d = with_outline()
+        del d["package"]["outline"]["ref"]
+        self.assertTrue(any("package.outline.ref" in x and "missing" in x for x in problems(d)))
+
+    def test_variant_ids_are_unique_and_complete(self):
+        d = with_outline()
+        d["package"]["variants"][1]["id"] = "dfn"
+        self.assertTrue(any("variant 'dfn' is listed twice" in x for x in problems(d)))
+        d = with_outline()
+        d["package"]["variants"][0]["pins"] = 0
+        d["package"]["variants"][1]["colour"] = "red"
+        p = problems(d)
+        self.assertTrue(any("variants[0].pins" in x for x in p), p)
+        self.assertTrue(any("variants[1]" in x and "colour" in x for x in p), p)
+        d = with_outline()
+        del d["package"]["variants"][0]["type"]
+        self.assertTrue(any("variants[0].type: missing" in x for x in problems(d)))
+
+    def test_pins_must_fit_the_body_and_supply_must_be_ordered(self):
+        d = with_outline()
+        d["package"]["outline"]["pitch_mm"] = 1.6  # 3 gaps of 1.6 mm on a 4.9 mm edge: 4.8 fits, so widen
+        d["package"]["outline"]["length_mm"] = 3.0
+        self.assertTrue(any("span 4.80 mm, more than the 3.0 mm edge" in x for x in problems(d)))
+        d = with_outline()
+        d["supply"][0].update(min_v=3.6, max_v=1.8)
+        self.assertTrue(any("supply[0].min_v" in x for x in problems(d)))
+
+    def test_outline_figure_for_a_leaded_package(self):
+        hw = parse(with_outline())
+        fig = render.build(hw, "chip-outline")
+        self.assertEqual(fig.problems(), [])
+        svg = fig.svg("light")
+        for text in ("4.9 mm", "3.9 mm", "1.75 mm", "pitch 1.27 mm", "4.9 x 3.9 x 1.75 mm"):
+            self.assertIn(text, svg)
+        body = fig.placed  # leads reach out of the body: pad 1 lies left of pad 5, which lies right of the body
+        self.assertLess(body[1].x, body[5].x)
+        self.assertEqual([round(body[n].cy, 1) for n in (1, 2, 3, 4)], sorted(round(body[n].cy, 1) for n in range(1, 5)))
+        self.assertEqual(svg, render.build(parse(with_outline()), "chip-outline").svg("light"))
+
+    def test_outline_figure_for_a_leadless_package_and_partial_data(self):
+        d = quad()
+        d["package"]["outline"] = {"length_mm": 3.0, "width_mm": 3.0, "pitch_mm": 0.5, "ref": "p"}
+        fig = render.build(parse(d), "chip-outline")
+        self.assertEqual(fig.problems(), [])
+        self.assertNotIn("Side view", fig.svg("light"))  # no height: no side view
+        d["package"]["outline"] = {"length_mm": 3.0, "width_mm": 3.0, "ref": "p"}  # no pitch either
+        fig = render.build(parse(d), "chip-outline")
+        self.assertEqual(fig.problems(), [])
+        self.assertNotIn("pitch", fig.svg("light"))
+
+    def test_fine_pitch_gets_a_larger_drawing_not_overlaps(self):
+        d = quad()
+        d["package"]["outline"] = {"length_mm": 3.0, "width_mm": 3.0, "pitch_mm": 0.4, "ref": "p"}
+        self.assertEqual(render.build(parse(d), "chip-outline").problems(), [])
+
+
+class ChipCardTest(unittest.TestCase):
+    """The README region and the figure, through the commands, on a copy of the template site."""
+
+    run_cli = TemplateSiteTest.run_cli
+
+    def site(self, tmp: str, outline: bool) -> pathlib.Path:
+        site = pathlib.Path(tmp) / "site"
+        shutil.copytree(TEMPLATE, site)
+        if outline:
+            shutil.copy(FIXTURE / "hardware.yml", site / "docs/hardware.yml")
+        shutil.copy(FIXTURE / "README.md", site / "README.md")
+        return site
+
+    def test_card_and_figure_are_written_and_checked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site = self.site(tmp, True)
+            r = self.run_cli(site, "check")
+            self.assertNotEqual(r.returncode, 0)  # figures and region not written yet
+            for cmd in ("figures", "gen"):
+                r = self.run_cli(site, cmd)
+                self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertTrue((site / "docs/diagrams/chip-outline.svg").is_file())
+            self.assertTrue((site / "docs/diagrams/chip-outline.dark.svg").is_file())
+            readme = (site / "README.md").read_text()
+            self.assertIn("docs/diagrams/chip-outline.dark.svg", readme)
+            for row in ("| **Package** | SOIC-8 |", "| **Pins** | 8 |", "| **Body size** | 4.9 x 3.9 x 1.75 mm |",
+                        "| **Pin pitch** | 1.27 mm |", "| **Supply VDD** | 1.8 V to 3.6 V |", "| `dfn` | DFN-8 | 8 |"):
+                self.assertIn(row, readme)
+            self.assertIn("height 5 Electrical characteristics, Table 4 Mechanical data, p. 5", readme)
+            r = self.run_cli(site, "check")
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            # A change to the outline makes the card and the figure stale.
+            y = site / "docs/hardware.yml"
+            y.write_text(y.read_text().replace("pitch_mm: 1.27", "pitch_mm: 1.25"))
+            r = self.run_cli(site, "check")
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("stale", r.stderr)
+            # An invalid outline stops the check at the validation.
+            y.write_text(y.read_text().replace("length_mm: 4.9", "length_mm: -4.9"))
+            r = self.run_cli(site, "check")
+            self.assertIn("package.outline.length_mm", r.stderr)
+
+    def test_a_chip_without_an_outline_still_builds(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site = self.site(tmp, False)
+            readme = (site / "README.md").read_text().replace("<!-- figure: chip-outline -->\n<!-- /figure -->\n\n", "")
+            (site / "README.md").write_text(readme)
+            for cmd in ("figures", "gen"):
+                r = self.run_cli(site, cmd)
+                self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            card = (site / "README.md").read_text()
+            self.assertIn("| **Package** | SOIC-8 |", card)
+            self.assertNotIn("Body size", card)
+            self.assertNotIn("Pin pitch", card)
+            self.assertNotIn("Also sold as", card)
+            self.assertFalse((site / "docs/diagrams/chip-outline.svg").exists())
+            r = self.run_cli(site, "check")
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
