@@ -1878,6 +1878,10 @@ page shows, in this order:</p>
    symbols, every MCU wire labelled with the hook that drives it (<code>GpioSet(CtrlPin::Reset)</code>). A second circuit
    (the minimal wiring, a variant) is a second entry under <code>circuits</code>.</li>
 </ol>
+<p>The README shows the same chip at a glance, under "At a glance": <code>&lt;!-- figure: chip-pinout --&gt;</code>,
+<code>&lt;!-- figure: chip-outline --&gt;</code> (the to-scale package body, from <code>package.outline</code>) and
+<code>&lt;!-- figure: chip-blocks --&gt;</code>, then the <code>&lt;!-- generated: chip-card --&gt;</code> table (package, pins, body size, pitch,
+supply, other packages), all from the same file.</p>
 <p>Every fact cites the datasheet section and printed page. A value the datasheet does not give (a pull-up chosen by
 the application, an example load) carries <code>unverified</code> with the reason, and the page shows it as such. The
 reference circuit can be exported for a board design with <code>kokeb-docs hardware --kicad-netlist</code>.</p>
