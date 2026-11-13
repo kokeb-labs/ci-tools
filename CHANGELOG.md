@@ -15,6 +15,12 @@ that heading.
 
 ## [Unreleased]
 
+### Fixed
+
+- `release_assets.py` names a firmware zip the way GitHub stores it (a space becomes `.`), so the line in
+  `SHA256SUMS` matches the downloaded file and `ru-attest-release` no longer fails with "No such file" for an
+  artifact folder such as `fw-app-Debug Release`.
+
 ## [1.16.0] - 2026-11-11
 
 ### Added
