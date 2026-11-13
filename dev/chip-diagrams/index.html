@@ -1523,7 +1523,7 @@ checked in both, embedded with <code>&lt;!-- figure: chip-pinout --&gt;</code> l
 </span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">GND</span><span class="p p-Indicator">,</span><span class="nt"> kind</span><span class="p">:</span><span class="w"> </span><span class="nv">ground</span><span class="p p-Indicator">,</span><span class="nt"> nodes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">U1.GND</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">U2.GND</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">C1.2</span><span class="p p-Indicator">]}</span>
 </span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">SCLK</span><span class="p p-Indicator">,</span><span class="nt"> nodes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">U1.SCLK</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">U2.SCK</span><span class="p p-Indicator">]}</span>
 </span></code></pre></div>
-<p>The template site's <a href="https://github.com/kokeb-labs/ci-tools/blob/46454b12969649b2f89fda5381e176e87dd20793/templates/mkdocs-site/docs/hardware.yml"><code>docs/hardware.yml</code></a> is a complete example.</p>
+<p>The template site's <a href="https://github.com/kokeb-labs/ci-tools/blob/22cba57f8640ab2cdc6b1a21ef91a564fc1af024/templates/mkdocs-site/docs/hardware.yml"><code>docs/hardware.yml</code></a> is a complete example.</p>
 <h3 id="keys">Keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -1592,7 +1592,7 @@ checked in both, embedded with <code>&lt;!-- figure: chip-pinout --&gt;</code> l
 <tr>
 <td><code>circuits</code></td>
 <td>no</td>
-<td><code>id</code> (names the figure), <code>title</code>, <code>description</code>, <code>ref</code>, <code>parts</code>, <code>nets</code>, <code>unused</code></td>
+<td><code>id</code> (names the figure), <code>title</code>, <code>description</code>, <code>ref</code>, <code>parts</code>, <code>nets</code> (<code>name</code>, <code>kind</code>, <code>label</code>, <code>nodes</code>, <code>ref</code>, <code>hook</code>), <code>unused</code></td>
 </tr>
 </tbody>
 </table>
@@ -1603,6 +1603,19 @@ checked in both, embedded with <code>&lt;!-- figure: chip-pinout --&gt;</code> l
 <code>zener</code>, <code>led</code>, <code>crystal</code>, <code>fuse</code>, whose pins are <code>1</code> and <code>2</code> (<code>A</code>/<code>K</code> and <code>+</code>/<code>-</code> work too). A net <code>kind</code> is
 <code>signal</code> (the default), <code>supply</code> or <code>ground</code>. A node is <code>PART.PIN</code>; pins of the chip that share a name (GND on
 several package pins) are one node.</p>
+<p>A net may carry an optional <code>hook</code>: the id of a hook under <code>hooks</code>, which replaces the chip pin's own <code>hook</code> in that
+one circuit's drawing and alt text (the pin table and the pinout keep the pin's hook). <code>hook: null</code> (or <code>""</code>) shows
+no hook on that wire. A net without the key is unchanged. Use it when a circuit drives a pin another way than
+the pinout says, for example a chip's SPI pins wired as a UART:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">hooks</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">transfer</span><span class="p p-Indicator">,</span><span class="nt"> call</span><span class="p">:</span><span class="w"> </span><span class="s">"Transfer()"</span><span class="p p-Indicator">,</span><span class="nt"> kind</span><span class="p">:</span><span class="w"> </span><span class="nv">spi</span><span class="p p-Indicator">}</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">exchange</span><span class="p p-Indicator">,</span><span class="nt"> call</span><span class="p">:</span><span class="w"> </span><span class="s">"Exchange()"</span><span class="p p-Indicator">,</span><span class="nt"> kind</span><span class="p">:</span><span class="w"> </span><span class="nv">uart</span><span class="p p-Indicator">}</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">circuits</span><span class="p">:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uart</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">nets</span><span class="p">:</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">SWP</span><span class="p p-Indicator">,</span><span class="nt"> nodes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">U1.SWP</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">U2.TX</span><span class="p p-Indicator">],</span><span class="nt"> hook</span><span class="p">:</span><span class="w"> </span><span class="nv">exchange</span><span class="p p-Indicator">}</span><span class="w">   </span><span class="c1"># labelled Exchange() here, Transfer() elsewhere</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">NAO</span><span class="p p-Indicator">,</span><span class="nt"> nodes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">U1.NAO</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">U2.GND</span><span class="p p-Indicator">],</span><span class="nt"> hook</span><span class="p">:</span><span class="w"> </span><span class="nv">null</span><span class="p p-Indicator">}</span><span class="w">      </span><span class="c1"># no hook label on this wire</span>
+</span></code></pre></div>
 <p>Every pin, block, link, part or net may carry <code>unverified: &lt;why&gt;</code>: a fact that could not be confirmed in the
 datasheet. The table gives it a footnote and the figures an asterisk with the reason under the figure, so a guess
 never reads as a fact.</p>
@@ -1615,7 +1628,7 @@ never reads as a fact.</p>
   with <code>min_v</code> above <code>max_v</code>; any of these citing an unknown <code>ref</code>.</li>
 <li>A pin number listed twice, missing, or outside the package; an <code>EP</code> pin without <code>exposed_pad</code>.</li>
 <li>A fact without a citation, a citation of an unknown document, a page that is not a number.</li>
-<li>A pin whose <code>hook</code> is not under <code>hooks</code>; a hook whose <code>symbol</code> is not in its <code>source</code>.</li>
+<li>A pin or net whose <code>hook</code> is not under <code>hooks</code> (a net <code>hook</code> also needs a chip pin on the net); a hook whose <code>symbol</code> is not in its <code>source</code>.</li>
 <li>A block that names an unknown pin, two blocks in one cell, a link to an unknown block.</li>
 <li>A circuit node whose part or pin does not exist; a pin on two nets; a net with fewer than two nodes; a pin on no
   net that is not listed under <code>unused</code> (pins of type <code>nc</code> excepted).</li>
@@ -1649,9 +1662,9 @@ PyYAML, no network and no browser; the same file always gives the same bytes.</p
   and crossings cost extra; ties are broken in a fixed order.</li>
 </ul>
 <h2 id="export-a-circuit">Export a circuit<a class="headerlink" href="#export-a-circuit" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kokeb-docs<span class="w"> </span>hardware<span class="w"> </span>--check<span class="w">                                      </span><span class="c1"># what CI runs</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>kokeb-docs<span class="w"> </span>hardware<span class="w"> </span>--kicad-netlist<span class="w"> </span>typical.net<span class="w"> </span>--circuit<span class="w"> </span>typical
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>kokeb-docs<span class="w"> </span>hardware<span class="w"> </span>--svg<span class="w"> </span>/tmp/chip<span class="w">                              </span><span class="c1"># the figures, light and dark, anywhere</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kokeb-docs<span class="w"> </span>hardware<span class="w"> </span>--check<span class="w">                                      </span><span class="c1"># what CI runs</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kokeb-docs<span class="w"> </span>hardware<span class="w"> </span>--kicad-netlist<span class="w"> </span>typical.net<span class="w"> </span>--circuit<span class="w"> </span>typical
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kokeb-docs<span class="w"> </span>hardware<span class="w"> </span>--svg<span class="w"> </span>/tmp/chip<span class="w">                              </span><span class="c1"># the figures, light and dark, anywhere</span>
 </span></code></pre></div>
 <p>The netlist is KiCad's export format (version <code>E</code>): KiCad's PCB editor imports it directly and most schematic and
 PCB tools read it. Passive parts map to KiCad's <code>Device</code> library (<code>R</code>, <code>C</code>, <code>LED</code> ...); the chip, the MCU and other
