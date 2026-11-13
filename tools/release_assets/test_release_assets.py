@@ -104,6 +104,21 @@ class ReleaseAssets(unittest.TestCase):
                 self.assertEqual(z.read("builds/b/bootloader/bootloader.bin"), kind.encode())
         self.assertIn("fw-demo-Release.zip", (out / "SHA256SUMS").read_text())
 
+    def test_firmware_zip_name_is_the_name_github_stores(self):
+        fw = Path(self.tmp.name) / "fw"
+        b = fw / "fw-demo-Debug Release" / "builds" / "b"
+        b.mkdir(parents=True)
+        (b / "app.bin").write_bytes(b"app")
+        (b / "flasher_args.json").write_text(json.dumps({"flash_files": {"0x10000": "app.bin"},
+                                                         "app": {"file": "app.bin"}}))
+        out = Path(self.tmp.name) / "dist"
+        self.assertEqual(release_assets.main(["--tag", "v1.2.0", "--out", str(out), "--firmware", str(fw)]), 0)
+        self.assertTrue((out / "fw-demo-Debug.Release.zip").is_file())
+        self.assertFalse((out / "fw-demo-Debug Release.zip").exists())
+        sums = (out / "SHA256SUMS").read_text()
+        self.assertIn("  fw-demo-Debug.Release.zip", sums)
+        self.assertNotIn(" fw-demo-Debug Release", sums)
+
     def test_firmware_missing_flash_file_fails(self):
         b = Path(self.tmp.name) / "fw" / "fw-x" / "b"
         b.mkdir(parents=True)

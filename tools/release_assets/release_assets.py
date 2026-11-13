@@ -11,7 +11,8 @@ Writes into --out:
   GitHub's own "Source code" archives are not promised to be byte-stable, so checksums cannot name them.
 - <name>-<version>.spdx.json: the repository as the main package, each git submodule as a package it contains
   (name, URL, pinned commit), and each release file as a file it generates, with its SHA-256.
-- <artifact>.zip for each folder in --firmware (one downloaded CI artifact): the files needed to flash and debug
+- <artifact>.zip for each folder in --firmware (one downloaded CI artifact; characters GitHub would rewrite in an
+  asset name, such as a space, become `.` here so the checksum line matches the downloaded file): the files needed to flash and debug
   each ESP-IDF build in it (flasher_args.json, every file it lists, the app .elf and .map), at their build-relative
   paths, so `esptool.py write_flash @flash_args` works after unzipping. A folder with no flasher_args.json is
   zipped whole. One zip per artifact keeps Debug and Release apart, where uploading the files one by one would let
@@ -140,6 +141,13 @@ def flash_set(build: Path) -> list[Path]:
     return sorted(files)
 
 
+def asset_name(name: str) -> str:
+    """The file name GitHub stores for an uploaded asset: every character outside letters, digits, `.`, `_`
+    and `-` becomes `.`. A checksum line must use this name, or `sha256sum -c` on the downloaded release
+    cannot find the file (an artifact folder named `fw-app-Debug Release` is stored as `fw-app-Debug.Release`)."""
+    return re.sub(r"[^A-Za-z0-9._-]", ".", name)
+
+
 def package_firmware(firmware: Path, out: Path) -> list[Path]:
     """One zip per artifact folder in `firmware`; see the module docstring."""
     zips = []
@@ -152,7 +160,7 @@ def package_firmware(firmware: Path, out: Path) -> list[Path]:
             members = [(f, f.relative_to(art)) for f in sorted(art.rglob("*")) if f.is_file()]
         if not members:
             continue
-        target = out / f"{art.name}.zip"
+        target = out / f"{asset_name(art.name)}.zip"
         with zipfile.ZipFile(target, "w") as zf:
             for f, rel in members:
                 add_to_zip(zf, f, rel.as_posix())
