@@ -50,6 +50,8 @@ Schema (version 1), in the order the file is usually written::
           - {id: C1, kind: capacitor, value: 100 nF}
         nets:
           - {name: "+3V3", kind: supply, nodes: [U1.VDD, U2.VDD, C1.1]}
+          - {name: SCK, nodes: [U1.SCLK, U2.SCK], hook: transfer}   # optional hook: replaces the pin's hook in this
+                                                                 # circuit only; hook: null shows no hook
           - {name: GND, kind: ground, nodes: [U1.GND, U2.GND, C1.2]}
         unused: [U1.NC]
 
@@ -261,6 +263,8 @@ class Net:
     ref: Ref
     label: str = ""
     unverified: str = ""
+    hook_set: bool = False  # the net carries its own ``hook`` key, which then replaces the chip pin's hook here
+    hook: str = ""  # that hook's id; empty when the key was null or empty (the wire shows no hook)
 
 
 @dataclass
@@ -282,6 +286,12 @@ class Circuit:
             if (part, pin) in n.nodes:
                 return n
         return None
+
+    def hook_of(self, pin: Pin) -> str:
+        """The hook id the chip ``pin`` shows in this circuit: its net's ``hook`` override when there is one (empty
+        for "no hook"), else the pin's own hook."""
+        n = self.net_of(self.chip.id, pin.name)
+        return n.hook if n is not None and n.hook_set else pin.hook
 
 
 @dataclass
@@ -695,7 +705,7 @@ def parse(data, root: pathlib.Path) -> Hardware:
     # Circuits
     circuits: list[Circuit] = []
     for ci, c in enumerate(data.get("circuits") or []):
-        circ = _circuit(ctx, c, f"circuits[{ci}]", pins)
+        circ = _circuit(ctx, c, f"circuits[{ci}]", pins, hooks)
         if circ:
             if any(x.id == circ.id for x in circuits):
                 ctx.bad(f"circuits[{ci}].id", f"circuit {circ.id!r} is listed twice")
@@ -707,7 +717,7 @@ def parse(data, root: pathlib.Path) -> Hardware:
                     blocks_unverified=blocks_unverified, supply=supply)
 
 
-def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin]) -> Circuit | None:
+def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin], hooks: dict[str, Hook]) -> Circuit | None:
     if not _keys(ctx, c, path, {"id", "title", "description", "ref", "parts", "nets", "unused"}):
         return None
     cid = ctx.need(c, "id", path) or "?"
@@ -781,7 +791,7 @@ def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin]) -> Circuit | None:
     where: dict[tuple[str, str], str] = {}
     for i, d in enumerate(c.get("nets") or []):
         p = f"{path}.nets[{i}]"
-        if not _keys(ctx, d, p, {"name", "kind", "label", "nodes", "ref", "unverified"}):
+        if not _keys(ctx, d, p, {"name", "kind", "label", "nodes", "ref", "unverified", "hook"}):
             continue
         name = ctx.need(d, "name", p) or "?"
         kind = str(d.get("kind") or "signal")
@@ -804,8 +814,15 @@ def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin]) -> Circuit | None:
             ctx.bad(f"{p}.nodes", f"net {name!r} has {count} node(s); a net joins at least two")
         if any(x.name == name for x in nets):
             ctx.bad(f"{p}.name", f"net {name!r} is listed twice")
+        hook_set = "hook" in d
+        net_hook = str(d.get("hook") or "")
+        if hook_set and net_hook:
+            if net_hook not in hooks:
+                ctx.bad(f"{p}.hook", f"{net_hook!r} is not a hook listed under hooks ({', '.join(hooks) or 'none'})")
+            if not any(parts[pid].kind == "chip" for pid, _pn in nodes):
+                ctx.bad(f"{p}.hook", f"net {name!r} has no chip pin, so there is no pin hook to override")
         nets.append(Net(name, kind, nodes, ctx.ref(d.get("ref"), f"{p}.ref", cref) or cref,
-                        str(d.get("label") or ""), str(d.get("unverified") or "")))
+                        str(d.get("label") or ""), str(d.get("unverified") or ""), hook_set, net_hook))
     unused = []
     for j, s in enumerate(c.get("unused") or []):
         nd = node(s, f"{path}.unused[{j}]")
