@@ -116,7 +116,7 @@ def _alt(hw: Hardware, circ: Circuit) -> str:
     kinds = []
     for p in parts:
         kinds.append(f"{p.id} {p.label or p.kind}{(' ' + p.value) if p.value else ''}")
-    hooks = sorted({hw.hooks[q.hook].call for q in hw.pins if q.hook and circ.net_of(circ.chip.id, q.name)})
+    hooks = sorted({hw.hooks[h].call for q in hw.pins if (h := circ.hook_of(q)) and circ.net_of(circ.chip.id, q.name)})
     s = "the chip with " + ", ".join(kinds) if kinds else "the chip alone"
     if hooks:
         s += "; the MCU wires carry the port hooks " + ", ".join(hooks)
@@ -145,7 +145,7 @@ def _plan(hw: Hardware, circ: Circuit) -> tuple[Plan, dict[str, CPin]]:
         if p.name in cpins:
             cpins[p.name].numbers.append(p.number)
             continue
-        cpins[p.name] = CPin(p.name, [p.number], p.type, circ.net_of(U.id, p.name), p.hook)
+        cpins[p.name] = CPin(p.name, [p.number], p.type, circ.net_of(U.id, p.name), circ.hook_of(p))
     used: set[str] = {U.id} | ({mcu.id} if mcu else set())
 
     def reaches_mcu(net: Net | None):

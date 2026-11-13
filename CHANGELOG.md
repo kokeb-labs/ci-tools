@@ -15,6 +15,14 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- **Docs theme: a circuit can give a pin a different hook.** A net in `docs/hardware.yml` takes an optional `hook`
+  (the id of a hook under `hooks`) that replaces the chip pin's hook in that circuit's drawing and alt text only;
+  `hook: null` shows no hook on that wire. The pin table and pinout keep the pin's own hook, and a net without the
+  key renders as before, so existing files are unaffected. The check rejects an unknown hook id and a hook on a net
+  with no chip pin.
+
 ### Fixed
 
 - `release_assets.py` names a firmware zip the way GitHub stores it (a space becomes `.`), so the line in

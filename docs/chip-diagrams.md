@@ -89,7 +89,7 @@ The template site's [`docs/hardware.yml`](../templates/mkdocs-site/docs/hardware
 | `hooks` | yes | The port hooks a pin can map to: `id`, `call` (as the reader writes it), `kind` (`spi`, `i2c`, `uart`, `gpio-out`, `gpio-in`, `irq`, `other`); with `source` and `symbol` the check fails when the symbol is no longer in that header |
 | `pins` | yes | One entry per package pin: `number` (or `EP` for the exposed pad), `name`, `type`, `domain` (the supply that sets its levels), `function`, `hook`, `unused` (what to do with it when unused), `ref` |
 | `block_diagram` | no | `ref`, `blocks` (`id`, `label`, `detail`, `at: [column, row]`, `pins`, `tone`, `side`), `links` (`from`, `to`, `label`, `both`) |
-| `circuits` | no | `id` (names the figure), `title`, `description`, `ref`, `parts`, `nets`, `unused` |
+| `circuits` | no | `id` (names the figure), `title`, `description`, `ref`, `parts`, `nets` (`name`, `kind`, `label`, `nodes`, `ref`, `hook`), `unused` |
 
 Pin `type` is one of `power`, `ground`, `bus`, `digital-in`, `digital-out`, `digital-io`, `open-drain`, `analog`,
 `power-out` (a load output) and `nc`; each has its own colour in the pinout, told apart in both themes. A part
@@ -98,6 +98,22 @@ Pin `type` is one of `power`, `ground`, `bus`, `digital-in`, `digital-out`, `dig
 `zener`, `led`, `crystal`, `fuse`, whose pins are `1` and `2` (`A`/`K` and `+`/`-` work too). A net `kind` is
 `signal` (the default), `supply` or `ground`. A node is `PART.PIN`; pins of the chip that share a name (GND on
 several package pins) are one node.
+
+A net may carry an optional `hook`: the id of a hook under `hooks`, which replaces the chip pin's own `hook` in that
+one circuit's drawing and alt text (the pin table and the pinout keep the pin's hook). `hook: null` (or `""`) shows
+no hook on that wire. A net without the key is unchanged. Use it when a circuit drives a pin another way than
+the pinout says, for example a chip's SPI pins wired as a UART:
+
+```yaml
+hooks:
+  - {id: transfer, call: "Transfer()", kind: spi}
+  - {id: exchange, call: "Exchange()", kind: uart}
+circuits:
+  - id: uart
+    nets:
+      - {name: SWP, nodes: [U1.SWP, U2.TX], hook: exchange}   # labelled Exchange() here, Transfer() elsewhere
+      - {name: NAO, nodes: [U1.NAO, U2.GND], hook: null}      # no hook label on this wire
+```
 
 Every pin, block, link, part or net may carry `unverified: <why>`: a fact that could not be confirmed in the
 datasheet. The table gives it a footnote and the figures an asterisk with the reason under the figure, so a guess
@@ -112,7 +128,7 @@ never reads as a fact.
   with `min_v` above `max_v`; any of these citing an unknown `ref`.
 - A pin number listed twice, missing, or outside the package; an `EP` pin without `exposed_pad`.
 - A fact without a citation, a citation of an unknown document, a page that is not a number.
-- A pin whose `hook` is not under `hooks`; a hook whose `symbol` is not in its `source`.
+- A pin or net whose `hook` is not under `hooks` (a net `hook` also needs a chip pin on the net); a hook whose `symbol` is not in its `source`.
 - A block that names an unknown pin, two blocks in one cell, a link to an unknown block.
 - A circuit node whose part or pin does not exist; a pin on two nets; a net with fewer than two nodes; a pin on no
   net that is not listed under `unused` (pins of type `nc` excepted).

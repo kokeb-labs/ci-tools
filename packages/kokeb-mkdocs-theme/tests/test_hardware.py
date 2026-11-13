@@ -349,6 +349,62 @@ def crowded_links() -> dict:
     return d
 
 
+class CircuitHookOverrideTest(unittest.TestCase):
+    """A net's optional ``hook`` replaces the chip pin's hook in that circuit only."""
+
+    @staticmethod
+    def net(d: dict, name: str) -> dict:
+        return next(n for n in d["circuits"][0]["nets"] if n["name"] == name)
+
+    def render(self, d: dict):
+        hw = parse(d)
+        fig = render.build(hw, "chip-circuit-typical")
+        self.assertEqual(fig.problems(), [])
+        return hw, fig
+
+    def test_absent_override_is_unchanged(self):
+        hw, fig = self.render(base())
+        self.assertFalse(any(n.hook_set for n in hw.circuits[0].nets))
+        svg = fig.svg("light")
+        self.assertIn("Transfer()", svg)
+        self.assertIn("GpioSet(CtrlPin::Reset)", svg)
+        self.assertIn("Transfer()", fig.alt)
+
+    def test_override_replaces_the_hook_in_this_circuit_only(self):
+        d = base()
+        self.net(d, "RESET_N")["hook"] = "transfer"
+        hw, fig = self.render(d)
+        circ = hw.circuits[0]
+        self.assertEqual(circ.hook_of(hw.pin("RESET_N")[0]), "transfer")
+        self.assertEqual(hw.pin("RESET_N")[0].hook, "reset")  # the pin table keeps the pin's own hook
+        for theme in ("light", "dark"):
+            self.assertNotIn("GpioSet(CtrlPin::Reset)", fig.svg(theme))
+        self.assertNotIn("GpioSet(CtrlPin::Reset)", fig.alt)
+        self.assertIn("Transfer()", fig.alt)
+
+    def test_null_and_empty_override_show_no_hook(self):
+        for value in (None, ""):
+            d = base()
+            self.net(d, "SCLK")["hook"] = value
+            self.net(d, "CS_N")["hook"] = value
+            self.net(d, "SDI")["hook"] = value
+            self.net(d, "SDO")["hook"] = value
+            hw, fig = self.render(d)
+            self.assertEqual(hw.circuits[0].hook_of(hw.pin("SCLK")[0]), "")
+            self.assertNotIn("Transfer()", fig.svg("light"), value)
+            self.assertNotIn("Transfer()", fig.svg("dark"), value)
+            self.assertNotIn("Transfer()", fig.alt)
+            self.assertIn("GpioSet(CtrlPin::Reset)", fig.alt)
+
+    def test_override_must_name_a_listed_hook_and_a_net_with_the_chip(self):
+        d = base()
+        self.net(d, "SCLK")["hook"] = "nope"
+        self.assertTrue(any("nets" in x and ".hook" in x and "not a hook listed" in x for x in problems(d)))
+        d = base()
+        d["circuits"][0]["nets"].append({"name": "X", "nodes": ["U2.GND", "C1.1"], "hook": "transfer"})
+        self.assertTrue(any("no chip pin" in x for x in problems(d)), problems(d))
+
+
 class LayoutRegressionTest(unittest.TestCase):
     def test_lane_label_clears_the_capacitor_above(self):
         from unittest import mock
