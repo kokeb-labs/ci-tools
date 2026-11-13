@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.17.0] - 2026-11-13
+
 ### Added
 
 - **Docs theme: a circuit can give a pin a different hook.** A net in `docs/hardware.yml` takes an optional `hook`
