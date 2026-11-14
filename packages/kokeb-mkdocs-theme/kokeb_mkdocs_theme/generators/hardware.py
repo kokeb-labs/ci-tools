@@ -7,7 +7,13 @@
   supply range and, for a chip sold in several packages, the variants, each with its datasheet citation. A row
   whose facts the file does not give is left out.
 
-The figures ``chip-pinout``, ``chip-outline``, ``chip-blocks`` and ``chip-circuit-<id>`` come from the same file, so the table and
+* ``<!-- generated: chip-summary -->``: the README's first line, "The <chip> is <overview.summary>", with its citation.
+* ``<!-- generated: chip-uses -->``: where the chip is used, one bullet per ``overview.applications`` entry.
+* ``<!-- generated: chip-coverage -->``: one row per ``capabilities`` entry: what the chip does, the driver calls
+  and registers that cover it (checked against the headers named under ``driver``), the status and the citation.
+
+The figures ``chip-pinout``, ``chip-outline``, ``chip-blocks``, ``chip-circuit-<id>``, ``chip-hero``,
+``chip-capabilities``, ``chip-frame-<id>`` and ``chip-wiring-<id>`` come from the same file, so the table and
 the figures cannot disagree. A file that fails validation stops the run with every problem listed.
 """
 
@@ -150,4 +156,78 @@ def card(page) -> str:
     return "\n".join(out) + "\n"
 
 
-REGIONS = {"chip-pins": pins, "chip-parts": parts, "chip-card": card}
+def _fill(text: str) -> str:
+    """A paragraph wrapped at 120 columns (the Markdown line-length rule), never inside a word or a link."""
+    import textwrap
+
+    return textwrap.fill(" ".join(text.split()), 120, break_long_words=False, break_on_hyphens=False)
+
+
+def _none(what: str) -> str:
+    return f"_No `{what}` in `{model.SOURCE}`._\n"
+
+
+def summary(page) -> str:
+    hw = _load()
+    if hw is None:
+        return f"_No `{model.SOURCE}` in this repository._\n"
+    ov = hw.doc.overview if hw.doc else None
+    if ov is None:
+        return _none("overview")
+    return _fill(f"The **{hw.chip}** is {ov.summary} ({ref_text(hw, ov.ref)}).") + "\n"
+
+
+def uses(page) -> str:
+    hw = _load()
+    if hw is None:
+        return f"_No `{model.SOURCE}` in this repository._\n"
+    ov = hw.doc.overview if hw.doc else None
+    if ov is None or not ov.applications:
+        return _none("overview.applications")
+    out = []
+    for a in ov.applications:
+        cite = f" ({ref_text(hw, a.ref, True)})" if a.ref != ov.ref else ""
+        mark = " (not confirmed in the datasheet)" if a.unverified else ""
+        out.append(f"- {_cell(a.label)}" + (f": {_cell(a.detail)}" if a.detail else "") + cite + mark)
+    out += ["", f"Uses named by the datasheet ({ref_text(hw, ov.ref)})."]
+    return "\n".join(out) + "\n"
+
+
+def coverage(page) -> str:
+    from kokeb_mkdocs_theme.hardware.chipdoc import STATUSES
+
+    hw = _load()
+    if hw is None:
+        return f"_No `{model.SOURCE}` in this repository._\n"
+    caps = hw.doc.capabilities if hw.doc else []
+    if not caps:
+        return _none("capabilities")
+    rows = ["| Capability | What the chip does | Driver API | Registers | Status | Datasheet |",
+            "| --- | --- | --- | --- | --- | --- |"]
+    for c in caps:
+        name = _cell(c.title)
+        doc, _, anchor = c.docs.partition("#")
+        if doc and (repo_root() / "docs" / doc).is_file():
+            name = f"[{name}]({page.rel('docs/' + doc)}{'#' + anchor if anchor else ''})"
+        what = _cell(c.what) + (f" ({_cell(c.note)})" if c.note else "") + (
+            f" (not confirmed in the datasheet: {_cell(c.unverified)})" if c.unverified else "")
+        api = ", ".join(f"`{_cell(a)}`" for a in c.api) or "-"
+        regs = ", ".join(f"`{_cell(r)}`" for r in c.registers) or "-"
+        rows.append(f"| {name} | {what} | {api} | {regs} | {STATUSES[c.status][1]} | {ref_text(hw, c.ref, True)} |")
+    used = [s for s in STATUSES if any(c.status == s for c in caps)]
+    legend = "; ".join(f"**{STATUSES[s][1]}**: {STATUSES[s][2]}" for s in used)
+    checked = []
+    if hw.doc.api_sources:
+        checked.append("every API name is in " + ", ".join(f"`{s}`" for s in hw.doc.api_sources))
+    if hw.doc.register_sources:
+        checked.append("every register in " + ", ".join(f"`{s}`" for s in hw.doc.register_sources))
+    out = rows + ["", _fill(legend + "."), ""]
+    tail = f"From [`{model.SOURCE}`]({page.rel(model.SOURCE)})"
+    if checked:
+        tail += "; `kokeb-docs hardware --check` confirms that " + " and ".join(checked)
+    out.append(_fill(tail + "."))
+    return "\n".join(out) + "\n"
+
+
+REGIONS = {"chip-pins": pins, "chip-parts": parts, "chip-card": card, "chip-summary": summary, "chip-uses": uses,
+           "chip-coverage": coverage}
