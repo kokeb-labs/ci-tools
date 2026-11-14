@@ -5,7 +5,6 @@ part``."""
 
 from __future__ import annotations
 
-import copy
 import shutil
 import tempfile
 import unittest
@@ -14,7 +13,7 @@ from kokeb_mkdocs_theme import readme
 from kokeb_mkdocs_theme.generators import hardware as gen_hw
 from kokeb_mkdocs_theme.hardware import render
 
-from test_readme_chip_first import FIXTURE, TEMPLATE, data, parse, problems, run_cli, site_root
+from test_readme_chip_first import FIXTURE, data, parse, problems, run_cli, site_root
 
 
 def circuit(d: dict) -> dict:

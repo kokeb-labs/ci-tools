@@ -755,10 +755,8 @@ def wiring(hw: Hardware, cid: str) -> Fig:
     y0 = 0.0
     # Left column: the direct wires, then each part between with its name above it.
     y = y0 + head
-    left_y = []
-    for _r in left:
-        left_y.append(y + RP / 2)
-        y += RP
+    left_y = [y + (i + 0.5) * RP for i in range(len(left))]
+    y += len(left) * RP
     groups = []
     for b in between:
         name_lines = _lines(b.part.label or b.part.id, x_w, small, 700)
