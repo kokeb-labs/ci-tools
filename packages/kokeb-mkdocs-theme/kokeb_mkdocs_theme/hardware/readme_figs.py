@@ -553,6 +553,10 @@ def _plan(hw: Hardware, c):
     def label(part, pn: str) -> str:
         return dict(part.pins).get(pn, pn)
 
+    def labels(part, pns: list[str]) -> str:
+        """Every pin of ``part`` on one net (DE and /RE tied together), in the order the net lists them."""
+        return ", ".join(label(part, q) for q in pns)
+
     def hooks_of_chip(pn: str) -> list[str]:
         pin = pins_by_name.get(pn)
         return [hw.hooks[h].call for h in c.hooks_of(pin)] if pin else []
@@ -592,9 +596,9 @@ def _plan(hw: Hardware, c):
                     continue
                 mp, cp = on(n, host.id), on(n, chip.id)
                 if mp and not cp:
-                    into.append(_Row(n, label(host, mp[0]), label(x, xp[0]), hooks_of_net(n)))
+                    into.append(_Row(n, label(host, mp[0]), labels(x, xp), hooks_of_net(n)))
                 elif cp and not mp:
-                    out.append(_Row(n, label(x, xp[0]), cp[0], hooks_of_chip(cp[0]), chip_pin=cp[0]))
+                    out.append(_Row(n, labels(x, xp), cp[0], hooks_of_chip(cp[0]), chip_pin=cp[0]))
                 elif not mp and not cp:
                     # Through one series part to the chip (a resistor at the first pixel) or from the MCU.
                     for pid, _pn in n.nodes:
@@ -603,9 +607,9 @@ def _plan(hw: Hardware, c):
                             continue
                         q, mq = on(m, chip.id), on(m, host.id)
                         if q and not mq:
-                            out.append(_Row(m, label(x, xp[0]), q[0], hooks_of_chip(q[0]), via=pid, chip_pin=q[0]))
+                            out.append(_Row(m, labels(x, xp), q[0], hooks_of_chip(q[0]), via=pid, chip_pin=q[0]))
                         elif mq and not q:
-                            into.append(_Row(m, label(host, mq[0]), label(x, xp[0]), hooks_of_net(m), via=pid))
+                            into.append(_Row(m, label(host, mq[0]), labels(x, xp), hooks_of_net(m), via=pid))
                         else:
                             continue
                         break
@@ -614,7 +618,7 @@ def _plan(hw: Hardware, c):
                 for n in c.nets:
                     if n.kind == "supply" and on(n, x.id) and on(n, chip.id):
                         cp = sorted(set(on(n, chip.id)))[0]
-                        out.append(_Row(n, label(x, on(n, x.id)[0]), cp, [], chip_pin=cp))
+                        out.append(_Row(n, labels(x, on(n, x.id)), cp, [], chip_pin=cp))
             if into and out:
                 between.append(_Between(x, into, out))
                 for r in into + out:
