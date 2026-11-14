@@ -72,18 +72,18 @@ class WiringTest(Case):
     def test_a_transceiver_with_a_series_resistor_and_more_mcu_wires(self):
         d = data()
         c = circuit(d)
-        c["parts"] += [{"id": "U3", "kind": "ic", "label": "Transceiver", "pins": ["DI", "RO", "DE", "B"]},
+        c["parts"] += [{"id": "U3", "kind": "ic", "label": "Transceiver", "pins": ["DI", "RO", "DE", "RE", "B"]},
                        {"id": "R2", "kind": "resistor", "value": "33 Ω"}]
         n = nets(d)
         n["SDI"]["nodes"] = ["U1.SDI", "R2.2"]
         n["SDO"]["nodes"] = ["U1.SDO", "U3.RO"]  # chip pin straight to the part
         c["nets"] += [{"name": "Bus", "nodes": ["R2.1", "U3.B"]},
                       {"name": "MOSI", "nodes": ["U2.MOSI", "U3.DI"], "hook": "transfer"},
-                      {"name": "MISO", "nodes": ["U2.MISO", "U3.DE"]}]
+                      {"name": "MISO", "nodes": ["U2.MISO", "U3.DE", "U3.RE"]}]
         fig = self.fig(d, "chip-wiring-typical")
         self.assertIn("Transceiver B to SDI through R2 33 Ω", fig.alt)
         self.assertIn("MCU SPI MOSI to Transceiver DI (Transfer())", fig.alt)
-        self.assertIn("MCU SPI MISO to Transceiver DE", fig.alt)
+        self.assertIn("MCU SPI MISO to Transceiver DE, RE", fig.alt)  # every pin of the part on the net
 
     def test_a_load_switch_feeds_the_chip_supply(self):
         d = data()
