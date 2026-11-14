@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.19.0] - 2026-11-14
+
 ### Added
 
 - **`ru-cmake-matrix`: a matrix of CMake configurations.** Entries as JSON (`matrix`), the MCU/RTOS pairs of a
