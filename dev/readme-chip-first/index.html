@@ -1173,6 +1173,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-sites-home-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The site's home page
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-figures" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1372,6 +1383,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-sites-home-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The site's home page
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-figures" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1535,7 +1557,7 @@ headers, and it is rebuilt rather than retyped when the facts change.</p>
 <tr>
 <td>7</td>
 <td>Inside the chip</td>
-<td><code>&lt;!-- figure: chip-blocks --&gt;</code> (the heading may say module, device or sensor)</td>
+<td><code>&lt;!-- figure: chip-blocks --&gt;</code> (the heading may say module, device, sensor or part; <code>overview.inside</code> fixes the word)</td>
 <td><code>block_diagram</code></td>
 </tr>
 <tr>
@@ -1572,7 +1594,72 @@ headers, and it is rebuilt rather than retyped when the facts change.</p>
 </table>
 <p><code>kokeb-docs readme --check</code> enforces rows 1, 2, 4 and 5 to 11 and refuses any figure in the README that is not a
 chip figure (<code>chip-*</code>). <code>kokeb-docs check</code> runs it once <code>docs/hardware.yml</code> has an <code>overview</code>, so a repository opts
-in by writing one. A repository without an <code>overview</code> gets no new figure and no new check.</p>
+in by writing one. A repository without an <code>overview</code> gets no new figure and no new check. A chip with no wiring
+figure (no MCU signal reaches it in any circuit) needs no <code>chip-wiring-&lt;id&gt;</code> under Pins and wiring.</p>
+<h2 id="the-sites-home-page">The site's home page<a class="headerlink" href="#the-sites-home-page" title="Permanent link">&para;</a></h2>
+<p><code>docs/index.md</code> opens the same way, under the site's hero, so the README and the site home read alike:</p>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Section</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>(hero)</td>
+<td><code>&lt;div class="kb-hero" markdown&gt;</code>: the kicker, <code># &lt;Chip&gt; Driver</code>, one paragraph on the driver, the buttons</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(under the hero)</td>
+<td><code>&lt;!-- generated: chip-summary --&gt;</code>, then any note (the template's scaffold note), then <code>&lt;!-- figure: chip-hero --&gt;</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>What it does</td>
+<td><code>&lt;!-- figure: chip-capabilities --&gt;</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Where it is used</td>
+<td><code>&lt;!-- generated: chip-uses --&gt;</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Inside the chip</td>
+<td><code>&lt;!-- figure: chip-blocks --&gt;</code> (same word as the README)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Pins and wiring</td>
+<td><code>chip-pinout</code>, every <code>chip-wiring-&lt;id&gt;</code>, <code>chip-outline</code>, each <code>chip-frame-&lt;id&gt;</code>, the chip card (<code>kb-chip</code>), a pointer to the Hardware page</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Quick start (optional)</td>
+<td>"Wire the chip as above, write the port", <code>&lt;!-- generated: quickstart-code --&gt;</code>, a pointer to the Quickstart page</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Driver coverage</td>
+<td><code>&lt;!-- generated: chip-coverage --&gt;</code>, then the driver paragraph ("The driver has no platform code ...")</td>
+</tr>
+<tr>
+<td>then</td>
+<td>any order</td>
+<td>What you get, Datasheet, Where to go next (the navigation cards)</td>
+</tr>
+</tbody>
+</table>
+<p><code>kokeb-docs readme --site --check</code> enforces rows 1 to 6 and 8, and refuses a figure other than a chip figure above
+Driver coverage. <code>kokeb-docs check</code> runs it once <code>docs/index.md</code> has a <code>chip-summary</code> region, so a site opts in by
+migrating its home page. <code>kokeb-docs readme --site --migrate</code> rewrites a template home page into this order: the
+paragraph under the hero moves under Driver coverage, the chip card under Pins and wiring, a chip summary inside the
+hero moves under it, and the other sections keep their order after Driver coverage. Quick start is added when the
+README has the <code>quickstart-code</code> region.</p>
 <h2 id="the-figures">The figures<a class="headerlink" href="#the-figures" title="Permanent link">&para;</a></h2>
 <p>All four are figkit figures in the <code>overview</code> profile: read at README width (about 830 px) with no text under
 11 px, light and dark from one layout, every text at 4.5:1 or better in both themes, every icon and pin stub at
@@ -1605,8 +1692,8 @@ text), and the wiring figure also refuses a label that runs onto a box.</p>
 </tr>
 <tr>
 <td><code>chip-wiring-&lt;id&gt;</code></td>
-<td>What a reader wires by hand: each MCU signal to its chip pin, coloured by pin type, with the net, the pin number, the driver hook and any part on the net or in series; the external blocks; then the supplies, the support parts and the unwired pins in words. The full schematic stays <code>chip-circuit-&lt;id&gt;</code></td>
-<td>each circuit with an MCU, once there is an <code>overview</code></td>
+<td>What a reader wires by hand: each MCU signal to its chip pin, coloured by pin type, with the net, the pin number, the driver hooks (one line each) and any part on the net or in series; a part between the MCU and the chip (a buffer, a transceiver, a level shifter, a load switch: any <code>ic</code> with an MCU wire on one side and a chip pin on the other, directly or through one series part; a load switch to a chip supply pin) as its own box with its wires in and out; the external blocks; then the supplies (a supply that reaches no chip pin names what it feeds), the support parts and the unwired pins in words. Long names are wrapped or ellipsised. The full schematic stays <code>chip-circuit-&lt;id&gt;</code></td>
+<td>each circuit in which an MCU signal reaches the chip, once there is an <code>overview</code>; <code>kokeb-docs figures</code> notes the others</td>
 </tr>
 </tbody>
 </table>
@@ -1650,6 +1737,21 @@ table. Nothing is copied from the datasheet: write the facts in your own words a
 <td>The datasheet's applications list, one short noun phrase each (a string, or <code>{label, detail, ref}</code>)</td>
 </tr>
 <tr>
+<td><code>applications_ref</code></td>
+<td>no</td>
+<td>Where the list is, when that is not <code>ref</code> (an Applications section); the footer under the list cites it</td>
+</tr>
+<tr>
+<td><code>applications_inferred</code></td>
+<td>no</td>
+<td>When the datasheet names no uses: what the list is inferred from ("the functions in the features list"); the footer then says "Uses inferred, not named by the datasheet"</td>
+</tr>
+<tr>
+<td><code>inside</code></td>
+<td>no</td>
+<td>The word of the "Inside the ..." heading: <code>chip</code>, <code>module</code>, <code>device</code>, <code>sensor</code> or <code>part</code>; the README check then asks for it</td>
+</tr>
+<tr>
 <td><code>specs</code></td>
 <td>no</td>
 <td>Two to six <code>{value, label, ref}</code>: the numbers a reader compares parts by (supply range, resolution, bus speed, current, package size); a <code>value</code> fits a tile, about 12 characters</td>
@@ -1678,7 +1780,10 @@ table. Nothing is copied from the datasheet: write the facts in your own words a
 </table>
 <h3 id="driver-and-capabilities"><code>driver</code> and <code>capabilities</code><a class="headerlink" href="#driver-and-capabilities" title="Permanent link">&para;</a></h3>
 <p><code>driver.api</code> and <code>driver.registers</code> list the headers the names below must appear in (as whole words); give them
-and the check fails when a call or a register named in the README no longer exists.</p>
+and the check fails when a call or a register named in the README no longer exists. <code>driver.kind: protocol</code> is for a
+driver of a protocol rather than of one part (a CANopen client): the legend and the coverage table then speak of
+the protocol ("the protocol defines it and the driver leaves it out", an Objects column), and every <code>supported</code>
+capability names its host test under <code>tests</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1721,7 +1826,12 @@ and the check fails when a call or a register named in the README no longer exis
 <tr>
 <td><code>registers</code></td>
 <td>no</td>
-<td>The registers behind it; the card shows three and a count, the table all</td>
+<td>The registers behind it, as the datasheet names them; the card shows three and a count, the table all. When the header spells one otherwise, write <code>{name: &lt;datasheet name&gt;, header: &lt;constant&gt;}</code>: the pill shows the name, the table both, and the check looks for the constant</td>
+</tr>
+<tr>
+<td><code>tests</code></td>
+<td>for a supported capability of a protocol driver</td>
+<td>The host tests that check it: a file (<code>tests/test_sdo.cpp</code>) or a test case name, each checked to exist under <code>tests/</code>; the coverage table gains a Host test column</td>
 </tr>
 <tr>
 <td><code>docs</code></td>
@@ -1755,7 +1865,12 @@ alone (<code>not-covered</code>), so the map is honest.</p>
 <tr>
 <td><code>id</code>, <code>title</code>, <code>bits</code>, <code>ref</code></td>
 <td>yes</td>
-<td><code>bits</code> is the frame length, 1 to 64</td>
+<td><code>bits</code> is the frame length, 1 to 128 (a 72-bit TMCL datagram fits)</td>
+</tr>
+<tr>
+<td><code>bit_order</code></td>
+<td>no</td>
+<td><code>msb-first</code> (the default: SPI, the high bit sent first and drawn on the left) or <code>lsb-first</code> (a UART datagram: bit 0 sent first and drawn on the left, each byte least significant bit first; field <code>bits</code> are then <code>[first, last]</code>, listed from bit 0 up, as the datasheet numbers them; no waveform)</td>
 </tr>
 <tr>
 <td><code>description</code></td>
@@ -1787,8 +1902,12 @@ draws one representative transfer, or none.</p>
    (an hour or two per driver); <code>kokeb-docs hardware --check</code> lists every problem with its path.</li>
 <li><code>kokeb-docs readme --migrate</code> moves the README into the layout: the chip paragraph's driver half, the glance
    table (without its chip row) and the feature list land under Driver coverage, the wiring table under Pins and
-   wiring, the layering figure leaves the README. Nothing else is dropped.</li>
-<li><code>kokeb-docs figures &amp;&amp; kokeb-docs gen</code>, then read the README top to bottom and trim the driver notes.</li>
+   wiring, the layering figure leaves the README. A quick start under another heading ("In 30 seconds") is found by
+   its wiring step or its <code>quickstart-code</code> region; a section the layout does not know keeps its place after
+   Documentation. Nothing else is dropped.</li>
+<li><code>kokeb-docs readme --site --migrate</code> does the same for <code>docs/index.md</code>.</li>
+<li><code>kokeb-docs figures &amp;&amp; kokeb-docs gen</code>, then read the README and the home page top to bottom and trim the driver
+   notes.</li>
 <li>Before the push: <code>kokeb-docs check</code>, <code>mkdocs build -f _config/mkdocs.yml --strict</code>, markdownlint with
    <code>_config/.markdownlint.json</code>, the offline link check, <code>python3 tools/check_standalone.py</code>.</li>
 </ol>
