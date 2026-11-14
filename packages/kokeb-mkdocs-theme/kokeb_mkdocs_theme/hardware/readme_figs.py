@@ -332,9 +332,12 @@ def capabilities(hw: Hardware) -> Fig:
 def frame(hw: Hardware, fid: str) -> Fig:
     fr = next(f for f in hw.doc.frames if f.id == fid)
     rows_alt = "; ".join(
-        f"{r.label}: " + ", ".join(f"{f.name} (bit {f.hi})" if f.width == 1 else f"{f.name} (bits {f.hi} to {f.lo})"
-                                   for f in r.fields) for r in fr.rows)
-    alt = f"{fr.title} of the {hw.chip}, {fr.bits} bits, most significant bit first. {rows_alt}."
+        f"{r.label}: " + ", ".join(f"{f.name} (bit {f.shown()[0]})" if f.width == 1
+                                   else f"{f.name} (bits {f.shown()[0]} to {f.shown()[1]})" for f in r.fields)
+        for r in fr.rows)
+    order = ("sent byte by byte, each byte least significant bit first, bit 0 first" if fr.lsb_first
+             else "most significant bit first")
+    alt = f"{fr.title} of the {hw.chip}, {fr.bits} bits, {order}. {rows_alt}."
     if fr.decode:
         alt += f" The {fr.decode.field} field of the {fr.decode.row} row: " + ", ".join(
             f"bit {b} {n}" for b, n in fr.decode.bits) + "."
@@ -343,7 +346,9 @@ def frame(hw: Hardware, fid: str) -> Fig:
     fig = Fig(f"chip-frame-{fr.id}", f"{hw.chip}: {fr.title}", alt=alt, width=W_FIG, profile="overview",
               kicker="On the bus",
               subtitle=(fr.description + " " if fr.description else "")
-              + f"{fr.bits} bits, sent most significant bit first. Datasheet: {fr.ref.short()}.")
+              + (f"{fr.bits} bits, sent from bit 0, each byte least significant bit first. " if fr.lsb_first
+                 else f"{fr.bits} bits, sent most significant bit first. ")
+              + f"Datasheet: {fr.ref.short()}.")
     k = fig.k
     W = fig.body_w
     bodies: list[tuple[Box, str]] = []
@@ -363,8 +368,9 @@ def frame(hw: Hardware, fid: str) -> Fig:
         return x0 + (fr.bits - 1 - bit) * bw
 
     ns = k["small"]
-    fig.text(x0, ns, "MSB, sent first", size=ns, color="muted")
-    fig.text(x1, ns, "LSB, sent last", size=ns, color="muted", anchor="end")
+    fig.text(x0, ns, "Bit 0, sent first" if fr.lsb_first else "MSB, sent first", size=ns, color="muted")
+    fig.text(x1, ns, f"Bit {fr.bits - 1}, sent last" if fr.lsb_first else "LSB, sent last", size=ns, color="muted",
+             anchor="end")
     y = ns + 18
     RH = 46
     field_boxes = {}
@@ -390,11 +396,12 @@ def frame(hw: Hardware, fid: str) -> Fig:
                      bg=f"{f.tone}.tint", anchor="middle")
             # Bit numbers under the field: the high bit at its left edge, the low bit at its right edge.
             ny = y + RH + ns + 4
+            left_n, right_n = f.shown()
             if f.width == 1:
-                fig.text(fx + fw / 2, ny, str(f.hi), size=ns, color="muted", anchor="middle")
+                fig.text(fx + fw / 2, ny, str(left_n), size=ns, color="muted", anchor="middle")
             else:
-                fig.text(fx + 2, ny, str(f.hi), size=ns, color="muted")
-                fig.text(fx + fw - 2, ny, str(f.lo), size=ns, color="muted", anchor="end")
+                fig.text(fx + 2, ny, str(left_n), size=ns, color="muted")
+                fig.text(fx + fw - 2, ny, str(right_n), size=ns, color="muted", anchor="end")
         y += RH + ns + 26
     if fr.waveform:
         y = _waveform(fig, fr, x0, x1, bx, bw, y + 8, LW)
@@ -402,9 +409,11 @@ def frame(hw: Hardware, fid: str) -> Fig:
         y = _decode(fig, fr, y + 10, field_boxes)
     fig._grow(y)
     layout_problems(fig, bodies, [])
-    fig.doc = (f"Reads: One {fr.title} of the {hw.chip}, {fr.bits} bits in a row from the most significant (left, sent "
-               "first) to the least significant (right). Each row is one kind of frame; each coloured box a field, "
-               "with its first and last bit number under it."
+    fig.doc = (f"Reads: One {fr.title} of the {hw.chip}, {fr.bits} bits in a row from "
+               + ("bit 0 (left, sent first) to the last bit (right), each byte sent least significant bit first. "
+                  if fr.lsb_first else "the most significant (left, sent first) to the least significant (right). ")
+               + "Each row is one kind of frame; each coloured box a field, with its first and last bit number under "
+               "it."
                + (" The waveform below draws the select, the clock and the data lines over the same bits."
                   if fr.waveform else "")
                + (f" The table at the bottom names each bit of the {fr.decode.field} field." if fr.decode else ""))

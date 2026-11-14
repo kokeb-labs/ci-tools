@@ -33,7 +33,7 @@ that heading.
   word, now also `part`; a capability register may be `{name, header}` (the datasheet's mnemonic, checked by its
   header constant); `driver.kind: protocol` words the capability legend and coverage table for a protocol driver
   and makes each supported capability name its host test (`tests`, checked to exist); frames up to 128 bits (the
-  72-bit TMCL datagram).
+  72-bit TMCL datagram), and `bit_order: lsb-first` for a UART datagram numbered from bit 0, the first bit sent.
 
 ### Fixed
 

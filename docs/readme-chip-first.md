@@ -125,6 +125,7 @@ alone (`not-covered`), so the map is honest.
 | Key | Required | What to write |
 | --- | --- | --- |
 | `id`, `title`, `bits`, `ref` | yes | `bits` is the frame length, 1 to 128 (a 72-bit TMCL datagram fits) |
+| `bit_order` | no | `msb-first` (the default: SPI, the high bit sent first and drawn on the left) or `lsb-first` (a UART datagram: bit 0 sent first and drawn on the left, each byte least significant bit first; field `bits` are then `[first, last]`, listed from bit 0 up, as the datasheet numbers them; no waveform) |
 | `description` | no | One sentence on what a transfer does |
 | `rows` | yes | `{label, sub, fields}`; each field `{name, bits, tone, short}`, `bits` a bit (`39`) or `[high, low]`, listed from bit `bits - 1` down to 0 with no gap and no overlap; `short` when the name does not fit its bits |
 | `decode` | no | `{row, field, ref, bits: [{bit, name}]}`, naming every bit of one field once |

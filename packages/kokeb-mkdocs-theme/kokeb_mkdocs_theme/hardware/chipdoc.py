@@ -29,6 +29,7 @@ generated region (see ``docs/readme-chip-first.md`` in ci-tools)::
       - id: spi
         title: SPI datagram
         bits: 40                            # 1 to 128
+        bit_order: msb-first                # optional; lsb-first: a UART datagram, bit 0 sent first, bits [first, last]
         ref: spi
         rows:
           - {label: Write, fields: [{name: W, bits: 39}, {name: address, bits: [38, 32]}, {name: data, bits: [31, 0]}]}
@@ -156,10 +157,16 @@ class Field:
     lo: int
     tone: str = "slate"
     short: str = ""
+    first: int = -1  # lsb-first frames: the datasheet's number of the field's first bit (sent first, drawn left)
+    last: int = -1
 
     @property
     def width(self) -> int:
         return self.hi - self.lo + 1
+
+    def shown(self) -> tuple[int, int]:
+        """The bit numbers written at the field's left and right edges."""
+        return (self.first, self.last) if self.first >= 0 else (self.hi, self.lo)
 
 
 @dataclass
@@ -201,6 +208,7 @@ class Frame:
     description: str = ""
     decode: Decode | None = None
     waveform: Waveform | None = None
+    lsb_first: bool = False  # sent byte by byte, each byte least significant bit first (a UART datagram)
 
     def row(self, label: str) -> FrameRow | None:
         return next((r for r in self.rows if r.label == label), None)
@@ -410,14 +418,20 @@ def _capabilities(ctx, keys, root, caps, api_src: list[str], reg_src: list[str],
     return out
 
 
-def _bits(ctx, v, path: str, width: int) -> tuple[int, int] | None:
+def _bits(ctx, v, path: str, width: int, ascending: bool = False) -> tuple[int, int] | None:
+    """A field's bits: ``(high, low)``, or with ``ascending`` (an lsb-first frame) ``(first, last)``."""
     if isinstance(v, int) and not isinstance(v, bool):
         hi = lo = v
     elif isinstance(v, list) and len(v) == 2 and all(isinstance(x, int) and not isinstance(x, bool) for x in v):
         hi, lo = v
     else:
-        ctx.bad(path, f"a bit (39) or a range [high, low], not {v!r}")
+        ctx.bad(path, f"a bit (39) or a range [{'first, last' if ascending else 'high, low'}], not {v!r}")
         return None
+    if ascending:
+        if not (0 <= hi <= lo < width):
+            ctx.bad(path, f"[{hi}, {lo}] is not a range inside 0 to {width - 1} (first bit first)")
+            return None
+        return hi, lo
     if not (0 <= lo <= hi < width):
         ctx.bad(path, f"[{hi}, {lo}] is not a range inside {width - 1} to 0 (high first)")
         return None
@@ -428,7 +442,8 @@ def _frames(ctx, keys, frames) -> list[Frame]:
     out: list[Frame] = []
     for i, f in enumerate(_list(ctx, frames, "frames")):
         p = f"frames[{i}]"
-        if not keys(ctx, f, p, {"id", "title", "description", "bits", "ref", "rows", "decode", "waveform"}):
+        if not keys(ctx, f, p, {"id", "title", "description", "bits", "ref", "rows", "decode", "waveform",
+                                "bit_order"}):
             continue
         fid, title = _text(ctx, f, "id", p, True), _text(ctx, f, "title", p, True)
         if fid and not _SLUG.fullmatch(fid):
@@ -440,6 +455,11 @@ def _frames(ctx, keys, frames) -> list[Frame]:
             ctx.bad(f"{p}.bits", f"the frame length in bits, 1 to {MAX_FRAME_BITS}, not {width!r}")
             continue
         ref = ctx.ref(f.get("ref"), f"{p}.ref")
+        order = _text(ctx, f, "bit_order", p) or "msb-first"
+        if order not in ("msb-first", "lsb-first"):
+            ctx.bad(f"{p}.bit_order", f"{order!r} is not msb-first or lsb-first")
+            order = "msb-first"
+        lsb = order == "lsb-first"
         rows: list[FrameRow] = []
         for j, r in enumerate(_list(ctx, f.get("rows"), f"{p}.rows")):
             q = f"{p}.rows[{j}]"
@@ -452,24 +472,34 @@ def _frames(ctx, keys, frames) -> list[Frame]:
                 if not keys(ctx, fd, fq, {"name", "bits", "tone", "short"}):
                     continue
                 name = _text(ctx, fd, "name", fq, True)
-                b = _bits(ctx, fd.get("bits"), f"{fq}.bits", width)
+                b = _bits(ctx, fd.get("bits"), f"{fq}.bits", width, ascending=lsb)
                 tone = _text(ctx, fd, "tone", fq) or "slate"
                 if tone not in T.TONES:
                     ctx.bad(f"{fq}.tone", f"{tone!r} is not one of {', '.join(T.TONES)}")
                     tone = "slate"
-                if name and b:
+                if name and b and lsb:
+                    # Bit 0 is sent first and drawn on the left: the grid runs from width - 1 (left) to 0.
+                    fields.append(Field(name, width - 1 - b[0], width - 1 - b[1], tone, _text(ctx, fd, "short", fq),
+                                        b[0], b[1]))
+                elif name and b:
                     fields.append(Field(name, b[0], b[1], tone, _text(ctx, fd, "short", fq)))
-            # The fields of a row cover every bit once, most significant first.
+            # The fields of a row cover every bit once, in the order they are sent.
             nxt = width - 1
             for fd in fields:
                 if fd.hi != nxt:
-                    ctx.bad(f"{q}.fields", f"field {fd.name!r} starts at bit {fd.hi}; the bit after the previous "
-                            f"field is {nxt} (list the fields from bit {width - 1} down to 0, no gap, no overlap)")
+                    if lsb:
+                        ctx.bad(f"{q}.fields", f"field {fd.name!r} starts at bit {fd.first}; the bit after the "
+                                f"previous field is {width - 1 - nxt} (list the fields from bit 0 up to {width - 1}, "
+                                "no gap, no overlap)")
+                    else:
+                        ctx.bad(f"{q}.fields", f"field {fd.name!r} starts at bit {fd.hi}; the bit after the previous "
+                                f"field is {nxt} (list the fields from bit {width - 1} down to 0, no gap, no overlap)")
                     break
                 nxt = fd.lo - 1
             else:
                 if fields and nxt != -1:
-                    ctx.bad(f"{q}.fields", f"bits {nxt} to 0 are in no field")
+                    ctx.bad(f"{q}.fields", f"bits {width - 1 - nxt} to {width - 1} are in no field" if lsb
+                            else f"bits {nxt} to 0 are in no field")
             if label and any(x.label == label for x in rows):
                 ctx.bad(f"{q}.label", f"row {label!r} is listed twice")
             if label and fields:
@@ -522,7 +552,9 @@ def _frames(ctx, keys, frames) -> list[Frame]:
             if mode in (0, 1, 2, 3) and sel and clk:
                 wave = Waveform(int(mode), sel, clk, lanes)
         if fid and title and ref and rows:
-            out.append(Frame(fid, title, width, ref, rows, _text(ctx, f, "description", p), decode, wave))
+            if wave and lsb:
+                ctx.bad(f"{p}.waveform", "an SPI waveform needs an msb-first frame")
+            out.append(Frame(fid, title, width, ref, rows, _text(ctx, f, "description", p), decode, wave, lsb))
     return out
 
 

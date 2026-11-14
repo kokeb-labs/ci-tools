@@ -193,6 +193,29 @@ class FramesAndRegistersTest(Case):
         fr["bits"] = 129
         self.assertTrue(any("1 to 128" in p for p in problems(d, self.root)))
 
+    def test_an_lsb_first_uart_datagram(self):
+        d = data()
+        fr = d["frames"][0]
+        fr.update(bits=72, bit_order="lsb-first")
+        fr.pop("waveform")
+        fields = [{"name": "sync and address", "short": "address", "bits": [0, 7]}]
+        fields += [{"name": n, "bits": [8 * i, 8 * i + 7]} for i, n in ((1, "operation"), (2, "type"), (3, "bank"))]
+        fields += [{"name": "data (big endian)", "bits": [32, 63]}, {"name": "checksum", "bits": [64, 71]}]
+        fr["rows"] = [{"label": "Command", "fields": fields}]
+        self.assertEqual(problems(d, self.root), [])
+        fig = self.fig(d, "chip-frame-spi")
+        self.assertIn("sync and address (bits 0 to 7)", fig.alt)
+        self.assertIn("Bit 0, sent first", texts(fig))
+        self.assertIn("least significant bit first", fig.alt)
+        fields[1]["bits"] = [9, 15]
+        self.assertTrue(any("starts at bit 9; the bit after the previous field is 8" in x
+                            for x in problems(d, self.root)))
+        fields[1]["bits"] = [15, 8]
+        self.assertTrue(any("first bit first" in x for x in problems(d, self.root)))
+        fields[1]["bits"] = [8, 15]
+        fr["bit_order"] = "middle-out"
+        self.assertTrue(any("bit_order" in x for x in problems(d, self.root)))
+
     def test_a_register_with_a_header_alias(self):
         d = data()
         d["capabilities"][0]["registers"] = [{"name": "Temperature MSB", "header": "TEMP_MSB"}, "TEMP_LSB"]
