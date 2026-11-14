@@ -671,6 +671,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1018,6 +1028,146 @@
     
   
     ru-misra (MISRA C++:2023)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ru-cmake-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-cmake-matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ru-mutation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-mutation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ru-pin-hygiene/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-pin-hygiene
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ru-layering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-layering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ru-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ru-catalog
   
 
     
@@ -1647,8 +1797,18 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 <td><code>contents: read</code>, <code>pull-requests: write</code></td>
 </tr>
 <tr>
+<td><a href="../ru-catalog/"><code>ru-catalog.yml</code></a></td>
+<td>Generate the compatibility catalogue of a revision from its pinned drivers, check it against the committed one, and publish it with the revision's SBOMs and a known-vulnerability scan.</td>
+<td><code>contents: read</code></td>
+</tr>
+<tr>
 <td><a href="../ru-ci-gate/"><code>ru-ci-gate.yml</code></a></td>
 <td>One required status check per repository: it passes only when every other CI job passed.</td>
+<td><code>contents: read</code></td>
+</tr>
+<tr>
+<td><a href="../ru-cmake-matrix/"><code>ru-cmake-matrix.yml</code></a></td>
+<td>Configure, build and test a CMake project in many configurations at once: MCU x RTOS x preset, on the host, for Arm cores and with ESP-IDF, with a bounded number of jobs.</td>
 <td><code>contents: read</code></td>
 </tr>
 <tr>
@@ -1692,6 +1852,11 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 <td><code>contents: read</code></td>
 </tr>
 <tr>
+<td><a href="../ru-layering/"><code>ru-layering.yml</code></a></td>
+<td>Prove on every pull request that dependencies point down only and that SDK and RTOS code stays in its boundary files.</td>
+<td><code>contents: read</code></td>
+</tr>
+<tr>
 <td><a href="../ru-markdown-lint/"><code>ru-markdown-lint.yml</code></a></td>
 <td>Lint Markdown with markdownlint-cli2 against the repository's own rules.</td>
 <td><code>contents: read</code></td>
@@ -1705,6 +1870,16 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 <td><a href="../ru-mkdocs-publish/"><code>ru-mkdocs-publish.yml</code></a></td>
 <td>Build, check, audit and publish a Kokeb Labs documentation site with the shared theme, versioned or not.</td>
 <td><code>contents: write</code></td>
+</tr>
+<tr>
+<td><a href="../ru-mutation/"><code>ru-mutation.yml</code></a></td>
+<td>Find the guards no test checks: change the code one edit at a time and require the tests to fail on every change.</td>
+<td><code>contents: read</code></td>
+</tr>
+<tr>
+<td><a href="../ru-pin-hygiene/"><code>ru-pin-hygiene.yml</code></a></td>
+<td>Prove that every pinned submodule is a release that passed its own CI, so a repository can trust its pins instead of re-running their checks.</td>
+<td><code>contents: read</code></td>
 </tr>
 <tr>
 <td><a href="../ru-release-firmware/"><code>ru-release-firmware.yml</code></a></td>

@@ -669,6 +669,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1376,6 +1386,31 @@
 <td></td>
 <td><a href="../ru-host-quality/"><code>ru-host-quality</code></a> and <a href="../ru-cross-build/"><code>ru-cross-build</code></a> on fixtures, in one job and with <code>separate_jobs</code> / <code>per_core_jobs</code>; the figures must agree</td>
 </tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-cmake-matrix.yml"><code>ci-cmake-matrix.yml</code></a></td>
+<td><code>fixture</code>, <code>catalogue</code>, <code>outputs-checked</code></td>
+<td><a href="../ru-cmake-matrix/"><code>ru-cmake-matrix</code></a>: host GCC with tests and the install consumer, host Clang through a preset, an Arm entry, an ESP-IDF container entry, and a catalogue's pairs; every result is checked</td>
+</tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-mutation.yml"><code>ci-mutation.yml</code></a></td>
+<td><code>catalogue</code>, <code>generated</code>, <code>outputs-checked</code></td>
+<td><a href="../ru-mutation/"><code>ru-mutation</code></a>: a catalogue at level high with one equivalent mutant, generated operators in two shards; the counts are checked</td>
+</tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-pin-hygiene.yml"><code>ci-pin-hygiene.yml</code></a></td>
+<td><code>empty</code>, <code>stale</code>, <code>live</code>, <code>outputs-checked</code></td>
+<td><a href="../ru-pin-hygiene/"><code>ru-pin-hygiene</code></a>: an empty lock, a pin without a submodule (exactly PIN-001), and the checker on a scratch repository pinning a real driver</td>
+</tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-layering.yml"><code>ci-layering.yml</code></a></td>
+<td><code>fixture</code>, <code>seeded</code>, <code>outputs-checked</code></td>
+<td><a href="../ru-layering/"><code>ru-layering</code></a>: the fixture tree with its good and bad cases, the poison build, the target graph and the symbol lint; one seeded case (exactly LAY-012)</td>
+</tr>
+<tr>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/main/.github/workflows/ci-catalog.yml"><code>ci-catalog.yml</code></a></td>
+<td><code>fixture</code>, <code>outputs-checked</code></td>
+<td><a href="../ru-catalog/"><code>ru-catalog</code></a>: a real pinned driver read through the API; the catalogue equals the committed one; SBOMs, scan and Pages artifact</td>
+</tr>
 </tbody>
 </table>
 <h2 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h2>
@@ -1402,6 +1437,11 @@
 <td><code>.github/scripts/gen_readme_inputs.py --check</code></td>
 <td><code>workflow-checks</code></td>
 <td>A README inputs table differs from its workflow</td>
+</tr>
+<tr>
+<td><code>tools/cmake_matrix/test_cmake_matrix.py</code>, <code>tools/mutation/test_mutation.py</code>, <code>tools/pins/test_pins.py</code>, <code>tools/layering/test_layering.py</code>, <code>tools/catalog/test_catalog.py</code></td>
+<td><code>workflow-checks</code></td>
+<td>A unit test of the scripts behind <code>ru-cmake-matrix</code>, <code>ru-mutation</code>, <code>ru-pin-hygiene</code>, <code>ru-layering</code> or <code>ru-catalog</code> fails</td>
 </tr>
 <tr>
 <td><code>.github/scripts/check_contract.py</code></td>

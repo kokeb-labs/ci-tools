@@ -65,7 +65,15 @@
          <lastmod>2026-11-14</lastmod>
     </url>
     <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-catalog/</loc>
+         <lastmod>2026-11-14</lastmod>
+    </url>
+    <url>
          <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-ci-gate/</loc>
+         <lastmod>2026-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-cmake-matrix/</loc>
          <lastmod>2026-11-14</lastmod>
     </url>
     <url>
@@ -101,6 +109,10 @@
          <lastmod>2026-11-14</lastmod>
     </url>
     <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-layering/</loc>
+         <lastmod>2026-11-14</lastmod>
+    </url>
+    <url>
          <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-markdown-lint/</loc>
          <lastmod>2026-11-14</lastmod>
     </url>
@@ -110,6 +122,14 @@
     </url>
     <url>
          <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-mkdocs-publish/</loc>
+         <lastmod>2026-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-mutation/</loc>
+         <lastmod>2026-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://kokeb-labs.github.io/ci-tools/latest/ru-pin-hygiene/</loc>
          <lastmod>2026-11-14</lastmod>
     </url>
     <url>
