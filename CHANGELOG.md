@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.18.0] - 2026-11-13
+
 ### Added
 
 - **ru-misra: `scan_parallel` input.** The CMake build that runs under the CodeQL tracer used an unbounded
