@@ -127,6 +127,7 @@ keep their review step (MISRA Compliance:2020 §3.5), as the [plan](tool-validat
 | `cmake_args` | string | empty | Configure arguments that build every translation unit of the code under paths (for example -DMYCHIP_BUILD_TESTS=ON) |
 | `build_target` | string | empty | Target of the host build; empty builds all |
 | `cross` | boolean | `true` | Also analyse the Cortex-M build (cortex-m4f, the Arm GNU toolchain of toolchain.json), whose preprocessor paths differ from the host's |
+| `scan_parallel` | string | empty (2) | Job count of the CMake builds under the CodeQL tracer; empty uses 2. `CMAKE_BUILD_PARALLEL_LEVEL` in `scan.py`'s environment is honoured when this is empty |
 | `cross_cmake_args` | string | empty | Configure arguments of the Cortex-M build; empty uses cmake_args |
 | `cross_build_target` | string | empty | Target of the Cortex-M build (for example the driver's <chip>_optimised_build); empty builds all |
 | `profile_pack` | boolean | `true` | Also run the Kokeb C++20 profile pack (codeql/kokeb-cpp20) of this workflow's commit |

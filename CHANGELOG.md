@@ -17,6 +17,10 @@ that heading.
 
 ### Added
 
+- **ru-misra: `scan_parallel` input.** The CMake build that runs under the CodeQL tracer used an unbounded
+  `cmake --build --parallel`, which starved the runner on projects with large test suites. It now runs with 2 jobs
+  by default; set `scan_parallel` (or `CMAKE_BUILD_PARALLEL_LEVEL` for `tools/misra/scan.py`) to change it.
+
 - **Docs theme: the chip-first README.** Four optional keys of `docs/hardware.yml` give a driver README its opening:
   `overview` (the chip in one sentence, its applications, headline numbers and system), `capabilities` (one entry
   per chip function with its icon, status, driver calls and registers, checked against the headers named under
