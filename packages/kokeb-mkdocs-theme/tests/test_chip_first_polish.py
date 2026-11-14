@@ -259,6 +259,7 @@ class ProtocolTest(Case):
         fig = self.fig(d, "chip-capabilities")
         self.assertIn("the driver implements it and the named host test checks it", " ".join(texts(fig)))
         self.assertNotIn("the chip has it", " ".join(texts(fig)))
+        self.assertEqual(fig.title, "What the driver does")
         d["capabilities"][2]["tests"] = ["No such test", "tests/none.cpp"]
         p = "\n".join(problems(d, self.root))
         self.assertIn("no test named 'No such test'", p)

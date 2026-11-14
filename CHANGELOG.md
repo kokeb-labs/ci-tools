@@ -44,6 +44,8 @@ that heading.
   ("VBAT_SW: ·"), and shows every hook of a wire on its own line.
 - **Docs theme: the wiring figure** names every pin of a part between the MCU and the chip that a wire reaches
   (`DE, RE` for a transceiver's tied enables), not only the first.
+- **Docs theme: the capability map of a protocol driver** is titled "What the driver does": its cards are the
+  protocol's functions, not one chip's.
 - **Docs theme: the circuit figure** leaves room between a right-hand pin tied to ground and the pin under it tied
   to a supply, so the ground symbol and the supply's name no longer meet.
 - **Docs theme: long names in the chip figures** (package strings, the chip name, section names under the hero
