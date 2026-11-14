@@ -8,9 +8,13 @@
   whose facts the file does not give is left out.
 
 * ``<!-- generated: chip-summary -->``: the README's first line, "The <chip> is <overview.summary>", with its citation.
-* ``<!-- generated: chip-uses -->``: where the chip is used, one bullet per ``overview.applications`` entry.
+* ``<!-- generated: chip-uses -->``: where the chip is used, one bullet per ``overview.applications`` entry, then
+  the source of the list: ``overview.applications_ref`` (else ``overview.ref``), or, with
+  ``overview.applications_inferred``, a footer saying the uses are inferred and from what.
 * ``<!-- generated: chip-coverage -->``: one row per ``capabilities`` entry: what the chip does, the driver calls
-  and registers that cover it (checked against the headers named under ``driver``), the status and the citation.
+  and registers that cover it (checked against the headers named under ``driver``), the status and the citation;
+  a ``Host test`` column when a capability names its tests. The legend uses the protocol wording for
+  ``driver.kind: protocol``.
 
 The figures ``chip-pinout``, ``chip-outline``, ``chip-blocks``, ``chip-circuit-<id>``, ``chip-hero``,
 ``chip-capabilities``, ``chip-frame-<id>`` and ``chip-wiring-<id>`` come from the same file, so the table and
@@ -185,16 +189,22 @@ def uses(page) -> str:
     if ov is None or not ov.applications:
         return _none("overview.applications")
     out = []
+    src = ov.uses_ref
     for a in ov.applications:
-        cite = f" ({ref_text(hw, a.ref, True)})" if a.ref != ov.ref else ""
+        cite = f" ({ref_text(hw, a.ref, True)})" if a.ref != src else ""
         mark = " (not confirmed in the datasheet)" if a.unverified else ""
         out.append(f"- {_cell(a.label)}" + (f": {_cell(a.detail)}" if a.detail else "") + cite + mark)
-    out += ["", f"Uses named by the datasheet ({ref_text(hw, ov.ref)})."]
+    if ov.applications_inferred:
+        why = ov.applications_inferred.rstrip(".")
+        foot = f"Uses inferred, not named by the datasheet: {why} ({ref_text(hw, src)})."
+    else:
+        foot = f"Uses named by the datasheet ({ref_text(hw, src)})."
+    out += ["", _fill(foot)]
     return "\n".join(out) + "\n"
 
 
 def coverage(page) -> str:
-    from kokeb_mkdocs_theme.hardware.chipdoc import STATUSES
+    from kokeb_mkdocs_theme.hardware.chipdoc import STATUSES, meaning
 
     hw = _load()
     if hw is None:
@@ -202,8 +212,13 @@ def coverage(page) -> str:
     caps = hw.doc.capabilities if hw.doc else []
     if not caps:
         return _none("capabilities")
-    rows = ["| Capability | What the chip does | Driver API | Registers | Status | Datasheet |",
-            "| --- | --- | --- | --- | --- | --- |"]
+    kind = hw.doc.kind
+    with_tests = any(c.tests for c in caps)
+    what_head = "What the protocol does" if kind == "protocol" else "What the chip does"
+    regs_head = "Objects" if kind == "protocol" else "Registers"
+    head = ["Capability", what_head, "Driver API", regs_head, "Status"] + (["Host test"] if with_tests else []) \
+        + ["Datasheet"]
+    rows = ["| " + " | ".join(head) + " |", "|" + " --- |" * len(head)]
     for c in caps:
         name = _cell(c.title)
         doc, _, anchor = c.docs.partition("#")
@@ -212,15 +227,26 @@ def coverage(page) -> str:
         what = _cell(c.what) + (f" ({_cell(c.note)})" if c.note else "") + (
             f" (not confirmed in the datasheet: {_cell(c.unverified)})" if c.unverified else "")
         api = ", ".join(f"`{_cell(a)}`" for a in c.api) or "-"
-        regs = ", ".join(f"`{_cell(r)}`" for r in c.registers) or "-"
-        rows.append(f"| {name} | {what} | {api} | {regs} | {STATUSES[c.status][1]} | {ref_text(hw, c.ref, True)} |")
+        regs = ", ".join(f"`{_cell(r.name)}`" + (f" (`{_cell(r.header)}`)" if r.header else "")
+                         for r in c.registers) or "-"
+        cells = [name, what, api, regs, STATUSES[c.status][1]]
+        if with_tests:
+            cells.append(", ".join(f"[`{_cell(t.rsplit('/', 1)[-1])}`]({page.rel(t)})" if "/" in t else f"{_cell(t)}"
+                                   for t in c.tests) or "-")
+        cells.append(ref_text(hw, c.ref, True))
+        rows.append("| " + " | ".join(cells) + " |")
     used = [s for s in STATUSES if any(c.status == s for c in caps)]
-    legend = "; ".join(f"**{STATUSES[s][1]}**: {STATUSES[s][2]}" for s in used)
+    legend = "; ".join(f"**{STATUSES[s][1]}**: {meaning(s, kind)}" for s in used)
     checked = []
     if hw.doc.api_sources:
         checked.append("every API name is in " + ", ".join(f"`{s}`" for s in hw.doc.api_sources))
     if hw.doc.register_sources:
-        checked.append("every register in " + ", ".join(f"`{s}`" for s in hw.doc.register_sources))
+        what = "every object" if kind == "protocol" else "every register"
+        alias = " (the header constant in brackets, where the header spells it otherwise)" if any(
+            r.header for c in caps for r in c.registers) else ""
+        checked.append(f"{what}{alias} in " + ", ".join(f"`{s}`" for s in hw.doc.register_sources))
+    if with_tests:
+        checked.append("every named test exists")
     out = rows + ["", _fill(legend + "."), ""]
     tail = f"From [`{model.SOURCE}`]({page.rel(model.SOURCE)})"
     if checked:

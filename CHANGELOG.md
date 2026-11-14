@@ -15,6 +15,38 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- **Docs theme: the chip-first home page.** `kokeb-docs readme --site --check|--migrate` keeps `docs/index.md` in
+  the README's order under the site's hero: chip summary and hero figure, What it does, Where it is used, Inside the
+  chip, Pins and wiring (every wiring figure and the chip card), an optional Quick start, Driver coverage, then the
+  rest of the home page. `--migrate` rewrites a template home page (the paragraph under the hero moves under Driver
+  coverage, the chip card under Pins and wiring, a summary inside the hero under it). `kokeb-docs check` runs the
+  site check once the page has a `chip-summary` region. The style guide describes the new home page.
+- **Docs theme: parts between the MCU and the chip in the wiring figure.** A buffer, a transceiver, a level shifter
+  or a load switch (an `ic` part with an MCU wire on one side and a chip pin on the other, directly or through one
+  series part, or a chip supply pin for a load switch) is drawn as its own box with its wires in and out. A circuit
+  in which no MCU signal reaches the chip gets no wiring figure, and `kokeb-docs figures` says so.
+- **Docs theme: `docs/hardware.yml` keys.** A net `hook` may be a list (both hooks of a shared half-duplex wire) and
+  may sit on an MCU net into a part; `overview.applications_ref` cites the applications list apart from `ref`, and
+  `overview.applications_inferred` gives the "Uses inferred" footer; `overview.inside` picks the "Inside the ..."
+  word, now also `part`; a capability register may be `{name, header}` (the datasheet's mnemonic, checked by its
+  header constant); `driver.kind: protocol` words the capability legend and coverage table for a protocol driver
+  and makes each supported capability name its host test (`tests`, checked to exist); frames up to 128 bits (the
+  72-bit TMCL datagram), and `bit_order: lsb-first` for a UART datagram numbered from bit 0, the first bit sent.
+
+### Fixed
+
+- **Docs theme: `kokeb-docs readme --migrate`** finds a quick start under another heading ("In 30 seconds") by its
+  wiring step or its snippet, and keeps a section it does not know in its place after Documentation instead of
+  after License.
+- **Docs theme: the wiring figure** names what a supply that reaches no chip pin feeds instead of an empty entry
+  ("VBAT_SW: ·"), and shows every hook of a wire on its own line.
+- **Docs theme: the circuit figure** leaves room between a right-hand pin tied to ground and the pin under it tied
+  to a supply, so the ground symbol and the supply's name no longer meet.
+- **Docs theme: long names in the chip figures** (package strings, the chip name, section names under the hero
+  tiles, register pills, block labels) wrap or are ellipsised instead of running out of their box.
+
 ## [1.19.0] - 2026-11-14
 
 ### Added

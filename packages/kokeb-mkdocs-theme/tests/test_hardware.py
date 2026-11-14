@@ -401,8 +401,18 @@ class CircuitHookOverrideTest(unittest.TestCase):
         self.net(d, "SCLK")["hook"] = "nope"
         self.assertTrue(any("nets" in x and ".hook" in x and "not a hook listed" in x for x in problems(d)))
         d = base()
-        d["circuits"][0]["nets"].append({"name": "X", "nodes": ["U2.GND", "C1.1"], "hook": "transfer"})
-        self.assertTrue(any("no chip pin" in x for x in problems(d)), problems(d))
+        d["circuits"][0]["parts"].append({"id": "C9", "kind": "capacitor", "value": "1 nF"})
+        d["circuits"][0]["nets"].append({"name": "X", "nodes": ["C9.1", "C9.2"], "hook": "transfer"})
+        self.assertTrue(any("no chip or MCU pin" in x for x in problems(d)), problems(d))
+        # An MCU net may name a hook: the wire into a part between the MCU and the chip shows it.
+        d = base()
+        c = d["circuits"][0]
+        mcu = next(x for x in c["parts"] if x["kind"] == "mcu")
+        mcu["pins"].append("SPARE")
+        c["parts"].append({"id": "C9", "kind": "capacitor", "value": "1 nF"})
+        c["nets"].append({"name": "X", "nodes": [f"{mcu['id']}.SPARE", "C9.1"], "hook": "transfer"})
+        c.setdefault("unused", []).append("C9.2")
+        self.assertFalse(any("hook" in x for x in problems(d)), problems(d))
 
 
 class LayoutRegressionTest(unittest.TestCase):

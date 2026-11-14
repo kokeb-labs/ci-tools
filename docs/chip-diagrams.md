@@ -104,7 +104,10 @@ several package pins) are one node.
 A net may carry an optional `hook`: the id of a hook under `hooks`, which replaces the chip pin's own `hook` in that
 one circuit's drawing and alt text (the pin table and the pinout keep the pin's hook). `hook: null` (or `""`) shows
 no hook on that wire. A net without the key is unchanged. Use it when a circuit drives a pin another way than
-the pinout says, for example a chip's SPI pins wired as a UART:
+the pinout says, for example a chip's SPI pins wired as a UART. A list (`hook: [write, read]`) shows each hook under
+the wire, for one data line that both directions share (a half-duplex servo bus). An MCU net that reaches the chip
+through a part between them (a transceiver, a buffer, a level shifter, a load switch) may name a hook too: the
+wiring figure shows it on the wire from the MCU into that part.
 
 ```yaml
 hooks:
@@ -115,6 +118,8 @@ circuits:
     nets:
       - {name: SWP, nodes: [U1.SWP, U2.TX], hook: exchange}   # labelled Exchange() here, Transfer() elsewhere
       - {name: NAO, nodes: [U1.NAO, U2.GND], hook: null}      # no hook label on this wire
+      - {name: DATA, nodes: [U1.DATA, U3.Y1, U3.A2], hook: [write, read]}   # both, one under the other
+      - {name: TXD, nodes: [U2.TX, U3.A1], hook: write}       # MCU into the buffer U3
 ```
 
 Every pin, block, link, part or net may carry `unverified: <why>`: a fact that could not be confirmed in the
@@ -130,7 +135,8 @@ never reads as a fact.
   with `min_v` above `max_v`; any of these citing an unknown `ref`.
 - A pin number listed twice, missing, or outside the package; an `EP` pin without `exposed_pad`.
 - A fact without a citation, a citation of an unknown document, a page that is not a number.
-- A pin or net whose `hook` is not under `hooks` (a net `hook` also needs a chip pin on the net); a hook whose `symbol` is not in its `source`.
+- A pin or net whose `hook` is not under `hooks` (a net `hook` also needs a chip or an MCU pin on the net, and a
+  list names each hook once); a hook whose `symbol` is not in its `source`.
 - A block that names an unknown pin, two blocks in one cell, a link to an unknown block.
 - A circuit node whose part or pin does not exist; a pin on two nets; a net with fewer than two nodes; a pin on no
   net that is not listed under `unused` (pins of type `nc` excepted).

@@ -7,6 +7,9 @@ generated region (see ``docs/readme-chip-first.md`` in ci-tools)::
       category: Stepper motor controller and driver                         # the hero's kicker
       ref: cover
       applications: [Robotics and industrial drives, {text: "3D printers", ref: cover}]
+      applications_ref: apps                # optional: where the list comes from, when not from ref
+      applications_inferred: "..."          # optional: the datasheet names no uses; say what they are inferred from
+      inside: chip                          # optional: the "Inside the ..." heading (chip, module, device, sensor, part)
       specs:                                # 2 to 6 headline numbers, one tile each
         - {value: "10 to 55 V", label: motor supply, ref: electrical}
       system:                               # the hero: host -> chip -> what it drives, and what it reads back
@@ -17,13 +20,16 @@ generated region (see ``docs/readme-chip-first.md`` in ci-tools)::
     driver:                                 # headers the capability names are checked against
       api: [inc/x.hpp]
       registers: [inc/x_registers.hpp]
+      kind: device                          # optional: device (a chip, module or instrument) or protocol
     capabilities:                           # what the chip does, one card each, and how the driver covers it
       - {id: motion, title: Ramp generator, icon: ramp, what: "Moves to a target with S-shaped ramps",
-         status: supported, api: [MoveTo, SetRamp], registers: [RAMPMODE, XTARGET], docs: motion.md, ref: ramp}
+         status: supported, api: [MoveTo, SetRamp], registers: [RAMPMODE, {name: XTARGET, header: kXTarget}],
+         docs: motion.md, tests: [tests/test_motion.cpp], ref: ramp}
     frames:                                 # what one bus transfer carries, bit by bit
       - id: spi
         title: SPI datagram
-        bits: 40
+        bits: 40                            # 1 to 128
+        bit_order: msb-first                # optional; lsb-first: a UART datagram, bit 0 sent first, bits [first, last]
         ref: spi
         rows:
           - {label: Write, fields: [{name: W, bits: 39}, {name: address, bits: [38, 32]}, {name: data, bits: [31, 0]}]}
@@ -49,6 +55,24 @@ STATUSES: dict[str, tuple[str, str, str]] = {
     "read-only": ("teal", "Read only", "the driver reads and reports it, and does not set it"),
     "not-covered": ("slate", "Not covered", "the chip has it and the driver leaves it alone"),
 }
+#: The meanings for a protocol driver (``driver.kind: protocol``): there is no chip, and every supported function
+#: names the host test that checks it (``tests``).
+PROTOCOL_MEANINGS: dict[str, str] = {
+    "supported": "the driver implements it and the named host test checks it",
+    "guarded": "implemented, behind an explicit acknowledgement because a wrong value can do harm",
+    "partial": "implemented in part; the coverage map says which part",
+    "read-only": "the driver reads and reports it, and does not set it",
+    "not-covered": "the protocol defines it and the driver leaves it out",
+}
+DRIVER_KINDS = ("device", "protocol")
+INSIDE = ("chip", "module", "device", "sensor", "part")
+#: Where a test named under ``tests`` is looked for.
+TEST_DIRS = ("tests", "test")
+
+
+def meaning(status: str, kind: str = "device") -> str:
+    """What a status means, in the words of the driver's kind."""
+    return PROTOCOL_MEANINGS[status] if kind == "protocol" else STATUSES[status][2]
 
 
 @dataclass
@@ -85,6 +109,25 @@ class Overview:
     applications: list[Item] = field(default_factory=list)
     specs: list[Spec] = field(default_factory=list)
     system: System | None = None
+    applications_ref: object = None  # the citation of the list, when it is not ``ref``
+    applications_inferred: str = ""  # the datasheet names no uses: what the list is inferred from
+    inside: str = ""  # the word of the "Inside the ..." heading
+
+    @property
+    def uses_ref(self):
+        return self.applications_ref or self.ref
+
+
+@dataclass
+class Register:
+    """A register behind a capability: the datasheet's mnemonic, and the header constant when the header spells it
+    otherwise (the pill and the table show ``name``; the header check looks for ``header``)."""
+
+    name: str
+    header: str = ""
+
+    def __str__(self) -> str:
+        return self.name
 
 
 @dataclass
@@ -96,10 +139,11 @@ class Capability:
     status: str
     ref: object
     api: list[str] = field(default_factory=list)
-    registers: list[str] = field(default_factory=list)
+    registers: list[Register] = field(default_factory=list)
     docs: str = ""
     note: str = ""
     unverified: str = ""
+    tests: list[str] = field(default_factory=list)
 
     @property
     def tone(self) -> str:
@@ -113,10 +157,16 @@ class Field:
     lo: int
     tone: str = "slate"
     short: str = ""
+    first: int = -1  # lsb-first frames: the datasheet's number of the field's first bit (sent first, drawn left)
+    last: int = -1
 
     @property
     def width(self) -> int:
         return self.hi - self.lo + 1
+
+    def shown(self) -> tuple[int, int]:
+        """The bit numbers written at the field's left and right edges."""
+        return (self.first, self.last) if self.first >= 0 else (self.hi, self.lo)
 
 
 @dataclass
@@ -158,6 +208,7 @@ class Frame:
     description: str = ""
     decode: Decode | None = None
     waveform: Waveform | None = None
+    lsb_first: bool = False  # sent byte by byte, each byte least significant bit first (a UART datagram)
 
     def row(self, label: str) -> FrameRow | None:
         return next((r for r in self.rows if r.label == label), None)
@@ -170,9 +221,12 @@ class ChipDoc:
     frames: list[Frame] = field(default_factory=list)
     api_sources: list[str] = field(default_factory=list)
     register_sources: list[str] = field(default_factory=list)
+    kind: str = "device"  # driver.kind: device or protocol
 
 
 KEYS = {"overview", "driver", "capabilities", "frames"}
+#: The longest frame the figure draws (a 72-bit TMCL UART datagram fits; the bit grid stays readable).
+MAX_FRAME_BITS = 128
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
 
 
@@ -215,14 +269,24 @@ def _item(ctx, keys, v, path: str, default_ref) -> Item | None:
 
 def _overview(ctx, keys, o) -> Overview | None:
     p = "overview"
-    if not keys(ctx, o, p, {"summary", "category", "ref", "applications", "specs", "system"}):
+    if not keys(ctx, o, p, {"summary", "category", "ref", "applications", "applications_ref",
+                            "applications_inferred", "specs", "system", "inside"}):
         return None
     summary, category = _text(ctx, o, "summary", p, True), _text(ctx, o, "category", p, True)
     if summary and summary.rstrip().endswith("."):
         ctx.bad(f"{p}.summary", "leave out the full stop: the README writes 'The <chip> is <summary>.'")
     ref = ctx.ref(o.get("ref"), f"{p}.ref")
+    apps_ref = ctx.ref(o["applications_ref"], f"{p}.applications_ref") if o.get("applications_ref") is not None \
+        else None
+    inferred = _text(ctx, o, "applications_inferred", p)
+    if (apps_ref or inferred) and not o.get("applications"):
+        ctx.bad(f"{p}.applications", "missing: applications_ref and applications_inferred describe the list")
+    inside = _text(ctx, o, "inside", p)
+    if inside and inside not in INSIDE:
+        ctx.bad(f"{p}.inside", f"{inside!r} is not one of {', '.join(INSIDE)}")
+        inside = ""
     apps = [a for i, v in enumerate(_list(ctx, o.get("applications"), f"{p}.applications"))
-            if (a := _item(ctx, keys, v, f"{p}.applications[{i}]", ref)) is not None]
+            if (a := _item(ctx, keys, v, f"{p}.applications[{i}]", apps_ref or ref)) is not None]
     specs: list[Spec] = []
     for i, s in enumerate(_list(ctx, o.get("specs"), f"{p}.specs")):
         q = f"{p}.specs[{i}]"
@@ -247,7 +311,7 @@ def _overview(ctx, keys, o) -> Overview | None:
         system = System(_text(ctx, sy, "host", f"{p}.system") or "MCU", bus, drives, senses)
     if not (summary and category and ref):
         return None
-    return Overview(summary, category, ref, apps, specs, system)
+    return Overview(summary, category, ref, apps, specs, system, apps_ref, inferred, inside)
 
 
 def _sources(ctx, root, d, key: str) -> list[str]:
@@ -263,16 +327,46 @@ def _sources(ctx, root, d, key: str) -> list[str]:
     return out
 
 
-def _capabilities(ctx, keys, root, caps, api_src: list[str], reg_src: list[str]) -> list[Capability]:
+def _registers(ctx, v, path: str) -> list[Register]:
+    out: list[Register] = []
+    for i, r in enumerate(_list(ctx, v, path)):
+        if isinstance(r, (str, int, float)) and not isinstance(r, bool):
+            out.append(Register(str(r)))
+        elif isinstance(r, dict) and not set(r) - {"name", "header"} and r.get("name"):
+            h = r.get("header")
+            if h is not None and (not isinstance(h, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_:]*", h)):
+                ctx.bad(f"{path}[{i}].header", f"{h!r}: the constant's C++ name in the header")
+                h = ""
+            out.append(Register(str(r["name"]), str(h or "")))
+        else:
+            ctx.bad(f"{path}[{i}]", "a register is its datasheet name, or {name, header} when the header constant "
+                    "is spelled otherwise")
+    return out
+
+
+def _test_text(root) -> str:
+    out = []
+    for d in TEST_DIRS:
+        base = root / d
+        if base.is_dir():
+            for f in sorted(base.rglob("*")):
+                if f.is_file() and f.suffix in (".cpp", ".cc", ".c", ".hpp", ".h", ".py"):
+                    out.append(f.read_text(errors="replace"))
+    return "\n".join(out)
+
+
+def _capabilities(ctx, keys, root, caps, api_src: list[str], reg_src: list[str], kind: str = "device"
+                  ) -> list[Capability]:
     from .icons import ICONS
 
     api_text = "\n".join((root / s).read_text(errors="replace") for s in api_src)
     reg_text = "\n".join((root / s).read_text(errors="replace") for s in reg_src)
     out: list[Capability] = []
+    test_text = None
     for i, c in enumerate(_list(ctx, caps, "capabilities")):
         p = f"capabilities[{i}]"
         if not keys(ctx, c, p, {"id", "title", "icon", "what", "status", "api", "registers", "docs", "note", "ref",
-                                "unverified"}):
+                                "unverified", "tests"}):
             continue
         cid, title = _text(ctx, c, "id", p, True), _text(ctx, c, "title", p, True)
         icon, what = _text(ctx, c, "icon", p, True), _text(ctx, c, "what", p, True)
@@ -288,7 +382,7 @@ def _capabilities(ctx, keys, root, caps, api_src: list[str], reg_src: list[str])
         if what and len(what) > 110:
             ctx.bad(f"{p}.what", f"{len(what)} characters: one short sentence (110 at most) fits a card")
         api = [str(x) for x in _list(ctx, c.get("api"), f"{p}.api")]
-        regs = [str(x) for x in _list(ctx, c.get("registers"), f"{p}.registers")]
+        regs = _registers(ctx, c.get("registers"), f"{p}.registers")
         if status and status != "not-covered" and not api:
             ctx.bad(f"{p}.api", f"a {status} capability names the driver calls that cover it")
         for name in api:
@@ -296,27 +390,48 @@ def _capabilities(ctx, keys, root, caps, api_src: list[str], reg_src: list[str])
                 ctx.bad(f"{p}.api", f"{name!r}: a C++ name, without parentheses")
             elif api_src and not re.search(rf"\b{re.escape(name.split('::')[-1])}\b", api_text):
                 ctx.bad(f"{p}.api", f"{name!r} is not in {', '.join(api_src)}")
-        for name in regs:
-            if reg_src and not re.search(rf"\b{re.escape(name)}\b", reg_text):
-                ctx.bad(f"{p}.registers", f"{name!r} is not in {', '.join(reg_src)}")
+        for r in regs:
+            name = r.header or r.name
+            if reg_src and not re.search(rf"\b{re.escape(name.split('::')[-1])}\b", reg_text):
+                what = f"{r.name!r} (header {r.header!r})" if r.header else repr(r.name)
+                ctx.bad(f"{p}.registers", f"{what} is not in {', '.join(reg_src)}")
+        tests = [str(x) for x in _list(ctx, c.get("tests"), f"{p}.tests")]
+        for t in tests:
+            if "/" in t or t.endswith((".cpp", ".cc", ".c", ".py")):
+                if not (root / t).is_file():
+                    ctx.bad(f"{p}.tests", f"no file {t}")
+            else:
+                if test_text is None:
+                    test_text = _test_text(root)
+                if t not in test_text:
+                    ctx.bad(f"{p}.tests", f"no test named {t!r} under {' or '.join(d + '/' for d in TEST_DIRS)}")
+        if kind == "protocol" and status == "supported" and not tests:
+            ctx.bad(f"{p}.tests", "a supported capability of a protocol driver names the host test that checks it "
+                    "(a test file such as tests/test_sdo.cpp, or a test case name)")
         docs = _text(ctx, c, "docs", p)
         if docs and not (root / "docs" / docs.split("#")[0]).is_file():
             ctx.bad(f"{p}.docs", f"no page docs/{docs.split('#')[0]}")
         ref = ctx.ref(c.get("ref"), f"{p}.ref")
         if cid and title and icon in ICONS and what and status in STATUSES and ref:
             out.append(Capability(cid, title, icon, what, status, ref, api, regs, docs, _text(ctx, c, "note", p),
-                                  _text(ctx, c, "unverified", p)))
+                                  _text(ctx, c, "unverified", p), tests))
     return out
 
 
-def _bits(ctx, v, path: str, width: int) -> tuple[int, int] | None:
+def _bits(ctx, v, path: str, width: int, ascending: bool = False) -> tuple[int, int] | None:
+    """A field's bits: ``(high, low)``, or with ``ascending`` (an lsb-first frame) ``(first, last)``."""
     if isinstance(v, int) and not isinstance(v, bool):
         hi = lo = v
     elif isinstance(v, list) and len(v) == 2 and all(isinstance(x, int) and not isinstance(x, bool) for x in v):
         hi, lo = v
     else:
-        ctx.bad(path, f"a bit (39) or a range [high, low], not {v!r}")
+        ctx.bad(path, f"a bit (39) or a range [{'first, last' if ascending else 'high, low'}], not {v!r}")
         return None
+    if ascending:
+        if not (0 <= hi <= lo < width):
+            ctx.bad(path, f"[{hi}, {lo}] is not a range inside 0 to {width - 1} (first bit first)")
+            return None
+        return hi, lo
     if not (0 <= lo <= hi < width):
         ctx.bad(path, f"[{hi}, {lo}] is not a range inside {width - 1} to 0 (high first)")
         return None
@@ -327,7 +442,8 @@ def _frames(ctx, keys, frames) -> list[Frame]:
     out: list[Frame] = []
     for i, f in enumerate(_list(ctx, frames, "frames")):
         p = f"frames[{i}]"
-        if not keys(ctx, f, p, {"id", "title", "description", "bits", "ref", "rows", "decode", "waveform"}):
+        if not keys(ctx, f, p, {"id", "title", "description", "bits", "ref", "rows", "decode", "waveform",
+                                "bit_order"}):
             continue
         fid, title = _text(ctx, f, "id", p, True), _text(ctx, f, "title", p, True)
         if fid and not _SLUG.fullmatch(fid):
@@ -335,10 +451,15 @@ def _frames(ctx, keys, frames) -> list[Frame]:
         if fid and any(x.id == fid for x in out):
             ctx.bad(f"{p}.id", f"frame {fid!r} is listed twice")
         width = f.get("bits")
-        if not isinstance(width, int) or isinstance(width, bool) or not 1 <= width <= 64:
-            ctx.bad(f"{p}.bits", f"the frame length in bits, 1 to 64, not {width!r}")
+        if not isinstance(width, int) or isinstance(width, bool) or not 1 <= width <= MAX_FRAME_BITS:
+            ctx.bad(f"{p}.bits", f"the frame length in bits, 1 to {MAX_FRAME_BITS}, not {width!r}")
             continue
         ref = ctx.ref(f.get("ref"), f"{p}.ref")
+        order = _text(ctx, f, "bit_order", p) or "msb-first"
+        if order not in ("msb-first", "lsb-first"):
+            ctx.bad(f"{p}.bit_order", f"{order!r} is not msb-first or lsb-first")
+            order = "msb-first"
+        lsb = order == "lsb-first"
         rows: list[FrameRow] = []
         for j, r in enumerate(_list(ctx, f.get("rows"), f"{p}.rows")):
             q = f"{p}.rows[{j}]"
@@ -351,24 +472,34 @@ def _frames(ctx, keys, frames) -> list[Frame]:
                 if not keys(ctx, fd, fq, {"name", "bits", "tone", "short"}):
                     continue
                 name = _text(ctx, fd, "name", fq, True)
-                b = _bits(ctx, fd.get("bits"), f"{fq}.bits", width)
+                b = _bits(ctx, fd.get("bits"), f"{fq}.bits", width, ascending=lsb)
                 tone = _text(ctx, fd, "tone", fq) or "slate"
                 if tone not in T.TONES:
                     ctx.bad(f"{fq}.tone", f"{tone!r} is not one of {', '.join(T.TONES)}")
                     tone = "slate"
-                if name and b:
+                if name and b and lsb:
+                    # Bit 0 is sent first and drawn on the left: the grid runs from width - 1 (left) to 0.
+                    fields.append(Field(name, width - 1 - b[0], width - 1 - b[1], tone, _text(ctx, fd, "short", fq),
+                                        b[0], b[1]))
+                elif name and b:
                     fields.append(Field(name, b[0], b[1], tone, _text(ctx, fd, "short", fq)))
-            # The fields of a row cover every bit once, most significant first.
+            # The fields of a row cover every bit once, in the order they are sent.
             nxt = width - 1
             for fd in fields:
                 if fd.hi != nxt:
-                    ctx.bad(f"{q}.fields", f"field {fd.name!r} starts at bit {fd.hi}; the bit after the previous "
-                            f"field is {nxt} (list the fields from bit {width - 1} down to 0, no gap, no overlap)")
+                    if lsb:
+                        ctx.bad(f"{q}.fields", f"field {fd.name!r} starts at bit {fd.first}; the bit after the "
+                                f"previous field is {width - 1 - nxt} (list the fields from bit 0 up to {width - 1}, "
+                                "no gap, no overlap)")
+                    else:
+                        ctx.bad(f"{q}.fields", f"field {fd.name!r} starts at bit {fd.hi}; the bit after the previous "
+                                f"field is {nxt} (list the fields from bit {width - 1} down to 0, no gap, no overlap)")
                     break
                 nxt = fd.lo - 1
             else:
                 if fields and nxt != -1:
-                    ctx.bad(f"{q}.fields", f"bits {nxt} to 0 are in no field")
+                    ctx.bad(f"{q}.fields", f"bits {width - 1 - nxt} to {width - 1} are in no field" if lsb
+                            else f"bits {nxt} to 0 are in no field")
             if label and any(x.label == label for x in rows):
                 ctx.bad(f"{q}.label", f"row {label!r} is listed twice")
             if label and fields:
@@ -421,7 +552,9 @@ def _frames(ctx, keys, frames) -> list[Frame]:
             if mode in (0, 1, 2, 3) and sel and clk:
                 wave = Waveform(int(mode), sel, clk, lanes)
         if fid and title and ref and rows:
-            out.append(Frame(fid, title, width, ref, rows, _text(ctx, f, "description", p), decode, wave))
+            if wave and lsb:
+                ctx.bad(f"{p}.waveform", "an SPI waveform needs an msb-first frame")
+            out.append(Frame(fid, title, width, ref, rows, _text(ctx, f, "description", p), decode, wave, lsb))
     return out
 
 
@@ -430,12 +563,17 @@ def parse(ctx, keys, data: dict, root) -> ChipDoc:
     if data.get("overview") is not None:
         doc.overview = _overview(ctx, keys, data["overview"])
     drv = data.get("driver")
-    if drv is not None and keys(ctx, drv, "driver", {"api", "registers"}):
+    if drv is not None and keys(ctx, drv, "driver", {"api", "registers", "kind"}):
         doc.api_sources = _sources(ctx, root, drv, "api")
         doc.register_sources = _sources(ctx, root, drv, "registers")
+        kind = _text(ctx, drv, "kind", "driver") or "device"
+        if kind not in DRIVER_KINDS:
+            ctx.bad("driver.kind", f"{kind!r} is not one of {', '.join(DRIVER_KINDS)}")
+            kind = "device"
+        doc.kind = kind
     if data.get("capabilities") is not None:
         doc.capabilities = _capabilities(ctx, keys, root, data["capabilities"], doc.api_sources,
-                                         doc.register_sources)
+                                         doc.register_sources, doc.kind)
     if data.get("frames") is not None:
         doc.frames = _frames(ctx, keys, data["frames"])
     return doc

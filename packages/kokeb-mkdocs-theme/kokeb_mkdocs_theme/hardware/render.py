@@ -7,7 +7,7 @@ no wire runs through a part body or a text, every pin sits on the side the packa
 Figure ids: ``chip-pinout``, ``chip-outline`` (when ``package.outline`` is given, drawn by ``outline.py``),
 ``chip-blocks`` and ``chip-circuit-<id>``; and the chip-first README figures of ``readme_figs.py``: ``chip-hero``
 (``overview``), ``chip-capabilities`` (``capabilities``), ``chip-frame-<id>`` (``frames``) and ``chip-wiring-<id>``
-(each circuit with an MCU, once the file has an ``overview``).
+(each circuit in which an MCU signal reaches the chip, once the file has an ``overview``).
 """
 
 from __future__ import annotations
@@ -38,8 +38,22 @@ def figure_ids(hw: Hardware) -> list[str]:
             ids.append("chip-capabilities")
         ids += [f"chip-frame-{f.id}" for f in doc.frames]
         if doc.overview:
-            ids += [f"chip-wiring-{c.id}" for c in hw.circuits if any(p.kind == "mcu" for p in c.parts.values())]
+            from .readme_figs import reaches_chip
+
+            # A circuit with an MCU, when an MCU signal reaches the chip (directly, through a series part or through
+            # a part between them); ``wiring_skipped`` names the others, which have nothing to draw.
+            ids += [f"chip-wiring-{c.id}" for c in hw.circuits
+                    if any(p.kind == "mcu" for p in c.parts.values()) and reaches_chip(hw, c)]
     return ids
+
+
+def wiring_skipped(hw: Hardware) -> list[str]:
+    """The circuits with an MCU that get no wiring figure, because no MCU signal reaches the chip."""
+    if hw.doc is None or not hw.doc.overview:
+        return []
+    from .readme_figs import reaches_chip
+
+    return [c.id for c in hw.circuits if any(p.kind == "mcu" for p in c.parts.values()) and not reaches_chip(hw, c)]
 
 
 def build(hw: Hardware, fid: str) -> Fig:
