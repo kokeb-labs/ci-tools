@@ -54,6 +54,10 @@ Schema (version 1), in the order the file is usually written::
                                                                  # circuit only; hook: null shows no hook
           - {name: GND, kind: ground, nodes: [U1.GND, U2.GND, C1.2]}
         unused: [U1.NC]
+    overview: ...                         # optional, the chip-first README content: see ``chipdoc``
+    driver: ...
+    capabilities: ...
+    frames: ...
 
 Any pin, block, link, part or net may carry ``unverified: <why>``: the fact could not be confirmed in the datasheet.
 The table and the figures mark it, so a guess never reads as a fact.
@@ -308,6 +312,8 @@ class Hardware:
     source: str = SOURCE
     blocks_unverified: str = ""
     supply: list[Supply] = field(default_factory=list)
+    #: The chip-first README content (``overview``, ``driver``, ``capabilities``, ``frames``), see ``chipdoc``.
+    doc: object = None
 
     def pin(self, key: str | int) -> list[Pin]:
         """Pins named ``key`` (several for a repeated name such as GND), or the pin numbered ``key``."""
@@ -534,7 +540,8 @@ def load(root: pathlib.Path | None = None, path: pathlib.Path | None = None) -> 
 def parse(data, root: pathlib.Path) -> Hardware:
     ctx = _Ctx({}, {})
     if not _keys(ctx, data, "(top)", {"schema", "chip", "documents", "refs", "package", "hooks", "pins",
-                                      "block_diagram", "circuits", "supply"}):
+                                      "block_diagram", "circuits", "supply", "overview", "driver",
+                                      "capabilities", "frames"}):
         raise HardwareError(ctx.problems)
     if data.get("schema") != SCHEMA_VERSION:
         ctx.bad("schema", f"must be {SCHEMA_VERSION}, not {data.get('schema')!r}")
@@ -711,10 +718,14 @@ def parse(data, root: pathlib.Path) -> Hardware:
                 ctx.bad(f"circuits[{ci}].id", f"circuit {circ.id!r} is listed twice")
             circuits.append(circ)
 
+    from . import chipdoc
+
+    doc = chipdoc.parse(ctx, _keys, data, root)
+
     if ctx.problems:
         raise HardwareError(ctx.problems)
     return Hardware(chip, package, hooks, pins, blocks, links, blocks_ref, circuits, ctx.docs,
-                    blocks_unverified=blocks_unverified, supply=supply)
+                    blocks_unverified=blocks_unverified, supply=supply, doc=doc)
 
 
 def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin], hooks: dict[str, Hook]) -> Circuit | None:
