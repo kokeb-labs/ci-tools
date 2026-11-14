@@ -354,13 +354,14 @@ def check_release_lock(a, entries, add) -> None:
 # ----------------------------------------------------------------------------------------------------------- output
 
 def lock_line(root: str, lock: str, name: str) -> int:
-    try:
-        with open(os.path.join(root, lock), encoding="utf-8") as fh:
-            for n, line in enumerate(fh, 1):
-                if re.search(rf"name:\s*{re.escape(name)}\b", line):
-                    return n
-    except OSError:
-        pass
+    """The line of the lock entry named `name`, else 1 (the annotation then points at the file's top)."""
+    path = os.path.join(root, lock)
+    if not os.path.isfile(path):
+        return 1
+    with open(path, encoding="utf-8") as fh:
+        for n, line in enumerate(fh, 1):
+            if re.search(rf"name:\s*{re.escape(name)}\b", line):
+                return n
     return 1
 
 
