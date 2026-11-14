@@ -1488,7 +1488,7 @@
 <h1 id="ru-release-firmware">ru-release-firmware<a class="headerlink" href="#ru-release-firmware" title="Permanent link">&para;</a></h1>
 <p>Create a GitHub Release for a tag and attach the firmware that <code>ru-build</code> built and tested for the same commit,
 in public and private repositories.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/e5eefc6bb1893a89b92b05935ed4518a5181f88f/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/056844cdc8a05e7fc058393749d3cf88fde51cc8/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></p>
 <p>It replaces <a href="../ru-release-with-artifacts/"><code>ru-release-with-artifacts</code></a>, with the same inputs and behaviour. The
 difference is one permission: its job asks for <code>actions: read</code> as well as <code>contents: write</code>, so it can find the
 tagged commit's CI run in a private repository.</p>
