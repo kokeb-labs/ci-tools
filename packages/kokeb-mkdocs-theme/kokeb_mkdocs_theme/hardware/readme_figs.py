@@ -17,11 +17,12 @@ geometry checks (``common.layout_problems``).
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass, field
 
 from ..figkit import Box, Fig, text_width, wrap
 from ..figkit import theme as T
 from . import icons
-from .chipdoc import STATUSES
+from .chipdoc import STATUSES, meaning
 from .common import UNVERIFIED_MARK, layout_problems, unverified_note
 from .model import PIN_TYPES, Hardware
 
@@ -132,7 +133,11 @@ def hero(hw: Hardware) -> Fig:
         ty = bottom + 40
         # Tile height from the longest label.
         lab_lines = [wrap(s.label, tw - 32, k["card_body"]) for s in ov.specs]
-        th = 24 + 30 + 10 + max(len(ls) for ls in lab_lines) * k["card_body"] * 1.35 + 8 + k["small"] + 20
+        # The citation under each tile: a long section name wraps to a second line, then is ellipsised.
+        cite_lines = [_lines(_short(s.ref), tw - 32, k["small"]) for s in ov.specs]
+        nc = max(len(c) for c in cite_lines)
+        th = (24 + 30 + 10 + max(len(ls) for ls in lab_lines) * k["card_body"] * 1.35 + 8 + k["small"]
+              + (nc - 1) * k["small"] * 1.35 + 20)
         for i, s in enumerate(ov.specs):
             x = i * (tw + gap)
             fig.rect(x, ty, tw, th, fill="paper", stroke="line")
@@ -149,7 +154,9 @@ def hero(hw: Hardware) -> Fig:
             for ln in lab_lines[i]:
                 fig.text(x + 16, yy, ln, size=k["card_body"], color="ink2", bg="paper")
                 yy += k["card_body"] * 1.35
-            fig.text(x + 16, ty + th - 18, _short(s.ref), size=k["small"], color="muted", bg="paper")
+            for j, ln in enumerate(cite_lines[i]):
+                fig.text(x + 16, ty + th - 18 - (len(cite_lines[i]) - 1 - j) * k["small"] * 1.35, ln, size=k["small"],
+                         color="muted", bg="paper")
         bottom = ty + th
     fig._grow(bottom)
     unverified_note(fig, unverified)
@@ -197,12 +204,24 @@ def _chip_body(fig: Fig, hw: Hardware, x: float, y: float, w: float, h: float) -
     body = fig.rect(x, y, w, h, fill="paper", stroke="ink2", sw=2.2, rx=10)
     fig.circle(x + 20, y + 20, 6, fill="ink2")
     size = 30
-    while text_width(hw.chip, size, 700) > w - 30 and size > 18:
+    while text_width(hw.chip, size, 700) > w - 30 and size > 22:
         size -= 1
-    fig.text(x + w / 2, y + h / 2 - 6, hw.chip, size=size, weight=700, color="ink", bg="paper", anchor="middle")
-    fig.text(x + w / 2, y + h / 2 + 24, pk.type, size=k["card_body"], color="muted", bg="paper", anchor="middle")
+    names = [hw.chip]
+    if text_width(hw.chip, size, 700) > w - 30:
+        # A long name wraps to two lines, a long package string too; what is still left over is ellipsised.
+        size = 24
+        names = _lines(hw.chip, w - 30, size, 700)
+    pkg = _lines(pk.type, w - 30, k["card_body"])
+    lh, ph = size * 1.15, k["card_body"] * 1.3
+    cy = y + h / 2
+    for t, ln in enumerate(names):  # the last name line sits where a one-line name does
+        fig.text(x + w / 2, cy - 6 - (len(names) - 1 - t) * lh, ln, size=size, weight=700, color="ink", bg="paper",
+                 anchor="middle")
+    for t, ln in enumerate(pkg):
+        fig.text(x + w / 2, cy + 24 + t * ph, ln, size=k["card_body"], color="muted", bg="paper", anchor="middle")
     pins = f"{pk.pins} pins" + (" + pad" if pk.exposed_pad else "")
-    fig.text(x + w / 2, y + h / 2 + 48, pins, size=k["small"], color="muted", bg="paper", anchor="middle")
+    fig.text(x + w / 2, cy + 48 + (len(pkg) - 1) * ph, pins, size=k["small"], color="muted", bg="paper",
+             anchor="middle")
     return body
 
 
@@ -211,7 +230,9 @@ def _chip_body(fig: Fig, hw: Hardware, x: float, y: float, w: float, h: float) -
 
 def capabilities(hw: Hardware) -> Fig:
     caps = hw.doc.capabilities
+    kind = hw.doc.kind
     used = [s for s in STATUSES if any(c.status == s for c in caps)]
+    of = "the protocol" if kind == "protocol" else "the chip"
     fig = Fig(
         "chip-capabilities",
         f"What the {hw.chip} does",
@@ -220,8 +241,9 @@ def capabilities(hw: Hardware) -> Fig:
         width=W_FIG,
         profile="overview",
         kicker="Capabilities",
-        subtitle="One card per function of the chip, with how this driver covers it and the registers behind it.",
-        legend=[(STATUSES[s][0], f"{STATUSES[s][1]}: {STATUSES[s][2]}") for s in used],
+        subtitle=f"One card per function of {of}, with how this driver covers it and the "
+        + ("objects behind it." if kind == "protocol" else "registers behind it."),
+        legend=[(STATUSES[s][0], f"{STATUSES[s][1]}: {meaning(s, kind)}") for s in used],
     )
     k = fig.k
     W = fig.body_w
@@ -235,10 +257,11 @@ def capabilities(hw: Hardware) -> Fig:
     title_w = inner - disc - 14
 
     def regs_of(c) -> list[str]:
-        regs = list(c.registers)
+        # The datasheet's names; a pill wider than the card is ellipsised (the coverage table has the full name).
+        regs = [str(r) for r in c.registers]
         if len(regs) > 4:
             regs = regs[:3] + [f"+{len(c.registers) - 3} more"]
-        return regs
+        return [_fit(r, inner - 16, k["pill"], 700) for r in regs]
 
     def measure(c) -> float:
         scratch = Fig("scratch", "s", alt="s", width=W_FIG, profile="overview")
@@ -298,8 +321,8 @@ def capabilities(hw: Hardware) -> Fig:
     layout_problems(fig, [], [])
     fig.doc = (f"Reads: Each card is one function of the {hw.chip}: an icon, its name and what it does for the "
                "application. The filled pill says how this driver covers it (legend below); the outlined pills are "
-               "the chip registers behind it. The coverage table in the README gives the driver calls and the "
-               "datasheet section of each card.")
+               + ("the protocol objects behind it" if kind == "protocol" else "the chip registers behind it")
+               + ". The coverage table in the README gives the driver calls and the datasheet section of each card.")
     return fig
 
 
@@ -479,44 +502,162 @@ def _decode(fig: Fig, fr, y: float, field_boxes: dict) -> float:
 # ---------------------------------------------------------------------------------------------------- wiring
 
 
+@dataclass
+class _Row:
+    """One wire of the wiring figure."""
+
+    net: object
+    near: str  # the pin label at the near end: the MCU's, or the intermediate part's
+    far: str  # the pin at the far end: the chip's pin name, or the intermediate part's pin label
+    hooks: list[str] = field(default_factory=list)  # driver calls shown under the wire
+    via: str = ""  # a series part the wire goes through
+    extra: list[str] = field(default_factory=list)  # other two-pin parts on the net
+    chip_pin: str = ""  # the chip pin this wire ends on (empty for an MCU-to-part wire)
+
+
+@dataclass
+class _Between:
+    """A part between the MCU and the chip (a buffer, a transceiver, a level shifter, a load switch): the wires
+    from the MCU into it and the wires from it to the chip."""
+
+    part: object
+    into: list[_Row]
+    out: list[_Row]
+
+
+def _plan(hw: Hardware, c):
+    """The wires of a circuit's wiring figure: MCU to chip (directly or through one series part), MCU to a part
+    between them and that part to the chip, and the chip to the external blocks."""
+    chip = c.chip
+    host = next((p for p in c.parts.values() if p.kind == "mcu"), None)
+    signal = [n for n in c.nets if n.kind not in ("supply", "ground")]
+    pins_by_name: dict = {}
+    for p in hw.pins:
+        pins_by_name.setdefault(p.name, p)
+
+    def on(n, pid: str) -> list[str]:
+        return [pn for q, pn in n.nodes if q == pid]
+
+    def other_net(pid: str, net):
+        return next((m for m in signal if m is not net and on(m, pid)), None)
+
+    def label(part, pn: str) -> str:
+        return dict(part.pins).get(pn, pn)
+
+    def hooks_of_chip(pn: str) -> list[str]:
+        pin = pins_by_name.get(pn)
+        return [hw.hooks[h].call for h in c.hooks_of(pin)] if pin else []
+
+    def hooks_of_net(n) -> list[str]:
+        return [hw.hooks[h].call for h in n.hooks] if n.hook_set else []
+
+    direct: list[_Row] = []
+    used_series: set[str] = set()
+    used_nets: set[str] = set()
+    if host:
+        for n in signal:
+            cp, mp = on(n, chip.id), on(n, host.id)
+            if cp and mp:
+                direct.append(_Row(n, label(host, mp[0]), cp[0], hooks_of_chip(cp[0]), chip_pin=cp[0]))
+                used_nets.add(n.name)
+            elif mp and not cp:
+                # An MCU pin that reaches the chip through one series part (a resistor in a UART TX line).
+                for pid, _pn in n.nodes:
+                    m = other_net(pid, n) if c.parts[pid].two_pin else None
+                    q = on(m, chip.id) if m else []
+                    if q and not on(m, host.id):
+                        direct.append(_Row(m, label(host, mp[0]), q[0], hooks_of_chip(q[0]), via=pid, chip_pin=q[0]))
+                        used_series.add(pid)
+                        used_nets.update((n.name, m.name))
+                        break
+    # Parts between the MCU and the chip.
+    between: list[_Between] = []
+    if host:
+        for x in c.parts.values():
+            if x.kind != "ic":
+                continue
+            into, out = [], []
+            for n in signal:
+                xp = on(n, x.id)
+                if not xp or n.name in used_nets:
+                    continue
+                mp, cp = on(n, host.id), on(n, chip.id)
+                if mp and not cp:
+                    into.append(_Row(n, label(host, mp[0]), label(x, xp[0]), hooks_of_net(n)))
+                elif cp and not mp:
+                    out.append(_Row(n, label(x, xp[0]), cp[0], hooks_of_chip(cp[0]), chip_pin=cp[0]))
+                elif not mp and not cp:
+                    # Through one series part to the chip (a resistor at the first pixel) or from the MCU.
+                    for pid, _pn in n.nodes:
+                        m = other_net(pid, n) if c.parts[pid].two_pin else None
+                        if m is None or on(m, x.id) or m.name in used_nets:
+                            continue
+                        q, mq = on(m, chip.id), on(m, host.id)
+                        if q and not mq:
+                            out.append(_Row(m, label(x, xp[0]), q[0], hooks_of_chip(q[0]), via=pid, chip_pin=q[0]))
+                        elif mq and not q:
+                            into.append(_Row(m, label(host, mq[0]), label(x, xp[0]), hooks_of_net(m), via=pid))
+                        else:
+                            continue
+                        break
+            if into and not out:
+                # A load switch: the MCU enables it and it feeds a chip supply pin.
+                for n in c.nets:
+                    if n.kind == "supply" and on(n, x.id) and on(n, chip.id):
+                        cp = sorted(set(on(n, chip.id)))[0]
+                        out.append(_Row(n, label(x, on(n, x.id)[0]), cp, [], chip_pin=cp))
+            if into and out:
+                between.append(_Between(x, into, out))
+                for r in into + out:
+                    used_nets.add(r.net.name)
+                    if r.via:
+                        used_series.add(r.via)
+    inter = {b.part.id for b in between}
+    externals = [p for p in c.parts.values() if p.kind in ("ic", "connector") and p.id not in inter]
+    right: dict[str, list[_Row]] = {e.id: [] for e in externals}
+    for n in signal:
+        if n.name in used_nets:
+            continue
+        cp = on(n, chip.id)
+        ext = [(pid, pn) for pid, pn in n.nodes if pid in right]
+        if cp and ext:
+            pid, pn = ext[0]
+            right[pid].append(_Row(n, label(c.parts[pid], pn), cp[0], chip_pin=cp[0]))
+    rows = direct + [r for b in between for r in b.into + b.out] + [r for v in right.values() for r in v]
+    for r in rows:
+        if r.net.kind != "supply":
+            r.extra = [pid for pid, _pn in r.net.nodes if c.parts[pid].two_pin and pid not in used_series]
+    return host, direct, between, externals, right, pins_by_name
+
+
+def reaches_chip(hw: Hardware, c) -> bool:
+    """Whether an MCU signal of circuit ``c`` reaches the chip: the circuit then has a wiring figure."""
+    host, direct, between, _e, _r, _p = _plan(hw, c)
+    return bool(host and (direct or between))
+
+
+def _fit(text: str, width: float, size: float, weight: int = 400, mono: bool = False) -> str:
+    """``text``, ellipsised to ``width`` when it is wider."""
+    if text_width(text, size, weight, mono) <= width:
+        return text
+    while text and text_width(text + "…", size, weight, mono) > width:
+        text = text[:-1]
+    return text.rstrip(" ,;-") + "…"
+
+
+def _lines(text: str, width: float, size: float, weight: int = 400, most: int = 2) -> list[str]:
+    """``text`` wrapped to ``width``, at most ``most`` lines, the last one ellipsised when more is left."""
+    ls = wrap(text, width, size, weight)
+    if len(ls) > most:
+        ls = ls[:most - 1] + [_fit(" ".join(ls[most - 1:]), width, size, weight)]
+    return [_fit(ln, width, size, weight) for ln in ls]
+
+
 def wiring(hw: Hardware, cid: str) -> Fig:
     c = next(x for x in hw.circuits if x.id == cid)
     chip = c.chip
-    host = next((p for p in c.parts.values() if p.kind == "mcu"), None)
-    externals = [p for p in c.parts.values() if p.kind in ("ic", "connector")]
-    pins_by_name = {}
-    for p in hw.pins:
-        pins_by_name.setdefault(p.name, p)
-    # Rows: (net, chip pin, the other end's pin label, parts on the net, the series part the wire goes through).
-    left, right = [], {e.id: [] for e in externals}
-    supplies = []
-    signal = [n for n in c.nets if n.kind not in ("supply", "ground")]
+    host, left, between, externals, right, pins_by_name = _plan(hw, c)
     supplies = [n for n in c.nets if n.kind in ("supply", "ground")]
-
-    def other_net(part_id: str, net):
-        return next((m for m in signal if m is not net and any(pid == part_id for pid, _pn in m.nodes)), None)
-
-    via_parts = set()
-    for n in signal:
-        chip_pins = [pn for pid, pn in n.nodes if pid == chip.id]
-        mcu_pins = [pn for pid, pn in n.nodes if host and pid == host.id]
-        ext = [(pid, pn) for pid, pn in n.nodes if pid in right]
-        if chip_pins and mcu_pins:
-            left.append([n, chip_pins[0], dict(host.pins).get(mcu_pins[0], mcu_pins[0]), [], ""])
-        elif chip_pins and ext:
-            pid, pn = ext[0]
-            right[pid].append([n, chip_pins[0], dict(c.parts[pid].pins).get(pn, pn), [], ""])
-        elif mcu_pins and not chip_pins:
-            # An MCU pin that reaches the chip through one series part (a resistor in a UART TX line).
-            for pid, _pn in n.nodes:
-                m = other_net(pid, n) if c.parts[pid].two_pin else None
-                cp = [pn for q, pn in m.nodes if q == chip.id] if m else []
-                if cp:
-                    left.append([m, cp[0], dict(host.pins).get(mcu_pins[0], mcu_pins[0]), [], pid])
-                    via_parts.add(pid)
-                    break
-    for row in left + [r for v in right.values() for r in v]:
-        row[3] = [pid for pid, _pn in row[0].nodes if c.parts[pid].two_pin and pid not in via_parts]
     nparts = {kind: 0 for kind in ("capacitor", "resistor")}
     other_passives = 0
     for p in c.parts.values():
@@ -525,73 +666,114 @@ def wiring(hw: Hardware, cid: str) -> Fig:
                 nparts[p.kind] += 1
             else:
                 other_passives += 1
+
     def part_text(pid: str) -> str:
         return f"{pid} {c.parts[pid].value}".strip()
 
-    hook_of, sub_of = {}, {}
-    for i, (n, pn, _l, extra, via) in enumerate(left):
-        pin = pins_by_name.get(pn)
-        hid = c.hook_of(pin) if pin else ""
-        hook_of[i] = hw.hooks[hid].call if hid else ""
-        bits = [hook_of[i]] if hook_of[i] else []
-        if via:
-            bits.append(f"through {part_text(via)}")
-        if extra:
-            bits.append("+ " + ", ".join(part_text(x) for x in extra))
-        sub_of[i] = bits  # one line each under the wire
-    alt = (f"Wiring of the {hw.chip} for the {c.title}: "
-           + "; ".join(f"{host.label or 'MCU'} {lab} to {pn}" + (f" through {part_text(via)}" if via else "")
-                       + (f" ({hook_of[i]})" if hook_of[i] else "") for i, (n, pn, lab, _x, via) in enumerate(left))
-           + ("; " + "; ".join(f"{r[1]} to {e.label or e.id} {r[2]}" for e in externals for r in right[e.id])
-              if any(right.values()) else "")
+    def sub_lines(r: _Row) -> list[str]:
+        bits = list(r.hooks)
+        if r.via:
+            bits.append(f"through {part_text(r.via)}")
+        if r.extra:
+            bits.append("+ " + ", ".join(part_text(x) for x in r.extra))
+        return bits  # one line each under the wire
+
+    def hook_text(r: _Row) -> str:
+        return f" ({' and '.join(r.hooks)})" if r.hooks else ""
+
+    mcu_name = (host.label or "MCU") if host else "MCU"
+    alt_bits = [f"{mcu_name} {r.near} to {r.far}" + (f" through {part_text(r.via)}" if r.via else "") + hook_text(r)
+                for r in left]
+    for b in between:
+        name = b.part.label or b.part.id
+        alt_bits += [f"{mcu_name} {r.near} to {name} {r.far}" + (f" through {part_text(r.via)}" if r.via else "")
+                     + hook_text(r) for r in b.into]
+        alt_bits += [f"{name} {r.near} to {r.far}" + (f" through {part_text(r.via)}" if r.via else "")
+                     + hook_text(r) for r in b.out]
+    alt_bits += [f"{r.far} to {e.label or e.id} {r.near}" for e in externals for r in right[e.id]]
+    alt = (f"Wiring of the {hw.chip} for the {c.title}: " + "; ".join(alt_bits)
            + ". Supplies, grounds and the support parts are listed under the drawing.")
+    chip_rows = left + [r for b in between for r in b.out] + [r for v in right.values() for r in v]
     fig = Fig(f"chip-wiring-{c.id}", f"Wiring: {c.title}", alt=alt, width=W_FIG, profile="overview",
               kicker="Pins and wiring",
               subtitle="What you connect by hand, with the driver hook on each MCU wire. The full schematic, with "
               f"every part and value, is on the Hardware page. Datasheet: {c.ref.short()}.",
               legend=[(PIN_TYPES[t][0], PIN_TYPES[t][1]) for t in PIN_TYPES
-                      if any(pins_by_name[r[1]].type == t for r in left + [r for v in right.values() for r in v]
-                             if r[1] in pins_by_name)])
+                      if any(pins_by_name[r.chip_pin].type == t for r in chip_rows if r.chip_pin in pins_by_name)])
     k = fig.k
     W = fig.body_w
     mono = k["mono"]
-    # Row pitch: the net name above the wire, the hook (and a series or extra part) under it.
-    RP = 64 + (k["mono"] * 1.35 if any(len(v) > 1 for v in sub_of.values()) else 0)
+    small = k["small"]
+    all_rows = chip_rows + [r for b in between for r in b.into]
+    subs = {id(r): sub_lines(r) for r in all_rows}
+    # Row pitch: the net name above the wire, the hooks (and a series or extra part) under it, one line each.
+    most = max([len(v) for v in subs.values()] + [1])
+    RP = 64 + mono * 1.35 * (most - 1)
     pad = k["pad"]
-    host_lab_w = max([text_width(r[2], mono, 600, True) for r in left] + [60])
+
+    def tag_of(r: _Row) -> str:
+        num = ", ".join(str(q.number) for q in hw.pin(r.chip_pin)) if r.chip_pin in pins_by_name else ""
+        return r.net.name + (f"  pin {num}" if num else "")
+
+    def span(rows: list[_Row]) -> float:
+        """The room a wire's texts need between its two ends."""
+        return max([text_width(s, mono, 400, True) for r in rows for s in subs[id(r)]]
+                   + [text_width(tag_of(r), small, 600) for r in rows] + [80]) + 40
+
+    mcu_rows = left + [r for b in between for r in b.into]
+    host_lab_w = max([text_width(r.near, mono, 600, True) for r in mcu_rows] + [60])
     hw_w = max(200, math.ceil(host_lab_w + 2 * pad + 16))
-    chip_lab_w = max([text_width(r[1], mono, 700, True) for r in left]
-                     + [text_width(r[1], mono, 700, True) for v in right.values() for r in v] + [60])
+    chip_lab_w = max([text_width(r.far, mono, 700, True) for r in chip_rows] + [60])
     has_right = any(right.values())
     chip_w = max(240, math.ceil(chip_lab_w * (2 if has_right else 1) + 2 * pad + (40 if has_right else 16)))
-    gap_l = max([text_width(s, mono, 400, True) for v in sub_of.values() for s in v]
-                + [text_width(r[0].name + "  pin 00", k["small"], 600) for r in left] + [80]) + 40
+    gap_l = span(left) if left else 0
+    if between:
+        gap_a = span([r for b in between for r in b.into])
+        gap_b = span([r for b in between for r in b.out])
+        in_w = max(text_width(r.far, mono, 600, True) for b in between for r in b.into)
+        out_w = max(text_width(r.near, mono, 600, True) for b in between for r in b.out)
+        x_w = min(300, max(150, math.ceil(in_w + out_w + 2 * pad + 28)))
+        mid = max(gap_l, gap_a + x_w + gap_b)
+    else:
+        gap_a = gap_b = x_w = 0
+        mid = max(gap_l, 120)
     ext_w = 0
     gap_r = 0
     if has_right:
-        ext_w = max([text_width(r[2], mono, 600, True) for v in right.values() for r in v]
+        ext_w = max([text_width(r.near, mono, 600, True) for v in right.values() for r in v]
                     + [text_width(e.label or e.id, k["card_title"], 700) * 0.6 for e in externals] + [120])
         ext_w = min(240, math.ceil(ext_w + 2 * pad + 16))
-        gap_r = max([text_width(r[0].name + "  pin 00", k["small"], 600) for v in right.values() for r in v]
-                    + [60]) + 40
-    total = hw_w + gap_l + chip_w + (gap_r + ext_w if has_right else 0)
+        gap_r = max([text_width(tag_of(r), small, 600) for v in right.values() for r in v] + [60]) + 40
+    total = hw_w + mid + chip_w + (gap_r + ext_w if has_right else 0)
     if total > W:
         fig.problem(f"the wiring needs {total:.0f} px, the figure has {W:.0f}")
     x_host = max(0.0, (W - total) / 2)
-    x_chip = x_host + hw_w + gap_l
+    x_chip = x_host + hw_w + mid
+    x_mid = x_host + hw_w + (mid - (gap_a + x_w + gap_b)) / 2 + gap_a  # the parts between, centred in the gap
     x_ext = x_chip + chip_w + gap_r
     head = k["card_title"] * 1.3 + pad + 18
     y0 = 0.0
-    n_left = len(left)
+    # Left column: the direct wires, then each part between with its name above it.
+    y = y0 + head
+    left_y = []
+    for _r in left:
+        left_y.append(y + RP / 2)
+        y += RP
+    groups = []
+    for b in between:
+        name_lines = _lines(b.part.label or b.part.id, x_w, small, 700)
+        y += len(name_lines) * small * 1.3 + 10
+        n = max(len(b.into), len(b.out))
+        groups.append((b, name_lines, y, n))
+        y += n * RP + 8
     n_right = sum(len(v) for v in right.values()) + max(0, len([e for e in externals if right[e.id]]) - 1)
-    rows = max(n_left, n_right, 1)
-    body_h = head + rows * RP + pad
+    body_h = max(y - y0, head + max(n_right, 1 if not (left or between) else 0) * RP) + pad
     bodies = []
     # Chip card.
     cbox = fig.rect(x_chip, y0, chip_w, body_h, fill="paper", stroke="ink2", sw=2.2, rx=10)
-    fig.text(x_chip + chip_w / 2, y0 + pad + k["card_title"] * 0.85, hw.chip, size=k["card_title"], weight=700,
-             bg="paper", anchor="middle")
-    fig.text(x_chip + chip_w / 2, y0 + pad + k["card_title"] * 0.85 + k["small"] * 1.4, chip.id, size=k["small"],
+    fig.text(x_chip + chip_w / 2, y0 + pad + k["card_title"] * 0.85, _fit(hw.chip, chip_w - 2 * pad,
+             k["card_title"], 700), size=k["card_title"], weight=700, bg="paper", anchor="middle")
+    fig.text(x_chip + chip_w / 2, y0 + pad + k["card_title"] * 0.85 + small * 1.4, chip.id, size=small,
              color="muted", bg="paper", anchor="middle")
     bodies.append((cbox, "the chip"))
     wires = []
@@ -603,30 +785,54 @@ def wiring(hw: Hardware, cid: str) -> Fig:
         sx = x - 14 if side == "left" else x
         fig.rect(sx, yy - 6, 14, 12, fill=f"{tone}.tint", stroke=f"{tone}.strong", sw=1.4, rx=2, layer="label")
 
-    if host and left:
+    def wire(a: tuple, b: tuple, r: _Row, color: str) -> None:
+        fig.line([a, b], color=color, sw=2.2, layer="edge")
+        wires.append((a, b))
+        mx = (a[0] + b[0]) / 2
+        fig.text(mx, a[1] - 10, tag_of(r), size=small, weight=600, color="ink2", anchor="middle")
+        for j, s in enumerate(subs[id(r)]):
+            fig.text(mx, a[1] + 10 + mono * 0.8 + j * mono * 1.35, s, size=mono, mono=True, color="muted",
+                     anchor="middle")
+
+    def chip_end(r: _Row, yy: float) -> str:
+        fig.text(x_chip + pad + 4, yy + mono * 0.36, r.far, size=mono, weight=700, mono=True, bg="paper")
+        stub(x_chip, yy, r.far, "left")
+        p = pins_by_name.get(r.far)
+        return f"{p.tone}.strong" if p else "ink2"
+
+    def host_pin(r: _Row, yy: float) -> None:
+        fig.text(x_host + hw_w - pad, yy + mono * 0.36, r.near, size=mono, weight=600, mono=True, color="blue.text",
+                 bg="blue.tint", anchor="end")
+
+    if host and (left or between):
         hbox = fig.rect(x_host, y0, hw_w, body_h, fill="blue.tint", stroke="blue.strong", sw=1.4)
         bodies.append((hbox, "the MCU"))
-        fig.text(x_host + pad, y0 + pad + k["card_title"] * 0.85, host.label or "MCU", size=k["card_title"],
-                 weight=700, color="blue.text", bg="blue.tint")
-        fig.text(x_host + pad, y0 + pad + k["card_title"] * 0.85 + k["small"] * 1.4, host.id, size=k["small"],
+        fig.text(x_host + pad, y0 + pad + k["card_title"] * 0.85, _fit(mcu_name, hw_w - 2 * pad, k["card_title"], 700),
+                 size=k["card_title"], weight=700, color="blue.text", bg="blue.tint")
+        fig.text(x_host + pad, y0 + pad + k["card_title"] * 0.85 + small * 1.4, host.id, size=small,
                  color="blue.text", bg="blue.tint")
-        for i, (n, pn, lab, extra, via) in enumerate(left):
-            yy = y0 + head + i * RP + RP / 2
-            fig.text(x_host + hw_w - pad, yy + mono * 0.36, lab, size=mono, weight=600, mono=True, color="blue.text",
-                     bg="blue.tint", anchor="end")
-            p = pins_by_name.get(pn)
-            num = ", ".join(str(q.number) for q in hw.pin(pn)) if p else ""
-            fig.text(x_chip + pad + 4, yy + mono * 0.36, pn, size=mono, weight=700, mono=True, bg="paper")
-            stub(x_chip, yy, pn, "left")
-            a, b = (x_host + hw_w, yy), (x_chip - 14, yy)
-            fig.line([a, b], color=f"{p.tone}.strong" if p else "ink2", sw=2.2, layer="edge")
-            wires.append((a, b))
-            mx = (a[0] + b[0]) / 2
-            tag = n.name + (f"  pin {num}" if num else "")
-            fig.text(mx, yy - 10, tag, size=k["small"], weight=600, color="ink2", anchor="middle")
-            for j, s in enumerate(sub_of[i]):
-                fig.text(mx, yy + 10 + mono * 0.8 + j * mono * 1.35, s, size=mono, mono=True, color="muted",
-                         anchor="middle")
+        for r, yy in zip(left, left_y):
+            host_pin(r, yy)
+            color = chip_end(r, yy)
+            wire((x_host + hw_w, yy), (x_chip - 14, yy), r, color)
+        for b, name_lines, top, n in groups:
+            xbox = fig.rect(x_mid, top, x_w, n * RP, fill="violet.tint", stroke="violet.strong", sw=1.4)
+            bodies.append((xbox, b.part.label or b.part.id))
+            for t, ln in enumerate(name_lines):
+                fig.text(x_mid, top - 10 - (len(name_lines) - 1 - t) * small * 1.3, ln, size=small, weight=700,
+                         color="violet.text")
+            for i, r in enumerate(b.into):
+                yy = top + i * RP + RP / 2
+                host_pin(r, yy)
+                fig.text(x_mid + pad, yy + mono * 0.36, r.far, size=mono, weight=600, mono=True, color="violet.text",
+                         bg="violet.tint")
+                wire((x_host + hw_w, yy), (x_mid, yy), r, "ink2")
+            for i, r in enumerate(b.out):
+                yy = top + i * RP + RP / 2
+                fig.text(x_mid + x_w - pad, yy + mono * 0.36, r.near, size=mono, weight=600, mono=True,
+                         color="violet.text", bg="violet.tint", anchor="end")
+                color = chip_end(r, yy)
+                wire((x_mid + x_w, yy), (x_chip - 14, yy), r, color)
     yr = 0
     for e in externals:
         items = right[e.id]
@@ -637,26 +843,21 @@ def wiring(hw: Hardware, cid: str) -> Fig:
         ebox = fig.rect(x_ext, ey, ext_w, eh, fill="teal.tint", stroke="teal.strong", sw=1.4)
         bodies.append((ebox, e.label or e.id))
         # The block's name above it, in the room the chip's header (or the blank row before it) leaves.
-        e_lines = wrap(e.label or e.id, ext_w, k["small"], 700)
-        if len(e_lines) > 2:
-            fig.problem(f"the label of {e.id} needs {len(e_lines)} lines above its box; shorten it to two")
-        for t, ln in enumerate(e_lines[:2]):
-            fig.text(x_ext, ey - 10 - (min(len(e_lines), 2) - 1 - t) * k["small"] * 1.3, ln, size=k["small"],
-                     weight=700, color="teal.text")
-        for i, (n, pn, lab, extra, _via) in enumerate(items):
+        for t, ln in enumerate(e_lines := _lines(e.label or e.id, ext_w, small, 700)):
+            fig.text(x_ext, ey - 10 - (len(e_lines) - 1 - t) * small * 1.3, ln, size=small, weight=700,
+                     color="teal.text")
+        for i, r in enumerate(items):
             yy = ey + i * RP + RP / 2
-            fig.text(x_chip + chip_w - pad - 4, yy + mono * 0.36, pn, size=mono, weight=700, mono=True, bg="paper",
+            fig.text(x_chip + chip_w - pad - 4, yy + mono * 0.36, r.far, size=mono, weight=700, mono=True, bg="paper",
                      anchor="end")
-            stub(x_chip + chip_w, yy, pn, "right")
-            fig.text(x_ext + pad, yy + mono * 0.36, lab, size=mono, weight=600, mono=True, color="teal.text",
+            stub(x_chip + chip_w, yy, r.far, "right")
+            fig.text(x_ext + pad, yy + mono * 0.36, r.near, size=mono, weight=600, mono=True, color="teal.text",
                      bg="teal.tint")
-            p = pins_by_name.get(pn)
+            p = pins_by_name.get(r.far)
             a, b = (x_chip + chip_w + 14, yy), (x_ext, yy)
             fig.line([a, b], color=f"{p.tone}.strong" if p else "ink2", sw=2.2, layer="edge")
             wires.append((a, b))
-            num = ", ".join(str(q.number) for q in hw.pin(pn))
-            fig.text((a[0] + b[0]) / 2, yy - 10, f"{n.name}  pin {num}" if num else n.name, size=k["small"],
-                     weight=600, color="ink2", anchor="middle")
+            fig.text((a[0] + b[0]) / 2, yy - 10, tag_of(r), size=small, weight=600, color="ink2", anchor="middle")
         yr += len(items) + 1
     y = y0 + body_h + 28
     # Supplies, support parts and unused pins, in words.
@@ -664,7 +865,12 @@ def wiring(hw: Hardware, cid: str) -> Fig:
     for n in supplies:
         on_chip = sorted({pn for pid, pn in n.nodes if pid == chip.id})
         others = [f"{pid}.{pn}" for pid, pn in n.nodes if pid != chip.id and not c.parts[pid].two_pin]
-        lines.append(f"{n.name}: {', '.join(on_chip)}" + (f"; also {', '.join(others)}" if others else ""))
+        if on_chip:
+            lines.append(f"{n.name}: {', '.join(on_chip)}" + (f"; also {', '.join(others)}" if others else ""))
+        else:
+            # A supply that reaches no chip pin (a switched battery rail of the load): name what it feeds.
+            fed = others or sorted({pid for pid, _pn in n.nodes})
+            lines.append(f"{n.name} (no {hw.chip} pin): {', '.join(fed)}")
     if lines:
         box = fig.note(0, y, W, " · ".join(lines), tone="rose", title="Supplies and ground")
         y = box.b + 14
@@ -691,9 +897,12 @@ def wiring(hw: Hardware, cid: str) -> Fig:
                     + [f"{p.id}: {p.unverified}" for p in c.parts.values() if p.unverified])
     layout_problems(fig, bodies, wires)
     _text_on_bodies(fig, bodies)
-    fig.doc = (f"Reads: The {host.label if host else 'host'} on the left, the {hw.chip} in the middle"
+    names = ", ".join(b.part.label or b.part.id for b in between)
+    fig.doc = (f"Reads: The {host.label if host else 'host'} on the left, the {hw.chip}"
+               + (f" on the right of the parts between them ({names})" if between else " in the middle")
                + (", the blocks it drives on the right" if has_right else "")
-               + ". Each wire is coloured by the chip pin's electrical type and carries the net name and the chip "
-               "pin number above it and, under it, the driver hook that uses it (and any part on the net). The boxes "
-               "underneath list the supplies, the support parts and the pins this circuit leaves unconnected.")
+               + ". Each wire to the chip is coloured by the chip pin's electrical type and carries the net name and "
+               "the chip pin number above it and, under it, the driver hooks that use it (and any part on the net). "
+               "The boxes underneath list the supplies, the support parts and the pins this circuit leaves "
+               "unconnected.")
     return fig

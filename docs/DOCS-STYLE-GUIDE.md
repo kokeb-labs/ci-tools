@@ -72,7 +72,8 @@ Supply
 ```
 
 Five to seven rows: function, interface (mode, speed, address), supply, key limits, package, and the mode the
-driver uses. A board uses `class="kb-chip kb-chip--board"` with MCU, power input, connectors, chips on board.
+driver uses. On a driver's home page the card sits under Pins and wiring, after the chip figures. A board uses
+`class="kb-chip kb-chip--board"` with MCU, power input, connectors, chips on board.
 
 ## Code
 
@@ -166,7 +167,7 @@ cells short; long prose goes under the table.
 
 | Page | File | Contains |
 | --- | --- | --- |
-| Home | `index.md` | Hero (what, one-sentence why, buttons), the "no platform code" paragraph, chip card, "What you get" (5-7 bullets, each linking its page), navigation cards |
+| Home | `index.md` | Chip first, in the README's order ([Chip-first README](readme-chip-first.md#the-sites-home-page)): the hero (what the driver is, buttons), the generated chip summary and the `chip-hero` figure; What it does; Where it is used; Inside the chip; Pins and wiring (pinout, wiring, frames, the chip card, a pointer to Hardware); an optional Quick start; Driver coverage (the coverage table, then the "no platform code" paragraph); "What you get" (5-7 bullets, each linking its page); Datasheet; navigation cards |
 | Quickstart | `quickstart.md` | Safety note if it moves hardware; wiring table; add the driver; the port (compiled); a ~15-line example (compiled); what each step does; a "if it does not work" table |
 | Installation | `installation.md` | Requirements; submodule; CMake target and options; ESP-IDF component; build layout; version; compile-time switches |
 | Hardware | `hardware.md` | The chip figures and the pin table from `docs/hardware.yml` ([below](#chip-hardware)): pinout, generated pin table, block diagram, application circuit and its parts; control pins; bus settings table (mode, speed, frame, timing); a timing diagram or Mermaid sequence for the protocol; power ranges; errata that affect the host; evaluation boards; reference documents table |

@@ -5,7 +5,8 @@
     kokeb-docs figures [--check] [ids]   build (or check) the figkit figures under docs/diagrams/figures/
     kokeb-docs gen [--check|--list]      fill (or check) the <!-- generated: name --> regions
     kokeb-docs hardware [--check] ...    validate docs/hardware.yml, export a circuit (--kicad-netlist OUT)
-    kokeb-docs readme --check|--migrate  keep README.md chip-first (checked once hardware.yml has an overview)
+    kokeb-docs readme --check|--migrate  keep README.md chip-first (checked once hardware.yml has an overview);
+                                         --site: the same for docs/index.md
     kokeb-docs check                     all of these checks, as CI runs them before the build
     kokeb-docs screenshots SITE OUT      phone and desktop screenshots, light and dark, of a built site
     kokeb-docs pages SITE                the pages CI audits: the home page and the first navigation pages
@@ -68,6 +69,10 @@ def _check() -> int:
             from . import readme
 
             rc |= readme.main(["--check"])
+            # The home page, once it has opted in with the chip summary.
+            site = root / readme.SITE
+            if site.is_file() and "<!-- generated: chip-summary -->" in site.read_text():
+                rc |= readme.main(["--site", "--check"])
     return rc
 
 

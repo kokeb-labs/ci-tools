@@ -299,6 +299,13 @@ def main(argv=None) -> int:
         return 0
 
     files, index, problems = render_all(known if args.check else ids)
+    hw = _hardware()
+    if hw is not None:
+        from ..hardware import render
+
+        for cid in render.wiring_skipped(hw):
+            print(f"[figures] note: circuit {cid!r} has an MCU but no MCU signal reaches the chip, so it has no "
+                  f"chip-wiring-{cid} figure")
 
     if args.check:
         bad = list(problems)

@@ -51,7 +51,10 @@ Schema (version 1), in the order the file is usually written::
         nets:
           - {name: "+3V3", kind: supply, nodes: [U1.VDD, U2.VDD, C1.1]}
           - {name: SCK, nodes: [U1.SCLK, U2.SCK], hook: transfer}   # optional hook: replaces the pin's hook in this
-                                                                 # circuit only; hook: null shows no hook
+                                                                 # circuit only; hook: null shows no hook; a list
+                                                                 # ([write, read]) shows each, for a shared
+                                                                 # half-duplex wire; an MCU net that reaches the
+                                                                 # chip through a part (a transceiver) may name one
           - {name: GND, kind: ground, nodes: [U1.GND, U2.GND, C1.2]}
         unused: [U1.NC]
     overview: ...                         # optional, the chip-first README content: see ``chipdoc``
@@ -268,7 +271,12 @@ class Net:
     label: str = ""
     unverified: str = ""
     hook_set: bool = False  # the net carries its own ``hook`` key, which then replaces the chip pin's hook here
-    hook: str = ""  # that hook's id; empty when the key was null or empty (the wire shows no hook)
+    hooks: list[str] = field(default_factory=list)  # those hook ids, in order; empty for null (no hook shown)
+
+    @property
+    def hook(self) -> str:
+        """The first hook id of the net's own ``hook`` key ("" when there is none)."""
+        return self.hooks[0] if self.hooks else ""
 
 
 @dataclass
@@ -294,8 +302,16 @@ class Circuit:
     def hook_of(self, pin: Pin) -> str:
         """The hook id the chip ``pin`` shows in this circuit: its net's ``hook`` override when there is one (empty
         for "no hook"), else the pin's own hook."""
+        hs = self.hooks_of(pin)
+        return hs[0] if hs else ""
+
+    def hooks_of(self, pin: Pin) -> list[str]:
+        """Every hook id the chip ``pin`` shows in this circuit: its net's ``hook`` (one or a list) when the net sets
+        it, else the pin's own hook."""
         n = self.net_of(self.chip.id, pin.name)
-        return n.hook if n is not None and n.hook_set else pin.hook
+        if n is not None and n.hook_set:
+            return list(n.hooks)
+        return [pin.hook] if pin.hook else []
 
 
 @dataclass
@@ -826,14 +842,21 @@ def _circuit(ctx: _Ctx, c, path: str, chip_pins: list[Pin], hooks: dict[str, Hoo
         if any(x.name == name for x in nets):
             ctx.bad(f"{p}.name", f"net {name!r} is listed twice")
         hook_set = "hook" in d
-        net_hook = str(d.get("hook") or "")
-        if hook_set and net_hook:
-            if net_hook not in hooks:
-                ctx.bad(f"{p}.hook", f"{net_hook!r} is not a hook listed under hooks ({', '.join(hooks) or 'none'})")
-            if not any(parts[pid].kind == "chip" for pid, _pn in nodes):
-                ctx.bad(f"{p}.hook", f"net {name!r} has no chip pin, so there is no pin hook to override")
+        raw = d.get("hook")
+        if isinstance(raw, list):
+            net_hooks = [str(x) for x in raw if x]
+            if len(net_hooks) != len(raw) or len(set(net_hooks)) != len(net_hooks):
+                ctx.bad(f"{p}.hook", "a list of distinct hook ids")
+        else:
+            net_hooks = [str(raw)] if raw else []
+        if hook_set and net_hooks:
+            for h in net_hooks:
+                if h not in hooks:
+                    ctx.bad(f"{p}.hook", f"{h!r} is not a hook listed under hooks ({', '.join(hooks) or 'none'})")
+            if not any(parts[pid].kind in ("chip", "mcu") for pid, _pn in nodes):
+                ctx.bad(f"{p}.hook", f"net {name!r} has no chip or MCU pin, so no wire of it shows a hook")
         nets.append(Net(name, kind, nodes, ctx.ref(d.get("ref"), f"{p}.ref", cref) or cref,
-                        str(d.get("label") or ""), str(d.get("unverified") or ""), hook_set, net_hook))
+                        str(d.get("label") or ""), str(d.get("unverified") or ""), hook_set, net_hooks))
     unused = []
     for j, s in enumerate(c.get("unused") or []):
         nd = node(s, f"{path}.unused[{j}]")
