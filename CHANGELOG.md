@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.20.0] - 2026-11-14
+
 ### Added
 
 - **Docs theme: the chip-first home page.** `kokeb-docs readme --site --check|--migrate` keeps `docs/index.md` in
