@@ -81,9 +81,9 @@ def hero(hw: Hardware) -> Fig:
     unverified = []
     CW, CH = 230, 210
     y0 = 8
+    host_w = 210
     if sy:
         lw = text_width(sy.bus, k["edge_label"], 500) + 12
-        host_w = 210
         g1 = max(120, math.ceil(lw + 56))
         cx0 = host_w + g1
     else:
