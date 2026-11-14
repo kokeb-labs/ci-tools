@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kokeb-labs/ci-tools/tools/catalog/schemas/compat.schema.json",
+  "title": "compat.yml (schema 1)",
+  "description": "The compatibility catalogue: which driver versions a revision binds, on which MCU and RTOS configurations.",
+  "type": "object",
+  "required": ["schema", "kb_core", "drivers"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 1},
+    "kb_core": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "drivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version", "repo", "tag", "commit", "bus", "mcus", "peripheral", "kb_core_min",
+                     "binding", "configs"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+          "repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+          "tag": {"type": "string", "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(-rc\\.[0-9]+)?$"},
+          "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "bus": {"type": "array", "items": {"type": "string"}},
+          "mcus": {"type": "array", "items": {"type": "string"}},
+          "peripheral": {"type": ["string", "null"]},
+          "kb_core_min": {"type": ["string", "null"]},
+          "binding": {"type": ["string", "null"]},
+          "configs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["mcu", "rtos", "result"],
+              "additionalProperties": false,
+              "properties": {
+                "mcu": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+                "rtos": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+                "result": {"enum": ["pass", "fail", "untested"]}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

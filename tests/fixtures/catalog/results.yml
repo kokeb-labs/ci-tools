@@ -1,0 +1,4 @@
+---
+# Integration results of the ru-catalog self-test (an integration matrix writes these).
+- {mcu: ESP32, rtos: FREERTOS, result: pass}
+- {mcu: HOST, rtos: NONE, result: pass}

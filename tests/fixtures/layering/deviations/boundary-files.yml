@@ -1,0 +1,6 @@
+---
+# The only file of the fixture that may include an RTOS header.
+boundary_files:
+  - path: lib/core/backends/rtos_boundary.cpp
+    sdk: freertos
+    status: present

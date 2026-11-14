@@ -1,0 +1,3 @@
+---
+# A lock with no pins, for a repository with no submodule (ru-pin-hygiene self-test).
+drivers: []

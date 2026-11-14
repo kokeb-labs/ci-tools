@@ -1,0 +1,150 @@
+---
+# Pin hygiene (docs/ru-pin-hygiene.md): every submodule is pinned to the commit of a vX.Y.Z or vX.Y.Z-rc.N tag
+# whose required CI check passed there, never to a branch; the lock file has exactly one matching entry per
+# submodule; and the driver.yml at that commit agrees with the lock, the MCU gate table and this revision's version.
+# This is the evidence that lets a repository trust its pins instead of re-running their CI. Read-only API calls
+# with the workflow's built-in token, the only credential it uses; a private pinned repository is accepted only with
+# private_repos: true and only if that token can read it. Findings are annotations on the lock file, a SARIF file and
+# a step summary table of every pin.
+name: 📌 [RU] Pin hygiene
+
+on:
+  workflow_call:
+    inputs:
+      lock_file:
+        description: "Lock file of the pins (drivers: [{name, repo, tag, commit, kind}])"
+        type: string
+        required: false
+        default: "drivers/drivers.lock.yml"
+      gates_file:
+        description: "MCU gate table: a file of \"<driver>:<MCU>:<peripheral>\" strings; empty skips PIN-007"
+        type: string
+        required: false
+        default: ""
+      version_file:
+        description: "File with this revision's version (set(<X>_VERSION_MAJOR n) ..., or X.Y.Z); empty skips PIN-008"
+        type: string
+        required: false
+        default: ""
+      required_check:
+        description: "Check run that must have concluded success on each pinned commit; empty skips PIN-005"
+        type: string
+        required: false
+        default: "CI gate / gate"
+      tag_pattern:
+        description: "Regular expression a pin's tag must match"
+        type: string
+        required: false
+        default: '^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$'
+      forbid_branch_entries:
+        description: "Fail on a branch = entry in .gitmodules"
+        type: boolean
+        required: false
+        default: true
+      url_pattern:
+        description: "Regular expression every .gitmodules URL must match"
+        type: string
+        required: false
+        default: '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?(\.git)?$'
+      handbook_levels:
+        description: "Space-separated levels a pin's .kokeb/handbook.yml may declare (e.g. high safety); empty skips PIN-009"
+        type: string
+        required: false
+        default: ""
+      private_repos:
+        description: >-
+          Accept pins to private repositories. They are read with the workflow's built-in token only (no other
+          credential is accepted), so the token must be able to read them.
+        type: boolean
+        required: false
+        default: false
+      release_lock:
+        description: "Release lock to check at a release (PIN-012): its pins equal the lock's and it records HEAD"
+        type: string
+        required: false
+        default: ""
+      submodules:
+        description: "Check out the submodules too, so PIN-010 also checks that each working tree is clean"
+        type: string
+        required: false
+        default: "false"
+      enforce:
+        description: "Fail the job on a finding; false reports only (the counts are in the outputs)"
+        type: boolean
+        required: false
+        default: true
+      artifact_name:
+        description: "Name of the report artifact (JSON and SARIF)"
+        type: string
+        required: false
+        default: "pin-hygiene-report"
+    outputs:
+      pins:
+        description: "Number of pins in the lock file"
+        value: ${{ jobs.pins.outputs.pins }}
+      findings:
+        description: "Number of findings"
+        value: ${{ jobs.pins.outputs.findings }}
+      rules:
+        description: "JSON list of the rule ids with a finding"
+        value: ${{ jobs.pins.outputs.rules }}
+
+permissions: {}
+
+jobs:
+  pins:
+    name: pins
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      pins: ${{ steps.check.outputs.pins }}
+      findings: ${{ steps.check.outputs.findings }}
+      rules: ${{ steps.check.outputs.rules }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+      # The scripts at the commit of this workflow (the same trust as this file).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-pin-hygiene/ci-tools
+          sparse-checkout: |
+            tools/pins
+            tools/misra
+          persist-credentials: false
+      - name: Install PyYAML (pinned, hash-checked)
+        run: python3 .ru-pin-hygiene/ci-tools/tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+      - name: Check every pin
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          LOCK: ${{ inputs.lock_file }}
+          GATES: ${{ inputs.gates_file }}
+          VERSION_FILE: ${{ inputs.version_file }}
+          REQUIRED_CHECK: ${{ inputs.required_check }}
+          TAG_PATTERN: ${{ inputs.tag_pattern }}
+          FORBID_BRANCH: ${{ inputs.forbid_branch_entries }}
+          URL_PATTERN: ${{ inputs.url_pattern }}
+          LEVELS: ${{ inputs.handbook_levels }}
+          PRIVATE: ${{ inputs.private_repos }}
+          RELEASE_LOCK: ${{ inputs.release_lock }}
+          ENFORCE: ${{ inputs.enforce }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" .ru-pin-hygiene/ci-tools/tools/pins/pins.py --lock "$LOCK" --gates "$GATES" \
+            --version-file "$VERSION_FILE" --required-check "$REQUIRED_CHECK" --tag-pattern "$TAG_PATTERN" \
+            --forbid-branch-entries "$FORBID_BRANCH" --url-pattern "$URL_PATTERN" --handbook-levels "$LEVELS" \
+            --private-repos "$PRIVATE" --release-lock "$RELEASE_LOCK" --ref "$GITHUB_REF" \
+            --report-dir .ru-pin-hygiene/out --summary "$GITHUB_STEP_SUMMARY" --github-output "$GITHUB_OUTPUT" \
+            --enforce "$ENFORCE"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .ru-pin-hygiene/out
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "strict",
+      "displayName": "Warnings are errors",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/strict",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "RING_STRICT": "ON"
+      }
+    }
+  ]
+}

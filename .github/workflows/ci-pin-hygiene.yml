@@ -1,0 +1,79 @@
+---
+name: 📌 Pin hygiene self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # This repository has no submodule: an empty lock passes.
+  empty:
+    uses: ./.github/workflows/ru-pin-hygiene.yml
+    permissions:
+      contents: read
+    with:
+      lock_file: tests/fixtures/pins/empty.lock.yml
+      artifact_name: selftest-pins-empty
+
+  # A real pin with no submodule behind it: the tag, its gate and driver.yml check out, PIN-001 is reported.
+  stale:
+    uses: ./.github/workflows/ru-pin-hygiene.yml
+    permissions:
+      contents: read
+    with:
+      lock_file: tests/fixtures/pins/stale.lock.yml
+      gates_file: tests/fixtures/pins/gates.cmake
+      version_file: tests/fixtures/pins/version.cmake
+      handbook_levels: "high safety"
+      enforce: false
+      artifact_name: selftest-pins-stale
+
+  # The script on a scratch repository whose gitlink pins the same driver: no finding; then a wrong kind is PIN-004.
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install PyYAML (pinned, hash-checked)
+        run: python3 tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+      - name: A clean pin passes, a wrong kind fails
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          bash tests/fixtures/pins/make-repo.sh "$RUNNER_TEMP/pins"
+          pins="$PWD/tools/pins/pins.py"
+          cd "$RUNNER_TEMP/pins"
+          "$RUNNER_TEMP/venv/bin/python" "$pins" --lock drivers/drivers.lock.yml --gates cmake/gates.cmake \
+            --version-file cmake/version.cmake --handbook-levels "high safety"
+          sed -i 's/kind: rc/kind: release/' drivers/drivers.lock.yml
+          if "$RUNNER_TEMP/venv/bin/python" "$pins" --lock drivers/drivers.lock.yml --github-output out.txt; then
+            echo "::error::a release kind on an rc tag passed"
+            exit 1
+          fi
+          grep -qx 'rules=\["PIN-004"\]' out.txt
+
+  outputs-checked:
+    needs: [empty, stale]
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: The findings are the fixtures'
+        env:
+          EMPTY: ${{ toJSON(needs.empty.outputs) }}
+          STALE: ${{ toJSON(needs.stale.outputs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          e, s = json.loads(os.environ["EMPTY"]), json.loads(os.environ["STALE"])
+          print(e, s)
+          assert (e["pins"], e["findings"]) == ("0", "0"), e
+          assert (s["pins"], s["findings"], json.loads(s["rules"])) == ("1", "1", ["PIN-001"]), s
+          PY

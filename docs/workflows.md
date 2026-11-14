@@ -13,7 +13,9 @@ job starts ([Permissions contract](permissions.md)).
 | [`org-standard-check.yml`](org-standard-check.md) | Check that a repository has the root files every Kokeb Labs repository must carry, and that its licence is MIT. | `contents: read` |
 | [`ru-attest-release.yml`](ru-attest-release.md) | Sign build provenance for every file of a published release. | `attestations: write`, `contents: read`, `id-token: write` |
 | [`ru-build.yml`](ru-build.md) | Build every ESP32 example app of a repository across ESP-IDF versions and build types, upload the firmware and report its size on pull requests. | `contents: read`, `pull-requests: write` |
+| [`ru-catalog.yml`](ru-catalog.md) | Generate the compatibility catalogue of a revision from its pinned drivers, check it against the committed one, and publish it with the revision's SBOMs and a known-vulnerability scan. | `contents: read` |
 | [`ru-ci-gate.yml`](ru-ci-gate.md) | One required status check per repository: it passes only when every other CI job passed. | `contents: read` |
+| [`ru-cmake-matrix.yml`](ru-cmake-matrix.md) | Configure, build and test a CMake project in many configurations at once: MCU x RTOS x preset, on the host, for Arm cores and with ESP-IDF, with a bounded number of jobs. | `contents: read` |
 | [`ru-cpp-analysis.yml`](ru-cpp-analysis.md) | Run cppcheck over source folders, without a build, and keep the report as an artifact. | `contents: read` |
 | [`ru-cpp-lint.yml`](ru-cpp-lint.md) | Check C and C++ formatting with clang-format and lint with clang-tidy, with results as annotations on the pull request. | `contents: read` |
 | [`ru-cross-build.yml`](ru-cross-build.md) | Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, so code that claims to run on any MCU is shown to compile for one on every pull request. | `contents: read` |
@@ -22,9 +24,12 @@ job starts ([Permissions contract](permissions.md)).
 | [`ru-handbook-check.yml`](ru-handbook-check.md) | Check a repository against the [Kokeb Labs handbook](https://kokeb-labs.github.io/handbook/) rules that a script can decide, and report every finding by rule ID. | `contents: read` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | Build, test and analyse a CMake project on the host, with clang-tidy 18 and cppcheck over the compiler's own compile database. | `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets for each assurance level (ADR-0020). | `contents: read` |
+| [`ru-layering.yml`](ru-layering.md) | Prove on every pull request that dependencies point down only and that SDK and RTOS code stays in its boundary files. | `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | Lint Markdown with markdownlint-cli2 against the repository's own rules. | `contents: read` |
 | [`ru-misra.yml`](ru-misra.md) | Check C++ code against MISRA C++:2023 with the validated open-source toolchain, and get a per-guideline report. | `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | Build, check, audit and publish a Kokeb Labs documentation site with the shared theme, versioned or not. | `contents: write` |
+| [`ru-mutation.yml`](ru-mutation.md) | Find the guards no test checks: change the code one edit at a time and require the tests to fail on every change. | `contents: read` |
+| [`ru-pin-hygiene.yml`](ru-pin-hygiene.md) | Prove that every pinned submodule is a release that passed its own CI, so a repository can trust its pins instead of re-running their checks. | `contents: read` |
 | [`ru-release-firmware.yml`](ru-release-firmware.md) | Create a GitHub Release for a tag and attach the firmware that `ru-build` built and tested for the same commit, in public and private repositories. | `actions: read`, `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Deprecated: use [`ru-release-firmware`](ru-release-firmware.md), which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that `ru-build` built for the same commit. | `contents: write` |
 | [`ru-release.yml`](ru-release.md) | Create a GitHub Release with generated notes for a tag. | `contents: write` |

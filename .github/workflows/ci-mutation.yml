@@ -1,0 +1,57 @@
+---
+name: 🧬 Mutation testing self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # The fixture's catalogue at level high: every mutant is killed but one, which the equivalents file records.
+  catalogue:
+    uses: ./.github/workflows/ru-mutation.yml
+    permissions:
+      contents: read
+    with:
+      root: tests/fixtures/mutation
+      level: high
+      mutate_paths: "src include"
+      equivalents_file: equivalent-mutants.yml
+      artifact_name: selftest-mutation-catalogue
+
+  # Generated operators in two shards: the two survivors (< vs <= and > vs >= at the clamp bounds) are reported,
+  # and the standard level's 80 % is missed, but enforce is off.
+  generated:
+    uses: ./.github/workflows/ru-mutation.yml
+    permissions:
+      contents: read
+    with:
+      root: tests/fixtures/mutation
+      mode: generated
+      level: standard
+      mutate_paths: "src include"
+      compiler: clang
+      shards: "2"
+      enforce: false
+      artifact_name: selftest-mutation-generated
+
+  outputs-checked:
+    needs: [catalogue, generated]
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: The counts are the fixture's
+        env:
+          C: ${{ toJSON(needs.catalogue.outputs) }}
+          G: ${{ toJSON(needs.generated.outputs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          c, g = json.loads(os.environ["C"]), json.loads(os.environ["G"])
+          print("catalogue", c)
+          print("generated", g)
+          assert (c["passed"], c["killed"], c["survived"], c["total"], c["kill_rate"]) == ("true", "4", "0", "5", "100.0"), c
+          assert (g["passed"], g["killed"], g["survived"], g["total"], g["kill_rate"]) == ("false", "6", "2", "8", "75.0"), g
+          PY

@@ -1,0 +1,8 @@
+---
+# Pins of the ru-catalog self-test: a public driver at a release-candidate tag, read through the API (no submodule).
+drivers:
+  - name: ws2812_rmt
+    repo: kokeb-labs-drivers/driver-ws2812-rmt
+    tag: v0.1.0-rc.1
+    commit: 2790be043fce5c620281aafa5b2bc2e0880af829
+    kind: rc

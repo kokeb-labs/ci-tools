@@ -1,0 +1,246 @@
+---
+# Layering and dependency rules (docs/ru-layering.md), by the caller's rules file: every #include resolves to a zone
+# the including zone may use, SDK and RTOS headers appear only in the listed boundary files, platform macros only
+# there, no forbidden keyword (such as virtual), CMake targets link downwards only (cmake --graphviz), and no linked
+# object of a platform-free part references an SDK or RTOS symbol (nm). The checker's own fixtures run first. The
+# poison build compiles the project with a header that stops the build in place of every SDK header, so an SDK
+# include reached through any path fails. Findings are annotations, a SARIF file and a step summary.
+name: 🧱 [RU] Layering
+
+on:
+  workflow_call:
+    inputs:
+      rules:
+        description: "Rules file (zones, boundary files, SDK headers, keywords, targets, symbols), relative to root"
+        type: string
+        required: true
+      boundary_files:
+        description: "Boundary file list that replaces the rules file's boundary_files; empty uses the rules file's"
+        type: string
+        required: false
+        default: ""
+      fixtures:
+        description: >-
+          Folder of the checker's fixtures, relative to root: good/ must give no finding, each bad/<case>/ exactly
+          the rule ids of its expect.txt. Excluded from the check of the tree. Empty runs none.
+        type: string
+        required: false
+        default: ""
+      root:
+        description: "Folder the rules' paths are relative to"
+        type: string
+        required: false
+        default: "."
+      exclude:
+        description: "Space-separated globs, relative to root, that are not checked"
+        type: string
+        required: false
+        default: ""
+      poison:
+        description: "Run the poison build (needs a CMake project at source_dir)"
+        type: boolean
+        required: false
+        default: true
+      poison_cmake_args:
+        description: "Configure arguments of the poison build (build every platform-free translation unit)"
+        type: string
+        required: false
+        default: ""
+      poison_dir:
+        description: "Folder of extra poison headers, relative to root, copied over the generated ones (if present)"
+        type: string
+        required: false
+        default: "tests/poison"
+      source_dir:
+        description: "CMake source folder of the poison build, relative to root"
+        type: string
+        required: false
+        default: "."
+      build_target:
+        description: "Target of the poison build; empty builds all"
+        type: string
+        required: false
+        default: ""
+      build_parallel:
+        description: "Jobs of the poison build"
+        type: string
+        required: false
+        default: "2"
+      compiler:
+        description: "gcc or clang, the version of tools/misra/toolchain.json"
+        type: string
+        required: false
+        default: "gcc"
+      symbol_lint:
+        description: "Run nm over the poison build's objects (the rules' symbols, or the default SDK and RTOS symbols)"
+        type: boolean
+        required: false
+        default: true
+      submodules:
+        description: "actions/checkout submodules value: false, true or recursive"
+        type: string
+        required: false
+        default: "false"
+      enforce:
+        description: "Fail the job on a finding; false reports only (the count is in the outputs)"
+        type: boolean
+        required: false
+        default: true
+      artifact_name:
+        description: "Name of the report artifact (SARIF, JSON, build log)"
+        type: string
+        required: false
+        default: "layering-report"
+    secrets:
+      denylist:
+        description: "Names that must appear nowhere in the tree, one per line (LAY-009); never printed"
+        required: false
+    outputs:
+      findings:
+        description: "Number of findings"
+        value: ${{ jobs.check.outputs.findings }}
+      rules:
+        description: "JSON list of the rule ids with a finding"
+        value: ${{ jobs.check.outputs.rules }}
+
+permissions: {}
+
+jobs:
+  check:
+    name: includes, links and poison build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      findings: ${{ steps.check.outputs.findings }}
+      rules: ${{ steps.check.outputs.rules }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+      # The scripts at the commit of this workflow (the same trust as this file).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-layering/ci-tools
+          sparse-checkout: |
+            tools/layering
+            tools/misra
+          persist-credentials: false
+      - name: Install PyYAML (pinned, hash-checked) and the compiler (toolchain.json)
+        env:
+          COMPILER: ${{ inputs.compiler }}
+          POISON: ${{ inputs.poison }}
+        run: |
+          set -euo pipefail
+          tools=.ru-layering/ci-tools/tools/misra
+          python3 "$tools/install.py" python --venv "$RUNNER_TEMP/venv"
+          case "$COMPILER" in gcc|clang) ;; *) echo "::error::compiler must be gcc or clang"; exit 1 ;; esac
+          if [ "$POISON" = "true" ]; then
+            read -r gcc clang < <(python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["host"]; print(h["gcc"], h["clang"])' "$tools/toolchain.json")
+            if ! command -v "$gcc" >/dev/null || ! command -v "$clang" >/dev/null; then python3 "$tools/install.py" apt; fi
+            if [ "$COMPILER" = "clang" ]; then cxx="$clang"; cc="${clang/clang++/clang}"; else cxx="$gcc"; cc="${gcc/g++/gcc}"; fi
+            { echo "CXX=$cxx"; echo "CC=$cc"; } >> "$GITHUB_ENV"
+            if ! command -v ninja >/dev/null; then
+              timeout 180 sudo apt-get -o Acquire::Retries=3 update -q
+              timeout 600 sudo apt-get -o Acquire::Retries=3 install -y -q --no-install-recommends ninja-build
+            fi
+          fi
+      - name: The checker's fixtures
+        if: ${{ inputs.fixtures != '' }}
+        env:
+          ROOT: ${{ inputs.root }}
+          RULES: ${{ inputs.rules }}
+          FIXTURES: ${{ inputs.fixtures }}
+          BOUNDARY: ${{ inputs.boundary_files }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" .ru-layering/ci-tools/tools/layering/layering.py fixtures \
+            --dir "$ROOT/$FIXTURES" --rules "$ROOT/$RULES" --boundary-files "$BOUNDARY"
+      - name: Poison build
+        id: poison
+        if: ${{ inputs.poison }}
+        env:
+          ROOT: ${{ inputs.root }}
+          RULES: ${{ inputs.rules }}
+          POISON_DIR: ${{ inputs.poison_dir }}
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          CMAKE_ARGS: ${{ inputs.poison_cmake_args }}
+          TARGET: ${{ inputs.build_target }}
+          PARALLEL: ${{ inputs.build_parallel }}
+        run: |
+          set -uo pipefail
+          [[ "$PARALLEL" =~ ^[1-9][0-9]*$ ]] || { echo "::error::build_parallel is a positive integer"; exit 1; }
+          out=.ru-layering/out
+          mkdir -p "$out"
+          poison="$RUNNER_TEMP/ru-layering-poison"
+          extra=()
+          if [ -d "$ROOT/$POISON_DIR" ]; then extra=(--extra "$ROOT/$POISON_DIR"); fi
+          "$RUNNER_TEMP/venv/bin/python" .ru-layering/ci-tools/tools/layering/layering.py poison \
+            --rules "$ROOT/$RULES" --out "$poison" "${extra[@]}"
+          read -r -a args <<< "$CMAKE_ARGS"
+          build="$RUNNER_TEMP/ru-layering-build"
+          # The poison folder comes first on every compile's system include path, so an SDK or RTOS header resolves
+          # to a header that stops the build, however it is reached.
+          if ! cmake -S "$ROOT/$SOURCE_DIR" -B "$build" -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_C_STANDARD_INCLUDE_DIRECTORIES=$poison" \
+               "-DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=$poison" "--graphviz=$out/targets.dot" "${args[@]}" \
+               2>&1 | tee "$out/configure.log"; then
+            echo "::error::the poison build's configure failed (log in the artifact)"
+            exit 1
+          fi
+          cmd=(cmake --build "$build" --parallel "$PARALLEL")
+          if [ -n "$TARGET" ]; then cmd+=(--target "$TARGET"); fi
+          if "${cmd[@]}" 2>&1 | tee "$out/build.log"; then
+            echo "poison build passed: no translation unit reaches an SDK or RTOS header"
+            echo "build=$build" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if grep -q 'ru-layering poison' "$out/build.log"; then
+            grep -E '^[^ :]+:[0-9]+(:[0-9]+)?: (fatal )?error: .*ru-layering poison' "$out/build.log" | sort -u |
+              while IFS=: read -r file line _; do
+                echo "::error file=${file#"$GITHUB_WORKSPACE/"},line=$line,title=LAY-002::an SDK or RTOS header is reached from here (poison build)"
+              done
+            echo "::error::LAY-002: the poison build reached an SDK or RTOS header (log in the artifact)"
+          else
+            echo "::error::the poison build failed for another reason (log in the artifact)"
+          fi
+          exit 1
+      - name: Layering check
+        id: check
+        env:
+          ROOT: ${{ inputs.root }}
+          RULES: ${{ inputs.rules }}
+          BOUNDARY: ${{ inputs.boundary_files }}
+          FIXTURES: ${{ inputs.fixtures }}
+          EXCLUDE: ${{ inputs.exclude }}
+          BUILD: ${{ steps.poison.outputs.build }}
+          SYMBOLS: ${{ inputs.symbol_lint }}
+          ENFORCE: ${{ inputs.enforce }}
+          DENYLIST: ${{ secrets.denylist }}
+        run: |
+          set -euo pipefail
+          out=.ru-layering/out
+          mkdir -p "$out"
+          args=(--root "$ROOT" --rules "$ROOT/$RULES" --boundary-files "$BOUNDARY" --report-dir "$out"
+                --summary "$GITHUB_STEP_SUMMARY" --github-output "$GITHUB_OUTPUT" --annotate-prefix "$ROOT"
+                --enforce "$ENFORCE" --exclude "$EXCLUDE ${FIXTURES:+$FIXTURES/**} .ru-layering/**")
+          if [ -n "$BUILD" ]; then
+            args+=(--compile-db "$BUILD/compile_commands.json" --graphviz "$out/targets.dot")
+            if [ "$SYMBOLS" = "true" ]; then args+=(--objects "$BUILD"); fi
+          fi
+          if [ -n "$DENYLIST" ]; then
+            umask 077
+            printf '%s\n' "$DENYLIST" > "$RUNNER_TEMP/denylist.txt"
+            args+=(--denylist "$RUNNER_TEMP/denylist.txt")
+          fi
+          "$RUNNER_TEMP/venv/bin/python" .ru-layering/ci-tools/tools/layering/layering.py check "${args[@]}"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .ru-layering/out
+          if-no-files-found: warn
+          retention-days: 30

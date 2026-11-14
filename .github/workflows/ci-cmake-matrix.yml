@@ -1,0 +1,76 @@
+---
+name: 🧮 CMake matrix self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # Host GCC with tests and the install consumer, host Clang through a preset, an Arm core picked by its MCU, and an
+  # MCU x RTOS cross product whose ESP32 entry builds in the ESP-IDF container.
+  fixture:
+    uses: ./.github/workflows/ru-cmake-matrix.yml
+    permissions:
+      contents: read
+    with:
+      source_dir: tests/fixtures/cmake-matrix
+      mcu_variable: FIXTURE_MCU
+      rtos_variable: FIXTURE_RTOS
+      matrix: >-
+        [{"name": "gcc", "toolchain": "host-gcc"},
+         {"name": "clang-strict", "toolchain": "host-clang", "preset": "strict"},
+         {"name": "stm32f4", "mcu": "STM32F4", "target": "ring"}]
+      mcus: "ESP32"
+      rtoses: "FREERTOS"
+      install_consumer: tests/fixtures/cmake-matrix/consumer
+      max_parallel: "2"
+      build_parallel: "2"
+      artifact_prefix: selftest-cmake-matrix
+
+  # The MCU/RTOS pairs of a compatibility catalogue, built on the host.
+  catalogue:
+    uses: ./.github/workflows/ru-cmake-matrix.yml
+    permissions:
+      contents: read
+    with:
+      source_dir: tests/fixtures/cmake-matrix
+      matrix_from: tests/fixtures/catalog/compat.yml
+      mcu_toolchains: '{"*": "host-clang"}'
+      mcu_variable: FIXTURE_MCU
+      rtos_variable: FIXTURE_RTOS
+      ccache: false
+      artifact_prefix: selftest-cmake-matrix-catalogue
+
+  outputs-checked:
+    needs: [fixture, catalogue]
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: Every configuration ran and passed
+        env:
+          COUNT: ${{ needs.fixture.outputs.count }}
+          PASSED: ${{ needs.fixture.outputs.passed }}
+          FAILED: ${{ needs.fixture.outputs.failed }}
+          RESULTS: ${{ needs.fixture.outputs.results }}
+          CAT_COUNT: ${{ needs.catalogue.outputs.count }}
+          CAT_RESULTS: ${{ needs.catalogue.outputs.results }}
+        run: |
+          set -euo pipefail
+          echo "fixture: $COUNT configurations, $PASSED passed, $FAILED failed"
+          test "$COUNT" = 4 && test "$PASSED" = 4 && test "$FAILED" = 0
+          python3 - <<'PY'
+          import json, os
+          rows = {r["name"]: r for r in json.loads(os.environ["RESULTS"])}
+          assert set(rows) == {"gcc", "clang-strict", "stm32f4", "ESP32-FREERTOS"}, rows
+          assert rows["stm32f4"]["toolchain"] == "arm-none-eabi", rows["stm32f4"]
+          assert rows["ESP32-FREERTOS"]["toolchain"] == "esp-idf", rows["ESP32-FREERTOS"]
+          assert rows["ESP32-FREERTOS"]["mcu"] == "ESP32" and rows["ESP32-FREERTOS"]["rtos"] == "FREERTOS"
+          assert rows["gcc"]["tests"]["tests"] >= 1 and rows["gcc"]["tests"]["failures"] == 0, rows["gcc"]
+          cat = json.loads(os.environ["CAT_RESULTS"])
+          assert [r["name"] for r in cat] == ["ESP32-FREERTOS"] and cat[0]["status"] == "passed", cat
+          assert os.environ["CAT_COUNT"] == "1"
+          print("matrix outputs as expected")
+          PY

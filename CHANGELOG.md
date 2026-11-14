@@ -15,6 +15,32 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- **`ru-cmake-matrix`: a matrix of CMake configurations.** Entries as JSON (`matrix`), the MCU/RTOS pairs of a
+  compatibility catalogue (`matrix_from`) and the cross product of `mcus`, `rtoses` and `presets`, each configured,
+  built and, on the host, tested with ctest (JUnit in the artifact), with an optional install consumer. Host GCC and
+  Clang and the Arm GNU toolchain come from `tools/misra/toolchain.json`; `esp-idf` entries build in the ESP-IDF
+  v5.5 container, pinned by digest. `max_parallel` and `build_parallel` bound the parallelism; a ccache per
+  configuration; compiler diagnostics as annotations; a `results` output for `ru-catalog`.
+- **`ru-mutation`: mutation testing with a kill-rate gate.** The mutants of a catalogue in the drivers'
+  `tools/mutants` format, or generated operators (relational, logical, arithmetic, negation, boolean and integer
+  constants) over `mutate_paths`, built incrementally and tested in parallel shards and workers. `level: high` needs
+  every mutant killed or recorded as equivalent with a reason; `standard` needs 80 %. Survivors are annotations; the
+  report artifact holds Markdown, JSON per mutant and the mutation-testing-elements JSON.
+- **`ru-pin-hygiene`: pins only at release and release-candidate tags.** PIN-001 to PIN-013: the lock file complete
+  and equal to the gitlinks, each tag pointing at its commit, the required check passed there, no `branch =` entry,
+  and each pin's `driver.yml` in agreement with the lock, the MCU gate table and this revision's version. API reads
+  with the built-in token only; private pins only with `private_repos: true`. Annotations, SARIF, a table of pins.
+- **`ru-layering`: include, platform and link layering by a rules file.** Zones and what each may include, SDK and
+  RTOS headers only in listed boundary files, platform macros, forbidden keywords (`virtual`), the CMake target graph,
+  an `nm` symbol lint, a private denylist from an optional secret, and a poison build in which every SDK header stops
+  the build. The caller's fixtures (`good/`, `bad/<case>/expect.txt`) run first. Annotations, SARIF, a summary.
+- **`ru-catalog`: the compatibility catalogue, SBOMs and a vulnerability scan.** `compat.yml` (schema 1) generated
+  from each pinned driver's `driver.yml` at its commit, the gate table and integration results, validated against
+  JSON schemas (bundled, or the caller's) and compared with the committed file; CycloneDX 1.6 and SPDX 2.3 SBOMs;
+  OSV-Scanner 2.7.0, pinned by SHA-256, with SARIF. One artifact, and a GitHub Pages artifact with `pages: true`.
+
 ## [1.18.0] - 2026-11-13
 
 ### Added

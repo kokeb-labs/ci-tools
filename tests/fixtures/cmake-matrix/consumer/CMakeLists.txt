@@ -1,0 +1,10 @@
+# Install consumer of the ru-cmake-matrix fixture: the installed package works through find_package.
+cmake_minimum_required(VERSION 3.21)
+project(ring_consumer LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(ring 1.0 REQUIRED)
+enable_testing()
+add_executable(consumer main.cpp)
+target_link_libraries(consumer PRIVATE ring::ring)
+add_test(NAME consumer COMMAND consumer)
+message(STATUS "install consumer for matrix entry ${MATRIX_ENTRY}")

@@ -1,0 +1,34 @@
+---
+# Rules of the ru-layering self-test (docs/ru-layering.md): a core part, an app part above it, an RTOS backend whose
+# boundary file is the only place an RTOS header may appear, and tests.
+zones:
+  core:
+    paths: ["lib/core/inc/**", "lib/core/src/**"]
+    may_include: [core, std_subset]
+  backend:
+    paths: ["lib/core/backends/**"]
+    may_include: [core, std_subset, sdk]
+  app:
+    paths: ["lib/app/inc/**", "lib/app/src/**"]
+    may_include: [app, core_public, std_subset]
+  tests:
+    paths: ["tests/**"]
+    may_include: [core, app, std_any, unit_test]
+public_headers:
+  core_public: "lib/core/inc/core/**"
+header_groups:
+  unit_test: ["unit/*"]
+boundary_files: deviations/boundary-files.yml
+sdk_headers: ["freertos/*", "FreeRTOS.h", "esp_*"]
+forbidden_keywords: [virtual]
+platform_macros: [ESP_PLATFORM, "configUSE_*"]
+forbidden_patterns:
+  - id: LAY-010
+    regex: 'add_subdirectory\(\s*"?ports'
+    paths: ["**/CMakeLists.txt", "**/*.cmake"]
+    message: "a CMake file adds ports/; ports are their own projects"
+targets:
+  layers: [["fx_core"], ["fx_backend"], ["fx_app"]]
+  private_only: ["fx_backend"]
+symbols:
+  forbidden: ['^_?x(Task|Queue|Semaphore)', '^_?vTask']

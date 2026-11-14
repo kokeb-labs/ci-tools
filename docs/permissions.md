@@ -20,7 +20,9 @@ read from the workflow files.
 | [`org-standard-check.yml`](org-standard-check.md) | `contents: read` | `check`: `contents: read` |
 | [`ru-attest-release.yml`](ru-attest-release.md) | `attestations: write`, `contents: read`, `id-token: write` | `attest`: `attestations: write`, `contents: read`, `id-token: write` |
 | [`ru-build.yml`](ru-build.md) | `contents: read`, `pull-requests: write` | `generate-matrix`: `contents: read`<br>`build`: `contents: read`<br>`size-report`: `pull-requests: write` |
+| [`ru-catalog.yml`](ru-catalog.md) | `contents: read` | `catalog`: `contents: read` |
 | [`ru-ci-gate.yml`](ru-ci-gate.md) | `contents: read` | `gate`: `contents: read` |
+| [`ru-cmake-matrix.yml`](ru-cmake-matrix.md) | `contents: read` | `plan`: `contents: read`<br>`build`: `contents: read`<br>`build-esp-idf`: `contents: read`<br>`report`: `contents: read` |
 | [`ru-cpp-analysis.yml`](ru-cpp-analysis.md) | `contents: read` | `cppcheck`: `contents: read` |
 | [`ru-cpp-lint.yml`](ru-cpp-lint.md) | `contents: read` | `lint`: `contents: read` |
 | [`ru-cross-build.yml`](ru-cross-build.md) | `contents: read` | `build-cores`: `contents: read`<br>`plan`: none<br>`build`: `contents: read` |
@@ -29,9 +31,12 @@ read from the workflow files.
 | [`ru-handbook-check.yml`](ru-handbook-check.md) | `contents: read` | `check`: `contents: read` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | `contents: read` | `host`: `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | `contents: read` | `gates`: `contents: read`<br>`complexity`: `contents: read`<br>`coverage`: `contents: read`<br>`sanitizers`: `contents: read`<br>`fuzz`: `contents: read` |
+| [`ru-layering.yml`](ru-layering.md) | `contents: read` | `check`: `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | `contents: read` | `markdownlint`: `contents: read` |
 | [`ru-misra.yml`](ru-misra.md) | `contents: read` | `plan`: `contents: read`<br>`scan`: `contents: read`<br>`report`: `contents: read` |
 | [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`deploy`: `contents: write` |
+| [`ru-mutation.yml`](ru-mutation.md) | `contents: read` | `plan`: `contents: read`<br>`run`: `contents: read`<br>`report`: `contents: read` |
+| [`ru-pin-hygiene.yml`](ru-pin-hygiene.md) | `contents: read` | `pins`: `contents: read` |
 | [`ru-release-firmware.yml`](ru-release-firmware.md) | `actions: read`, `contents: write` | `release`: `actions: read`, `contents: write` |
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-release.yml`](ru-release.md) | `contents: write` | `release`: `contents: write` |
