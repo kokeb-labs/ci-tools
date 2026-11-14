@@ -275,5 +275,26 @@ class Extraction(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout)
         self.assertIn("not built", r.stdout)
 
+class BuildParallel(unittest.TestCase):
+    def setUp(self):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import scan
+        self.scan = scan
+
+    def test_default_is_bounded(self):
+        self.assertEqual(self.scan.build_parallel("", {}), 2)
+
+    def test_environment_overrides_default(self):
+        self.assertEqual(self.scan.build_parallel("", {"CMAKE_BUILD_PARALLEL_LEVEL": "6"}), 6)
+
+    def test_argument_overrides_environment(self):
+        self.assertEqual(self.scan.build_parallel("3", {"CMAKE_BUILD_PARALLEL_LEVEL": "6"}), 3)
+
+    def test_invalid_counts_are_rejected(self):
+        for bad in ("0", "-1", "many"):
+            with self.assertRaises(SystemExit):
+                self.scan.build_parallel(bad, {})
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

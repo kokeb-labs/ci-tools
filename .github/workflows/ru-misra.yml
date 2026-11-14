@@ -40,6 +40,13 @@ on:
         type: string
         required: false
         default: ""
+      scan_parallel:
+        description: >-
+          Job count of the host and Cortex-M CMake builds that run under the CodeQL tracer. Empty: 2. Raise it for
+          small projects on big runners; an unbounded count starves the runner on large test suites.
+        type: string
+        required: false
+        default: ""
       cross:
         description: >-
           Also analyse the Cortex-M build (cortex-m4f, the Arm GNU toolchain of toolchain.json), whose preprocessor
@@ -228,6 +235,7 @@ jobs:
           SOURCE_DIR: ${{ inputs.cmake_source_dir }}
           CMAKE_ARGS: ${{ matrix.config == 'cortex-m' && inputs.cross_cmake_args != '' && inputs.cross_cmake_args || inputs.cmake_args }}
           BUILD_TARGET: ${{ matrix.config == 'cortex-m' && inputs.cross_build_target || inputs.build_target }}
+          SCAN_PARALLEL: ${{ inputs.scan_parallel }}
           REPO_DEVIATIONS: ${{ inputs.repo_deviations }}
           PROFILE: ${{ inputs.profile_pack }}
         run: |
@@ -244,7 +252,7 @@ jobs:
             --codeql "$CODEQL" --misra-pack "$MISRA_PACK" --cs-script "$CS_SCRIPT" \
             --records .ru-misra/handbook/compliance/misra-cpp-2023-deviations.yml "${repo_records[@]}" \
             --matrix .ru-misra/handbook/compliance/misra-cpp-2023.yml \
-            --source-dir "$SOURCE_DIR" --cmake-args="$CMAKE_ARGS" --build-target "$BUILD_TARGET" --paths="$PATHS" \
+            --source-dir "$SOURCE_DIR" --cmake-args="$CMAKE_ARGS" --build-target "$BUILD_TARGET" --parallel "$SCAN_PARALLEL" --paths="$PATHS" \
             "${own[@]}" --clang-tidy "$RUNNER_TEMP/venv/bin/clang-tidy" --tidy-configs .ru-misra/out/tidy-configs.json \
             --arm-bin "${ARM_BIN:-}"
           cp .ru-misra/out/versions.json ".ru-misra/out/$CONFIG/"

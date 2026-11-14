@@ -39,6 +39,25 @@ def group(title: str) -> None:
     print(f"::endgroup::\n::group::{title}", flush=True)
 
 
+DEFAULT_BUILD_PARALLEL = 2
+
+
+def build_parallel(value: str = "", environ: dict | None = None) -> int:
+    """Job count of the traced build: --parallel, else CMAKE_BUILD_PARALLEL_LEVEL, else 2 (never unbounded)."""
+    env = os.environ if environ is None else environ
+    for raw in (value, env.get("CMAKE_BUILD_PARALLEL_LEVEL", "")):
+        raw = (raw or "").strip()
+        if raw:
+            try:
+                n = int(raw)
+            except ValueError:
+                raise SystemExit(f"::error::build parallelism must be a positive integer, got {raw!r}")
+            if n < 1:
+                raise SystemExit(f"::error::build parallelism must be a positive integer, got {raw!r}")
+            return n
+    return DEFAULT_BUILD_PARALLEL
+
+
 def ram_option() -> list[str]:
     """CodeQL's heap: the machine's memory less 2 GiB for the OS and the evaluator's native memory."""
     try:
@@ -70,6 +89,8 @@ def main() -> int:
     ap.add_argument("--arm-bin", default="")
     ap.add_argument("--cxx", default="g++")
     ap.add_argument("--threads", default="0")
+    ap.add_argument("--parallel", default="", help="jobs of the traced CMake build (default: "
+                    "$CMAKE_BUILD_PARALLEL_LEVEL, else 2)")
     a = ap.parse_args()
 
     py = sys.executable
@@ -119,7 +140,7 @@ def main() -> int:
             print("::error::CMake configure failed")
             return 1
         shutil.copyfile(os.path.join(build, "compile_commands.json"), compdb)
-        build_cmd = shlex.join(["cmake", "--build", build, "--parallel",
+        build_cmd = shlex.join(["cmake", "--build", build, "--parallel", str(build_parallel(a.parallel)),
                                 *(["--target", a.build_target] if a.build_target else [])])
 
     group(f"{a.config}: CodeQL database (traced build, deviation configuration, canary)")
