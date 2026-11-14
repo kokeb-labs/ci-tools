@@ -280,13 +280,13 @@ jobs:
               if ! command -v "$gcc" >/dev/null || ! command -v "$clang" >/dev/null; then python3 "$tools/install.py" apt; fi
               echo "CMAKE_MATRIX_GCC=$gcc" >> "$GITHUB_ENV"
               echo "CMAKE_MATRIX_CLANG=$clang" >> "$GITHUB_ENV"
-              "$gcc" --version | head -1
-              "$clang" --version | head -1 ;;
+              "$gcc" --version | sed -n 1p
+              "$clang" --version | sed -n 1p ;;
             arm-none-eabi)
               python3 "$tools/install.py" arm --cache ~/.cache/ru-cmake-matrix/arm --dest "$RUNNER_TEMP/ru-cmake-matrix" \
                 --github-env "$GITHUB_ENV"
               echo "$RUNNER_TEMP/ru-cmake-matrix/arm/bin" >> "$GITHUB_PATH"
-              "$RUNNER_TEMP/ru-cmake-matrix/arm/bin/arm-none-eabi-g++" --version | head -1 ;;
+              "$RUNNER_TEMP/ru-cmake-matrix/arm/bin/arm-none-eabi-g++" --version | sed -n 1p ;;
           esac
           missing=()
           command -v ninja >/dev/null || missing+=(ninja-build)
@@ -296,7 +296,7 @@ jobs:
             timeout 180 sudo apt-get "${apt_opts[@]}" update -q
             timeout 600 sudo apt-get "${apt_opts[@]}" install -y -q --no-install-recommends "${missing[@]}"
           fi
-          cmake --version | head -1
+          cmake --version | sed -n 1p
       - name: Restore the compiler cache
         if: ${{ inputs.ccache }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
@@ -319,10 +319,12 @@ jobs:
           # In the ESP-IDF container: the image's entrypoint (which runs export.sh) does not run in a job container,
           # so the cross compilers and ccache are put on PATH here.
           if [ -n "${IDF_PATH:-}" ] && [ -f "$IDF_PATH/export.sh" ]; then
+            set +e
             # shellcheck disable=SC1091
             . "$IDF_PATH/export.sh" >/dev/null
           fi
           set -uo pipefail
+          set +e  # the result is read from run.py's status below
           ccache_flag=(--no-ccache)
           if [ "$USE_CCACHE" = "true" ] && command -v ccache >/dev/null; then
             export CCACHE_DIR="$PWD/.ru-cmake-matrix/ccache" CCACHE_MAXSIZE=500M CCACHE_BASEDIR="$PWD" CCACHE_NOHASHDIR=1
@@ -335,7 +337,7 @@ jobs:
             --configure-args "$EXTRA_ARGS" --no-tests "$NO_TESTS" "${ccache_flag[@]}"
           status=$?
           echo "::remove-matcher owner=ru-cmake-matrix-compiler::"
-          if [ "$USE_CCACHE" = "true" ] && command -v ccache >/dev/null; then ccache --show-stats | head -12; fi
+          if [ "$USE_CCACHE" = "true" ] && command -v ccache >/dev/null; then ccache --show-stats | sed -n 1,12p; fi
           exit "$status"
       - &upload
         name: Upload the result and test report
@@ -381,11 +383,16 @@ jobs:
           persist-credentials: false
       - name: ESP-IDF version
         run: |
-          set -euo pipefail
           echo "IDF_PATH=${IDF_PATH:?the image does not set IDF_PATH}"
           git config --global --add safe.directory "$IDF_PATH"
+          # export.sh may return non-zero from a benign probe; it must not stop the step.
+          set +e
+          # shellcheck disable=SC1091
+          . "$IDF_PATH/export.sh" >/dev/null
+          set -euo pipefail
           (cd "$IDF_PATH" && git describe --tags --always 2>/dev/null) || true
-          cmake --version | head -1
+          cmake --version | sed -n 1p
+          ninja --version
       - name: Restore the compiler cache
         if: ${{ inputs.ccache }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0

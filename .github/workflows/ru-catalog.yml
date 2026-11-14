@@ -219,12 +219,15 @@ jobs:
             echo "${OSV_SCANNER_SHA256}  $bin" | sha256sum -c - || exit 1
             chmod 0755 "$bin"
           fi
-          "$bin" --version | head -1
+          "$bin" --version | sed -n 1p
           out="$RUNNER_TEMP/ru-catalog-out"
-          # The generated SBOMs are scanned with the tree (OSV-Scanner reads *.cdx.json and *.spdx.json).
+          # The generated SBOMs are scanned with the tree (OSV-Scanner reads *.cdx.json and *.spdx.json). Its exit
+          # status is read below: 1 means vulnerabilities, 128 no package found.
+          set +e
           "$bin" scan source --recursive --format json --output "$out/osv.json" "$ROOT" "$out"
           rc=$?
           "$bin" scan source --recursive --format sarif --output "$out/osv.sarif" "$ROOT" "$out" >/dev/null 2>&1
+          set -e
           case "$rc" in
             0|1) ;;
             128) echo "no package OSV-Scanner can check was found (no lock file, SBOM package or submodule it knows)"
