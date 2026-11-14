@@ -330,7 +330,12 @@ def _draw(hw: Hardware, circ: Circuit, fig: Fig, dy: float) -> dict:
     for k, cp in enumerate(plan.right):
         if k:
             prev = plan.right[k - 1]
-            y += _g(max(pitch, lane_dn[prev.name] + lane_up[cp.name]))
+            gap = lane_dn[prev.name] + lane_up[cp.name]
+            if (prev.net is not None and cp.net is not None and prev.net is not cp.net and prev.net.kind == "ground"
+                    and cp.net.kind == "supply" and not plan.chains.get(prev.name)):
+                # A ground symbol hangs under the lane above and the supply's name stands over this one.
+                gap += 3 * G
+            y += _g(max(pitch, gap))
         ry.append(y)
     right_span = (ry[-1] if ry else 0)
     left_span = (len(plan.left) - 1) * pitch if plan.left else 0

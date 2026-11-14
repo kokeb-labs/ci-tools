@@ -42,6 +42,8 @@ that heading.
   after License.
 - **Docs theme: the wiring figure** names what a supply that reaches no chip pin feeds instead of an empty entry
   ("VBAT_SW: ·"), and shows every hook of a wire on its own line.
+- **Docs theme: the circuit figure** leaves room between a right-hand pin tied to ground and the pin under it tied
+  to a supply, so the ground symbol and the supply's name no longer meet.
 - **Docs theme: long names in the chip figures** (package strings, the chip name, section names under the hero
   tiles, register pills, block labels) wrap or are ellipsised instead of running out of their box.
 

@@ -139,6 +139,21 @@ class WiringTest(Case):
         self.assertNotIn("VBAT_SW: ·", joined)
 
 
+class SchematicTest(Case):
+    def test_a_ground_pin_above_a_supply_pin_on_the_right(self):
+        # A pin tied to ground right above a pin tied to a supply (an address pin to GND, a mode pin to VDDIO): the
+        # ground symbol and the supply's name must not meet.
+        d = data()
+        c = circuit(d)
+        n = nets(d)
+        n["ALERT"]["nodes"] = ["U2.IRQ", "R1.2"]
+        n["RESET_N"]["nodes"] = ["U2.RST", "C9.1"]
+        c["parts"].append({"id": "C9", "kind": "capacitor", "value": "1 nF"})
+        n["GND"]["nodes"] += ["U1.ALERT", "C9.2"]
+        n["+3V3"]["nodes"].append("U1.RESET_N")
+        self.fig(d, "chip-circuit-typical")
+
+
 class OverflowTest(Case):
     def test_long_names_wrap_or_ellipsise(self):
         d = data()
