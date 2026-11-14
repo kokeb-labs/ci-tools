@@ -5,7 +5,9 @@ figure. On top of figkit's checks each figure checks its own geometry (``layout_
 no wire runs through a part body or a text, every pin sits on the side the package puts it.
 
 Figure ids: ``chip-pinout``, ``chip-outline`` (when ``package.outline`` is given, drawn by ``outline.py``),
-``chip-blocks`` and ``chip-circuit-<id>``.
+``chip-blocks`` and ``chip-circuit-<id>``; and the chip-first README figures of ``readme_figs.py``: ``chip-hero``
+(``overview``), ``chip-capabilities`` (``capabilities``), ``chip-frame-<id>`` (``frames``) and ``chip-wiring-<id>``
+(each circuit with an MCU, once the file has an ``overview``).
 """
 
 from __future__ import annotations
@@ -26,6 +28,17 @@ def figure_ids(hw: Hardware) -> list[str]:
     if hw.blocks:
         ids.append("chip-blocks")
     ids += [f"chip-circuit-{c.id}" for c in hw.circuits]
+    # The chip-first README figures (readme_figs.py), each switched on by its key of the file. The wiring figures
+    # come with the overview, so a repository that has not adopted the README layout gets no new figure.
+    doc = hw.doc
+    if doc is not None:
+        if doc.overview:
+            ids.append("chip-hero")
+        if doc.capabilities:
+            ids.append("chip-capabilities")
+        ids += [f"chip-frame-{f.id}" for f in doc.frames]
+        if doc.overview:
+            ids += [f"chip-wiring-{c.id}" for c in hw.circuits if any(p.kind == "mcu" for p in c.parts.values())]
     return ids
 
 
@@ -38,6 +51,17 @@ def build(hw: Hardware, fid: str) -> Fig:
         return outline(hw)
     if fid == "chip-blocks":
         return blocks(hw)
+    if fid in ("chip-hero", "chip-capabilities") or fid.startswith(("chip-frame-", "chip-wiring-")):
+        from . import readme_figs
+
+        if fid == "chip-hero" and hw.doc and hw.doc.overview:
+            return readme_figs.hero(hw)
+        if fid == "chip-capabilities" and hw.doc and hw.doc.capabilities:
+            return readme_figs.capabilities(hw)
+        if fid.startswith("chip-frame-") and hw.doc and any(f.id == fid[len("chip-frame-"):] for f in hw.doc.frames):
+            return readme_figs.frame(hw, fid[len("chip-frame-"):])
+        if fid.startswith("chip-wiring-") and any(c.id == fid[len("chip-wiring-"):] for c in hw.circuits):
+            return readme_figs.wiring(hw, fid[len("chip-wiring-"):])
     if fid.startswith("chip-circuit-"):
         from .circuit import circuit
 
