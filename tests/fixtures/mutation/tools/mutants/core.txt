@@ -1,0 +1,17 @@
+# One-edit mutants, one block each: "id | file | what the edit removes", an optional "= reason" line (an
+# equivalent mutant, listed and not run), then the old text ("- " lines) and the new text ("+ " lines).
+clamp-low | src/limits.cpp | values below low are raised to low
+- if (value < low) {
++ if (value < low - 1) {
+clamp-high | src/limits.cpp | values above high are lowered to high
+- if (value > high) {
++ if (false) {
+step-limit | src/limits.cpp | the counter stops at kMax
+- if (count >= kMax) {
++ if (count > kMax) {
+max-value | include/limits.hpp | the limit is 100
+- constexpr int kMax = 100;
++ constexpr int kMax = 101;
+clamp-low-equal | src/limits.cpp | a value equal to low is returned either way
+- if (value < low) {
++ if (value <= low) {

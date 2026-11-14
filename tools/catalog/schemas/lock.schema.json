@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kokeb-labs/ci-tools/tools/catalog/schemas/lock.schema.json",
+  "title": "drivers.lock.yml",
+  "description": "The driver pins of a revision: one entry per submodule, each at a release or release-candidate tag.",
+  "type": "object",
+  "required": ["drivers"],
+  "properties": {
+    "drivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "repo", "tag", "commit", "kind"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+          "tag": {"type": "string", "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(-rc\\.[0-9]+)?$"},
+          "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "kind": {"enum": ["release", "rc"]}
+        }
+      }
+    }
+  }
+}

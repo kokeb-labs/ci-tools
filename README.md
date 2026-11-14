@@ -123,6 +123,11 @@ workflow's job permissions ever differ from this table.
 | [`ru-ci-gate.yml`](.github/workflows/ru-ci-gate.yml) | `contents: read` | read the calling workflow to verify `needs` |
 | [`ru-cpp-analysis.yml`](.github/workflows/ru-cpp-analysis.yml) | `contents: read` | checkout |
 | [`ru-misra.yml`](.github/workflows/ru-misra.yml) | `contents: read` | checkout of the caller, of ci-tools (scripts, packs, pins) and of the handbook (matrix, deviation records) |
+| [`ru-cmake-matrix.yml`](.github/workflows/ru-cmake-matrix.yml) | `contents: read` | checkout of the caller and of ci-tools (scripts, toolchain pins) |
+| [`ru-mutation.yml`](.github/workflows/ru-mutation.yml) | `contents: read` | checkout of the caller and of ci-tools (mutation scripts, toolchain pins) |
+| [`ru-pin-hygiene.yml`](.github/workflows/ru-pin-hygiene.yml) | `contents: read` | checkout; read the pinned repositories' tags, checks and files through the API |
+| [`ru-layering.yml`](.github/workflows/ru-layering.yml) | `contents: read` | checkout of the caller and of ci-tools (checker, toolchain pins) |
+| [`ru-catalog.yml`](.github/workflows/ru-catalog.yml) | `contents: read` | checkout; read each pin's `driver.yml` and licence through the API |
 | [`ru-cpp-lint.yml`](.github/workflows/ru-cpp-lint.yml) | `contents: read` | checkout |
 | [`ru-docs-linkcheck.yml`](.github/workflows/ru-docs-linkcheck.yml) | `contents: read` | checkout |
 | [`ru-docs-publish.yml`](.github/workflows/ru-docs-publish.yml) | `contents: write` | push to the deployment branch; required on pull requests too, although PRs never deploy |
@@ -396,6 +401,223 @@ jobs:
 | `enforce` | boolean | no | `true` | Fail the job by the level's policy. False reports only (the counts are in the outputs). |
 | `artifact_name` | string | no | `misra-report` | Name of the report artifact (unique per call when a run calls this more than once) |
 <!-- inputs:ru-misra.yml:end -->
+
+### ru-cmake-matrix
+
+Configure, build and test a matrix of CMake configurations: MCU x RTOS x preset, entries given as JSON, or the
+MCU/RTOS pairs of a compatibility catalogue. Host entries use the GCC or Clang of `tools/misra/toolchain.json` and
+run ctest (JUnit in the artifact), with an optional install consumer; Arm entries use the pinned Arm GNU toolchain;
+`esp-idf` entries build in the ESP-IDF v5.5 container, pinned by digest. `max_parallel` and `build_parallel` bound
+the parallelism. See [docs/ru-cmake-matrix.md](docs/ru-cmake-matrix.md).
+
+```yaml
+jobs:
+  matrix:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-cmake-matrix.yml@v1
+    permissions:
+      contents: read
+    with:
+      mcus: "HOST ESP32 STM32F4"
+      rtoses: "NONE FREERTOS"
+      cmake_args: "-DMYLIB_BUILD_TESTS=ON"
+      install_consumer: tests/install_consumer
+```
+
+<!-- inputs:ru-cmake-matrix.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `matrix` | string | no | `""` | JSON list of entries. Keys: name (required, unique), toolchain (host-gcc, host-clang, arm-none-eabi, esp-idf), core (arm-none-eabi), idf_target (esp-idf), mcu, rtos, preset, cmake_args, source_dir, target, build_type, test, consumer_args |
+| `matrix_from` | string | no | `""` | A compatibility catalogue (compat.yml, schema 1, as ru-catalog writes it): every distinct mcu and rtos of its drivers' configs becomes an entry, added to matrix |
+| `mcus` | string | no | `""` | Space-separated MCUs; with rtoses and presets their cross product is added to matrix |
+| `rtoses` | string | no | `""` | Space-separated RTOSes of the cross product |
+| `presets` | string | no | `""` | Space-separated CMake configure presets of the cross product (CMakePresets.json) |
+| `mcu_toolchains` | string | no | `{"HOST": "host-gcc", "ESP32S3*": "esp-idf:esp32s3", "ESP32C3*": "esp-idf:esp32c3", "ESP32C6*": "esp-idf:esp32c6", "ESP32*": "esp-idf:esp32", "STM32F0*": "arm-none-eabi:cortex-m0plus", "STM32G0*": "arm-none-eabi:cortex-m0plus", "STM32F1*": "arm-none-eabi:cortex-m3", "STM32F7*": "arm-none-eabi:cortex-m7f", "STM32H7*": "arm-none-eabi:cortex-m7f", "STM32H5*": "arm-none-eabi:cortex-m33f", "STM32U5*": "arm-none-eabi:cortex-m33f", "STM32*": "arm-none-eabi:cortex-m4f"}` | JSON object: MCU name pattern (fnmatch, case-insensitive, first match wins) -> toolchain, toolchain:core or esp-idf:target, for entries that name an MCU but no toolchain |
+| `mcu_variable` | string | no | `KB_MCU` | CMake cache variable an entry's mcu is passed as (-D<variable>=<mcu>); empty passes none |
+| `rtos_variable` | string | no | `KB_RTOS` | CMake cache variable an entry's rtos is passed as; empty passes none |
+| `toolchain` | string | no | `host-gcc` | Toolchain of an entry that names none and whose MCU matches no mcu_toolchains pattern |
+| `source_dir` | string | no | `.` | CMake source directory of an entry that names none, relative to the repository root |
+| `cmake_args` | string | no | `""` | Configure arguments added to every entry, after the entry's own |
+| `build_type` | string | no | `Debug` | CMAKE_BUILD_TYPE of an entry without a preset or build_type |
+| `build_target` | string | no | `""` | Target of an entry that names none; empty builds all |
+| `run_tests` | boolean | no | `true` | Run ctest for host entries that do not set test |
+| `no_tests` | string | no | `error` | What a tested entry with no tests is: error (default) or ignore |
+| `ctest_args` | string | no | `""` | Extra ctest arguments, e.g. -L unit |
+| `install_consumer` | string | no | `""` | A CMake project that uses the installed package through find_package: after each host entry's tests, the build is installed to a staging prefix and this project is configured (with CMAKE_PREFIX_PATH and -DMATRIX_ENTRY=<name>), built and tested. Skipped with a warning while it has no CMakeLists.txt. |
+| `submodules` | string | no | `false` | actions/checkout submodules value: false, true or recursive |
+| `max_parallel` | string | no | `4` | Most configurations built at the same time (strategy.max-parallel) |
+| `build_parallel` | string | no | `""` | Jobs of each cmake --build and ctest; empty uses the runner's processor count |
+| `ccache` | boolean | no | `true` | Use ccache with a per-configuration Actions cache |
+| `esp_idf_image` | string | no | `espressif/idf:v5.5.6@sha256:bf72fe7a15c22849a9a94147301165a545fb8905d97c176cf748e3e4614cac84` | Container image of esp-idf entries (pin it by digest) |
+| `timeout_minutes` | string | no | `60` | Timeout of each configuration's job, in minutes |
+| `artifact_prefix` | string | no | `cmake-matrix` | Prefix of the per-configuration artifacts (results, JUnit); distinct per call in one run |
+<!-- inputs:ru-cmake-matrix.yml:end -->
+
+### ru-mutation
+
+Mutation testing: the mutants of a catalogue in the drivers' `tools/mutants` format, or generated operators over
+`mutate_paths`, each built incrementally and tested with ctest in parallel shards and workers. The kill rate must
+reach the level's threshold (`high`: 100 %, so every survivor is killed by a test or recorded as equivalent with a
+reason). Survivors are annotations; the report artifact holds Markdown, JSON per mutant and the
+mutation-testing-elements JSON. See [docs/ru-mutation.md](docs/ru-mutation.md).
+
+```yaml
+jobs:
+  mutation:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-mutation.yml@v1
+    permissions:
+      contents: read
+    with:
+      level: high
+      cmake_args: "-DMYLIB_BUILD_TESTS=ON"
+      mutate_paths: "inc src"
+      equivalents_file: docs/equivalent-mutants.yml
+```
+
+<!-- inputs:ru-mutation.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `level` | string | no | `high` | Policy: high (100 % kill rate, no broken catalogue mutant) or standard (80 %) |
+| `threshold` | string | no | `""` | Kill-rate percentage that overrides the level's; empty uses the level's |
+| `root` | string | no | `.` | Directory mutant file paths, mutate_paths, catalogues and the equivalents file are relative to |
+| `mutate_paths` | string | no | `inc src include` | Space-separated folders or files whose C and C++ code generated mutants edit |
+| `catalogue` | string | no | `tools/mutants/*.txt` | Space-separated globs of catalogue files (the drivers' tools/mutants format: "id \| file \| what", optional "= reason", "- old" and "+ new" lines) |
+| `mode` | string | no | `auto` | auto (the catalogues when one exists, else generated), catalogue, generated or both |
+| `equivalents_file` | string | no | `""` | YAML or JSON of equivalent mutants (id -> reason, or a list of {id, reason}): reported, not run. A listed id that matches no mutant fails the run; a file that does not exist yet is a warning. |
+| `source_dir` | string | no | `.` | CMake source directory, relative to root |
+| `cmake_args` | string | no | `""` | Configure arguments that build the tests (for example -DMYLIB_BUILD_TESTS=ON) |
+| `build_target` | string | no | `""` | Target built for each mutant; empty builds all |
+| `ctest_args` | string | no | `""` | Extra ctest arguments, e.g. -L unit to run only the fast tests |
+| `compiler` | string | no | `gcc` | gcc or clang, the version of tools/misra/toolchain.json |
+| `max_mutants` | string | no | `0` | Most mutants run (a stable sample by id); 0 runs every one |
+| `shards` | string | no | `1` | Parallel jobs the mutants are split into |
+| `workers` | string | no | `2` | Mutants built and tested at the same time in each shard (each in its own copy of the tree) |
+| `build_parallel` | string | no | `2` | Jobs of each worker's cmake --build and ctest |
+| `timeout_factor` | string | no | `3` | A mutant's tests time out after this many times the unedited tree's test time (at least 30 s) |
+| `submodules` | string | no | `false` | actions/checkout submodules value: false, true or recursive |
+| `enforce` | boolean | no | `true` | Fail the job by the level's policy; false reports only (the counts are in the outputs) |
+| `timeout_minutes` | string | no | `120` | Timeout of each shard's job, in minutes |
+| `artifact_name` | string | no | `mutation-report` | Name of the report artifact (unique per call when a run calls this more than once) |
+<!-- inputs:ru-mutation.yml:end -->
+
+### ru-pin-hygiene
+
+Every submodule pinned to the commit of a `vX.Y.Z` or `vX.Y.Z-rc.N` tag whose required check passed there, never a
+branch; the lock file complete and matching; each pin's `driver.yml` in agreement with the lock, the MCU gate table
+and this revision's version (PIN-001 to PIN-013). Read-only API calls with the built-in token only. See
+[docs/ru-pin-hygiene.md](docs/ru-pin-hygiene.md).
+
+```yaml
+jobs:
+  pins:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-pin-hygiene.yml@v1
+    permissions:
+      contents: read
+    with:
+      lock_file: drivers/drivers.lock.yml
+      gates_file: cmake/mcu_gates.cmake
+      version_file: cmake/version.cmake
+```
+
+<!-- inputs:ru-pin-hygiene.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `lock_file` | string | no | `drivers/drivers.lock.yml` | Lock file of the pins (drivers: [{name, repo, tag, commit, kind}]) |
+| `gates_file` | string | no | `""` | MCU gate table: a file of "<driver>:<MCU>:<peripheral>" strings; empty skips PIN-007 |
+| `version_file` | string | no | `""` | File with this revision's version (set(<X>_VERSION_MAJOR n) ..., or X.Y.Z); empty skips PIN-008 |
+| `required_check` | string | no | `CI gate / gate` | Check run that must have concluded success on each pinned commit; empty skips PIN-005 |
+| `tag_pattern` | string | no | `^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$` | Regular expression a pin's tag must match |
+| `forbid_branch_entries` | boolean | no | `true` | Fail on a branch = entry in .gitmodules |
+| `url_pattern` | string | no | `^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?(\.git)?$` | Regular expression every .gitmodules URL must match |
+| `handbook_levels` | string | no | `""` | Space-separated levels a pin's .kokeb/handbook.yml may declare (e.g. high safety); empty skips PIN-009 |
+| `private_repos` | boolean | no | `false` | Accept pins to private repositories. They are read with the workflow's built-in token only (no other credential is accepted), so the token must be able to read them. |
+| `release_lock` | string | no | `""` | Release lock to check at a release (PIN-012): its pins equal the lock's and it records HEAD |
+| `submodules` | string | no | `false` | Check out the submodules too, so PIN-010 also checks that each working tree is clean |
+| `enforce` | boolean | no | `true` | Fail the job on a finding; false reports only (the counts are in the outputs) |
+| `artifact_name` | string | no | `pin-hygiene-report` | Name of the report artifact (JSON and SARIF) |
+<!-- inputs:ru-pin-hygiene.yml:end -->
+
+### ru-layering
+
+Layering rules from a rules file: includes resolve to zones the including zone may use, SDK and RTOS headers only in
+listed boundary files, platform macros only there, no forbidden keyword such as `virtual`, CMake targets linked
+downwards only, and no SDK or RTOS symbol in a platform-free object (`nm`). The checker's fixtures run first; the
+poison build puts a header that stops the build in place of every SDK header. Findings are annotations, SARIF and a
+summary. See [docs/ru-layering.md](docs/ru-layering.md).
+
+```yaml
+jobs:
+  layering:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-layering.yml@v1
+    permissions:
+      contents: read
+    with:
+      rules: tools/include_checker/rules.yml
+      fixtures: tests/layering
+      poison_cmake_args: "-DMYLIB_BUILD_TESTS=ON"
+```
+
+<!-- inputs:ru-layering.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `rules` | string | yes | - | Rules file (zones, boundary files, SDK headers, keywords, targets, symbols), relative to root |
+| `boundary_files` | string | no | `""` | Boundary file list that replaces the rules file's boundary_files; empty uses the rules file's |
+| `fixtures` | string | no | `""` | Folder of the checker's fixtures, relative to root: good/ must give no finding, each bad/<case>/ exactly the rule ids of its expect.txt. Excluded from the check of the tree. Empty runs none. |
+| `root` | string | no | `.` | Folder the rules' paths are relative to |
+| `exclude` | string | no | `""` | Space-separated globs, relative to root, that are not checked |
+| `poison` | boolean | no | `true` | Run the poison build (needs a CMake project at source_dir) |
+| `poison_cmake_args` | string | no | `""` | Configure arguments of the poison build (build every platform-free translation unit) |
+| `poison_dir` | string | no | `tests/poison` | Folder of extra poison headers, relative to root, copied over the generated ones (if present) |
+| `source_dir` | string | no | `.` | CMake source folder of the poison build, relative to root |
+| `build_target` | string | no | `""` | Target of the poison build; empty builds all |
+| `build_parallel` | string | no | `2` | Jobs of the poison build |
+| `compiler` | string | no | `gcc` | gcc or clang, the version of tools/misra/toolchain.json |
+| `symbol_lint` | boolean | no | `true` | Run nm over the poison build's objects (the rules' symbols, or the default SDK and RTOS symbols) |
+| `submodules` | string | no | `false` | actions/checkout submodules value: false, true or recursive |
+| `enforce` | boolean | no | `true` | Fail the job on a finding; false reports only (the count is in the outputs) |
+| `artifact_name` | string | no | `layering-report` | Name of the report artifact (SARIF, JSON, build log) |
+<!-- inputs:ru-layering.yml:end -->
+
+### ru-catalog
+
+The compatibility catalogue (`compat.yml`, schema 1) generated from the pinned drivers' `driver.yml` and tags, the
+MCU gate table and the integration results, validated against JSON schemas and compared with the committed file;
+CycloneDX 1.6 and SPDX 2.3 SBOMs; an OSV-Scanner known-vulnerability scan. One artifact, and optionally a GitHub
+Pages artifact. See [docs/ru-catalog.md](docs/ru-catalog.md).
+
+```yaml
+jobs:
+  catalog:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-catalog.yml@v1
+    permissions:
+      contents: read
+    with:
+      lock_file: drivers/drivers.lock.yml
+      gates_file: cmake/mcu_gates.cmake
+      output: catalog/compat.yml
+      submodules: true
+```
+
+<!-- inputs:ru-catalog.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `lock_file` | string | no | `drivers/drivers.lock.yml` | Lock file of the pins (drivers: [{name, repo, tag, commit, kind}]), relative to root |
+| `gates_file` | string | no | `""` | MCU gate table: a file of "<driver>:<MCU>:<peripheral>" strings (a CMake list); empty: none |
+| `version_file` | string | no | `""` | File with this revision's version (set(<X>_VERSION_MAJOR n) ..., or X.Y.Z); empty looks in CMakeLists.txt's project(VERSION) and cmake/*version*.cmake |
+| `output` | string | no | `catalog/compat.yml` | The committed catalogue, relative to root; the generated one is compared with it |
+| `check` | boolean | no | `true` | Fail when the committed catalogue differs from the generated one |
+| `results` | string | no | `""` | Integration results file (JSON or YAML list of {driver?, mcu, rtos, result}), relative to root |
+| `results_json` | string | no | `""` | Integration results as JSON, e.g. ru-cmake-matrix's results output; added to results |
+| `binding_pattern` | string | no | `""` | Path of a driver's binding header with {name} for the driver name, relative to root; the catalogue records it from its include root (after inc/ or include/). Empty records binding: null. |
+| `schemas` | string | no | `""` | Folder of the caller's JSON schemas (lock.schema.json, driver.schema.json, compat.schema.json), relative to root; a file it lacks falls back to the bundled one |
+| `root` | string | no | `.` | Folder the other paths are relative to |
+| `submodules` | boolean | no | `false` | Check out the submodules; driver.yml is then read from them, else through the GitHub API |
+| `sbom` | boolean | no | `true` | Write the CycloneDX 1.6 and SPDX 2.3 SBOMs |
+| `sbom_name` | string | no | `""` | Name of the SBOM's root component; empty uses the repository name |
+| `osv` | boolean | no | `true` | Scan the tree (lock files, SBOMs, submodules) with OSV-Scanner for known vulnerabilities |
+| `fail_on_vulnerabilities` | boolean | no | `true` | Fail the job when OSV-Scanner reports a known vulnerability |
+| `pages` | boolean | no | `false` | Also upload a GitHub Pages artifact (index.html, compat.json, compat.yml, SBOMs, scan); deploy it from the caller with actions/deploy-pages (docs/ru-catalog.md) |
+| `artifact_name` | string | no | `catalog` | Name of the artifact (catalogue, SBOMs, scan results) |
+<!-- inputs:ru-catalog.yml:end -->
 
 ### ru-mkdocs-publish
 
@@ -853,6 +1075,7 @@ jobs:
 | [`ci-repo-checks.yml`](.github/workflows/ci-repo-checks.yml) | Runs `ru-repo-checks` on this repository (every check passes) and on the known-bad handbook and cppcheck fixtures (the findings are counted) |
 | [`ci-misra.yml`](.github/workflows/ci-misra.yml) | The MISRA toolchain's tool validation (compilers, clang-tidy, CodeQL on host and Cortex-M databases, the record check) and `ru-misra` on a fixture with exact counts; see the [tool validation plan](docs/tool-validation/plan.md) |
 | `ci-host-quality.yml`, `ci-cross-build.yml` | Run `ru-host-quality` and `ru-cross-build` in one job and with `separate_jobs` / `per_core_jobs`, and compare the figures |
+| `ci-cmake-matrix.yml`, `ci-mutation.yml`, `ci-pin-hygiene.yml`, `ci-layering.yml`, `ci-catalog.yml` | Run `ru-cmake-matrix` (host, preset, Arm and ESP-IDF entries, a catalogue's pairs), `ru-mutation` (a catalogue at level high, generated operators in two shards), `ru-pin-hygiene` (an empty and a stale lock, and the script on a scratch repository pinning a real driver), `ru-layering` (fixture tree with its good and bad cases and the poison build, and one seeded case) and `ru-catalog` (a real pinned driver: catalogue, SBOMs, scan, Pages artifact) on fixtures, and check their outputs exactly |
 
 Third-party actions are pinned to commit SHAs with a `# vX.Y.Z` comment, and
 Dependabot keeps them current. Contributions follow

@@ -1,0 +1,51 @@
+---
+name: 🧱 Layering self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # The fixture tree: its own good and bad fixtures first, then the tree with the poison build, the target graph
+  # and the symbol lint; no finding.
+  fixture:
+    uses: ./.github/workflows/ru-layering.yml
+    permissions:
+      contents: read
+    with:
+      root: tests/fixtures/layering
+      rules: rules.yml
+      fixtures: tests/layering
+      poison_cmake_args: "-DFX_BUILD_TESTS=ON"
+      artifact_name: selftest-layering
+
+  # One bad case checked as a tree: its finding is reported, not enforced.
+  seeded:
+    uses: ./.github/workflows/ru-layering.yml
+    permissions:
+      contents: read
+    with:
+      root: tests/fixtures/layering/tests/layering/bad/virtual-keyword
+      rules: ../../../../rules.yml
+      poison: false
+      enforce: false
+      artifact_name: selftest-layering-seeded
+
+  outputs-checked:
+    needs: [fixture, seeded]
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: The findings are the fixtures'
+        env:
+          FIXTURE: ${{ needs.fixture.outputs.findings }}
+          SEEDED: ${{ needs.seeded.outputs.findings }}
+          SEEDED_RULES: ${{ needs.seeded.outputs.rules }}
+        run: |
+          echo "fixture: $FIXTURE finding(s); seeded: $SEEDED ($SEEDED_RULES)"
+          test "$FIXTURE" = 0
+          test "$SEEDED" = 1
+          test "$SEEDED_RULES" = '["LAY-012"]'

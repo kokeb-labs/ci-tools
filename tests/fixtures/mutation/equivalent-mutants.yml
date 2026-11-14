@@ -1,0 +1,5 @@
+---
+# Mutants that cannot change behaviour, with the reason (ru-mutation lists them and does not run them).
+equivalent:
+  - id: clamp-low-equal
+    reason: Clamp returns low for value == low on both paths, so < and <= cannot be told apart.

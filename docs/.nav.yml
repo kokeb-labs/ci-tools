@@ -17,6 +17,11 @@ nav:
       - ru-cpp-lint: ru-cpp-lint.md
       - ru-cpp-analysis: ru-cpp-analysis.md
       - ru-misra (MISRA C++:2023): ru-misra.md
+      - ru-cmake-matrix: ru-cmake-matrix.md
+      - ru-mutation: ru-mutation.md
+      - ru-pin-hygiene: ru-pin-hygiene.md
+      - ru-layering: ru-layering.md
+      - ru-catalog: ru-catalog.md
       - ru-mkdocs-publish: ru-mkdocs-publish.md
       - ru-docs-linkcheck: ru-docs-linkcheck.md
       - ru-markdown-lint: ru-markdown-lint.md

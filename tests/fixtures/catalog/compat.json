@@ -1,0 +1,29 @@
+{
+  "drivers": [
+    {
+      "binding": null,
+      "bus": [
+        "pio"
+      ],
+      "commit": "2790be043fce5c620281aafa5b2bc2e0880af829",
+      "configs": [
+        {
+          "mcu": "ESP32",
+          "result": "pass",
+          "rtos": "FREERTOS"
+        }
+      ],
+      "kb_core_min": null,
+      "mcus": [
+        "esp32"
+      ],
+      "name": "ws2812_rmt",
+      "peripheral": "rmt",
+      "repo": "kokeb-labs-drivers/driver-ws2812-rmt",
+      "tag": "v0.1.0-rc.1",
+      "version": "0.1.0"
+    }
+  ],
+  "kb_core": "0.2.0",
+  "schema": 1
+}

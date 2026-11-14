@@ -1,0 +1,271 @@
+---
+# The compatibility catalogue (docs/ru-catalog.md): compat.yml (schema 1) generated from the lock file's pins, each
+# driver's driver.yml at its pinned commit, the MCU gate table and the integration results; validated against the
+# JSON schemas (bundled, or the caller's); compared with the committed file. Also the revision's SBOM (CycloneDX 1.6
+# and SPDX 2.3) and a known-vulnerability scan with OSV-Scanner (pinned, hash-checked; SARIF and JSON). Everything is
+# one artifact; with pages: true a GitHub Pages artifact as well, for a deploy job in the caller.
+name: 📇 [RU] Compatibility catalogue
+
+on:
+  workflow_call:
+    inputs:
+      lock_file:
+        description: "Lock file of the pins (drivers: [{name, repo, tag, commit, kind}]), relative to root"
+        type: string
+        required: false
+        default: "drivers/drivers.lock.yml"
+      gates_file:
+        description: "MCU gate table: a file of \"<driver>:<MCU>:<peripheral>\" strings (a CMake list); empty: none"
+        type: string
+        required: false
+        default: ""
+      version_file:
+        description: >-
+          File with this revision's version (set(<X>_VERSION_MAJOR n) ..., or X.Y.Z); empty looks in
+          CMakeLists.txt's project(VERSION) and cmake/*version*.cmake
+        type: string
+        required: false
+        default: ""
+      output:
+        description: "The committed catalogue, relative to root; the generated one is compared with it"
+        type: string
+        required: false
+        default: "catalog/compat.yml"
+      check:
+        description: "Fail when the committed catalogue differs from the generated one"
+        type: boolean
+        required: false
+        default: true
+      results:
+        description: "Integration results file (JSON or YAML list of {driver?, mcu, rtos, result}), relative to root"
+        type: string
+        required: false
+        default: ""
+      results_json:
+        description: "Integration results as JSON, e.g. ru-cmake-matrix's results output; added to results"
+        type: string
+        required: false
+        default: ""
+      binding_pattern:
+        description: >-
+          Path of a driver's binding header with {name} for the driver name, relative to root; the catalogue
+          records it from its include root (after inc/ or include/). Empty records binding: null.
+        type: string
+        required: false
+        default: ""
+      schemas:
+        description: >-
+          Folder of the caller's JSON schemas (lock.schema.json, driver.schema.json, compat.schema.json), relative
+          to root; a file it lacks falls back to the bundled one
+        type: string
+        required: false
+        default: ""
+      root:
+        description: "Folder the other paths are relative to"
+        type: string
+        required: false
+        default: "."
+      submodules:
+        description: "Check out the submodules; driver.yml is then read from them, else through the GitHub API"
+        type: boolean
+        required: false
+        default: false
+      sbom:
+        description: "Write the CycloneDX 1.6 and SPDX 2.3 SBOMs"
+        type: boolean
+        required: false
+        default: true
+      sbom_name:
+        description: "Name of the SBOM's root component; empty uses the repository name"
+        type: string
+        required: false
+        default: ""
+      osv:
+        description: "Scan the tree (lock files, SBOMs, submodules) with OSV-Scanner for known vulnerabilities"
+        type: boolean
+        required: false
+        default: true
+      fail_on_vulnerabilities:
+        description: "Fail the job when OSV-Scanner reports a known vulnerability"
+        type: boolean
+        required: false
+        default: true
+      pages:
+        description: >-
+          Also upload a GitHub Pages artifact (index.html, compat.json, compat.yml, SBOMs, scan); deploy it from the
+          caller with actions/deploy-pages (docs/ru-catalog.md)
+        type: boolean
+        required: false
+        default: false
+      artifact_name:
+        description: "Name of the artifact (catalogue, SBOMs, scan results)"
+        type: string
+        required: false
+        default: "catalog"
+    outputs:
+      drivers:
+        description: "Number of drivers in the catalogue"
+        value: ${{ jobs.catalog.outputs.drivers }}
+      version:
+        description: "The revision's version the catalogue records"
+        value: ${{ jobs.catalog.outputs.version }}
+      stale:
+        description: "true when the committed catalogue differs from the generated one"
+        value: ${{ jobs.catalog.outputs.stale }}
+      errors:
+        description: "Schema, gate and driver.yml errors"
+        value: ${{ jobs.catalog.outputs.errors }}
+      vulnerabilities:
+        description: "Known vulnerabilities OSV-Scanner reported"
+        value: ${{ jobs.catalog.outputs.vulnerabilities }}
+
+permissions: {}
+
+env:
+  OSV_SCANNER_VERSION: "2.7.0"
+  OSV_SCANNER_SHA256: "160c6253e2922e9e0a6a9771c5c4c40a4b3c6090b34a3cdd5e80c96cc2e4218b"
+
+jobs:
+  catalog:
+    name: compat.yml, SBOM and vulnerability scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      drivers: ${{ steps.build.outputs.drivers }}
+      version: ${{ steps.build.outputs.version }}
+      stale: ${{ steps.build.outputs.stale }}
+      errors: ${{ steps.build.outputs.errors }}
+      vulnerabilities: ${{ steps.osv.outputs.vulnerabilities }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+      # The scripts and schemas at the commit of this workflow (the same trust as this file).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-catalog/ci-tools
+          sparse-checkout: tools/catalog
+          persist-credentials: false
+      # The scripts move out of the checked-out tree, so the vulnerability scan sees the caller's files only.
+      - name: Install PyYAML and jsonschema (pinned, hash-checked)
+        run: |
+          set -euo pipefail
+          cp -R .ru-catalog/ci-tools/tools/catalog "$RUNNER_TEMP/ru-catalog-tools"
+          rm -rf .ru-catalog
+          mkdir -p "$RUNNER_TEMP/ru-catalog-out"
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet --disable-pip-version-check --require-hashes --no-deps \
+            -r "$RUNNER_TEMP/ru-catalog-tools/requirements.txt"
+      - name: Generate, validate and compare the catalogue
+        id: build
+        env:
+          ROOT: ${{ inputs.root }}
+          LOCK: ${{ inputs.lock_file }}
+          GATES: ${{ inputs.gates_file }}
+          VERSION_FILE: ${{ inputs.version_file }}
+          OUTPUT: ${{ inputs.output }}
+          CHECK: ${{ inputs.check }}
+          RESULTS: ${{ inputs.results }}
+          RESULTS_JSON: ${{ inputs.results_json }}
+          BINDING: ${{ inputs.binding_pattern }}
+          SCHEMAS: ${{ inputs.schemas }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          out="$RUNNER_TEMP/ru-catalog-out"
+          args=(--root "$ROOT" --lock "$LOCK" --gates "$GATES" --version-file "$VERSION_FILE"
+                --binding-pattern "$BINDING" --out "$out/compat.yml" --summary "$GITHUB_STEP_SUMMARY"
+                --github-output "$GITHUB_OUTPUT" --results-json "$RESULTS_JSON")
+          if [ -n "$RESULTS" ]; then args+=(--results "$ROOT/$RESULTS"); fi
+          if [ -n "$SCHEMAS" ]; then args+=(--schemas "$ROOT/$SCHEMAS"); fi
+          if [ "$CHECK" = "true" ]; then args+=(--check "$OUTPUT"); fi
+          "$RUNNER_TEMP/venv/bin/python" "$RUNNER_TEMP/ru-catalog-tools/catalog.py" build "${args[@]}"
+      - name: SBOM (CycloneDX 1.6, SPDX 2.3)
+        if: ${{ inputs.sbom && !cancelled() && steps.build.outputs.version != '' }}
+        env:
+          ROOT: ${{ inputs.root }}
+          NAME: ${{ inputs.sbom_name || github.event.repository.name }}
+          VERSION: ${{ steps.build.outputs.version }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" "$RUNNER_TEMP/ru-catalog-tools/catalog.py" sbom --root "$ROOT" \
+            --catalog "$RUNNER_TEMP/ru-catalog-out/compat.yml" --name "$NAME" --version "$VERSION" \
+            --out-dir "$RUNNER_TEMP/ru-catalog-out"
+      - name: Restore OSV-Scanner
+        id: osv_bin
+        if: ${{ inputs.osv && !cancelled() }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: ~/.cache/ru-catalog/osv
+          key: osv-scanner-${{ runner.os }}-${{ env.OSV_SCANNER_VERSION }}-${{ env.OSV_SCANNER_SHA256 }}
+      - name: Known vulnerabilities (OSV-Scanner)
+        id: osv
+        if: ${{ inputs.osv && !cancelled() }}
+        env:
+          ROOT: ${{ inputs.root }}
+          FAIL: ${{ inputs.fail_on_vulnerabilities }}
+        run: |
+          set -uo pipefail
+          bin="$HOME/.cache/ru-catalog/osv/osv-scanner"
+          if [ ! -x "$bin" ] || ! echo "${OSV_SCANNER_SHA256}  $bin" | sha256sum -c --quiet -; then
+            mkdir -p "$(dirname "$bin")"
+            curl -fsSL --retry 6 --retry-all-errors --retry-delay 10 --connect-timeout 20 -o "$bin" \
+              "https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}/osv-scanner_linux_amd64"
+            echo "${OSV_SCANNER_SHA256}  $bin" | sha256sum -c - || exit 1
+            chmod 0755 "$bin"
+          fi
+          "$bin" --version | head -1
+          out="$RUNNER_TEMP/ru-catalog-out"
+          # The generated SBOMs are scanned with the tree (OSV-Scanner reads *.cdx.json and *.spdx.json).
+          "$bin" scan source --recursive --format json --output "$out/osv.json" "$ROOT" "$out"
+          rc=$?
+          "$bin" scan source --recursive --format sarif --output "$out/osv.sarif" "$ROOT" "$out" >/dev/null 2>&1
+          case "$rc" in
+            0|1) ;;
+            128) echo "no package OSV-Scanner can check was found (no lock file, SBOM package or submodule it knows)"
+                 echo '{"results": []}' > "$out/osv.json" ;;
+            *) echo "::error::OSV-Scanner failed (exit $rc)"; exit 1 ;;
+          esac
+          n=$(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(sum(len(p.get("vulnerabilities") or []) for r in d.get("results") or [] for p in r.get("packages") or []))' "$out/osv.json")
+          echo "vulnerabilities=$n" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Known vulnerabilities (OSV-Scanner ${OSV_SCANNER_VERSION})"
+            echo
+            echo "$n known vulnerabilit$([ "$n" = 1 ] && echo y || echo ies) in the tree and its SBOM."
+          } >> "$GITHUB_STEP_SUMMARY"
+          python3 - "$out/osv.json" <<'PY'
+          import json, sys
+          for r in json.load(open(sys.argv[1])).get("results") or []:
+              src = (r.get("source") or {}).get("path", "")
+              for p in r.get("packages") or []:
+                  pkg = p.get("package") or {}
+                  for v in p.get("vulnerabilities") or []:
+                      print(f"::warning file={src},title={v.get('id')}::{pkg.get('name')} {pkg.get('version', '')}: "
+                            f"{(v.get('summary') or '').strip()[:200]}")
+          PY
+          if [ "$n" != "0" ] && [ "$FAIL" = "true" ]; then
+            echo "::error::$n known vulnerabilit$([ "$n" = 1 ] && echo y || echo ies) (osv.json in the artifact)"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ runner.temp }}/ru-catalog-out
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Pages site
+        if: ${{ inputs.pages && success() }}
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" "$RUNNER_TEMP/ru-catalog-tools/catalog.py" pages \
+            --catalog "$RUNNER_TEMP/ru-catalog-out/compat.yml" --files "$RUNNER_TEMP/ru-catalog-out" \
+            --out "$RUNNER_TEMP/catalog-site"
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
+        if: ${{ inputs.pages && success() }}
+        with:
+          path: ${{ runner.temp }}/catalog-site

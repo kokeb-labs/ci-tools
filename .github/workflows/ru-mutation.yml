@@ -1,0 +1,342 @@
+---
+# Mutation testing of a CMake project (docs/ru-mutation.md): the mutants of a catalogue in the drivers'
+# tools/mutants format, or generated operators over mutate_paths, each built incrementally and tested with ctest.
+# A mutant the tests do not kill is a finding; the kill rate must reach the level's threshold (high: 100 %, so every
+# survivor is killed by a test or recorded as equivalent with a reason). The mutants are split into shards that run
+# as parallel jobs, each with a bounded number of workers. Survivors become annotations; the report (Markdown, JSON
+# per mutant, and the mutation-testing-elements JSON that its HTML viewer reads) is an artifact.
+name: 🧬 [RU] Mutation testing
+
+on:
+  workflow_call:
+    inputs:
+      level:
+        description: "Policy: high (100 % kill rate, no broken catalogue mutant) or standard (80 %)"
+        type: string
+        required: false
+        default: "high"
+      threshold:
+        description: "Kill-rate percentage that overrides the level's; empty uses the level's"
+        type: string
+        required: false
+        default: ""
+      root:
+        description: "Directory mutant file paths, mutate_paths, catalogues and the equivalents file are relative to"
+        type: string
+        required: false
+        default: "."
+      mutate_paths:
+        description: "Space-separated folders or files whose C and C++ code generated mutants edit"
+        type: string
+        required: false
+        default: "inc src include"
+      catalogue:
+        description: >-
+          Space-separated globs of catalogue files (the drivers' tools/mutants format: "id | file | what", optional
+          "= reason", "- old" and "+ new" lines)
+        type: string
+        required: false
+        default: "tools/mutants/*.txt"
+      mode:
+        description: "auto (the catalogues when one exists, else generated), catalogue, generated or both"
+        type: string
+        required: false
+        default: "auto"
+      equivalents_file:
+        description: >-
+          YAML or JSON of equivalent mutants (id -> reason, or a list of {id, reason}): reported, not run. A listed
+          id that matches no mutant fails the run; a file that does not exist yet is a warning.
+        type: string
+        required: false
+        default: ""
+      source_dir:
+        description: "CMake source directory, relative to root"
+        type: string
+        required: false
+        default: "."
+      cmake_args:
+        description: "Configure arguments that build the tests (for example -DMYLIB_BUILD_TESTS=ON)"
+        type: string
+        required: false
+        default: ""
+      build_target:
+        description: "Target built for each mutant; empty builds all"
+        type: string
+        required: false
+        default: ""
+      ctest_args:
+        description: "Extra ctest arguments, e.g. -L unit to run only the fast tests"
+        type: string
+        required: false
+        default: ""
+      compiler:
+        description: "gcc or clang, the version of tools/misra/toolchain.json"
+        type: string
+        required: false
+        default: "gcc"
+      max_mutants:
+        description: "Most mutants run (a stable sample by id); 0 runs every one"
+        type: string
+        required: false
+        default: "0"
+      shards:
+        description: "Parallel jobs the mutants are split into"
+        type: string
+        required: false
+        default: "1"
+      workers:
+        description: "Mutants built and tested at the same time in each shard (each in its own copy of the tree)"
+        type: string
+        required: false
+        default: "2"
+      build_parallel:
+        description: "Jobs of each worker's cmake --build and ctest"
+        type: string
+        required: false
+        default: "2"
+      timeout_factor:
+        description: "A mutant's tests time out after this many times the unedited tree's test time (at least 30 s)"
+        type: string
+        required: false
+        default: "3"
+      submodules:
+        description: "actions/checkout submodules value: false, true or recursive"
+        type: string
+        required: false
+        default: "false"
+      enforce:
+        description: "Fail the job by the level's policy; false reports only (the counts are in the outputs)"
+        type: boolean
+        required: false
+        default: true
+      timeout_minutes:
+        description: "Timeout of each shard's job, in minutes"
+        type: string
+        required: false
+        default: "120"
+      artifact_name:
+        description: "Name of the report artifact (unique per call when a run calls this more than once)"
+        type: string
+        required: false
+        default: "mutation-report"
+    outputs:
+      kill_rate:
+        description: "Killed / (killed + survived), in percent"
+        value: ${{ jobs.report.outputs.kill_rate }}
+      killed:
+        description: "Mutants a test killed"
+        value: ${{ jobs.report.outputs.killed }}
+      survived:
+        description: "Mutants every test passed with"
+        value: ${{ jobs.report.outputs.survived }}
+      broken:
+        description: "Catalogue mutants whose text is not in the file or that do not compile"
+        value: ${{ jobs.report.outputs.broken }}
+      total:
+        description: "Every mutant, equivalent ones included"
+        value: ${{ jobs.report.outputs.total }}
+      passed:
+        description: "true when the level's policy passes"
+        value: ${{ jobs.report.outputs.passed }}
+
+permissions: {}
+
+jobs:
+  plan:
+    name: mutants
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      shards: ${{ steps.list.outputs.shards }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+      # The scripts at the commit of this workflow (the same trust as this file).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-mutation/ci-tools
+          sparse-checkout: |
+            tools/mutation
+            tools/misra
+          persist-credentials: false
+      - name: Install PyYAML (pinned, hash-checked)
+        run: python3 .ru-mutation/ci-tools/tools/misra/install.py python --venv "$RUNNER_TEMP/venv"
+      - name: List the mutants
+        id: list
+        env:
+          LEVEL: ${{ inputs.level }}
+          THRESHOLD: ${{ inputs.threshold }}
+          ROOT: ${{ inputs.root }}
+          PATHS: ${{ inputs.mutate_paths }}
+          CATALOGUE: ${{ inputs.catalogue }}
+          MODE: ${{ inputs.mode }}
+          EQUIVALENTS: ${{ inputs.equivalents_file }}
+          MAX: ${{ inputs.max_mutants }}
+          SHARDS: ${{ inputs.shards }}
+          WORKERS: ${{ inputs.workers }}
+          BUILD_PARALLEL: ${{ inputs.build_parallel }}
+          COMPILER: ${{ inputs.compiler }}
+        run: |
+          set -euo pipefail
+          case "$LEVEL" in high|standard) ;; *) echo "::error::level must be high or standard, not '$LEVEL'"; exit 1 ;; esac
+          case "$COMPILER" in gcc|clang) ;; *) echo "::error::compiler must be gcc or clang"; exit 1 ;; esac
+          if [ -n "$THRESHOLD" ] && ! [[ "$THRESHOLD" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "::error::threshold must be a percentage"; exit 1
+          fi
+          [[ "$MAX" =~ ^[0-9]+$ ]] || { echo "::error::max_mutants must be a whole number"; exit 1; }
+          for v in "$SHARDS" "$WORKERS" "$BUILD_PARALLEL"; do
+            [[ "$v" =~ ^[1-9][0-9]*$ ]] || { echo "::error::shards, workers and build_parallel are positive integers"; exit 1; }
+          done
+          if [ -n "$EQUIVALENTS" ] && [ ! -f "$ROOT/$EQUIVALENTS" ]; then
+            echo "::warning::equivalents_file $EQUIVALENTS does not exist under $ROOT: no mutant is recorded as equivalent"
+            EQUIVALENTS=""
+          fi
+          read -r -a globs <<< "$CATALOGUE"
+          args=()
+          for g in "${globs[@]}"; do args+=(--catalogue "$g"); done
+          mkdir -p .ru-mutation/plan
+          "$RUNNER_TEMP/venv/bin/python" .ru-mutation/ci-tools/tools/mutation/mutate.py list --root "$ROOT" \
+            --paths "$PATHS" --mode "$MODE" ${EQUIVALENTS:+--equivalents "$ROOT/$EQUIVALENTS"} --max "$MAX" \
+            "${args[@]}" --out .ru-mutation/plan/mutants.json
+          echo "shards=$(python3 -c 'import json,sys; print(json.dumps(list(range(int(sys.argv[1])))))' "$SHARDS")" \
+            >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-mutants
+          path: .ru-mutation/plan/mutants.json
+          retention-days: 7
+
+  run:
+    name: shard ${{ matrix.shard }}
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ fromJSON(inputs.timeout_minutes) }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-mutation/ci-tools
+          sparse-checkout: |
+            tools/mutation
+            tools/misra
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-mutants
+          path: .ru-mutation/plan
+      - name: Install the compiler (toolchain.json)
+        env:
+          COMPILER: ${{ inputs.compiler }}
+        run: |
+          set -euo pipefail
+          tools=.ru-mutation/ci-tools/tools/misra
+          read -r gcc clang < <(python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["host"]; print(h["gcc"], h["clang"])' "$tools/toolchain.json")
+          if ! command -v "$gcc" >/dev/null || ! command -v "$clang" >/dev/null; then python3 "$tools/install.py" apt; fi
+          if [ "$COMPILER" = "clang" ]; then cxx="$clang"; cc="${clang/clang++/clang}"; else cxx="$gcc"; cc="${gcc/g++/gcc}"; fi
+          { echo "CXX=$cxx"; echo "CC=$cc"; } >> "$GITHUB_ENV"
+          "$cxx" --version | head -1
+          if ! command -v ninja >/dev/null; then
+            timeout 180 sudo apt-get -o Acquire::Retries=3 update -q
+            timeout 600 sudo apt-get -o Acquire::Retries=3 install -y -q --no-install-recommends ninja-build
+          fi
+      - name: Build and test every mutant of the shard
+        env:
+          ROOT: ${{ inputs.root }}
+          SHARD: ${{ matrix.shard }}
+          SHARDS: ${{ inputs.shards }}
+          WORKERS: ${{ inputs.workers }}
+          BUILD_PARALLEL: ${{ inputs.build_parallel }}
+          CMAKE_ARGS: ${{ inputs.cmake_args }}
+          SOURCE_DIR: ${{ inputs.source_dir }}
+          BUILD_TARGET: ${{ inputs.build_target }}
+          CTEST_ARGS: ${{ inputs.ctest_args }}
+          TIMEOUT_FACTOR: ${{ inputs.timeout_factor }}
+        run: |
+          set -euo pipefail
+          mkdir -p .ru-mutation/results
+          python3 .ru-mutation/ci-tools/tools/mutation/mutate.py run --root "$ROOT" \
+            --mutants .ru-mutation/plan/mutants.json --shard "$SHARD" --shards "$SHARDS" --workers "$WORKERS" \
+            --build-parallel "$BUILD_PARALLEL" --cmake-args "$CMAKE_ARGS" --source-dir "$SOURCE_DIR" \
+            --build-target "$BUILD_TARGET" --ctest-args "$CTEST_ARGS" --timeout-factor "$TIMEOUT_FACTOR" \
+            --work-dir "$RUNNER_TEMP" --out ".ru-mutation/results/shard-$SHARD.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: ${{ inputs.artifact_name }}-shard-${{ matrix.shard }}
+          path: .ru-mutation/results
+          if-no-files-found: warn
+          retention-days: 7
+
+  report:
+    name: kill rate
+    needs: [plan, run]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      kill_rate: ${{ steps.report.outputs.kill_rate }}
+      killed: ${{ steps.report.outputs.killed }}
+      survived: ${{ steps.report.outputs.survived }}
+      broken: ${{ steps.report.outputs.broken }}
+      total: ${{ steps.report.outputs.total }}
+      passed: ${{ steps.report.outputs.passed }}
+    steps:
+      # The caller's tree, for the sources the report embeds.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: ${{ inputs.submodules }}
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
+          ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
+          path: .ru-mutation/ci-tools
+          sparse-checkout: tools/mutation
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: ${{ inputs.artifact_name }}-mutants
+          path: .ru-mutation/plan
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          pattern: ${{ inputs.artifact_name }}-shard-*
+          path: .ru-mutation/results
+      - name: Kill rate and report
+        id: report
+        env:
+          ROOT: ${{ inputs.root }}
+          LEVEL: ${{ inputs.level }}
+          THRESHOLD: ${{ inputs.threshold }}
+          ENFORCE: ${{ inputs.enforce }}
+        run: |
+          mkdir -p .ru-mutation/results
+          python3 .ru-mutation/ci-tools/tools/mutation/mutate.py report --root "$ROOT" \
+            --mutants .ru-mutation/plan/mutants.json --results .ru-mutation/results --level "$LEVEL" \
+            --threshold "$THRESHOLD" --report-dir .ru-mutation/report --summary "$GITHUB_STEP_SUMMARY" \
+            --github-output "$GITHUB_OUTPUT" --enforce "$ENFORCE" --annotate-prefix "$ROOT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: ${{ always() }}
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .ru-mutation/report
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,59 @@
+---
+name: 📇 Catalogue self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  # A real driver pinned at its release-candidate tag, read through the API: the generated catalogue must equal the
+  # committed one; SBOMs, the OSV scan and the Pages artifact are built.
+  fixture:
+    uses: ./.github/workflows/ru-catalog.yml
+    permissions:
+      contents: read
+    with:
+      root: tests/fixtures/catalog
+      lock_file: drivers.lock.yml
+      gates_file: cmake/gates.cmake
+      output: compat.yml
+      results: results.yml
+      sbom_name: catalog-fixture
+      pages: true
+      artifact_name: selftest-catalog
+
+  outputs-checked:
+    needs: fixture
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: The catalogue is the fixture's
+        env:
+          OUT: ${{ toJSON(needs.fixture.outputs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          o = json.loads(os.environ["OUT"])
+          print(o)
+          assert (o["drivers"], o["version"], o["stale"], o["errors"], o["vulnerabilities"]) == \
+              ("1", "0.2.0", "false", "0", "0"), o
+          PY
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: selftest-catalog
+          path: catalog
+      - name: The SBOMs name the pinned driver
+        run: |
+          python3 - <<'PY'
+          import json
+          cdx = json.load(open("catalog/catalog-fixture-0.2.0.cdx.json"))
+          spdx = json.load(open("catalog/catalog-fixture-0.2.0.spdx.json"))
+          assert cdx["bomFormat"] == "CycloneDX" and cdx["specVersion"] == "1.6", cdx
+          purls = [c["purl"] for c in cdx["components"]]
+          assert purls == ["pkg:github/kokeb-labs-drivers/driver-ws2812-rmt@v0.1.0-rc.1"], purls
+          assert spdx["spdxVersion"] == "SPDX-2.3" and len(spdx["packages"]) == 2, spdx["packages"]
+          print("SBOMs as expected")
+          PY

@@ -1,0 +1,3 @@
+---
+boundary_files:
+  - {path: lib/core/backends/rtos_boundary.cpp, sdk: freertos, status: present}

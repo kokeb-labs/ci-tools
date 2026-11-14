@@ -134,6 +134,23 @@ jobs:
       - name: Unit tests for ru-misra's scripts (licence gate, deviation records, markers, policy, extraction)
         run: python tools/misra/test_misra.py
 
+      - name: Unit tests for ru-cmake-matrix's planner, entry runner and report
+        run: python tools/cmake_matrix/test_cmake_matrix.py
+
+      - name: Unit tests for ru-mutation's operators, listing and kill-rate policy
+        run: python tools/mutation/test_mutation.py
+
+      - name: Unit tests for ru-pin-hygiene's checks (fake GitHub API, scratch repositories)
+        run: python tools/pins/test_pins.py
+
+      - name: Unit tests for ru-layering's checker (fixtures, target graph, symbols, denylist, poison headers)
+        run: python tools/layering/test_layering.py
+
+      - name: Unit tests for ru-catalog's generator, schemas and SBOMs
+        run: |
+          python -m pip install --quiet --require-hashes --no-deps -r tools/catalog/requirements.txt
+          python tools/catalog/test_catalog.py
+
       # ru-build inlines the ensure-tools-directory action's script (see the
       # comment there); the two copies must not drift apart.
       - name: ru-build's inlined tools-directory step matches the action
@@ -324,6 +341,36 @@ jobs:
     permissions:
       contents: read
 
+  selftest-cmake-matrix:
+    name: Self-test CMake matrix
+    uses: ./.github/workflows/ci-cmake-matrix.yml
+    permissions:
+      contents: read
+
+  selftest-mutation:
+    name: Self-test mutation testing
+    uses: ./.github/workflows/ci-mutation.yml
+    permissions:
+      contents: read
+
+  selftest-pin-hygiene:
+    name: Self-test pin hygiene
+    uses: ./.github/workflows/ci-pin-hygiene.yml
+    permissions:
+      contents: read
+
+  selftest-layering:
+    name: Self-test layering
+    uses: ./.github/workflows/ci-layering.yml
+    permissions:
+      contents: read
+
+  selftest-catalog:
+    name: Self-test catalogue
+    uses: ./.github/workflows/ci-catalog.yml
+    permissions:
+      contents: read
+
   # Dogfood the gate: this repository's required check is "CI gate / gate".
   ci-gate:
     name: CI gate
@@ -344,6 +391,11 @@ jobs:
       - selftest-handbook-check
       - selftest-repo-checks
       - selftest-misra
+      - selftest-cmake-matrix
+      - selftest-mutation
+      - selftest-pin-hygiene
+      - selftest-layering
+      - selftest-catalog
     if: always()
     uses: ./.github/workflows/ru-ci-gate.yml
     permissions:
