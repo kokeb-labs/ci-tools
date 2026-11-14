@@ -235,8 +235,9 @@ def capabilities(hw: Hardware) -> Fig:
     of = "the protocol" if kind == "protocol" else "the chip"
     fig = Fig(
         "chip-capabilities",
-        f"What the {hw.chip} does",
-        alt=f"Capability map of the {hw.chip}: " + "; ".join(
+        "What the driver does" if kind == "protocol" else f"What the {hw.chip} does",
+        alt=("Capability map of the driver's protocol: " if kind == "protocol" else f"Capability map of the {hw.chip}: ")
+        + "; ".join(
             f"{c.title} ({STATUSES[c.status][1].lower()}): {c.what}" for c in caps) + ".",
         width=W_FIG,
         profile="overview",
