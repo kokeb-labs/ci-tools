@@ -15,6 +15,17 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- **Docs theme: the chip-first README.** Four optional keys of `docs/hardware.yml` give a driver README its opening:
+  `overview` (the chip in one sentence, its applications, headline numbers and system), `capabilities` (one entry
+  per chip function with its icon, status, driver calls and registers, checked against the headers named under
+  `driver`) and `frames` (a bus transfer bit by bit, with an optional SPI waveform and bit decode). New figures
+  `chip-hero`, `chip-capabilities`, `chip-frame-<id>` and `chip-wiring-<id>` (a circuit reduced to what is wired by
+  hand), new regions `chip-summary`, `chip-uses` and `chip-coverage`, and `kokeb-docs readme --check|--migrate`,
+  which `kokeb-docs check` runs once the file has an `overview`. A repository without the keys gets no new figure
+  and no new check. See docs/readme-chip-first.md.
+
 ## [1.17.0] - 2026-11-13
 
 ### Added

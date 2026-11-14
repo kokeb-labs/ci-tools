@@ -1,0 +1,52 @@
+# XMPL100 Driver
+
+<!-- generated: chip-summary -->
+<!-- /generated -->
+
+C++20 driver for the XMPL100.
+
+<!-- figure: chip-hero -->
+<!-- /figure -->
+
+## What it does
+
+<!-- figure: chip-capabilities -->
+<!-- /figure -->
+
+## Where it is used
+
+<!-- generated: chip-uses -->
+<!-- /generated -->
+
+## Inside the chip
+
+<!-- figure: chip-blocks -->
+<!-- /figure -->
+
+## Pins and wiring
+
+<!-- figure: chip-pinout -->
+<!-- /figure -->
+
+<!-- figure: chip-wiring-typical -->
+<!-- /figure -->
+
+<!-- figure: chip-frame-spi -->
+<!-- /figure -->
+
+<!-- generated: chip-card -->
+<!-- /generated -->
+
+## Quick start
+
+<!-- generated: quickstart-code -->
+<!-- /generated -->
+
+## Driver coverage
+
+<!-- generated: chip-coverage -->
+<!-- /generated -->
+
+## Documentation
+
+See `docs/`.

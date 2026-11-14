@@ -14,10 +14,12 @@ def unverified_note(fig: Fig, items: list[str], y: float | None = None) -> None:
     """A footnote line under the figure for facts not confirmed in the datasheet."""
     if not items:
         return
-    y = (fig._maxy + 22) if y is None else y
+    # An overview figure (read at README width) keeps its footnote at its smallest text size.
+    size = max(12.5, fig.k["small"])
+    y = (fig._maxy + 22 + size - 12.5) if y is None else y
     text = f"{UNVERIFIED_MARK} Not confirmed in the datasheet: " + "; ".join(items) + "."
-    for k, line in enumerate(wrap(text, fig.body_w, 12.5)):
-        fig.text(0, y + k * 18, line, size=12.5, color="muted")
+    for k, line in enumerate(wrap(text, fig.body_w, size)):
+        fig.text(0, y + k * size * 1.44, line, size=size, color="muted")
 
 
 def layout_problems(fig: Fig, bodies: list[tuple[Box, str]], wires: list[tuple[tuple, tuple]],

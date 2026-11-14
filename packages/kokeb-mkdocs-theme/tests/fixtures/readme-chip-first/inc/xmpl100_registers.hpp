@@ -1,0 +1,2 @@
+// Fixture: register names, one per comment.
+// CHIP_ID REV_ID STATUS CTRL CONFIG TEMP_MSB TEMP_LSB TEMP_CRC ALERT_HIGH ALERT_LOW OFFSET

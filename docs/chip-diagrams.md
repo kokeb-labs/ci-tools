@@ -17,6 +17,7 @@ module or generator of its own:
 | `<!-- generated: chip-pins -->`: one row per pin with type, domain, function, hook, "if unused" and citation | `kokeb-docs gen` | `kokeb-docs gen --check` |
 | `<!-- generated: chip-parts -->`: the parts of each circuit with their values and nets | `kokeb-docs gen` | `kokeb-docs gen --check` |
 | `<!-- generated: chip-card -->`: the chip at a glance for the README: package, pin count, body size, pin pitch, supply range, and a table of the other packages it is sold in, each with its citation; a row the file does not give is left out | `kokeb-docs gen` | `kokeb-docs gen --check` |
+| `chip-hero`, `chip-capabilities`, `chip-frame-<id>`, `chip-wiring-<id>` and the `chip-summary`, `chip-uses` and `chip-coverage` regions: the README's chip-first opening, from `overview`, `capabilities` and `frames` ([Chip-first README](readme-chip-first.md)) | `kokeb-docs figures`, `kokeb-docs gen` | `kokeb-docs figures --check`, `kokeb-docs gen --check`, `kokeb-docs readme --check` |
 | A KiCad netlist of a circuit, for a schematic or PCB tool | `kokeb-docs hardware --kicad-netlist OUT --circuit ID` | `kokeb-docs hardware --check` |
 
 `kokeb-docs check`, which CI runs before every build, validates the file first and stops there when it is wrong,
@@ -90,6 +91,7 @@ The template site's [`docs/hardware.yml`](../templates/mkdocs-site/docs/hardware
 | `pins` | yes | One entry per package pin: `number` (or `EP` for the exposed pad), `name`, `type`, `domain` (the supply that sets its levels), `function`, `hook`, `unused` (what to do with it when unused), `ref` |
 | `block_diagram` | no | `ref`, `blocks` (`id`, `label`, `detail`, `at: [column, row]`, `pins`, `tone`, `side`), `links` (`from`, `to`, `label`, `both`) |
 | `circuits` | no | `id` (names the figure), `title`, `description`, `ref`, `parts`, `nets` (`name`, `kind`, `label`, `nodes`, `ref`, `hook`), `unused` |
+| `overview`, `driver`, `capabilities`, `frames` | no | The README's chip-first opening: see [Chip-first README](readme-chip-first.md#what-a-builder-writes) |
 
 Pin `type` is one of `power`, `ground`, `bus`, `digital-in`, `digital-out`, `digital-io`, `open-drain`, `analog`,
 `power-out` (a load output) and `nc`; each has its own colour in the pinout, told apart in both themes. A part
@@ -187,9 +189,8 @@ open pin. There are no dates or time stamps, so the same circuit always gives th
 2. In `docs/hardware.md`, replace the hand-written pin table with `<!-- generated: chip-pins -->` and embed
    `<!-- figure: chip-pinout -->`, `<!-- figure: chip-blocks -->` and `<!-- figure: chip-circuit-<id> -->`, each
    closed by its end marker.
-   In the README, under "At a glance", embed `<!-- figure: chip-pinout -->`, `<!-- figure: chip-outline -->` (when
-   the file has an outline) and `<!-- figure: chip-blocks -->`, then add `<!-- generated: chip-card -->` for the
-   table: the chip's module view without opening the docs.
+   The README embeds the chip figures and the chip card in its chip-first layout: write `overview`,
+   `capabilities` and `frames` and run `kokeb-docs readme --migrate` ([Chip-first README](readme-chip-first.md)).
 3. Run `kokeb-docs hardware --check`, then `kokeb-docs figures && kokeb-docs gen`, and commit the SVGs,
    `docs/diagrams/figures.json`, `docs/diagrams/index.md`, the README and the page.
 4. `kokeb-docs check` and `mkdocs build --strict` pass locally; CI then keeps them current.
