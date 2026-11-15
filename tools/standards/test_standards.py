@@ -8,6 +8,7 @@ import copy
 import datetime
 import io
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -286,9 +287,58 @@ class Files(Case):
         f = self.run_check(self.tree(README_dot_md="# Abc\n"))
         self.assertEqual(self.codes(f), ["030"])
 
+    def test_docs_pages_are_read_but_profile_lines_are_not(self):
+        f = self.run_check(self.tree(**{"docs/installation.md": "You need a C++17 compiler (Clang 12+).\n"}))
+        self.assertEqual([(x.code, x.path) for x in f if x.severity == "error"],
+                         [("031", "docs/installation.md"), ("031", "docs/installation.md")])
+        root = self.tree(**{"docs/profile.md": "KB-CPP20-001 Strict ISO C++20, a C++20 compiler.\n",
+                            "docs/adr/0010.md": "a C++17 compiler\n"})
+        (root / "docs/profile.md").write_text("KB-CPP17-001 needs a C++17 compiler.\n")
+        self.assertEqual(self.codes(self.run_check(root), "error"), [])
+
     def test_build_directories_and_third_party_are_skipped(self):
         root = self.tree(**{"build__CMakeLists_dot_txt": "cxx_std_17\n", "third_party__x__CMakeLists_dot_txt": "cxx_std_11\n"})
         self.assertEqual(self.codes(self.run_check(root), "error"), [])
+
+
+class Base(Case):
+    def git(self, root: Path, *args: str) -> None:
+        env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@e.invalid",
+               "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@e.invalid"}
+        subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, env=env)
+
+    def repo_at_base(self, **base_changes) -> Path:
+        root = self.tree(self.edit(**base_changes))
+        self.git(root, "init", "-q", "-b", "main")
+        self.git(root, "add", "-A")
+        self.git(root, "commit", "-q", "-m", "base")
+        return root
+
+    def test_raising_the_minimum_needs_a_breaking_entry(self):
+        root = self.repo_at_base(standard=20, tested=[20])
+        (root / "driver.yml").write_text(self.edit(standard=23, profile="KB-CPP23", tested=[23], profile_version="1.0",
+                                                   compilers={"gcc": "13", "clang": "17"}))
+        std = self.registry(lambda r: r["profiles"]["KB-CPP23"].update(handbook_versions=["1.0"]))
+        f = [x for x in cs.run(root, std, TODAY, False, "HEAD") if x.code == "040"]
+        self.assertEqual(len(f), 1)
+        (root / "CHANGELOG.md").write_text("# Changelog\n\n## [Unreleased]\n\n### Breaking\n\n- Needs C++23.\n")
+        self.assertEqual([x for x in cs.run(root, std, TODAY, False, "HEAD") if x.code == "040"], [])
+
+    def test_dropping_a_tested_standard_is_breaking_and_widening_is_not(self):
+        root = self.repo_at_base(tested=[20, 23])
+        (root / "driver.yml").write_text(self.edit(tested=[20]))
+        self.assertEqual(len([x for x in cs.run(root, STANDARDS, TODAY, False, "HEAD") if x.code == "040"]), 1)
+        root = self.repo_at_base(tested=[20])
+        (root / "driver.yml").write_text(self.edit(tested=[20, 23]))
+        self.assertEqual([x for x in cs.run(root, STANDARDS, TODAY, False, "HEAD") if x.code == "040"], [])
+
+    def test_a_new_block_has_nothing_to_compare(self):
+        root = self.tree(driver="name: abc\n")
+        self.git(root, "init", "-q", "-b", "main")
+        self.git(root, "add", "-A")
+        self.git(root, "commit", "-q", "-m", "base")
+        (root / "driver.yml").write_text(DRIVER_YML)
+        self.assertEqual([x for x in cs.run(root, STANDARDS, TODAY, False, "HEAD") if x.code == "040"], [])
 
 
 class Command(Case):

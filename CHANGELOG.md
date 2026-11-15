@@ -22,7 +22,8 @@ that heading.
   flag and compiler floors. `tools/standards/check_standards.py` reads a driver's new `language:` block in
   `driver.yml` and fails when the profile is unknown or retired, the standard or a compiler floor does not belong to
   the profile, or the CMake files, clang-format, `__cplusplus` assertions, `-std` flags, workflow standards and README
-  badge and text name another standard (codes LANG-001 to LANG-031). A driver without the block still passes with a
+  badge and text name another standard (codes LANG-001 to LANG-031). `--base-ref` adds LANG-040: raising the minimum standard or dropping a tested one needs a
+  `### Breaking` entry in the driver's changelog. A driver without the block still passes with a
   note. Guide: `docs/language-standards.md`. Not a reusable workflow yet, so callers see no change and no release is cut.
 
 ## [1.22.0] - 2026-11-14

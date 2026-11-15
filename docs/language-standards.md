@@ -41,7 +41,7 @@ language:
 ## What the checker compares
 
 ```bash
-python3 tools/standards/check_standards.py --repo path/to/driver [--today YYYY-MM-DD] [--require]
+python3 tools/standards/check_standards.py --repo path/to/driver [--today YYYY-MM-DD] [--require] [--base-ref origin/main]
 ```
 
 | Code | Fails when |
@@ -56,9 +56,10 @@ python3 tools/standards/check_standards.py --repo path/to/driver [--today YYYY-M
 | `LANG-020` | `CMakeLists.txt` and `cmake/` never require the declared standard (`cxx_std_N`) |
 | `LANG-021` | a file names another standard: `cxx_std_N`, `CMAKE_CXX_STANDARD`, clang-format `Standard`, a `__cplusplus ==` assertion, or a `-std=c++N` / `cppcheck_std` outside `tested` |
 | `LANG-022` | a workflow's standard matrix differs from `tested` |
-| `LANG-030`, `LANG-031` | the README badge is missing (warning), or the badge, "a C++20 compiler" or "GCC 10+" disagree with the block |
+| `LANG-040` | with `--base-ref`: the minimum standard was raised, or a tested standard dropped, and `CHANGELOG.md` has no `### Breaking` entry |
+| `LANG-030`, `LANG-031` | the README badge is missing (warning), or the badge, "a C++20 compiler" or "GCC 10+" (README and `docs/` pages) disagree with the block |
 
-Build directories, `third_party/` and `docs/` prose other than the README are not read for flags. The checker needs
+Build directories and `third_party/` are skipped; Markdown is read for badge, prose and compiler floors only, never for flags, and a line that names a `KB-CPP` rule is left alone. The checker needs
 PyYAML. A repository whose `driver.yml` has no block still passes, with a note, so the check can be switched on before
 every driver has the block.
 
