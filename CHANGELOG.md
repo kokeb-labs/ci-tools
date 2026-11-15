@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.21.0] - 2026-11-14
+
 ### Added
 
 - `ru-cpp-lint`: input `timeout_minutes` (default 20). `ru-misra`: input `scan_timeout_minutes` (default 60). Large
