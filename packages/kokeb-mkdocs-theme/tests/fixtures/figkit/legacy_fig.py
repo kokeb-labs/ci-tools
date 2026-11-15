@@ -9,7 +9,7 @@ def build():
     f = Fig("legacy-fig", "Legacy figure", alt="Two cards joined by an arrow, a region, a note and a chip row.",
             width=900, kicker="Fixture", subtitle="Drawn with the original figkit calls.",
             legend=[("blue", "a card"), ("~solid", "runs next"), ("~dashed", "passes files")])
-    r = f.region(0, 0, 840, 230, "Region", tone="slate", sub="with a sub label")
+    f.region(0, 0, 840, 230, "Region", tone="slate", sub="with a sub label")
     a = f.card(24, 56, 240, "First", ["one body line", "another body line"], tone="blue", accent=True, tag="tag")
     b = f.card(400, 56, 240, "Second", ["body"], tone="amber")
     c = f.card(24, 150, 240, "Third", [], tone="green", h=56, center=True, accent=True)

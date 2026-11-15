@@ -357,7 +357,6 @@ def route(fid: str, lock: dict, cards: dict, edges: list[dict], label_size: dict
         lo = rbot[g] if g >= 0 else rtop[0] - 3 * BASE_GUTTER / 2
         hi = rtop[g + 1] if g + 1 < len(ranks) else rbot[g] + BASE_GUTTER
         lst.sort(key=lambda i: (port.get((i, "tail"), 0.0), i))
-        n = len(lst)
         first_of = lambda i: (g == (rank_of[edges[i]["from"]] - (1 if kind[i] == "back" else 0))) if kind[i] != "same" else True
         has_label = {i: (i in label_size and first_of(i)) for i in lst}
         lh = max([lm(i) for i in lst if has_label[i]], default=0)
@@ -422,7 +421,6 @@ def route(fid: str, lock: dict, cards: dict, edges: list[dict], label_size: dict
             pts.append((ce, end_m))
         else:  # same rank
             if ts.startswith("c"):  # side to side
-                m = (port[(i, "tail")] + port[(i, "head")]) / 2
                 cstart = (ba[2] + gap) if ts == "c1" else (ba[0] - gap)
                 cend = (bb[0] - gap) if te == "c0" else (bb[2] + gap)
                 pm = port[(i, "tail")]

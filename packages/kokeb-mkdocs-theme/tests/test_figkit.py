@@ -12,8 +12,6 @@ needed only by the tests that run ``figkit layout`` (they skip without ``dot``);
 
 from __future__ import annotations
 
-import copy
-import hashlib
 import importlib.util
 import json
 import os
@@ -140,7 +138,7 @@ class GoldenTests(unittest.TestCase):
     def test_prototype_fixtures_present(self):
         """The three prototype figures are fixtures: the state machine, the zone graph and the byte layout."""
         ids = {yaml.safe_load(p.read_text())["id"] for p in MODELS}
-        self.assertTrue({"handler-health", "layers-zones", "journal-layout"} <= ids)
+        self.assertLessEqual({"handler-health", "layers-zones", "journal-layout"}, ids)
 
 
 class DeterminismTests(unittest.TestCase):
