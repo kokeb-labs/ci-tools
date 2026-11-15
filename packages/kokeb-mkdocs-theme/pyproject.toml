@@ -25,7 +25,7 @@ dependencies = [
 # Screenshots of the built site at phone and desktop widths (CI quality job, or locally).
 screenshots = ["playwright==1.64.1"]
 # Only `kokeb-docs figkit font` (the embedded font subset of a figure) needs these; rendering never does.
-fonts = ["fonttools==4.60.1", "brotli==1.2.1"]
+fonts = ["fonttools==4.60.2", "brotli==1.2.1"]
 
 [project.scripts]
 kokeb-docs = "kokeb_mkdocs_theme.cli:main"
