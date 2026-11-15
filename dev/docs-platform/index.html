@@ -933,6 +933,8 @@
       
         
       
+        
+      
     
     
     
@@ -1187,6 +1189,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../figkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Figures with figkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../chip-diagrams/" class="md-nav__link">
         
   
@@ -1256,6 +1286,8 @@
       
         
           
+        
+      
         
       
         
@@ -1437,7 +1469,7 @@
 <tbody>
 <tr>
 <td>Theme package</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
 <td><code>theme: kokeb</code> (brand, layout, components, light and dark), <code>plugins: [kokeb]</code> (Markdown dialect, validation, repository links, figures, page checks), figkit, the <code>kokeb-docs</code> command and the pinned toolchain</td>
 </tr>
 <tr>
@@ -1447,18 +1479,23 @@
 </tr>
 <tr>
 <td>Template</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
 <td>The skeleton of a driver site; the self-CI builds it</td>
 </tr>
 <tr>
 <td>Migration tool</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
 <td>The mechanical move from Jekyll, with a <code>--check</code> dry run</td>
 </tr>
 <tr>
 <td>Guides</td>
 <td><a href="../MIGRATING-TO-MKDOCS/">Migrating to MkDocs</a>, <a href="../DOCS-STYLE-GUIDE/">Style guide</a></td>
 <td>The procedure, and what the pages contain</td>
+</tr>
+<tr>
+<td>Figure kit</td>
+<td><a href="../figkit/"><code>kokeb_mkdocs_theme/figkit</code></a></td>
+<td>State machine, sequence, timeline, graph, matrix, byte layout and pipeline figures from a model file in <code>docs/model/</code>, with layout locks, an adaptive light and dark SVG, and lints (<a href="../adr/0001-figure-toolchain/">ADR 0001</a>)</td>
 </tr>
 <tr>
 <td>Chip diagrams</td>
@@ -1532,8 +1569,12 @@ Markdown extensions, strict validation and the version selector.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>kokeb-docs figures [--check]</code></td>
-<td>Builds (or checks) the figkit figures under <code>docs/diagrams/figures/</code></td>
+<td><code>kokeb-docs figures [--check] [--lint]</code></td>
+<td>Builds (or checks) the figkit figures: modules under <code>docs/diagrams/figures/</code> and models under <code>docs/model/</code></td>
+</tr>
+<tr>
+<td><code>kokeb-docs figkit new|layout|font|kinds|css</code></td>
+<td>Scaffolds a model figure, makes the Graphviz layout locks, the font subsets, the shared style sheet (<a href="../figkit/">Figures with figkit</a>)</td>
 </tr>
 <tr>
 <td><code>kokeb-docs gen [--check]</code></td>
@@ -1557,7 +1598,7 @@ Markdown extensions, strict validation and the version selector.</p>
 </tr>
 </tbody>
 </table>
-<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
+<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
 writes the catalogue, the permissions table and every inputs and jobs table from the workflow files.</p>
 <h2 id="preview-a-site-locally">Preview a site locally<a class="headerlink" href="#preview-a-site-locally" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>.venv/bin/activate

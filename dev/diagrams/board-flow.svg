@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="882" height="369" viewBox="0 0 882 369" role="img" aria-labelledby="board-flow-title board-flow-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="board-flow-title">From description to generated code</title>
+<desc id="board-flow-desc">Pipeline in three columns in which a board description is read by checks and then written out by emitters as generated files.</desc>
+<defs><marker id="board-flow-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7C8798"/></marker></defs>
+<rect x="0.5" y="0.5" width="881" height="368" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#7A360E">EXAMPLE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" fill="#0E1726">From description to generated code</text>
+<rect x="32" y="93.3" width="818" height="1" fill="#E2E7EE"/>
+<rect x="32" y="111.3" width="230" height="227" rx="14" fill="#EAF2FF" stroke="#BCD2F9" stroke-width="1.2"/>
+<rect x="326" y="111.3" width="230" height="227" rx="14" fill="#FFF5E3" stroke="#F1CF93" stroke-width="1.2"/>
+<rect x="620" y="111.3" width="230" height="227" rx="14" fill="#EAF7EF" stroke="#B2E2C2" stroke-width="1.2"/>
+<path d="M254 198.8 L288.2 198.8 Q294 198.8 294 193.1 L294 193.1 Q294 187.3 299.8 187.3 L334 187.3" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#board-flow-arrow-rail)"/>
+<path d="M254 283.8 L286 283.8 Q294 283.8 294 275.8 L294 218.3 Q294 210.3 302 210.3 L334 210.3" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#board-flow-arrow-rail)"/>
+<path d="M548 187.3 L582.2 187.3 Q588 187.3 588 193.1 L588 193.1 Q588 198.8 593.8 198.8 L628 198.8" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#board-flow-arrow-rail)"/>
+<path d="M548 210.3 L580 210.3 Q588 210.3 588 218.3 L588 275.8 Q588 283.8 596 283.8 L628 283.8" fill="none" stroke="#7C8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#board-flow-arrow-rail)"/>
+<rect x="44" y="164.3" width="206" height="69" rx="10" fill="#FFFFFF" stroke="#738093" stroke-width="1"/>
+<rect x="44" y="172.3" width="4" height="53" rx="2" fill="#2563EB"/>
+<rect x="44" y="249.3" width="206" height="69" rx="10" fill="#FFFFFF" stroke="#738093" stroke-width="1"/>
+<rect x="44" y="257.3" width="4" height="53" rx="2" fill="#2563EB"/>
+<rect x="338" y="164.3" width="206" height="69" rx="10" fill="#FFFFFF" stroke="#738093" stroke-width="1"/>
+<rect x="338" y="172.3" width="4" height="53" rx="2" fill="#C26A05"/>
+<rect x="632" y="164.3" width="206" height="69" rx="10" fill="#FFFFFF" stroke="#738093" stroke-width="1"/>
+<rect x="632" y="172.3" width="4" height="53" rx="2" fill="#15803D"/>
+<rect x="632" y="249.3" width="206" height="69" rx="10" fill="#FFFFFF" stroke="#738093" stroke-width="1"/>
+<rect x="632" y="257.3" width="4" height="53" rx="2" fill="#15803D"/>
+<text x="48" y="136.3" font-size="13" font-weight="700" fill="#1E429F">INPUTS</text>
+<text x="342" y="136.3" font-size="13" font-weight="700" fill="#8A3C0B">CHECKS</text>
+<text x="636" y="136.3" font-size="13" font-weight="700" fill="#14532D">OUTPUTS</text>
+<text x="64" y="191.1" font-size="15" font-weight="700" fill="#0E1726">board.yml</text>
+<text x="64" y="215.9" font-size="13" fill="#2B3442">pins and buses</text>
+<rect x="193.4" y="174.3" width="46.6" height="21.5" rx="10.8" fill="#EAF2FF" stroke="#BCD2F9" stroke-width="1"/>
+<text x="201.4" y="188.7" font-size="11.5" font-weight="700" fill="#1E429F">input</text>
+<text x="64" y="276.1" font-size="15" font-weight="700" fill="#0E1726">image.yml</text>
+<text x="64" y="300.9" font-size="13" fill="#2B3442">parts and drivers</text>
+<text x="358" y="191.1" font-size="15" font-weight="700" fill="#0E1726">Rule registry</text>
+<text x="358" y="215.9" font-size="13" fill="#2B3442">every rule has a code</text>
+<text x="652" y="191.1" font-size="15" font-weight="700" fill="#0E1726">image.cmake</text>
+<text x="652" y="215.9" font-size="13" fill="#2B3442">targets and options</text>
+<text x="652" y="276.1" font-size="15" font-weight="700" fill="#0E1726">image.lock</text>
+<text x="652" y="300.9" font-size="13" fill="#2B3442">pinned versions</text>
+<rect x="274.3" y="183.1" width="39.5" height="20" rx="10" fill="#FFFFFF"/>
+<text x="294" y="197.4" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">read</text>
+<rect x="568.8" y="183.1" width="38.3" height="20" rx="10" fill="#FFFFFF"/>
+<text x="588" y="197.4" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">emit</text>
+</svg>

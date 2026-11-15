@@ -16,7 +16,7 @@
         <link rel="prev" href="../MIGRATING-TO-MKDOCS/">
       
       
-        <link rel="next" href="../chip-diagrams/">
+        <link rel="next" href="../figkit/">
       
       
         
@@ -933,6 +933,8 @@
       
         
       
+        
+      
     
     
     
@@ -1348,6 +1350,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../figkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Figures with figkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../chip-diagrams/" class="md-nav__link">
         
   
@@ -1417,6 +1447,8 @@
       
         
           
+        
+      
         
       
         
@@ -1815,9 +1847,9 @@ navigation and table of contents).</p>
 <td>Offset and name columns get code font</td>
 </tr>
 <tr>
-<td>Sequence or state machine</td>
-<td>a <code>mermaid</code> fence</td>
-<td>Themed for light and dark automatically</td>
+<td>Sequence, state machine, timeline, matrix, byte layout</td>
+<td>a figkit model (<code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code>)</td>
+<td><a href="../figkit/">Figures with figkit</a>; Mermaid only in README files and pull requests</td>
 </tr>
 <tr>
 <td>Architecture, signal flow, layouts</td>
@@ -1900,7 +1932,11 @@ driver uses. On a driver's home page the card sits under Pins and wiring, after 
   <code>docs/diagrams/figures/&lt;id&gt;.py</code>, <code>data()</code> reads the facts from the headers, <code>build()</code> lays out cards. The build
   refuses text under 4.5:1 contrast in either theme, overlaps and missing alt text; <code>kokeb-docs figures --check</code>
   fails CI when the code changed and the figure did not. Embed with <code>&lt;!-- figure: &lt;id&gt; --&gt;</code> / <code>&lt;!-- /figure --&gt;</code>.</li>
-<li><strong>Mermaid</strong> for sequences and state machines.</li>
+<li><strong>Models</strong> for sequences, state machines, timelines, graphs, matrices, byte layouts and pipelines: a file
+  <code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code>, scaffolded with <code>kokeb-docs figkit new</code> (<a href="../figkit/">Figures with figkit</a>).</li>
+<li><strong>Mermaid</strong> is not used on published pages (<a href="../adr/0001-figure-toolchain/">ADR 0001</a>). It stays allowed in
+  README files and pull requests, where GitHub renders it. <code>kokeb-docs figures --lint</code> reports Mermaid fences in
+  <code>docs/</code>.</li>
 <li><strong>Chip figures</strong> (pinout, block diagram, application circuit) are not written as modules: they are drawn from
   <code>docs/hardware.yml</code> (<a href="#chip-hardware">Chip hardware</a>).</li>
 </ul>
@@ -2183,13 +2219,13 @@ duplicated API tables (that is the site's job).</p>
         
         
           
-          <a href="../chip-diagrams/" class="md-footer__link md-footer__link--next" aria-label="Next: Chip diagrams">
+          <a href="../figkit/" class="md-footer__link md-footer__link--next" aria-label="Next: Figures with figkit">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Chip diagrams
+                Figures with figkit
               </div>
             </div>
             <div class="md-footer__button md-icon">

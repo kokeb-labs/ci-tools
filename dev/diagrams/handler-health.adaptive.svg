@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="697" height="1310" viewBox="0 0 697 1310" role="img" aria-labelledby="handler-health-title handler-health-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" class="fk">
+<title id="handler-health-title">Handler lifecycle and health</title>
+<desc id="handler-health-desc">State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them.</desc>
+<style>
+.fk{--fk-amber-strong:#C26A05;--fk-amber-text:#8A3C0B;--fk-amber-tint:#FFF5E3;--fk-blue-strong:#2563EB;--fk-blue-text:#1E429F;--fk-blue-tint:#EAF2FF;--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-green-strong:#15803D;--fk-green-text:#14532D;--fk-green-tint:#EAF7EF;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-ink2:#2B3442;--fk-muted:#566070;--fk-rail:#7C8798;--fk-rose-strong:#DB2752;--fk-rose-text:#9F1239;--fk-rose-tint:#FFEEF2;--fk-slate-strong:#64748B;--fk-slate-text:#334155;--fk-slate-tint:#F1F4F8;--fk-violet-strong:#7C3AED;--fk-violet-text:#5B21B6;--fk-violet-tint:#F3EEFF;}
+@media (prefers-color-scheme:dark){.fk{--fk-amber-strong:#FBBF24;--fk-amber-text:#FDE68A;--fk-amber-tint:#2C2310;--fk-blue-strong:#60A5FA;--fk-blue-text:#BFDBFE;--fk-blue-tint:#13233A;--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-frame:#283241;--fk-green-strong:#4ADE80;--fk-green-text:#BBF7D0;--fk-green-tint:#11281A;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-ink2:#D2DAE4;--fk-muted:#9AA6B5;--fk-rail:#6C7889;--fk-rose-strong:#FB7185;--fk-rose-text:#FECDD3;--fk-rose-tint:#321820;--fk-slate-strong:#94A3B8;--fk-slate-text:#E2E8F0;--fk-slate-tint:#1B232E;--fk-violet-strong:#A78BFA;--fk-violet-text:#DDD6FE;--fk-violet-tint:#221A3A;}}
+:root[data-theme="dark"] .fk,[data-md-color-scheme="slate"] .fk{--fk-amber-strong:#FBBF24;--fk-amber-text:#FDE68A;--fk-amber-tint:#2C2310;--fk-blue-strong:#60A5FA;--fk-blue-text:#BFDBFE;--fk-blue-tint:#13233A;--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-frame:#283241;--fk-green-strong:#4ADE80;--fk-green-text:#BBF7D0;--fk-green-tint:#11281A;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-ink2:#D2DAE4;--fk-muted:#9AA6B5;--fk-rail:#6C7889;--fk-rose-strong:#FB7185;--fk-rose-text:#FECDD3;--fk-rose-tint:#321820;--fk-slate-strong:#94A3B8;--fk-slate-text:#E2E8F0;--fk-slate-tint:#1B232E;--fk-violet-strong:#A78BFA;--fk-violet-text:#DDD6FE;--fk-violet-tint:#221A3A;}
+:root[data-theme="light"] .fk,[data-md-color-scheme="default"] .fk{--fk-amber-strong:#C26A05;--fk-amber-text:#8A3C0B;--fk-amber-tint:#FFF5E3;--fk-blue-strong:#2563EB;--fk-blue-text:#1E429F;--fk-blue-tint:#EAF2FF;--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-green-strong:#15803D;--fk-green-text:#14532D;--fk-green-tint:#EAF7EF;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-ink2:#2B3442;--fk-muted:#566070;--fk-rail:#7C8798;--fk-rose-strong:#DB2752;--fk-rose-text:#9F1239;--fk-rose-tint:#FFEEF2;--fk-slate-strong:#64748B;--fk-slate-text:#334155;--fk-slate-tint:#F1F4F8;--fk-violet-strong:#7C3AED;--fk-violet-text:#5B21B6;--fk-violet-tint:#F3EEFF;}
+.fk-f-amber-strong{fill:var(--fk-amber-strong)}.fk-s-amber-strong{stroke:var(--fk-amber-strong)}
+.fk-f-amber-text{fill:var(--fk-amber-text)}.fk-s-amber-text{stroke:var(--fk-amber-text)}
+.fk-f-amber-tint{fill:var(--fk-amber-tint)}.fk-s-amber-tint{stroke:var(--fk-amber-tint)}
+.fk-f-blue-strong{fill:var(--fk-blue-strong)}.fk-s-blue-strong{stroke:var(--fk-blue-strong)}
+.fk-f-blue-text{fill:var(--fk-blue-text)}.fk-s-blue-text{stroke:var(--fk-blue-text)}
+.fk-f-blue-tint{fill:var(--fk-blue-tint)}.fk-s-blue-tint{stroke:var(--fk-blue-tint)}
+.fk-f-brand-text{fill:var(--fk-brand-text)}.fk-s-brand-text{stroke:var(--fk-brand-text)}
+.fk-f-canvas{fill:var(--fk-canvas)}.fk-s-canvas{stroke:var(--fk-canvas)}
+.fk-f-frame{fill:var(--fk-frame)}.fk-s-frame{stroke:var(--fk-frame)}
+.fk-f-green-strong{fill:var(--fk-green-strong)}.fk-s-green-strong{stroke:var(--fk-green-strong)}
+.fk-f-green-text{fill:var(--fk-green-text)}.fk-s-green-text{stroke:var(--fk-green-text)}
+.fk-f-green-tint{fill:var(--fk-green-tint)}.fk-s-green-tint{stroke:var(--fk-green-tint)}
+.fk-f-hair{fill:var(--fk-hair)}.fk-s-hair{stroke:var(--fk-hair)}
+.fk-f-ink{fill:var(--fk-ink)}.fk-s-ink{stroke:var(--fk-ink)}
+.fk-f-ink2{fill:var(--fk-ink2)}.fk-s-ink2{stroke:var(--fk-ink2)}
+.fk-f-muted{fill:var(--fk-muted)}.fk-s-muted{stroke:var(--fk-muted)}
+.fk-f-rail{fill:var(--fk-rail)}.fk-s-rail{stroke:var(--fk-rail)}
+.fk-f-rose-strong{fill:var(--fk-rose-strong)}.fk-s-rose-strong{stroke:var(--fk-rose-strong)}
+.fk-f-rose-text{fill:var(--fk-rose-text)}.fk-s-rose-text{stroke:var(--fk-rose-text)}
+.fk-f-rose-tint{fill:var(--fk-rose-tint)}.fk-s-rose-tint{stroke:var(--fk-rose-tint)}
+.fk-f-slate-strong{fill:var(--fk-slate-strong)}.fk-s-slate-strong{stroke:var(--fk-slate-strong)}
+.fk-f-slate-text{fill:var(--fk-slate-text)}.fk-s-slate-text{stroke:var(--fk-slate-text)}
+.fk-f-slate-tint{fill:var(--fk-slate-tint)}.fk-s-slate-tint{stroke:var(--fk-slate-tint)}
+.fk-f-violet-strong{fill:var(--fk-violet-strong)}.fk-s-violet-strong{stroke:var(--fk-violet-strong)}
+.fk-f-violet-text{fill:var(--fk-violet-text)}.fk-s-violet-text{stroke:var(--fk-violet-text)}
+.fk-f-violet-tint{fill:var(--fk-violet-tint)}.fk-s-violet-tint{stroke:var(--fk-violet-tint)}
+@media (forced-colors:active){.fk text{fill:CanvasText}.fk rect,.fk circle{fill:Canvas;stroke:CanvasText}.fk path{stroke:CanvasText}.fk marker path{fill:CanvasText;stroke:none}}
+</style>
+<defs><marker id="handler-health-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="fk-f-rail"/></marker></defs>
+<rect x="0.5" y="0.5" width="696" height="1309" rx="16" class="fk-f-canvas fk-s-frame"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" class="fk-f-brand-text">GENERATED</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" class="fk-f-ink">Handler lifecycle and health</text>
+<text x="32" y="103.8" font-size="15" class="fk-f-muted">Drawn from docs/model/handler-health.state.yml. Only start, Deinitialize and</text>
+<text x="32" y="125.5" font-size="15" class="fk-f-muted">Recover change the lifecycle.</text>
+<rect x="32" y="141.6" width="633" height="1" class="fk-f-hair"/>
+<path d="M384 185.6 L384 308.6" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M384 368.6 L384 491.6" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M463 509.6 L477 509.6 Q485 509.6 485 517.5 L485 525.5 Q485 533.5 477 533.5 L463 533.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M323 551.5 L323 598.8 Q323 606.8 315 606.8 L262 606.8 Q254 606.8 254 614.8 L254 674.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M445 551.5 L445 646.6 Q445 654.6 437 654.6 L390.5 654.6 Q382.5 654.6 382.5 662.6 L382.5 843 Q382.5 851 374.5 851 L371.3 851 Q363.3 851 363.3 859 L363.3 1025.9 Q363.3 1030.9 368.3 1030.9 L368.5 1030.9 Q373.3 1030.9 373.3 1035.7 L373.3 1040.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M172.7 734.5 L172.7 742.6 Q172.7 750.6 164.7 750.6 L140 750.6 Q132 750.6 132 758.6 L132 857.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M254 857.5 L254 788.2 Q254 780.2 246 780.2 L221.3 780.2 Q213.3 780.2 213.3 772.2 L213.3 734.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M193 917.5 L193 931.5 Q193 939.5 201 939.5 L284 939.5 Q292 939.5 292 947.5 L292 1040.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M254 734.5 L254 801.8 Q254 809.8 262 809.8 L288 809.8 Q296 809.8 296 817.8 L296 957.4 Q296 965.4 304 965.4 L324.7 965.4 Q332.7 965.4 332.7 973.4 L332.7 1040.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M292 1100.5 L292 1115 Q292 1123 300 1123 L345 1123 Q353 1123 353 1131 L353 1223.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M292 1223.5 L292 1170 Q292 1162 284 1162 L254.3 1162 Q246.3 1162 246.3 1154 L246.3 987 Q246.3 979 238.3 979 L98 979 Q90 979 90 971 L90 837.9 Q90 829.9 98 829.9 L124 829.9 Q132 829.9 132 821.9 L132 734.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M414 1223.5 L414 1100.5" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M132 674.5 L132 579.5 Q132 571.5 140 571.5 L153 571.5 Q161 571.5 161 563.5 L161 395.1 Q161 387.1 169 387.1 L315 387.1 Q323 387.1 323 379.1 L323 368.6" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<path d="M414 1040.5 L414 1013 Q414 1005 406 1005 L385.3 1005 Q377.3 1005 377.3 997 L377.3 844.8 Q377.3 840.4 372.9 840.4 L372.9 840.4 Q368.5 840.4 368.5 836 L368.5 638.7 Q368.5 630.7 376.5 630.7 L599 630.7 Q607 630.7 607 622.7 L607 481 Q607 473 599 473 L453 473 Q445 473 445 465 L445 368.6" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#handler-health-arrow-rail)" class="fk-s-rail"/>
+<rect x="309" y="312.6" width="150" height="52" rx="10" stroke-width="1.4" class="fk-f-slate-tint fk-s-slate-strong"/>
+<rect x="309" y="320.6" width="4" height="36" rx="2" class="fk-f-slate-strong"/>
+<rect x="309" y="495.6" width="150" height="52" rx="10" stroke-width="1.4" class="fk-f-blue-tint fk-s-blue-strong"/>
+<rect x="309" y="503.6" width="4" height="36" rx="2" class="fk-f-blue-strong"/>
+<rect x="118" y="678.5" width="150" height="52" rx="10" stroke-width="1.4" class="fk-f-green-tint fk-s-green-strong"/>
+<rect x="118" y="686.5" width="4" height="36" rx="2" class="fk-f-green-strong"/>
+<rect x="118" y="861.5" width="150" height="52" rx="10" stroke-width="1.4" class="fk-f-amber-tint fk-s-amber-strong"/>
+<rect x="118" y="869.5" width="4" height="36" rx="2" class="fk-f-amber-strong"/>
+<rect x="278" y="1044.5" width="150" height="52" rx="10" stroke-width="1.4" class="fk-f-rose-tint fk-s-rose-strong"/>
+<rect x="278" y="1052.5" width="4" height="36" rx="2" class="fk-f-rose-strong"/>
+<rect x="278" y="1227.5" width="150" height="52" rx="10" stroke-width="1.4" class="fk-f-violet-tint fk-s-violet-strong"/>
+<rect x="278" y="1235.5" width="4" height="36" rx="2" class="fk-f-violet-strong"/>
+<circle cx="384" cy="170.6" r="11" class="fk-f-ink2"/>
+<text x="387" y="343.1" font-size="15" font-weight="700" text-anchor="middle" class="fk-f-slate-text">Unknown</text>
+<text x="387" y="526" font-size="15" font-weight="700" text-anchor="middle" class="fk-f-blue-text">Starting</text>
+<text x="196" y="709" font-size="15" font-weight="700" text-anchor="middle" class="fk-f-green-text">Ready</text>
+<text x="196" y="892" font-size="15" font-weight="700" text-anchor="middle" class="fk-f-amber-text">Degraded</text>
+<text x="356" y="1075" font-size="15" font-weight="700" text-anchor="middle" class="fk-f-rose-text">Faulted</text>
+<text x="356" y="1258" font-size="15" font-weight="700" text-anchor="middle" class="fk-f-violet-text">Recovering</text>
+<rect x="391.9" y="237.1" width="36.3" height="20" rx="10" class="fk-f-canvas"/>
+<text x="410" y="251.4" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">ctor</text>
+<rect x="391.9" y="420.1" width="112.2" height="20" rx="10" class="fk-f-canvas"/>
+<text x="448" y="434.4" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">EnsureInitialized</text>
+<rect x="493.2" y="511.6" width="75.7" height="20" rx="10" class="fk-f-canvas"/>
+<text x="531" y="525.9" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">next stage</text>
+<rect x="244" y="596.8" width="88.9" height="20" rx="10" class="fk-f-canvas"/>
+<text x="288.5" y="611.1" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">last stage ok</text>
+<rect x="371.2" y="644.6" width="85.1" height="20" rx="10" class="fk-f-canvas"/>
+<text x="413.8" y="658.9" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">a stage fails</text>
+<rect x="180.8" y="740.6" width="61.7" height="20" rx="10" class="fk-f-canvas"/>
+<text x="211.7" y="754.9" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">call fails</text>
+<rect x="262" y="770.2" width="81.1" height="20" rx="10" class="fk-f-canvas"/>
+<text x="302.5" y="784.5" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">next call ok</text>
+<rect x="181.2" y="929.5" width="122.6" height="20" rx="10" class="fk-f-canvas"/>
+<text x="242.5" y="943.8" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">fault_after failures</text>
+<rect x="303.9" y="799.8" width="72.1" height="20" rx="10" class="fk-f-canvas"/>
+<text x="340" y="814.1" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">fatal error</text>
+<rect x="291.3" y="1113" width="62.4" height="20" rx="10" class="fk-f-canvas"/>
+<text x="322.5" y="1127.3" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">Recover</text>
+<rect x="241.1" y="1152" width="56.1" height="20" rx="10" class="fk-f-canvas"/>
+<text x="269.2" y="1166.4" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">plan ok</text>
+<rect x="421.8" y="1191.1" width="37.3" height="20" rx="10" class="fk-f-canvas"/>
+<text x="440.5" y="1205.4" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">fails</text>
+<rect x="168.8" y="561.5" width="78.5" height="20" rx="10" class="fk-f-canvas"/>
+<text x="208" y="575.8" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">Deinitialize</text>
+<rect x="421.8" y="995" width="78.5" height="20" rx="10" class="fk-f-canvas"/>
+<text x="461" y="1009.3" font-size="12" font-weight="500" text-anchor="middle" class="fk-f-muted">Deinitialize</text>
+</svg>

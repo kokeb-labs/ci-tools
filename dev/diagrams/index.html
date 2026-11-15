@@ -16,7 +16,7 @@
         <link rel="prev" href="../self-ci/">
       
       
-        <link rel="next" href="../changelog/">
+        <link rel="next" href="../adr/0001-figure-toolchain/">
       
       
         
@@ -931,6 +931,8 @@
       
         
       
+        
+      
     
     
     
@@ -992,6 +994,8 @@
       
         
           
+        
+      
         
       
         
@@ -1090,6 +1094,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../adr/0001-figure-toolchain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0001, figure toolchain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../changelog/" class="md-nav__link">
         
   
@@ -1145,6 +1177,94 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#from-description-to-generated-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From description to generated code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-guarded-bus-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A guarded bus access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#handler-lifecycle-and-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Handler lifecycle and health
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#channels-per-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channels per port
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fault-journal-record-and-ring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fault journal record and ring
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#include-zones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Include zones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contract-support-by-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contract support by port
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-transfer-against-its-deadline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A transfer against its deadline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#from-push-to-release" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1186,22 +1306,150 @@
 <p>Every figure on this site is drawn by a Python module from facts extracted from the code, so it is rebuilt,
 not redrawn, when the code changes. CI runs <code>kokeb-docs figures --check</code> and fails when a
 committed figure no longer matches the code. Each figure below lists the files it is drawn from.</p>
+<h2 id="from-description-to-generated-code">From description to generated code<a class="headerlink" href="#from-description-to-generated-code" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="board-flow.svg#only-light" alt="Pipeline in three columns in which a board description is read by checks and then written out by emitters as generated files." width="882" height="369"><img src="board-flow.dark.svg#only-dark" alt="Pipeline in three columns in which a board description is read by checks and then written out by emitters as generated files." width="882" height="369">
+<figcaption>From description to generated code</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The Inputs column holds the board description and the image description. The Checks column holds the rules that read them. The Outputs column holds the generated files the build consumes.</p>
+<p>Drawn from: <a href="../model/board-flow.pipeline.yml"><code>docs/model/board-flow.pipeline.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/board-flow.pipeline.yml"><code>docs/model/board-flow.pipeline.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/board-flow.pipeline.yml"><code>docs/model/board-flow.pipeline.yml</code></a></li>
+</ul>
+<h2 id="a-guarded-bus-access">A guarded bus access<a class="headerlink" href="#a-guarded-bus-access" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="bus-access.svg#only-light" alt="Sequence of a guarded register read, in which the caller asks the handler, the handler takes the bus lock, calls the driver, and the driver returns the value through the port." width="890" height="620" loading="lazy"><img src="bus-access.dark.svg#only-dark" alt="Sequence of a guarded register read, in which the caller asks the handler, the handler takes the bus lock, calls the driver, and the driver returns the value through the port." width="890" height="620" loading="lazy">
+<figcaption>A guarded bus access</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The Caller calls Read on the Handler. The Handler locks the Bus, then asks the Driver, which uses the Port to move the bytes. The value returns the same way and the Handler releases the lock before it answers the Caller.</p>
+<p>Drawn from: <a href="../model/bus-access.seq.yml"><code>docs/model/bus-access.seq.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/bus-access.seq.yml"><code>docs/model/bus-access.seq.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/bus-access.seq.yml"><code>docs/model/bus-access.seq.yml</code></a></li>
+</ul>
+<h2 id="handler-lifecycle-and-health">Handler lifecycle and health<a class="headerlink" href="#handler-lifecycle-and-health" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="handler-health.svg#only-light" alt="State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them." width="697" height="1310" loading="lazy"><img src="handler-health.dark.svg#only-dark" alt="State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them." width="697" height="1310" loading="lazy">
+<figcaption>Handler lifecycle and health</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>A handler starts Unknown, moves to Starting on the start call, runs its declared stages one at a time, and reaches Ready or Faulted. Ready becomes Degraded when a call fails and returns to Ready on the next good call; repeated or fatal failures make it Faulted. Only Recover moves a Faulted handler back, through Recovering, and Deinitialize returns it to Unknown.</p>
+<p>Drawn from: <a href="../model/handler-health.state.yml"><code>docs/model/handler-health.state.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/handler-health.state.yml"><code>docs/model/handler-health.state.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/handler-health.state.yml"><code>docs/model/handler-health.state.yml</code></a></li>
+</ul>
+<h2 id="channels-per-port">Channels per port<a class="headerlink" href="#channels-per-port" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="heat-channels.svg#only-light" alt="Heat map of the number of channels each port offers for the ADC, PWM and timer peripherals, darker cells meaning more channels." width="454" height="359" loading="lazy"><img src="heat-channels.dark.svg#only-dark" alt="Heat map of the number of channels each port offers for the ADC, PWM and timer peripherals, darker cells meaning more channels." width="454" height="359" loading="lazy">
+<figcaption>Channels per port</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>Rows are the peripherals ADC, PWM and timer; columns are two ports. Each cell shows the channel count as a number, and a darker cell means more channels.</p>
+<p>Drawn from: <a href="../model/heat-channels.matrix.yml"><code>docs/model/heat-channels.matrix.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/heat-channels.matrix.yml"><code>docs/model/heat-channels.matrix.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/heat-channels.matrix.yml"><code>docs/model/heat-channels.matrix.yml</code></a></li>
+</ul>
+<h2 id="fault-journal-record-and-ring">Fault journal record and ring<a class="headerlink" href="#fault-journal-record-and-ring" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="journal-layout.svg#only-light" alt="Layout of the 32-byte fault journal record in four rows of eight bytes, from the magic and version to the CRC-32, and a ring of eight slots in which the next append overwrites the oldest record." width="1040" height="673" loading="lazy"><img src="journal-layout.dark.svg#only-dark" alt="Layout of the 32-byte fault journal record in four rows of eight bytes, from the magic and version to the CRC-32, and a ring of eight slots in which the next append overwrites the oldest record." width="1040" height="673" loading="lazy">
+<figcaption>Fault journal record and ring</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>A record is 32 bytes in four rows of eight. The first four bytes hold a magic, a format version and the record kind; then a sequence number, a time stamp, the source, the status, a detail code and a value; the last four bytes are a CRC-32 over the first 28. The journal is a ring of slots: an append writes the slot after the newest record, so the oldest record is overwritten. A torn write leaves a slot whose CRC fails, which Open skips.</p>
+<p>Drawn from: <a href="../model/journal-layout.bytes.yml"><code>docs/model/journal-layout.bytes.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/journal-layout.bytes.yml"><code>docs/model/journal-layout.bytes.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/journal-layout.bytes.yml"><code>docs/model/journal-layout.bytes.yml</code></a></li>
+</ul>
+<h2 id="include-zones">Include zones<a class="headerlink" href="#include-zones" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="layers-zones.svg#only-light" alt="Zone graph of the include checker rules: handlers include interfaces, rtos, utils and drivers, interfaces include rtos and utils, and the MCU port and the RTOS backend may include SDK headers through boundary files only." width="862" height="634" loading="lazy"><img src="layers-zones.dark.svg#only-dark" alt="Zone graph of the include checker rules: handlers include interfaces, rtos, utils and drivers, interfaces include rtos and utils, and the MCU port and the RTOS backend may include SDK headers through boundary files only." width="862" height="634" loading="lazy">
+<figcaption>Include zones</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>Each box is a zone of the include checker. An arrow from A to B means files in A may include headers of B. The arrows are read from the checker's own rules file, so the figure cannot show an edge the checker would reject. Standard library entries are left out, and SDK access is limited to the boundary files of the zones tagged sdk.</p>
+<p>Drawn from: <a href="../model/layers-zones.graph.yml"><code>docs/model/layers-zones.graph.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/layers-zones.graph.yml"><code>docs/model/layers-zones.graph.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/layers-zones.graph.yml"><code>docs/model/layers-zones.graph.yml</code></a></li>
+</ul>
+<h2 id="contract-support-by-port">Contract support by port<a class="headerlink" href="#contract-support-by-port" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="port-capabilities.svg#only-light" alt="Matrix of which bus contracts each port supports, as native, adapted, planned or not applicable, with the published limit where there is one." width="582" height="359" loading="lazy"><img src="port-capabilities.dark.svg#only-dark" alt="Matrix of which bus contracts each port supports, as native, adapted, planned or not applicable, with the published limit where there is one." width="582" height="359" loading="lazy">
+<figcaption>Contract support by port</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>Rows are the contracts I2C, SPI and CAN; columns are the host port, the ESP32 port and a planned port. A cell says native, adapted, planned or n/a in words and with a mark, and a note gives the published limit.</p>
+<p>Drawn from: <a href="../model/port-capabilities.matrix.yml"><code>docs/model/port-capabilities.matrix.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/port-capabilities.matrix.yml"><code>docs/model/port-capabilities.matrix.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/port-capabilities.matrix.yml"><code>docs/model/port-capabilities.matrix.yml</code></a></li>
+</ul>
+<h2 id="a-transfer-against-its-deadline">A transfer against its deadline<a class="headerlink" href="#a-transfer-against-its-deadline" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="transfer-deadline.svg#only-light" alt="Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline." width="1000" height="395" loading="lazy"><img src="transfer-deadline.dark.svg#only-dark" alt="Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline." width="1000" height="395" loading="lazy">
+<figcaption>A transfer against its deadline</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The CPU lane prepares the buffer for 20 microseconds, then the DMA lane moves it for 50, and the CPU lane completes and checks it for 15. The Memory lane marks the cache clean before the move and the invalidate after it. The deadline falls at 100 microseconds, so this transfer ends with 15 microseconds to spare.</p>
+<p>Drawn from: <a href="../model/transfer-deadline.timeline.yml"><code>docs/model/transfer-deadline.timeline.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/transfer-deadline.timeline.yml"><code>docs/model/transfer-deadline.timeline.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/transfer-deadline.timeline.yml"><code>docs/model/transfer-deadline.timeline.yml</code></a></li>
+</ul>
 <h2 id="from-push-to-release">From push to release<a class="headerlink" href="#from-push-to-release" title="Permanent link">&para;</a></h2>
 <figure class="kb-figure">
-<img src="workflow-flow.svg#only-light" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863"><img src="workflow-flow.dark.svg#only-dark" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863">
+<img src="workflow-flow.svg#only-light" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863" loading="lazy"><img src="workflow-flow.dark.svg#only-dark" alt="Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release." width="1200" height="863" loading="lazy">
 <figcaption>From push to release</figcaption>
 </figure>
 
 <details class="kb-figure-desc">
 <summary>Figure description and sources</summary>
 <p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
-<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
+<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
 </details>
-<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
+<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
 <p>Drawn from:</p>
 <ul>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/e68fb2418612c2529a260294edd1b1bd5c77a2d6/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
 </ul>
 
 
@@ -1257,13 +1505,13 @@ committed figure no longer matches the code. Each figure below lists the files i
         
         
           
-          <a href="../changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: Changelog">
+          <a href="../adr/0001-figure-toolchain/" class="md-footer__link md-footer__link--next" aria-label="Next: ADR 0001, figure toolchain">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Changelog
+                ADR 0001, figure toolchain
               </div>
             </div>
             <div class="md-footer__button md-icon">

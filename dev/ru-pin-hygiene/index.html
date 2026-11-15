@@ -1645,6 +1645,8 @@
       
         
       
+        
+      
     
     
     
@@ -1704,6 +1706,8 @@
       
         
           
+        
+      
         
       
         
@@ -2026,6 +2030,12 @@ the pin and finding counts and the rule ids that fired.</p>
 <td>string</td>
 <td>empty</td>
 <td>Space-separated levels a pin's .kokeb/handbook.yml may declare (e.g. high safety); empty skips PIN-009</td>
+</tr>
+<tr>
+<td><code>ignore_paths</code></td>
+<td>string</td>
+<td>empty</td>
+<td>Space-separated globs of submodule paths that are not driver pins (SOUP such as an RTOS kernel); they need no lock entry (PIN-001), but their URL and branch rules still apply</td>
 </tr>
 <tr>
 <td><code>private_repos</code></td>
