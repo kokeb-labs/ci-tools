@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="395" viewBox="0 0 1000 395" role="img" aria-labelledby="transfer-deadline-title transfer-deadline-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="transfer-deadline-title">A transfer against its deadline</title>
+<desc id="transfer-deadline-desc">Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline.</desc>
+<rect x="0.5" y="0.5" width="999" height="394" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#7A360E">EXAMPLE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" fill="#0E1726">A transfer against its deadline</text>
+<rect x="32" y="93.3" width="936" height="1" fill="#E2E7EE"/>
+<path d="M168 141.3 L168 339.3" fill="none" stroke="#E2E7EE" stroke-width="1"/>
+<path d="M310.5 141.3 L310.5 339.3" fill="none" stroke="#E2E7EE" stroke-width="1"/>
+<path d="M453.1 141.3 L453.1 339.3" fill="none" stroke="#E2E7EE" stroke-width="1"/>
+<path d="M595.6 141.3 L595.6 339.3" fill="none" stroke="#E2E7EE" stroke-width="1"/>
+<path d="M738.2 141.3 L738.2 339.3" fill="none" stroke="#E2E7EE" stroke-width="1"/>
+<path d="M880.7 141.3 L880.7 339.3" fill="none" stroke="#E2E7EE" stroke-width="1"/>
+<rect x="32" y="149.3" width="936" height="60" rx="10" fill="#EAF2FF" stroke="#BCD2F9" stroke-width="1"/>
+<rect x="32" y="213.3" width="936" height="60" rx="10" fill="#E6F6F4" stroke="#A6DCD5" stroke-width="1"/>
+<rect x="32" y="277.3" width="936" height="60" rx="10" fill="#F1F4F8" stroke="#CBD5E1" stroke-width="1"/>
+<path d="M880.7 141.3 L880.7 343.3" fill="none" stroke="#DB2752" stroke-width="2" stroke-dasharray="7 5"/>
+<rect x="168" y="159.3" width="142.5" height="40" rx="10" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.4"/>
+<rect x="310.5" y="223.3" width="356.4" height="40" rx="10" fill="#E6F6F4" stroke="#0B7A72" stroke-width="1.4"/>
+<rect x="666.9" y="159.3" width="106.9" height="40" rx="10" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.4"/>
+<circle cx="310.5" cy="307.3" r="7" fill="#15803D" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="666.9" cy="307.3" r="7" fill="#15803D" stroke="#FFFFFF" stroke-width="2"/>
+<text x="168" y="135.3" font-size="12" text-anchor="middle" fill="#566070">0</text>
+<text x="310.5" y="135.3" font-size="12" text-anchor="middle" fill="#566070">20</text>
+<text x="453.1" y="135.3" font-size="12" text-anchor="middle" fill="#566070">40</text>
+<text x="595.6" y="135.3" font-size="12" text-anchor="middle" fill="#566070">60</text>
+<text x="738.2" y="135.3" font-size="12" text-anchor="middle" fill="#566070">80</text>
+<text x="880.7" y="135.3" font-size="12" text-anchor="middle" fill="#566070">100</text>
+<text x="952" y="361.3" font-size="12" text-anchor="end" fill="#566070">us</text>
+<text x="44" y="184.3" font-size="15" font-weight="700" fill="#1E429F">CPU</text>
+<text x="44" y="248.3" font-size="15" font-weight="700" fill="#0B5F59">DMA</text>
+<text x="44" y="312.3" font-size="15" font-weight="700" fill="#334155">Memory</text>
+<text x="239.3" y="183.3" font-size="13" font-weight="600" text-anchor="middle" fill="#1E429F">prepare</text>
+<text x="488.7" y="247.3" font-size="13" font-weight="600" text-anchor="middle" fill="#0B5F59">move</text>
+<text x="720.4" y="183.3" font-size="13" font-weight="600" text-anchor="middle" fill="#1E429F">complete</text>
+<text x="310.5" y="289.3" font-size="12" text-anchor="middle" fill="#14532D">clean</text>
+<text x="666.9" y="289.3" font-size="12" text-anchor="middle" fill="#14532D">invalidate</text>
+<text x="880.7" y="361.3" font-size="12" font-weight="700" text-anchor="middle" fill="#9F1239">deadline</text>
+</svg>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="582" height="359" viewBox="0 0 582 359" role="img" aria-labelledby="port-capabilities-title port-capabilities-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" class="fk">
+<title id="port-capabilities-title">Contract support by port</title>
+<desc id="port-capabilities-desc">Matrix of which bus contracts each port supports, as native, adapted, planned or not applicable, with the published limit where there is one.</desc>
+<style>
+.fk{--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-fail-strong:#DB2752;--fk-fail-text:#9F1239;--fk-fail-tint:#FFEEF2;--fk-frame:#E2E7EE;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-na-strong:#64748B;--fk-na-text:#334155;--fk-na-tint:#F1F4F8;--fk-ok-strong:#15803D;--fk-ok-text:#14532D;--fk-ok-tint:#EAF7EF;--fk-planned-strong:#7C3AED;--fk-planned-text:#5B21B6;--fk-planned-tint:#F3EEFF;--fk-warn-strong:#C26A05;--fk-warn-text:#8A3C0B;--fk-warn-tint:#FFF5E3;}
+@media (prefers-color-scheme:dark){.fk{--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-fail-strong:#FB7185;--fk-fail-text:#FECDD3;--fk-fail-tint:#321820;--fk-frame:#283241;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-na-strong:#94A3B8;--fk-na-text:#E2E8F0;--fk-na-tint:#1B232E;--fk-ok-strong:#4ADE80;--fk-ok-text:#BBF7D0;--fk-ok-tint:#11281A;--fk-planned-strong:#A78BFA;--fk-planned-text:#DDD6FE;--fk-planned-tint:#221A3A;--fk-warn-strong:#FBBF24;--fk-warn-text:#FDE68A;--fk-warn-tint:#2C2310;}}
+:root[data-theme="dark"] .fk,[data-md-color-scheme="slate"] .fk{--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-fail-strong:#FB7185;--fk-fail-text:#FECDD3;--fk-fail-tint:#321820;--fk-frame:#283241;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-na-strong:#94A3B8;--fk-na-text:#E2E8F0;--fk-na-tint:#1B232E;--fk-ok-strong:#4ADE80;--fk-ok-text:#BBF7D0;--fk-ok-tint:#11281A;--fk-planned-strong:#A78BFA;--fk-planned-text:#DDD6FE;--fk-planned-tint:#221A3A;--fk-warn-strong:#FBBF24;--fk-warn-text:#FDE68A;--fk-warn-tint:#2C2310;}
+:root[data-theme="light"] .fk,[data-md-color-scheme="default"] .fk{--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-fail-strong:#DB2752;--fk-fail-text:#9F1239;--fk-fail-tint:#FFEEF2;--fk-frame:#E2E7EE;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-na-strong:#64748B;--fk-na-text:#334155;--fk-na-tint:#F1F4F8;--fk-ok-strong:#15803D;--fk-ok-text:#14532D;--fk-ok-tint:#EAF7EF;--fk-planned-strong:#7C3AED;--fk-planned-text:#5B21B6;--fk-planned-tint:#F3EEFF;--fk-warn-strong:#C26A05;--fk-warn-text:#8A3C0B;--fk-warn-tint:#FFF5E3;}
+.fk-f-brand-text{fill:var(--fk-brand-text)}.fk-s-brand-text{stroke:var(--fk-brand-text)}
+.fk-f-canvas{fill:var(--fk-canvas)}.fk-s-canvas{stroke:var(--fk-canvas)}
+.fk-f-fail-strong{fill:var(--fk-fail-strong)}.fk-s-fail-strong{stroke:var(--fk-fail-strong)}
+.fk-f-fail-text{fill:var(--fk-fail-text)}.fk-s-fail-text{stroke:var(--fk-fail-text)}
+.fk-f-fail-tint{fill:var(--fk-fail-tint)}.fk-s-fail-tint{stroke:var(--fk-fail-tint)}
+.fk-f-frame{fill:var(--fk-frame)}.fk-s-frame{stroke:var(--fk-frame)}
+.fk-f-hair{fill:var(--fk-hair)}.fk-s-hair{stroke:var(--fk-hair)}
+.fk-f-ink{fill:var(--fk-ink)}.fk-s-ink{stroke:var(--fk-ink)}
+.fk-f-na-strong{fill:var(--fk-na-strong)}.fk-s-na-strong{stroke:var(--fk-na-strong)}
+.fk-f-na-text{fill:var(--fk-na-text)}.fk-s-na-text{stroke:var(--fk-na-text)}
+.fk-f-na-tint{fill:var(--fk-na-tint)}.fk-s-na-tint{stroke:var(--fk-na-tint)}
+.fk-f-ok-strong{fill:var(--fk-ok-strong)}.fk-s-ok-strong{stroke:var(--fk-ok-strong)}
+.fk-f-ok-text{fill:var(--fk-ok-text)}.fk-s-ok-text{stroke:var(--fk-ok-text)}
+.fk-f-ok-tint{fill:var(--fk-ok-tint)}.fk-s-ok-tint{stroke:var(--fk-ok-tint)}
+.fk-f-planned-strong{fill:var(--fk-planned-strong)}.fk-s-planned-strong{stroke:var(--fk-planned-strong)}
+.fk-f-planned-text{fill:var(--fk-planned-text)}.fk-s-planned-text{stroke:var(--fk-planned-text)}
+.fk-f-planned-tint{fill:var(--fk-planned-tint)}.fk-s-planned-tint{stroke:var(--fk-planned-tint)}
+.fk-f-warn-strong{fill:var(--fk-warn-strong)}.fk-s-warn-strong{stroke:var(--fk-warn-strong)}
+.fk-f-warn-text{fill:var(--fk-warn-text)}.fk-s-warn-text{stroke:var(--fk-warn-text)}
+.fk-f-warn-tint{fill:var(--fk-warn-tint)}.fk-s-warn-tint{stroke:var(--fk-warn-tint)}
+@media (forced-colors:active){.fk text{fill:CanvasText}.fk rect,.fk circle{fill:Canvas;stroke:CanvasText}.fk path{stroke:CanvasText}.fk marker path{fill:CanvasText;stroke:none}}
+</style>
+<rect x="0.5" y="0.5" width="581" height="358" rx="16" class="fk-f-canvas fk-s-frame"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" class="fk-f-brand-text">EXAMPLE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" class="fk-f-ink">Contract support by port</text>
+<rect x="32" y="93.3" width="518" height="1" class="fk-f-hair"/>
+<rect x="161" y="154.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M183.5 181.3 L187.5 186.3 L196.5 175.3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="289" y="154.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M311.5 178.3 L315.5 183.3 L324.5 172.3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="417" y="154.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-planned-tint fk-s-planned-strong"/>
+<circle cx="432.1" cy="181.3" r="1.9" class="fk-f-planned-strong"/>
+<circle cx="439.1" cy="181.3" r="1.9" class="fk-f-planned-strong"/>
+<circle cx="446.1" cy="181.3" r="1.9" class="fk-f-planned-strong"/>
+<rect x="161" y="214.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-warn-tint fk-s-warn-strong"/>
+<path d="M182.7 234.3 L182.7 243.3" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" class="fk-s-warn-strong"/>
+<circle cx="182.7" cy="247.3" r="1.6" class="fk-f-warn-strong"/>
+<rect x="289" y="214.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M311.5 241.3 L315.5 246.3 L324.5 235.3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="417" y="214.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-planned-tint fk-s-planned-strong"/>
+<circle cx="432.1" cy="241.3" r="1.9" class="fk-f-planned-strong"/>
+<circle cx="439.1" cy="241.3" r="1.9" class="fk-f-planned-strong"/>
+<circle cx="446.1" cy="241.3" r="1.9" class="fk-f-planned-strong"/>
+<rect x="161" y="274.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-na-tint fk-s-na-strong"/>
+<path d="M193.2 301.3 L205.2 301.3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-na-strong"/>
+<rect x="289" y="274.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-fail-tint fk-s-fail-strong"/>
+<path d="M307.1 296.3 L317.1 306.3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-fail-strong"/>
+<path d="M317.1 296.3 L307.1 306.3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-fail-strong"/>
+<rect x="417" y="274.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-planned-tint fk-s-planned-strong"/>
+<circle cx="432.1" cy="301.3" r="1.9" class="fk-f-planned-strong"/>
+<circle cx="439.1" cy="301.3" r="1.9" class="fk-f-planned-strong"/>
+<circle cx="446.1" cy="301.3" r="1.9" class="fk-f-planned-strong"/>
+<text x="222" y="139.3" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Host</text>
+<text x="350" y="139.3" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">ESP32</text>
+<text x="478" y="139.3" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Next port</text>
+<text x="44" y="186.3" font-size="13" font-weight="700" class="fk-f-ink">I2C</text>
+<text x="232" y="186.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">native</text>
+<text x="360" y="183.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">native</text>
+<text x="350" y="202.3" font-size="12" text-anchor="middle" class="fk-f-ok-text">1 MHz</text>
+<text x="488" y="186.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-planned-text">planned</text>
+<text x="44" y="246.3" font-size="13" font-weight="700" class="fk-f-ink">SPI</text>
+<text x="232" y="246.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-warn-text">adapted</text>
+<text x="360" y="246.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">native</text>
+<text x="488" y="246.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-planned-text">planned</text>
+<text x="44" y="306.3" font-size="13" font-weight="700" class="fk-f-ink">CAN</text>
+<text x="232" y="306.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-na-text">n/a</text>
+<text x="360" y="306.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-fail-text">missing</text>
+<text x="488" y="306.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-planned-text">planned</text>
+</svg>

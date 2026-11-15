@@ -41,7 +41,7 @@ The theme styles these; use them instead of inventing markup.
 | Code | fenced block with a language; `title="file.cpp"` for a file | Code from a compiled file: `--8<-- "tests/docs/x.cpp:section"` |
 | Registers, parameters, pins, options | a table | Header row, units in the header, code font for names |
 | Bit fields | a table inside `<div class="kb-registers" markdown>` | Offset and name columns get code font |
-| Sequence or state machine | a `mermaid` fence | Themed for light and dark automatically |
+| Sequence, state machine, timeline, matrix, byte layout | a figkit model (`docs/model/<id>.<kind>.yml`) | [Figures with figkit](figkit.md); Mermaid only in README files and pull requests |
 | Architecture, signal flow, layouts | a figkit figure | Light and dark from one layout, checked for contrast |
 | A light-only image (vendor SVG, photo) | `![alt](x.svg){ .kb-plate }` | Sits on a white plate in dark mode |
 | Steps | `<div class="kb-steps" markdown>` around an ordered list | Numbered circles and a rail |
@@ -95,7 +95,11 @@ driver uses. On a driver's home page the card sits under Pins and wiring, after 
   `docs/diagrams/figures/<id>.py`, `data()` reads the facts from the headers, `build()` lays out cards. The build
   refuses text under 4.5:1 contrast in either theme, overlaps and missing alt text; `kokeb-docs figures --check`
   fails CI when the code changed and the figure did not. Embed with `<!-- figure: <id> -->` / `<!-- /figure -->`.
-- **Mermaid** for sequences and state machines.
+- **Models** for sequences, state machines, timelines, graphs, matrices, byte layouts and pipelines: a file
+  `docs/model/<id>.<kind>.yml`, scaffolded with `kokeb-docs figkit new` ([Figures with figkit](figkit.md)).
+- **Mermaid** is not used on published pages ([ADR 0001](adr/0001-figure-toolchain.md)). It stays allowed in
+  README files and pull requests, where GitHub renders it. `kokeb-docs figures --lint` reports Mermaid fences in
+  `docs/`.
 - **Chip figures** (pinout, block diagram, application circuit) are not written as modules: they are drawn from
   `docs/hardware.yml` ([Chip hardware](#chip-hardware)).
 

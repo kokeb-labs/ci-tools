@@ -1,0 +1,98 @@
+{
+ "direction": "TB",
+ "edges": [
+  {
+   "from": "rtos",
+   "to": "utils",
+   "via": []
+  },
+  {
+   "from": "rtos_backend",
+   "to": "rtos",
+   "via": []
+  },
+  {
+   "from": "interfaces",
+   "to": "rtos",
+   "via": []
+  },
+  {
+   "from": "interfaces_host",
+   "to": "interfaces",
+   "via": []
+  },
+  {
+   "from": "handlers",
+   "to": "interfaces",
+   "via": []
+  },
+  {
+   "from": "handlers",
+   "to": "drivers",
+   "via": []
+  },
+  {
+   "from": "port_esp32",
+   "to": "interfaces",
+   "via": []
+  }
+ ],
+ "engine": "graphviz dot 13.1.0 (recorded for the reader; render never reads it)",
+ "figkit_layout": 1,
+ "id": "layers-zones",
+ "input": "532c37592883198b6e3edb226987f49c1fcbbd0194b67bb43960ab6f5e77d436",
+ "nodes": {
+  "drivers": [
+   492,
+   122,
+   190,
+   69
+  ],
+  "handlers": [
+   492,
+   0,
+   190,
+   69
+  ],
+  "interfaces": [
+   246,
+   122,
+   190,
+   69
+  ],
+  "interfaces_host": [
+   0,
+   0,
+   190,
+   69
+  ],
+  "port_esp32": [
+   246,
+   0,
+   190,
+   69
+  ],
+  "rtos": [
+   123,
+   244,
+   190,
+   69
+  ],
+  "rtos_backend": [
+   0,
+   122,
+   190,
+   69
+  ],
+  "utils": [
+   123,
+   366,
+   190,
+   69
+  ]
+ },
+ "size": [
+  682,
+  435
+ ]
+}

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="890" height="620" viewBox="0 0 890 620" role="img" aria-labelledby="bus-access-title bus-access-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="bus-access-title">A guarded bus access</title>
+<desc id="bus-access-desc">Sequence of a guarded register read, in which the caller asks the handler, the handler takes the bus lock, calls the driver, and the driver returns the value through the port.</desc>
+<defs><marker id="bus-access-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6C7889"/></marker></defs>
+<rect x="0.5" y="0.5" width="889" height="619" rx="16" fill="#0E131A" stroke="#283241"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#F8D27A">EXAMPLE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" fill="#E8EDF3">A guarded bus access</text>
+<text x="32" y="103.8" font-size="15" fill="#9AA6B5">A caller reads a register through a handler that guards the bus.</text>
+<rect x="32" y="119.8" width="826" height="1" fill="#252F3C"/>
+<path d="M105 193.8 L105 623.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M275 193.8 L275 623.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M445 193.8 L445 623.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M615 193.8 L615 623.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M785 193.8 L785 623.8" fill="none" stroke="#6C7889" stroke-width="1.2" stroke-dasharray="5 5"/>
+<path d="M109 229.8 L271 229.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M279 273.8 L441 273.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M279 317.8 L611 317.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M619 361.8 L781 361.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M781 405.8 L619 405.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M279 441.8 L301 441.8 Q309 441.8 309 449.8 L309 449.8 Q309 457.8 301 457.8 L279 457.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M279 545.8 L441 545.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#bus-access-arrow-rail)"/>
+<path d="M271 589.8 L109 589.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#bus-access-arrow-rail)"/>
+<rect x="40" y="137.8" width="130" height="52" rx="10" fill="#13233A" stroke="#60A5FA" stroke-width="1.4"/>
+<rect x="40" y="145.8" width="4" height="36" rx="2" fill="#60A5FA"/>
+<rect x="210" y="137.8" width="130" height="52" rx="10" fill="#2C2310" stroke="#FBBF24" stroke-width="1.4"/>
+<rect x="210" y="145.8" width="4" height="36" rx="2" fill="#FBBF24"/>
+<rect x="380" y="137.8" width="130" height="52" rx="10" fill="#1B232E" stroke="#94A3B8" stroke-width="1.4"/>
+<rect x="380" y="145.8" width="4" height="36" rx="2" fill="#94A3B8"/>
+<rect x="550" y="137.8" width="130" height="52" rx="10" fill="#11281A" stroke="#4ADE80" stroke-width="1.4"/>
+<rect x="550" y="145.8" width="4" height="36" rx="2" fill="#4ADE80"/>
+<rect x="720" y="137.8" width="130" height="52" rx="10" fill="#321820" stroke="#FB7185" stroke-width="1.4"/>
+<rect x="720" y="145.8" width="4" height="36" rx="2" fill="#FB7185"/>
+<rect x="205" y="477.8" width="310" height="41" rx="10" fill="#2C2310" stroke="#6A5220" stroke-width="1"/>
+<text x="108" y="168.3" font-size="15" font-weight="700" text-anchor="middle" fill="#BFDBFE">Caller</text>
+<text x="278" y="168.3" font-size="15" font-weight="700" text-anchor="middle" fill="#FDE68A">Handler</text>
+<text x="448" y="168.3" font-size="15" font-weight="700" text-anchor="middle" fill="#E2E8F0">Bus</text>
+<text x="618" y="168.3" font-size="15" font-weight="700" text-anchor="middle" fill="#BBF7D0">Driver</text>
+<text x="788" y="168.3" font-size="15" font-weight="700" text-anchor="middle" fill="#FECDD3">Port</text>
+<rect x="153.8" y="205.8" width="72.5" height="20" rx="10" fill="#0E131A"/>
+<text x="190" y="220.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">Read(reg)</text>
+<rect x="341.3" y="249.8" width="37.3" height="20" rx="10" fill="#0E131A"/>
+<text x="360" y="264.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">lock</text>
+<rect x="398.4" y="293.8" width="93.2" height="20" rx="10" fill="#0E131A"/>
+<text x="445" y="308.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">ReadRegister</text>
+<rect x="669.9" y="337.8" width="60.2" height="20" rx="10" fill="#0E131A"/>
+<text x="700" y="352.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">transfer</text>
+<rect x="677.1" y="381.8" width="45.8" height="20" rx="10" fill="#0E131A"/>
+<text x="700" y="396.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">bytes</text>
+<rect x="313" y="439.8" width="93.1" height="20" rx="10" fill="#0E131A"/>
+<text x="359.6" y="454.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">record health</text>
+<text x="219" y="502.9" font-size="13" fill="#FDE68A">bus lock held until unlock</text>
+<rect x="333.7" y="521.8" width="52.6" height="20" rx="10" fill="#0E131A"/>
+<text x="360" y="536.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">unlock</text>
+<rect x="167.6" y="565.8" width="44.9" height="20" rx="10" fill="#0E131A"/>
+<text x="190" y="580.1" font-size="12" font-weight="500" text-anchor="middle" fill="#9AA6B5">value</text>
+</svg>

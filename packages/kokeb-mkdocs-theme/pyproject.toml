@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kokeb-mkdocs-theme"
-version = "1.0.0"
+version = "1.1.0"
 description = "The Kokeb Labs documentation theme for MkDocs: brand, layout, page checks and figkit, in one package."
 readme = "README.md"
 license = "MIT"
@@ -24,6 +24,8 @@ dependencies = [
 [project.optional-dependencies]
 # Screenshots of the built site at phone and desktop widths (CI quality job, or locally).
 screenshots = ["playwright==1.64.1"]
+# Only `kokeb-docs figkit font` (the embedded font subset of a figure) needs these; rendering never does.
+fonts = ["fonttools==4.60.1", "brotli==1.2.1"]
 
 [project.scripts]
 kokeb-docs = "kokeb_mkdocs_theme.cli:main"

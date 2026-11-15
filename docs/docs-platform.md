@@ -11,6 +11,7 @@ The pieces every Kokeb Labs documentation site is built from, where each one liv
 | Template | [`templates/mkdocs-site`](../templates/mkdocs-site/mkdocs.yml) | The skeleton of a driver site; the self-CI builds it |
 | Migration tool | [`tools/docs-migrate.py`](../tools/docs-migrate.py) | The mechanical move from Jekyll, with a `--check` dry run |
 | Guides | [Migrating to MkDocs](MIGRATING-TO-MKDOCS.md), [Style guide](DOCS-STYLE-GUIDE.md) | The procedure, and what the pages contain |
+| Figure kit | [`kokeb_mkdocs_theme/figkit`](figkit.md) | State machine, sequence, timeline, graph, matrix, byte layout and pipeline figures from a model file in `docs/model/`, with layout locks, an adaptive light and dark SVG, and lints ([ADR 0001](adr/0001-figure-toolchain.md)) |
 | Chip diagrams | [`kokeb_mkdocs_theme/hardware`](chip-diagrams.md) | Pinout, block diagram, application circuits, pin table and KiCad netlist from one `docs/hardware.yml` |
 
 A repository carries no CSS, templates, hooks or requirements file for its site. The workflow installs the theme
@@ -50,7 +51,8 @@ Markdown extensions, strict validation and the version selector.
 
 | Command | Does |
 | --- | --- |
-| `kokeb-docs figures [--check]` | Builds (or checks) the figkit figures under `docs/diagrams/figures/` |
+| `kokeb-docs figures [--check] [--lint]` | Builds (or checks) the figkit figures: modules under `docs/diagrams/figures/` and models under `docs/model/` |
+| `kokeb-docs figkit new\|layout\|font\|kinds\|css` | Scaffolds a model figure, makes the Graphviz layout locks, the font subsets, the shared style sheet ([Figures with figkit](figkit.md)) |
 | `kokeb-docs gen [--check]` | Fills (or checks) `<!-- generated: name -->` regions; repository generators live in `tools/docs/generators/` |
 | `kokeb-docs hardware [--check]` | Validates `docs/hardware.yml`; `--kicad-netlist OUT --circuit ID` exports a circuit, `--svg DIR` writes the chip figures anywhere ([Chip diagrams](chip-diagrams.md)) |
 | `kokeb-docs check` | All three checks, as CI runs them: the hardware file first, then the figures (the chip figures included) and the regions |

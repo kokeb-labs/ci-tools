@@ -47,9 +47,11 @@ nav:
       - Platform guide: docs-platform.md
       - Migrating to MkDocs: MIGRATING-TO-MKDOCS.md
       - Style guide: DOCS-STYLE-GUIDE.md
+      - Figures with figkit: figkit.md
       - Chip diagrams: chip-diagrams.md
       - Chip-first README: readme-chip-first.md
   - Reference:
       - How this repository tests itself: self-ci.md
       - Figures: diagrams/index.md
+      - ADR 0001, figure toolchain: adr/0001-figure-toolchain.md
       - Changelog: changelog.md

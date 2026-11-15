@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="582" height="359" viewBox="0 0 582 359" role="img" aria-labelledby="port-capabilities-title port-capabilities-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="port-capabilities-title">Contract support by port</title>
+<desc id="port-capabilities-desc">Matrix of which bus contracts each port supports, as native, adapted, planned or not applicable, with the published limit where there is one.</desc>
+<rect x="0.5" y="0.5" width="581" height="358" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#7A360E">EXAMPLE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" fill="#0E1726">Contract support by port</text>
+<rect x="32" y="93.3" width="518" height="1" fill="#E2E7EE"/>
+<rect x="161" y="154.3" width="122" height="54" rx="10" fill="#EAF7EF" stroke="#15803D" stroke-width="1.4"/>
+<path d="M183.5 181.3 L187.5 186.3 L196.5 175.3" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="289" y="154.3" width="122" height="54" rx="10" fill="#EAF7EF" stroke="#15803D" stroke-width="1.4"/>
+<path d="M311.5 178.3 L315.5 183.3 L324.5 172.3" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="417" y="154.3" width="122" height="54" rx="10" fill="#F3EEFF" stroke="#7C3AED" stroke-width="1.4"/>
+<circle cx="432.1" cy="181.3" r="1.9" fill="#7C3AED"/>
+<circle cx="439.1" cy="181.3" r="1.9" fill="#7C3AED"/>
+<circle cx="446.1" cy="181.3" r="1.9" fill="#7C3AED"/>
+<rect x="161" y="214.3" width="122" height="54" rx="10" fill="#FFF5E3" stroke="#C26A05" stroke-width="1.4"/>
+<path d="M182.7 234.3 L182.7 243.3" fill="none" stroke="#C26A05" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="182.7" cy="247.3" r="1.6" fill="#C26A05"/>
+<rect x="289" y="214.3" width="122" height="54" rx="10" fill="#EAF7EF" stroke="#15803D" stroke-width="1.4"/>
+<path d="M311.5 241.3 L315.5 246.3 L324.5 235.3" fill="none" stroke="#15803D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="417" y="214.3" width="122" height="54" rx="10" fill="#F3EEFF" stroke="#7C3AED" stroke-width="1.4"/>
+<circle cx="432.1" cy="241.3" r="1.9" fill="#7C3AED"/>
+<circle cx="439.1" cy="241.3" r="1.9" fill="#7C3AED"/>
+<circle cx="446.1" cy="241.3" r="1.9" fill="#7C3AED"/>
+<rect x="161" y="274.3" width="122" height="54" rx="10" fill="#F1F4F8" stroke="#64748B" stroke-width="1.4"/>
+<path d="M193.2 301.3 L205.2 301.3" fill="none" stroke="#64748B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="289" y="274.3" width="122" height="54" rx="10" fill="#FFEEF2" stroke="#DB2752" stroke-width="1.4"/>
+<path d="M307.1 296.3 L317.1 306.3" fill="none" stroke="#DB2752" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M317.1 296.3 L307.1 306.3" fill="none" stroke="#DB2752" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="417" y="274.3" width="122" height="54" rx="10" fill="#F3EEFF" stroke="#7C3AED" stroke-width="1.4"/>
+<circle cx="432.1" cy="301.3" r="1.9" fill="#7C3AED"/>
+<circle cx="439.1" cy="301.3" r="1.9" fill="#7C3AED"/>
+<circle cx="446.1" cy="301.3" r="1.9" fill="#7C3AED"/>
+<text x="222" y="139.3" font-size="13" font-weight="700" text-anchor="middle" fill="#0E1726">Host</text>
+<text x="350" y="139.3" font-size="13" font-weight="700" text-anchor="middle" fill="#0E1726">ESP32</text>
+<text x="478" y="139.3" font-size="13" font-weight="700" text-anchor="middle" fill="#0E1726">Next port</text>
+<text x="44" y="186.3" font-size="13" font-weight="700" fill="#0E1726">I2C</text>
+<text x="232" y="186.3" font-size="13" font-weight="600" text-anchor="middle" fill="#14532D">native</text>
+<text x="360" y="183.3" font-size="13" font-weight="600" text-anchor="middle" fill="#14532D">native</text>
+<text x="350" y="202.3" font-size="12" text-anchor="middle" fill="#14532D">1 MHz</text>
+<text x="488" y="186.3" font-size="13" font-weight="600" text-anchor="middle" fill="#5B21B6">planned</text>
+<text x="44" y="246.3" font-size="13" font-weight="700" fill="#0E1726">SPI</text>
+<text x="232" y="246.3" font-size="13" font-weight="600" text-anchor="middle" fill="#8A3C0B">adapted</text>
+<text x="360" y="246.3" font-size="13" font-weight="600" text-anchor="middle" fill="#14532D">native</text>
+<text x="488" y="246.3" font-size="13" font-weight="600" text-anchor="middle" fill="#5B21B6">planned</text>
+<text x="44" y="306.3" font-size="13" font-weight="700" fill="#0E1726">CAN</text>
+<text x="232" y="306.3" font-size="13" font-weight="600" text-anchor="middle" fill="#334155">n/a</text>
+<text x="360" y="306.3" font-size="13" font-weight="600" text-anchor="middle" fill="#9F1239">missing</text>
+<text x="488" y="306.3" font-size="13" font-weight="600" text-anchor="middle" fill="#5B21B6">planned</text>
+</svg>

@@ -3,6 +3,8 @@
     kokeb-docs [-f CONFIG] COMMAND ...
 
     kokeb-docs figures [--check] [ids]   build (or check) the figkit figures under docs/diagrams/figures/
+    kokeb-docs figkit COMMAND ...        figure kit: new (scaffold a figure), layout (Graphviz layout locks), font,
+                                         kinds, css (see docs/figkit.md)
     kokeb-docs gen [--check|--list]      fill (or check) the <!-- generated: name --> regions
     kokeb-docs hardware [--check] ...    validate docs/hardware.yml, export a circuit (--kicad-netlist OUT)
     kokeb-docs readme --check|--migrate  keep README.md chip-first (checked once hardware.yml has an overview);
@@ -93,6 +95,10 @@ def main(argv: list[str] | None = None) -> int:
         from .figkit import build
 
         return build.main(rest)
+    if cmd == "figkit":
+        from .figkit import cmd as figkit_cmd
+
+        return figkit_cmd.main(rest)
     if cmd == "gen":
         from . import gen
 

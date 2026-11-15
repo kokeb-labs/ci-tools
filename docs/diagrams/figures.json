@@ -1,4 +1,140 @@
 {
+  "board-flow": {
+    "title": "From description to generated code",
+    "alt": "Pipeline in three columns in which a board description is read by checks and then written out by emitters as generated files.",
+    "description": "The Inputs column holds the board description and the image description. The Checks column holds the rules that read them. The Outputs column holds the generated files the build consumes.",
+    "profile": "detail",
+    "width": 882,
+    "source": "docs/model/board-flow.pipeline.yml",
+    "sources": [
+      "docs/model/board-flow.pipeline.yml"
+    ],
+    "kind": "pipeline",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
+  "bus-access": {
+    "title": "A guarded bus access",
+    "alt": "Sequence of a guarded register read, in which the caller asks the handler, the handler takes the bus lock, calls the driver, and the driver returns the value through the port.",
+    "description": "The Caller calls Read on the Handler. The Handler locks the Bus, then asks the Driver, which uses the Port to move the bytes. The value returns the same way and the Handler releases the lock before it answers the Caller.",
+    "profile": "detail",
+    "width": 890,
+    "source": "docs/model/bus-access.seq.yml",
+    "sources": [
+      "docs/model/bus-access.seq.yml"
+    ],
+    "kind": "seq",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
+  "handler-health": {
+    "title": "Handler lifecycle and health",
+    "alt": "State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them.",
+    "description": "A handler starts Unknown, moves to Starting on the start call, runs its declared stages one at a time, and reaches Ready or Faulted. Ready becomes Degraded when a call fails and returns to Ready on the next good call; repeated or fatal failures make it Faulted. Only Recover moves a Faulted handler back, through Recovering, and Deinitialize returns it to Unknown.",
+    "profile": "detail",
+    "width": 697,
+    "source": "docs/model/handler-health.state.yml",
+    "sources": [
+      "docs/model/handler-health.state.yml"
+    ],
+    "kind": "state",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
+  "heat-channels": {
+    "title": "Channels per port",
+    "alt": "Heat map of the number of channels each port offers for the ADC, PWM and timer peripherals, darker cells meaning more channels.",
+    "description": "Rows are the peripherals ADC, PWM and timer; columns are two ports. Each cell shows the channel count as a number, and a darker cell means more channels.",
+    "profile": "detail",
+    "width": 454,
+    "source": "docs/model/heat-channels.matrix.yml",
+    "sources": [
+      "docs/model/heat-channels.matrix.yml"
+    ],
+    "kind": "matrix",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": true,
+    "font": ""
+  },
+  "journal-layout": {
+    "title": "Fault journal record and ring",
+    "alt": "Layout of the 32-byte fault journal record in four rows of eight bytes, from the magic and version to the CRC-32, and a ring of eight slots in which the next append overwrites the oldest record.",
+    "description": "A record is 32 bytes in four rows of eight. The first four bytes hold a magic, a format version and the record kind; then a sequence number, a time stamp, the source, the status, a detail code and a value; the last four bytes are a CRC-32 over the first 28. The journal is a ring of slots: an append writes the slot after the newest record, so the oldest record is overwritten. A torn write leaves a slot whose CRC fails, which Open skips.",
+    "profile": "detail",
+    "width": 1040,
+    "source": "docs/model/journal-layout.bytes.yml",
+    "sources": [
+      "docs/model/journal-layout.bytes.yml"
+    ],
+    "kind": "bytes",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": true,
+    "font": ""
+  },
+  "layers-zones": {
+    "title": "Include zones",
+    "alt": "Zone graph of the include checker rules: handlers include interfaces, rtos, utils and drivers, interfaces include rtos and utils, and the MCU port and the RTOS backend may include SDK headers through boundary files only.",
+    "description": "Each box is a zone of the include checker. An arrow from A to B means files in A may include headers of B. The arrows are read from the checker's own rules file, so the figure cannot show an edge the checker would reject. Standard library entries are left out, and SDK access is limited to the boundary files of the zones tagged sdk.",
+    "profile": "detail",
+    "width": 862,
+    "source": "docs/model/layers-zones.graph.yml",
+    "sources": [
+      "docs/model/layers-zones.graph.yml"
+    ],
+    "kind": "graph",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
+  "port-capabilities": {
+    "title": "Contract support by port",
+    "alt": "Matrix of which bus contracts each port supports, as native, adapted, planned or not applicable, with the published limit where there is one.",
+    "description": "Rows are the contracts I2C, SPI and CAN; columns are the host port, the ESP32 port and a planned port. A cell says native, adapted, planned or n/a in words and with a mark, and a note gives the published limit.",
+    "profile": "detail",
+    "width": 582,
+    "source": "docs/model/port-capabilities.matrix.yml",
+    "sources": [
+      "docs/model/port-capabilities.matrix.yml"
+    ],
+    "kind": "matrix",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": true,
+    "font": ""
+  },
+  "transfer-deadline": {
+    "title": "A transfer against its deadline",
+    "alt": "Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline.",
+    "description": "The CPU lane prepares the buffer for 20 microseconds, then the DMA lane moves it for 50, and the CPU lane completes and checks it for 15. The Memory lane marks the cache clean before the move and the invalidate after it. The deadline falls at 100 microseconds, so this transfer ends with 15 microseconds to spare.",
+    "profile": "detail",
+    "width": 1000,
+    "source": "docs/model/transfer-deadline.timeline.yml",
+    "sources": [
+      "docs/model/transfer-deadline.timeline.yml"
+    ],
+    "kind": "timeline",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
   "workflow-flow": {
     "title": "From push to release",
     "alt": "Two-lane flow: on every push and pull request ru-build runs generate-matrix, build and size-report and uploads fw-* artifacts; on a version tag ru-release-firmware downloads those same artifacts and attaches them to a GitHub Release.",

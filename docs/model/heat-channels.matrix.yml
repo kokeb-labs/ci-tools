@@ -1,0 +1,20 @@
+---
+kind: matrix
+id: heat-channels
+title: Channels per port
+kicker: Example
+alt: Heat map of the number of channels each port offers for the ADC, PWM and timer peripherals, darker cells meaning more channels.
+reads: >-
+  Rows are the peripherals ADC, PWM and timer; columns are two ports. Each cell shows the channel count as a number,
+  and a darker cell means more channels.
+print: landscape
+rows: [{id: adc, label: ADC}, {id: pwm, label: PWM}, {id: tim, label: Timer}]
+cols: [{id: a, label: Port A}, {id: b, label: Port B}]
+heat: {min: 0, max: 16}
+cells:
+  - {row: adc, col: a, value: 8, text: 8 ch}
+  - {row: adc, col: b, value: 16, text: 16 ch}
+  - {row: pwm, col: a, value: 4, text: 4 ch}
+  - {row: pwm, col: b, value: 12, text: 12 ch}
+  - {row: tim, col: a, value: 1, text: 1 ch}
+  - {row: tim, col: b, value: 6, text: 6 ch}

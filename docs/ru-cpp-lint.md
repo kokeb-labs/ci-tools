@@ -55,6 +55,7 @@ The job needs only `contents: read`: annotations come from the log, and nothing 
 <!-- generated: inputs-ru-cpp-lint -->
 | Input | Type | Default | Description |
 | --- | --- | --- | --- |
+| `timeout_minutes` | number | `20` | Time limit of the lint job in minutes (large header-only drivers need more than the default) |
 | `clang_version` | string | `20` | Clang major version of clang-format and clang-tidy (20 is the supported version) |
 | `clang_format_config` | string | `_config/.clang-format` | Path to clang-format configuration file |
 | `clang_tidy_config` | string | `_config/.clang-tidy` | Path to clang-tidy configuration file |

@@ -66,7 +66,7 @@ repository links, figures and generated regions resolve as they would with a roo
 | `kokeb_mkdocs_theme/theme/` | Theme (`extends: material`): `main.html`, header with the org crumb, footer, inline mark, `assets/kokeb/kokeb.css` (tokens for light and dark, typography, admonitions, code, tables, hero, cards, chip card, figures, Mermaid, focus), the Doxygen stylesheet, the root `404.html` |
 | `kokeb_mkdocs_theme/plugin.py` | Defaults, Markdown extensions, validation, build-input exclusion, page checks |
 | `kokeb_mkdocs_theme/hooks.py` | Repository links to GitHub, API links, figure embeds, raw-HTML rebase, image and alt-text gate |
-| `kokeb_mkdocs_theme/figkit/` | Code-sourced SVG figures, light and dark from one layout, contrast-checked |
+| `kokeb_mkdocs_theme/figkit/` | Code-sourced SVG figures, light and dark from one layout, contrast-checked; `kinds/` draws a state machine, sequence, timeline, graph, matrix, byte layout or pipeline from a model file ([Figures with figkit](../../docs/figkit.md)) |
 | `kokeb_mkdocs_theme/hardware/` | Chip pinout, block diagram and application circuits from `docs/hardware.yml`, the grid router, the KiCad netlist export |
 | `kokeb_mkdocs_theme/gen.py`, `generators/` | `<!-- generated: name -->` regions; built in: `examples` (from `examples/*/app_config.yml`) |
 | `kokeb_mkdocs_theme/screenshots.py` | Phone / desktop, light / dark screenshots of a built site |

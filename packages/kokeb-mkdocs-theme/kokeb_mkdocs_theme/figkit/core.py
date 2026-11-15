@@ -32,6 +32,11 @@ _METRICS = json.loads((pathlib.Path(__file__).with_name("metrics.json")).read_te
 
 #: Contrast every text must reach against the paint under it, in both themes.
 MIN_CONTRAST = 4.5
+#: Contrast every shape that carries meaning (card outline, arrow, accent stripe) must reach, WCAG 2.x 1.4.11.
+MIN_NONTEXT_CONTRAST = 3.0
+#: Content width of an A4 page with 15 mm margins, in points, and the smallest text a printed figure may have.
+PRINT_WIDTH_PT = {"portrait": 510.0, "landscape": 757.0}
+MIN_PRINT_PT = 7.0
 #: Width at which GitHub shows a README image; an ``overview`` figure keeps text >= 11 px there.
 READ_WIDTH = 830
 LAYERS = ("bg", "region", "edge", "node", "label")
@@ -52,7 +57,7 @@ PROFILES = {
 
 def C(token: str) -> str:
     """Placeholder for a colour token, resolved by ``Fig.svg(theme)``."""
-    T.resolve(token, "light")  # fail early on an unknown token
+    T.resolve(token, "light", 2)  # fail early on an unknown token (palette 2 is the superset)
     return f"§{token}§"
 
 
@@ -127,6 +132,21 @@ def fit_title(s: str, width: float, size: float, min_size: float, weight: int = 
     return broken, size
 
 
+def card_size(k: dict, w: float, title: str, lines=(), sub: str = "", mono: bool = False, tag: str = "") -> float:
+    """Height ``Fig.card`` gives a card of width ``w`` with this content (``k`` is the profile's size table)."""
+    pad = k["pad"]
+    inner_w = w - 2 * pad - 6
+    tag_w = text_width(tag, k["pill"], 700) + 16 + 8 if tag else 0
+    t_lines, tsz = fit_title(title, inner_w - tag_w, k["card_title"], k["card_body"])
+    s_lines = wrap(sub, inner_w, k["small"]) if sub else []
+    body = []
+    for ln in lines:
+        body += wrap(ln, inner_w, k["mono"] if mono else k["card_body"], 400, mono)
+    th, sh, bh = tsz * 1.3, k["small"] * 1.35, (k["mono"] if mono else k["card_body"]) * 1.45
+    need = pad + len(t_lines) * th + (len(s_lines) * sh + 2 if s_lines else 0) + (6 + len(body) * bh if body else 0)
+    return math.ceil(need + pad - 4)
+
+
 def _f(v: float) -> str:
     r = round(v, 1)
     return str(int(r)) if r == int(r) else f"{r:.1f}"
@@ -192,6 +212,22 @@ class Fig:
     legend: list = field(default_factory=list)
     source: str = ""
     doc: str = ""
+    #: Colour palette version (``theme.py``). 1 keeps the bytes of every figure written before palette 2.
+    palette: int = 1
+    #: ``"portrait"`` or ``"landscape"`` to declare the page the figure is printed on (checked), or ``None``.
+    print_mode: str | None = None
+    #: Also write ``<id>.adaptive.svg`` (one file, light and dark, follows the page theme).
+    adaptive: bool = False
+    #: Kind of a model-drawn figure (``state``, ``seq``, ...), else empty.
+    kind: str = ""
+    #: The long description of a model-drawn figure (a module takes it from its docstring's ``Reads:`` paragraph).
+    reads: str = ""
+    #: Names (states, participants, lanes) the alt text or the long description must mention.
+    names: list = field(default_factory=list)
+    #: Table twin of a data-heavy figure: ``{"caption": str, "head": [...], "rows": [[...], ...]}``.
+    twin: dict | None = None
+    #: ``"embed"``: the standalone SVGs carry a subset of the font (see ``fontsubset.py``).
+    font: str = ""
 
     def __post_init__(self) -> None:
         self.k = PROFILES[self.profile]
@@ -204,6 +240,7 @@ class Fig:
         self._markers: set[str] = set()
         self._segments: list[tuple[tuple[float, float], tuple[float, float]]] = []
         self._labels: list[tuple[Box, str]] = []
+        self._nontext: list[tuple[str, tuple[str, ...], str]] = []  # (token, tokens it must contrast with, what)
         self._maxy = 0.0
         self._min_size = 99.0
         sub = wrap(self.subtitle, self.body_w, self.k["subtitle"]) if self.subtitle else []
@@ -460,6 +497,7 @@ class Fig:
             self.problem(f"card {title!r}: content needs {need:.0f} px but the card is {h:.0f} px tall")
         box = self.rect(x, y, w, hh, fill=fill, stroke=f"{tone}.strong" if accent else "line",
                         sw=1.4 if accent else 1.0, dash="6 4" if dashed else None)
+        self.nontext(f"{tone}.strong" if accent else "line", ("canvas", fill), f"outline of card {title!r}")
         if not dashed:
             self._put("node", f'<rect x="{_f(self._X(x))}" y="{_f(self._Y(y) + 8)}" width="4" '
                               f'height="{_f(max(hh - 16, 4))}" rx="2" fill="{C(tone + ".strong")}"/>')
@@ -523,8 +561,15 @@ class Fig:
 
     # ------------------------------------------------------------------ edges
 
+    def _mid(self, tone_token: str) -> str:
+        """Marker id: ``fk-arrow-<token>`` (palette 1, as always); with palette 2 prefixed by the figure id, so two
+        figures inlined in one page never share an id."""
+        if self.palette >= 2:
+            return f"{self.fid}-arrow-" + tone_token.replace(".", "-")
+        return "fk-arrow-" + tone_token.replace(".", "-")
+
     def _marker(self, tone_token: str) -> str:
-        mid = "fk-arrow-" + tone_token.replace(".", "-")
+        mid = self._mid(tone_token)
         self._markers.add(tone_token)
         return mid
 
@@ -545,6 +590,7 @@ class Fig:
         sw = sw or self.k["stroke"]
         d = _rounded([(self._X(px), self._Y(py)) for px, py in pts], 8)
         mk = self._marker(color)
+        self.nontext(color, ("canvas",), "arrow")
         ms = f' marker-end="url(#{mk})"' if arrow in ("end", "both") else ""
         if arrow == "both":
             ms += f' marker-start="url(#{mk})"'
@@ -620,15 +666,47 @@ class Fig:
 
     # ------------------------------------------------------------------ checks and output
 
+    def nontext(self, token: str, against: Sequence[str], what: str) -> None:
+        """Record a shape that carries meaning: ``token`` must reach 3:1 against every token in ``against``."""
+        self._nontext.append((token, tuple(against), what))
+
+    def advisories(self) -> list[str]:
+        """Non-text contrast failures (WCAG 1.4.11) and print-fit failures. They fail the build of a palette 2 figure
+        (``problems()``); for a palette 1 figure they are only reported by ``kokeb-docs figures --lint``."""
+        self._finalize()
+        out, seen = [], set()
+        for token, against, what in self._nontext:
+            for th in T.THEMES:
+                for bg in against:
+                    key = (token, bg, th)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    ratio = T.contrast(T.resolve(token, th, self.palette), T.resolve(bg, th, self.palette))
+                    if ratio < MIN_NONTEXT_CONTRAST:
+                        out.append(f"{th}: {what} is {ratio:.2f}:1 ({token} on {bg}), needs {MIN_NONTEXT_CONTRAST}:1")
+        if self.print_mode:
+            pt = self.print_pt()
+            if pt < MIN_PRINT_PT:
+                out.append(f"print {self.print_mode}: smallest text is {pt:.1f} pt, needs {MIN_PRINT_PT} pt")
+        return out
+
+    def print_pt(self) -> float:
+        """Smallest text in points when the figure is scaled to the content width of an A4 page."""
+        mode = self.print_mode or "portrait"
+        return round(self._min_size * min(1.0, PRINT_WIDTH_PT[mode] / self.width), 2)
+
     def problems(self) -> list[str]:
         self._finalize()
         out = list(self._problems)
+        if self.palette >= 2:
+            out += self.advisories()
         if not self.alt or not self.alt.strip():
             out.append("no alt text")
         seen = set()
         for bb, fg, bg, s, _size in self._texts:
             for th in T.THEMES:
-                ratio = T.contrast(T.resolve(fg, th), T.resolve(bg, th))
+                ratio = T.contrast(T.resolve(fg, th, self.palette), T.resolve(bg, th, self.palette))
                 key = (fg, bg, th)
                 if ratio < MIN_CONTRAST and key not in seen:
                     seen.add(key)
@@ -641,7 +719,8 @@ class Fig:
 
     def contrast_report(self) -> dict[str, float]:
         return {
-            th: round(min((T.contrast(T.resolve(fg, th), T.resolve(bg, th)) for _b, fg, bg, _s, _z in self._texts),
+            th: round(min((T.contrast(T.resolve(fg, th, self.palette), T.resolve(bg, th, self.palette))
+                           for _b, fg, bg, _s, _z in self._texts),
                           default=21.0), 2)
             for th in T.THEMES
         }
@@ -670,6 +749,7 @@ class Fig:
                                        f'{da} marker-end="url(#{mk})"/>')
                     self.text(x + 44, row_y + 1, label, size=size, color="muted", bg="canvas")
                 else:
+                    self.nontext(tone + ".strong", ("canvas", tone + ".tint"), f"legend swatch {label!r}")
                     self._put("label", f'<rect x="{_f(self._X(x))}" y="{_f(self._Y(row_y - size * 0.85))}" '
                                        f'width="14" height="14" rx="4" fill="{C(tone + ".tint")}" '
                                        f'stroke="{C(tone + ".strong")}" stroke-width="1.4"/>')
@@ -705,6 +785,10 @@ class Fig:
                     self._problems.append(f"edge label {s!r} sits on card {title!r}")
 
     def svg(self, theme: str = "light") -> str:
+        return _resolve(self.raw_svg(), theme, self.palette)
+
+    def raw_svg(self) -> str:
+        """The SVG with colour placeholders (``§token§``) not yet resolved."""
         self._finalize()
         height = math.ceil(self.oy + self._end_y + 30)
         k = self.k
@@ -722,7 +806,7 @@ class Fig:
                     f'fill="{C("hair")}"/>')
         defs = []
         for tok in sorted(self._markers):
-            mid = "fk-arrow-" + tok.replace(".", "-")
+            mid = self._mid(tok)
             defs.append(f'<marker id="{mid}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" '
                         f'orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="{C(tok)}"/></marker>')
         tid, did = f"{self.fid}-title", f"{self.fid}-desc"
@@ -740,14 +824,13 @@ class Fig:
         for layer in LAYERS:
             body += self._layers[layer]
         body.append("</svg>")
-        out = "\n".join(s for s in body if s) + "\n"
-        return _resolve(out, theme)
+        return "\n".join(s for s in body if s) + "\n"
 
 
-def _resolve(svg: str, theme: str) -> str:
+def _resolve(svg: str, theme: str, palette: int = 1) -> str:
     parts = svg.split("§")
     for i in range(1, len(parts), 2):
-        parts[i] = T.resolve(parts[i], theme)
+        parts[i] = T.resolve(parts[i], theme, palette)
     return "".join(parts)
 
 
