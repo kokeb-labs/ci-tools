@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import fnmatch
 import json
 import os
 import re
@@ -187,6 +188,10 @@ def check(a, api: Api) -> tuple[list[dict], list[dict], list[str]]:
     url_rx = re.compile(a.url_pattern) if a.url_pattern else None
     final_release = bool(re.match(r"^refs/tags/v\d+\.\d+\.\d+$", a.ref or ""))
     levels = set(a.handbook_levels.split())
+    ignored_globs = a.ignore_paths.split()
+
+    def ignored(path: str) -> bool:
+        return any(fnmatch.fnmatchcase(path, g) for g in ignored_globs)
 
     if a.forbid_branch_entries == "true":
         for n, m in sorted(mods.items()):
@@ -308,7 +313,7 @@ def check(a, api: Api) -> tuple[list[dict], list[dict], list[str]]:
                 add("PIN-009", name, f".kokeb/handbook.yml level is {lvl or 'missing'}, needs one of "
                                      f"{', '.join(sorted(levels))}")
 
-    for path in sorted(set(links) - seen_paths):
+    for path in sorted(p for p in set(links) - seen_paths if not ignored(p)):
         n = by_path.get(path, (path, {}))[0]
         add("PIN-001", n, f"the submodule {path} has no entry in {a.lock}")
 
@@ -392,6 +397,8 @@ def main() -> int:
     ap.add_argument("--forbid-branch-entries", default="true", choices=["true", "false"])
     ap.add_argument("--url-pattern", default=r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?(\.git)?$")
     ap.add_argument("--handbook-levels", default="")
+    ap.add_argument("--ignore-paths", default="",
+                    help="space-separated globs of submodule paths that are not pins (SOUP); PIN-001 skips them")
     ap.add_argument("--private-repos", default="false", choices=["true", "false"])
     ap.add_argument("--release-lock", default="")
     ap.add_argument("--ref", default=os.environ.get("GITHUB_REF", ""))

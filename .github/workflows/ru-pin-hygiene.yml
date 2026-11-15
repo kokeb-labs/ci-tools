@@ -51,6 +51,13 @@ on:
         type: string
         required: false
         default: ""
+      ignore_paths:
+        description: >-
+          Space-separated globs of submodule paths that are not driver pins (SOUP such as an RTOS kernel); they need
+          no lock entry (PIN-001), but their URL and branch rules still apply
+        type: string
+        required: false
+        default: ""
       private_repos:
         description: >-
           Accept pins to private repositories. They are read with the workflow's built-in token only (no other
@@ -132,13 +139,14 @@ jobs:
           URL_PATTERN: ${{ inputs.url_pattern }}
           LEVELS: ${{ inputs.handbook_levels }}
           PRIVATE: ${{ inputs.private_repos }}
+          IGNORE_PATHS: ${{ inputs.ignore_paths }}
           RELEASE_LOCK: ${{ inputs.release_lock }}
           ENFORCE: ${{ inputs.enforce }}
         run: |
           "$RUNNER_TEMP/venv/bin/python" .ru-pin-hygiene/ci-tools/tools/pins/pins.py --lock "$LOCK" --gates "$GATES" \
             --version-file "$VERSION_FILE" --required-check "$REQUIRED_CHECK" --tag-pattern "$TAG_PATTERN" \
             --forbid-branch-entries "$FORBID_BRANCH" --url-pattern "$URL_PATTERN" --handbook-levels "$LEVELS" \
-            --private-repos "$PRIVATE" --release-lock "$RELEASE_LOCK" --ref "$GITHUB_REF" \
+            --private-repos "$PRIVATE" --ignore-paths "$IGNORE_PATHS" --release-lock "$RELEASE_LOCK" --ref "$GITHUB_REF" \
             --report-dir .ru-pin-hygiene/out --summary "$GITHUB_STEP_SUMMARY" --github-output "$GITHUB_OUTPUT" \
             --enforce "$ENFORCE"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2

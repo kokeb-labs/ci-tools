@@ -17,6 +17,8 @@ that heading.
 
 ### Added
 
+- `ru-pin-hygiene`: input `ignore_paths` (space-separated globs). Submodules under those paths are SOUP, not
+  driver pins, so they need no lock entry (PIN-001); their URL and branch rules still apply.
 - `ru-build`: input `idf_scope` (default `auto`). A tag push, schedule, `workflow_dispatch`, `release` or
   `repository_dispatch` builds every version the app lists (except `ci: none` ones); every other event, pull
   requests and branch pushes included, builds one ESP-IDF version per app (the `ci: pr` version of espidf-tools'
