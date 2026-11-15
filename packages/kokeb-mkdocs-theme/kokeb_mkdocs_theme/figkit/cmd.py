@@ -103,7 +103,7 @@ def cmd_new(args) -> int:
         print(f"[figkit] {args.id!r} already exists", file=sys.stderr)
         return 1
     title = args.title or args.id.replace("-", " ").capitalize()
-    head = (f"# Model of the figure {args.id!r}. Edit this file; `kokeb-docs figures` draws it. Never edit the SVGs.\n"
+    head = (f"---\n# Model of the figure {args.id!r}. Edit this file; `kokeb-docs figures` draws it. Never edit the SVGs.\n"
             f"# Kind {args.kind}: see `kokeb-docs figkit kinds` and docs/figkit.md.\n"
             f"kind: {args.kind}\nid: {args.id}\ntitle: {title}\n"
             "alt: TODO one sentence, 40 to 300 characters, saying what the figure shows\n"

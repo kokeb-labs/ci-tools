@@ -1,3 +1,4 @@
+---
 kind: pipeline
 id: board-flow
 title: From description to generated code

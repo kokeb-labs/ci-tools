@@ -73,6 +73,7 @@ the pin and finding counts and the rule ids that fired.
 | `forbid_branch_entries` | boolean | `true` | Fail on a branch = entry in .gitmodules |
 | `url_pattern` | string | `^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?(\.git)?$` | Regular expression every .gitmodules URL must match |
 | `handbook_levels` | string | empty | Space-separated levels a pin's .kokeb/handbook.yml may declare (e.g. high safety); empty skips PIN-009 |
+| `ignore_paths` | string | empty | Space-separated globs of submodule paths that are not driver pins (SOUP such as an RTOS kernel); they need no lock entry (PIN-001), but their URL and branch rules still apply |
 | `private_repos` | boolean | `false` | Accept pins to private repositories. They are read with the workflow's built-in token only (no other credential is accepted), so the token must be able to read them. |
 | `release_lock` | string | empty | Release lock to check at a release (PIN-012): its pins equal the lock's and it records HEAD |
 | `submodules` | string | `false` | Check out the submodules too, so PIN-010 also checks that each working tree is clean |

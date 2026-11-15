@@ -22,6 +22,9 @@ else. The decision behind it is [ADR 0001](adr/0001-figure-toolchain.md).
 
 </div>
 
+A model file starts with `---`, indents by two spaces (sequence items too) and has no padding after commas, so it
+passes the organisation's yamllint configuration; the scaffold writes it that way.
+
 Never edit an SVG, write a hex colour (use tokens such as `blue` or `ink`), put a time stamp in a model, or switch a
 check off. When the nodes, edges or text sizes of a `state` or `graph` figure change, the layout lock is stale: the
 build says `layout stale, run kokeb-docs figkit layout <id>`.

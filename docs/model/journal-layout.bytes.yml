@@ -1,3 +1,4 @@
+---
 # A 32-byte journal record (little-endian) and the ring of slots it is stored in.
 kind: bytes
 id: journal-layout
@@ -15,11 +16,11 @@ sources: [docs/model/journal-layout.bytes.yml]
 row_bytes: 8
 size: 32
 fields:
-  - {at: 0,  len: 2, name: magic, note: "0x4A4B", tone: slate}
-  - {at: 2,  len: 1, name: version, note: "1", tone: slate}
-  - {at: 3,  len: 1, name: kind, note: RecordKind, tone: blue}
-  - {at: 4,  len: 4, name: sequence, note: wraps mod 2^32, tone: violet}
-  - {at: 8,  len: 8, name: time, note: microseconds, tone: teal}
+  - {at: 0, len: 2, name: magic, note: "0x4A4B", tone: slate}
+  - {at: 2, len: 1, name: version, note: "1", tone: slate}
+  - {at: 3, len: 1, name: kind, note: RecordKind, tone: blue}
+  - {at: 4, len: 4, name: sequence, note: wraps mod 2^32, tone: violet}
+  - {at: 8, len: 8, name: time, note: microseconds, tone: teal}
   - {at: 16, len: 2, name: source, note: handler or thread id, tone: blue}
   - {at: 18, len: 1, name: status, note: Status, tone: amber}
   - {at: 19, len: 1, name: reserved, short: rsvd, note: "0", tone: stone}

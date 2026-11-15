@@ -1,3 +1,4 @@
+---
 # Handler lifecycle and health. The transitions are those of the handler health state diagram; the labels are the
 # short form of the call that causes each one.
 kind: state

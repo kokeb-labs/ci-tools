@@ -127,6 +127,16 @@ class GoldenTests(unittest.TestCase):
         self.assertEqual(fig.svg("light"), (GOLDEN / "legacy-fig.svg").read_text())
         self.assertEqual(fig.svg("dark"), (GOLDEN / "legacy-fig.dark.svg").read_text())
 
+    def test_model_files_follow_the_yaml_lint_rules(self):
+        """The repository's yamllint config wants ``---``, two space indents and no padding after a comma."""
+        import re
+
+        for path in list(MODELS) + sorted((HERE.parents[2] / "docs/model").glob("*.yml")):
+            text = path.read_text()
+            self.assertTrue(text.startswith("---\n"), path.name)
+            self.assertIsNone(re.search(r",  +\S", text), f"{path.name}: padding after a comma")
+            self.assertIsNone(re.search(r"^\t", text, re.M), path.name)
+
     def test_prototype_fixtures_present(self):
         """The three prototype figures are fixtures: the state machine, the zone graph and the byte layout."""
         ids = {yaml.safe_load(p.read_text())["id"] for p in MODELS}
@@ -510,6 +520,7 @@ class BuildFlowTests(unittest.TestCase):
                 self.assertEqual(r.returncode, 0, r.stderr)
                 model = d / "docs/model" / f"demo.{kind}.yml"
                 self.assertTrue(model.is_file())
+                self.assertTrue(model.read_text().startswith("---\n"))
                 self.assertIn("<!-- figure: demo -->", (d / "docs/page.md").read_text())
                 # the scaffold is a valid model: the schema accepts it; only the TODO text and (for layered
                 # kinds) the missing lock stop the build, which is the point

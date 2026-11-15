@@ -1,3 +1,4 @@
+---
 kind: graph
 id: layers-zones
 title: Include zones
@@ -11,82 +12,57 @@ reads: Each box is a zone of the include checker. An arrow from A to B means fil
 direction: TB
 reduce: true
 print: landscape
-sources:
-- docs/model/layers-zones.graph.yml
+sources: [docs/model/layers-zones.graph.yml]
 legend:
-- - rose
-  - SDK access via boundary files
+  - [rose, SDK access via boundary files]
 nodes:
-- id: utils
-  tone: blue
-  lines:
-  - 2 path globs
-  accent: false
-- id: rtos
-  tone: teal
-  lines:
-  - 2 path globs
-  accent: false
-- id: rtos_backend
-  tone: teal
-  lines:
-  - 1 path glob
-  accent: true
-  tag: sdk
-- id: interfaces
-  tone: violet
-  lines:
-  - 2 path globs
-  accent: false
-- id: interfaces_host
-  tone: violet
-  lines:
-  - 1 path glob
-  accent: false
-- id: handlers
-  tone: amber
-  lines:
-  - 2 path globs
-  accent: false
-- id: drivers
-  tone: green
-  lines:
-  - 1 path glob
-  accent: false
-- id: port_esp32
-  tone: rose
-  lines:
-  - 2 path globs
-  accent: true
-  tag: sdk
+  - id: utils
+    tone: blue
+    lines: [2 path globs]
+    accent: false
+  - id: rtos
+    tone: teal
+    lines: [2 path globs]
+    accent: false
+  - id: rtos_backend
+    tone: teal
+    lines: [1 path glob]
+    accent: true
+    tag: sdk
+  - id: interfaces
+    tone: violet
+    lines: [2 path globs]
+    accent: false
+  - id: interfaces_host
+    tone: violet
+    lines: [1 path glob]
+    accent: false
+  - id: handlers
+    tone: amber
+    lines: [2 path globs]
+    accent: false
+  - id: drivers
+    tone: green
+    lines: [1 path glob]
+    accent: false
+  - id: port_esp32
+    tone: rose
+    lines: [2 path globs]
+    accent: true
+    tag: sdk
 edges:
-- from: rtos
-  to: utils
-- from: rtos_backend
-  to: rtos
-- from: rtos_backend
-  to: utils
-- from: interfaces
-  to: rtos
-- from: interfaces
-  to: utils
-- from: interfaces_host
-  to: interfaces
-- from: interfaces_host
-  to: rtos
-- from: interfaces_host
-  to: utils
-- from: handlers
-  to: interfaces
-- from: handlers
-  to: rtos
-- from: handlers
-  to: utils
-- from: handlers
-  to: drivers
-- from: port_esp32
-  to: interfaces
-- from: port_esp32
-  to: rtos
-- from: port_esp32
-  to: utils
+  - {from: rtos, to: utils}
+  - {from: rtos_backend, to: rtos}
+  - {from: rtos_backend, to: utils}
+  - {from: interfaces, to: rtos}
+  - {from: interfaces, to: utils}
+  - {from: interfaces_host, to: interfaces}
+  - {from: interfaces_host, to: rtos}
+  - {from: interfaces_host, to: utils}
+  - {from: handlers, to: interfaces}
+  - {from: handlers, to: rtos}
+  - {from: handlers, to: utils}
+  - {from: handlers, to: drivers}
+  - {from: port_esp32, to: interfaces}
+  - {from: port_esp32, to: rtos}
+  - {from: port_esp32, to: utils}

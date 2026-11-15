@@ -1,3 +1,4 @@
+---
 kind: seq
 id: bus-access
 title: A guarded bus access
