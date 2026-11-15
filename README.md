@@ -897,6 +897,7 @@ jobs:
 | `auto_clone_tools` | boolean | no | `true` | Auto-clone tools repo if project_tools_dir is missing |
 | `group_build_types` | boolean | no | `true` | Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type. |
 | `idf_install` | string | no | `native` | How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf image through espressif/esp-idf-ci-action, as before. |
+| `idf_scope` | string | no | `auto` | Which ESP-IDF versions of each app a run builds. auto (default): full on a tag push, schedule, workflow_dispatch, release and repository_dispatch, pr on every other event. pr: per app only the version with ci: pr in the tools' idf_versions.yml (else the app's first). full: every version the app lists. Tools without generate_matrix.py --ci-scope build every version, with a warning. |
 | `max_dec_total` | string | no | `0` | Maximum total dec size in bytes for size budget enforcement (0 to disable) |
 <!-- inputs:ru-build.yml:end -->
 

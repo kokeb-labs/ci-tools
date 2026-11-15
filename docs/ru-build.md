@@ -42,7 +42,7 @@ jobs:
 | `auto_clone_tools` | boolean | `true` | Auto-clone tools repo if project_tools_dir is missing |
 | `group_build_types` | boolean | `true` | Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type. |
 | `idf_install` | string | `native` | How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf image through espressif/esp-idf-ci-action, as before. |
-| `idf_scope` | string | `auto` | Which ESP-IDF versions of each app a run builds. auto (default): pr on pull requests and branch pushes, full on tags, schedules and manual runs. pr: per app only the version with ci: pr in the tools' idf_versions.yml (else the app's first). full: every version the app lists. Tools without generate_matrix.py --ci-scope build every version, with a warning. |
+| `idf_scope` | string | `auto` | Which ESP-IDF versions of each app a run builds. auto (default): full on a tag push, schedule, workflow_dispatch, release and repository_dispatch, pr on every other event. pr: per app only the version with ci: pr in the tools' idf_versions.yml (else the app's first). full: every version the app lists. Tools without generate_matrix.py --ci-scope build every version, with a warning. |
 | `max_dec_total` | string | `0` | Maximum total dec size in bytes for size budget enforcement (0 to disable) |
 <!-- /generated -->
 
@@ -92,16 +92,22 @@ A submodule is the reproducible choice: the clone follows the tools' `main` bran
 
 `idf_scope` (default `auto`) keeps CI minutes low while every version an app lists is still built regularly:
 
-| Run (`auto`) | Scope | ESP-IDF versions per app |
+| Event (`auto`) | Scope | ESP-IDF versions per app |
 | --- | --- | --- |
-| Pull request, push to a branch | `pr` | the version with `ci: pr` in the tools' `idf_versions.yml`, else the app's first |
-| Tag, schedule, manual run, release | `full` | every version the app lists in `app_config.yml` |
+| push of a tag, `schedule`, `workflow_dispatch`, `release`, `repository_dispatch` | `full` | every version the app lists in `app_config.yml` except those with `ci: none` |
+| every other event: `pull_request`, push to a branch, `merge_group`, `workflow_run`, ... | `pr` | the version with `ci: pr` in the tools' `idf_versions.yml`, else the app's first |
+
+An event the table does not name gets the cheap `pr` scope. The same table is `idf_versions.py scope` in
+espidf-tools, and a test there pins it.
 
 Set `idf_scope: full` to build everything on every run, or `pr` to never build more than one version. Tools that
 predate `generate_matrix.py --ci-scope` (espidf-tools 1.0.0) build every version, with a warning in the log.
 
 The native install clones each entry's `idf_ref` (the version's git ref in `idf_versions.yml`), else its
-`idf_version`. See [ESP-IDF versions](https://kokeb-labs.github.io/espidf-tools/latest/idf-versions/) for the
+`idf_version`. `idf_install: docker` ignores `idf_ref`: it pulls the `espressif/idf:<idf_version_docker>`
+image, which names the release branch. So when `idf_versions.yml` pins a version to a patch tag
+(`ref: v5.5.6`), native builds that tag and docker builds the branch's image. Use native (the default) when
+the pin matters. See [ESP-IDF versions](https://kokeb-labs.github.io/espidf-tools/latest/idf-versions/) for the
 versions file and the support periods behind it.
 
 ## The matrix

@@ -40,8 +40,8 @@ on:
         default: native
       idf_scope:
         description: >
-          Which ESP-IDF versions of each app a run builds. auto (default): pr on pull requests and branch pushes,
-          full on tags, schedules and manual runs. pr: per app only the version with ci: pr in the tools'
+          Which ESP-IDF versions of each app a run builds. auto (default): full on a tag push, schedule,
+          workflow_dispatch, release and repository_dispatch, pr on every other event. pr: per app only the version with ci: pr in the tools'
           idf_versions.yml (else the app's first). full: every version the app lists. Tools without
           generate_matrix.py --ci-scope build every version, with a warning.
         type: string
@@ -225,14 +225,14 @@ jobs:
           IDF_SCOPE: ${{ inputs.idf_scope }}
         run: |
           set -e
-          # auto: pull requests and branch pushes build one ESP-IDF version per app, tags, schedules and manual
-          # runs every version (the same rule as idf_versions.py scope).
+          # auto, the same table as espidf-tools' idf_versions.py scope: full for a tag push, schedule,
+          # workflow_dispatch, release and repository_dispatch; pr (the cheap scope) for every other event.
           scope="$IDF_SCOPE"
           if [ "$scope" = "auto" ]; then
+            scope="pr"
             case "$GITHUB_EVENT_NAME" in
-              pull_request|pull_request_target|merge_group) scope="pr" ;;
-              push) case "$GITHUB_REF" in refs/tags/*) scope="full" ;; *) scope="pr" ;; esac ;;
-              *) scope="full" ;;
+              push) case "$GITHUB_REF" in refs/tags/*) scope="full" ;; esac ;;
+              schedule|workflow_dispatch|release|repository_dispatch) scope="full" ;;
             esac
           fi
           # Scripts directory and generate_matrix.py already validated
