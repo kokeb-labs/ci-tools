@@ -1,0 +1,64 @@
+---
+# The C++ language standards Kokeb Labs code may declare, and where each stands. One file for the organisation; a
+# driver declares its own choice in the `language:` block of driver.yml. tools/standards/check_standards.py reads both.
+# Guide: docs/language-standards.md. Change this file in a pull request of its own, with the handbook release that
+# defines the profile (handbook rules/cpp<NN>.yml), and say in the changelog which statuses moved.
+#
+# status:
+#   current    what a new driver is scaffolded with; exactly one profile.
+#   supported  older but still accepted; drivers may stay, the check prints a notice with the move to make.
+#   preview    being prepared; accepted with a warning, never scaffolded; compiler floors may still change.
+#   retired    not accepted; the check fails. `retired_on` says when. A `supported_until` date that has passed
+#              counts as retired.
+schema: 1
+default: KB-CPP20   # the profile `tools/scaffold.py` writes into a new driver.yml
+next: KB-CPP23      # the profile under preparation (status preview); null when none
+
+# Compiler keys a driver may name in `language.compilers`; the value is the oldest version of the profile's floor
+# that the key must reach. Versions compare as dotted numbers ("19.30" is above "19.4").
+compilers:
+  gcc: Host GCC (g++)
+  clang: Host Clang (clang++), also the Apple toolchain by its LLVM version
+  msvc: MSVC, by the _MSC_VER value (19.30 is Visual Studio 2022 17.0)
+  arm_gcc: GNU Arm Embedded / Arm GNU Toolchain (arm-none-eabi-g++)
+  esp_idf: ESP-IDF release whose bundled GCC the driver builds with
+
+profiles:
+  KB-CPP17:
+    title: C++17 (never a Kokeb Labs profile; code written as C++17 was moved up, handbook ADR-0010)
+    standard: 17
+    status: retired
+    since: null
+    retired_on: "2026-11-03"
+    handbook_versions: []
+    misra: ["MISRA C++:2023"]
+    cmake: {feature: cxx_std_17, min_version: "3.8"}
+    flag: c++17
+    cplusplus: 201703
+    compilers: {gcc: "7", clang: "5", msvc: "19.14", arm_gcc: "7", esp_idf: "4.0"}
+
+  KB-CPP20:
+    title: C++20 profile, MISRA C++:2023 (handbook rules/cpp20.yml, KB-CPP20-001 to -058)
+    standard: 20
+    status: current
+    since: "2026-11-08"        # the handbook C++20 profile page
+    supported_until: null
+    handbook_versions: ["1.0"]
+    misra: ["MISRA C++:2023"]  # MISRA C++:2023 is written for C++17; the profile extends it (MD-CPP-001)
+    cmake: {feature: cxx_std_20, min_version: "3.16"}
+    flag: c++20
+    cplusplus: 202002          # __cplusplus on a conforming compiler; _MSVC_LANG on MSVC
+    compilers: {gcc: "10", clang: "13", msvc: "19.30", arm_gcc: "10", esp_idf: "5.0"}
+
+  KB-CPP23:
+    title: C++23 profile, MISRA C++:2023 (not yet defined in the handbook; floors are a proposal)
+    standard: 23
+    status: preview
+    since: null                # set when the handbook publishes rules/cpp23.yml
+    supported_until: null
+    handbook_versions: []
+    misra: ["MISRA C++:2023"]  # the next edition is added here when MISRA publishes and the matrix passes it
+    cmake: {feature: cxx_std_23, min_version: "3.20"}
+    flag: c++23
+    cplusplus: 202100          # GCC 11 to 13 report 202100L for -std=c++23, GCC 14 and Clang 17 report 202302L
+    compilers: {gcc: "13", clang: "17", msvc: "19.37", arm_gcc: "13", esp_idf: "5.2"}

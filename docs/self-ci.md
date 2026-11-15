@@ -34,6 +34,7 @@ The checks every pull request to this repository runs, and what each one proves.
 | `.github/scripts/check_permissions.py` | `workflow-checks` | The permissions of a workflow differ from the README table |
 | `.github/scripts/gen_readme_inputs.py --check` | `workflow-checks` | A README inputs table differs from its workflow |
 | `tools/cmake_matrix/test_cmake_matrix.py`, `tools/mutation/test_mutation.py`, `tools/pins/test_pins.py`, `tools/layering/test_layering.py`, `tools/catalog/test_catalog.py` | `workflow-checks` | A unit test of the scripts behind `ru-cmake-matrix`, `ru-mutation`, `ru-pin-hygiene`, `ru-layering` or `ru-catalog` fails |
+| `tools/standards/test_standards.py`, `tools/standards/check_standards.py --registry` | `workflow-checks` | A unit test of the [language standard checker](language-standards.md) fails, or `standards.yml` is incoherent |
 | `.github/scripts/check_contract.py` | `workflow-checks` (pull requests) | A breaking change has no `### Breaking` entry |
 | `.github/scripts/check_repo_checks.py` | `workflow-checks` | A step of `ru-repo-checks.yml` differs from the step of the single workflow it copies |
 | `.github/scripts/shellcheck_actions.py` | `actionlint` | shellcheck reports a finding in a composite action's `run:` step |
