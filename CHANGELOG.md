@@ -17,6 +17,8 @@ that heading.
 
 ### Added
 
+- `ru-cpp-lint`: input `timeout_minutes` (default 20). `ru-misra`: input `scan_timeout_minutes` (default 60). Large
+  header-only drivers whose test suite instantiates every template need more time than the defaults.
 - `ru-pin-hygiene`: input `ignore_paths` (space-separated globs). Submodules under those paths are SOUP, not
   driver pins, so they need no lock entry (PIN-001); their URL and branch rules still apply.
 - `ru-build`: input `idf_scope` (default `auto`). A tag push, schedule, `workflow_dispatch`, `release` or
