@@ -905,6 +905,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#which-esp-idf-versions-a-run-builds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which ESP-IDF versions a run builds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1371,6 +1382,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#which-esp-idf-versions-a-run-builds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which ESP-IDF versions a run builds
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1442,25 +1464,29 @@
 <h1 id="ru-build">ru-build<a class="headerlink" href="#ru-build" title="Permanent link">&para;</a></h1>
 <p>Build every ESP32 example app of a repository across ESP-IDF versions and build types, upload the firmware and
 report its size on pull requests.</p>
-<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/a1225923ffd620e174126e87c3ec8ae96b4bbac0/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></p>
+<p><strong>File:</strong> <a href="https://github.com/kokeb-labs/ci-tools/blob/7fe830fdbd171dd6e0538b9a02168b9ddd4452da/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></p>
 <h2 id="caller">Caller<a class="headerlink" href="#caller" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">---</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ESP32 examples build</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">on</span><span class="p">:</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">push</span><span class="p">:</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">jobs</span><span class="p">:</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">build</span><span class="p">:</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kokeb-labs/ci-tools/.github/workflows/ru-build.yml@v1</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nt">permissions</span><span class="p">:</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">      </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="nt">pull-requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">with</span><span class="p">:</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="nt">project_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/esp32</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="nt">project_tools_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/esp32/scripts</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="nt">max_dec_total</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"v*"</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">schedule</span><span class="p">:</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cron</span><span class="p">:</span><span class="w"> </span><span class="s">"17</span><span class="nv"> </span><span class="s">3</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">1"</span><span class="w">   </span><span class="c1"># every ESP-IDF version the apps list, once a week</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">workflow_dispatch</span><span class="p">:</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nt">jobs</span><span class="p">:</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nt">build</span><span class="p">:</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kokeb-labs/ci-tools/.github/workflows/ru-build.yml@v1</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="nt">permissions</span><span class="p">:</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="nt">pull-requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="nt">with</span><span class="p">:</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="nt">project_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/esp32</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="nt">project_tools_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">examples/esp32/scripts</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">      </span><span class="nt">max_dec_total</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
 </span></code></pre></div>
 <h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
 <!-- generated: inputs-ru-build -->
@@ -1511,6 +1537,12 @@ report its size on pull requests.</p>
 <td>How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf image through espressif/esp-idf-ci-action, as before.</td>
 </tr>
 <tr>
+<td><code>idf_scope</code></td>
+<td>string</td>
+<td><code>auto</code></td>
+<td>Which ESP-IDF versions of each app a run builds. auto (default): full on a tag push, schedule, workflow_dispatch, release and repository_dispatch, pr on every other event. pr: per app only the version with ci: pr in the tools' idf_versions.yml (else the app's first). full: every version the app lists. Tools without generate_matrix.py --ci-scope build every version, with a warning.</td>
+</tr>
+<tr>
 <td><code>max_dec_total</code></td>
 <td>string</td>
 <td><code>0</code></td>
@@ -1549,7 +1581,8 @@ report its size on pull requests.</p>
 </table>
 <ul>
 <li><strong><code>generate-matrix</code></strong> checks out with submodules, finds the project tools (below), runs <code>generate_matrix.py</code>
-  and outputs the matrix.</li>
+  with the scope of the run (<code>idf_scope</code>, below) and outputs the matrix, with the versions and apps in the run
+  summary.</li>
 <li><strong><code>build</code></strong> builds every build type of one app and IDF version (<code>group_build_types</code>): it checks out, restores
   the pip and compiler (ccache) caches (skipped with <code>clean_build</code>) and installs the tools' <code>requirements.txt</code>.
   With <code>idf_install: native</code> (default) it resolves the IDF version to a commit, restores <code>~/esp-idf</code> and
@@ -1592,6 +1625,39 @@ report its size on pull requests.</p>
 </tbody>
 </table>
 <p>A submodule is the reproducible choice: the clone follows the tools' <code>main</code> branch.</p>
+<h2 id="which-esp-idf-versions-a-run-builds">Which ESP-IDF versions a run builds<a class="headerlink" href="#which-esp-idf-versions-a-run-builds" title="Permanent link">&para;</a></h2>
+<p><code>idf_scope</code> (default <code>auto</code>) keeps CI minutes low while every version an app lists is still built regularly:</p>
+<table>
+<thead>
+<tr>
+<th>Event (<code>auto</code>)</th>
+<th>Scope</th>
+<th>ESP-IDF versions per app</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>push of a tag, <code>schedule</code>, <code>workflow_dispatch</code>, <code>release</code>, <code>repository_dispatch</code></td>
+<td><code>full</code></td>
+<td>every version the app lists in <code>app_config.yml</code> except those with <code>ci: none</code></td>
+</tr>
+<tr>
+<td>every other event: <code>pull_request</code>, push to a branch, <code>merge_group</code>, <code>workflow_run</code>, ...</td>
+<td><code>pr</code></td>
+<td>the version with <code>ci: pr</code> in the tools' <code>idf_versions.yml</code>, else the app's first</td>
+</tr>
+</tbody>
+</table>
+<p>An event the table does not name gets the cheap <code>pr</code> scope. The same table is <code>idf_versions.py scope</code> in
+espidf-tools, and a test there pins it.</p>
+<p>Set <code>idf_scope: full</code> to build everything on every run, or <code>pr</code> to never build more than one version. Tools that
+predate <code>generate_matrix.py --ci-scope</code> (espidf-tools 1.0.0) build every version, with a warning in the log.</p>
+<p>The native install clones each entry's <code>idf_ref</code> (the version's git ref in <code>idf_versions.yml</code>), else its
+<code>idf_version</code>. <code>idf_install: docker</code> ignores <code>idf_ref</code>: it pulls the <code>espressif/idf:&lt;idf_version_docker&gt;</code>
+image, which names the release branch. So when <code>idf_versions.yml</code> pins a version to a patch tag
+(<code>ref: v5.5.6</code>), native builds that tag and docker builds the branch's image. Use native (the default) when
+the pin matters. See <a href="https://kokeb-labs.github.io/espidf-tools/latest/idf-versions/">ESP-IDF versions</a> for the
+versions file and the support periods behind it.</p>
 <h2 id="the-matrix">The matrix<a class="headerlink" href="#the-matrix" title="Permanent link">&para;</a></h2>
 <p><code>generate_matrix.py</code> reads <code>app_config.yml</code> and emits one entry per app, ESP-IDF version and build type:</p>
 <table>
