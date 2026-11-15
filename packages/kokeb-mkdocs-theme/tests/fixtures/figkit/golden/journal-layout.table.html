@@ -1,0 +1,20 @@
+<details>
+<summary>Table form of this figure</summary>
+<table>
+<caption>Fault journal record and ring</caption>
+<thead><tr><th scope="col">Bytes</th><th scope="col">Field</th><th scope="col">Note</th></tr></thead>
+<tbody>
+<tr><th scope="row">0..1</th><td>magic</td><td>0x4A4B</td></tr>
+<tr><th scope="row">2</th><td>version</td><td>1</td></tr>
+<tr><th scope="row">3</th><td>kind</td><td>RecordKind</td></tr>
+<tr><th scope="row">4..7</th><td>sequence</td><td>wraps mod 2^32</td></tr>
+<tr><th scope="row">8..15</th><td>time</td><td>microseconds</td></tr>
+<tr><th scope="row">16..17</th><td>source</td><td>handler or thread id</td></tr>
+<tr><th scope="row">18</th><td>status</td><td>Status</td></tr>
+<tr><th scope="row">19</th><td>reserved</td><td>0</td></tr>
+<tr><th scope="row">20..23</th><td>detail</td><td>driver or vendor code</td></tr>
+<tr><th scope="row">24..27</th><td>value</td><td>count reason or mask</td></tr>
+<tr><th scope="row">28..31</th><td>crc32</td><td>over bytes 0 to 27</td></tr>
+</tbody>
+</table>
+</details>

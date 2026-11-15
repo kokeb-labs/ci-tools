@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="510" viewBox="0 0 900 510" role="img" aria-labelledby="legacy-fig-title legacy-fig-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="legacy-fig-title">Legacy figure</title>
+<desc id="legacy-fig-desc">Two cards joined by an arrow, a region, a note and a chip row.</desc>
+<defs><marker id="fk-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8893A2"/></marker></defs>
+<rect x="0.5" y="0.5" width="899" height="509" rx="16" fill="#FFFFFF" stroke="#E2E7EE"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#7A360E">FIXTURE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" fill="#0E1726">Legacy figure</text>
+<text x="32" y="103.8" font-size="15" fill="#566070">Drawn with the original figkit calls.</text>
+<rect x="32" y="119.8" width="836" height="1" fill="#E2E7EE"/>
+<rect x="32" y="137.8" width="840" height="230" rx="14" fill="#F1F4F8" stroke="#CBD5E1" stroke-width="1.2"/>
+<path d="M300 237.8 L359.2 237.8 Q364 237.8 364 233.1 L364 233.1 Q364 228.3 368.8 228.3 L428 228.3" fill="none" stroke="#8893A2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#fk-arrow-rail)"/>
+<path d="M176 285.8 L176 283.8" fill="none" stroke="#8893A2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 5" marker-end="url(#fk-arrow-rail)"/>
+<rect x="56" y="193.8" width="240" height="88" rx="10" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.4"/>
+<rect x="56" y="201.8" width="4" height="72" rx="2" fill="#2563EB"/>
+<rect x="432" y="193.8" width="240" height="69" rx="10" fill="#FFFFFF" stroke="#C9D1DB" stroke-width="1"/>
+<rect x="432" y="201.8" width="4" height="53" rx="2" fill="#C26A05"/>
+<rect x="56" y="287.8" width="240" height="56" rx="10" fill="#EAF7EF" stroke="#15803D" stroke-width="1.4"/>
+<rect x="56" y="295.8" width="4" height="40" rx="2" fill="#15803D"/>
+<rect x="32" y="387.8" width="840" height="60.5" rx="10" fill="#FBEFE6" stroke="#E9C3A6" stroke-width="1"/>
+<text x="48" y="162.8" font-size="13" font-weight="700" fill="#334155">REGION</text>
+<text x="112.8" y="162.8" font-size="12" fill="#334155">with a sub label</text>
+<text x="76" y="220.6" font-size="15" font-weight="700" fill="#1E429F">First</text>
+<text x="76" y="245.4" font-size="13" fill="#2B3442">one body line</text>
+<text x="76" y="264.2" font-size="13" fill="#2B3442">another body line</text>
+<rect x="250.8" y="203.8" width="35.2" height="21.5" rx="10.8" fill="#EAF2FF" stroke="#BCD2F9" stroke-width="1"/>
+<text x="258.8" y="218.2" font-size="11.5" font-weight="700" fill="#1E429F">tag</text>
+<text x="452" y="220.6" font-size="15" font-weight="700" fill="#0E1726">Second</text>
+<text x="452" y="245.4" font-size="13" fill="#2B3442">body</text>
+<text x="179" y="320.3" font-size="15" font-weight="700" text-anchor="middle" fill="#14532D">Third</text>
+<rect x="344.1" y="223.1" width="39.8" height="20" rx="10" fill="#FFFFFF"/>
+<text x="364" y="237.4" font-size="12" font-weight="500" text-anchor="middle" fill="#566070">calls</text>
+<rect x="432" y="287.8" width="48.7" height="21.5" rx="10.8" fill="#F3EEFF" stroke="#D5C5FA" stroke-width="1"/>
+<text x="440" y="302.2" font-size="11.5" font-weight="700" fill="#5B21B6">alpha</text>
+<rect x="488.7" y="287.8" width="42.5" height="21.5" rx="10.8" fill="#F3EEFF" stroke="#D5C5FA" stroke-width="1"/>
+<text x="496.7" y="302.2" font-size="11.5" font-weight="700" fill="#5B21B6">beta</text>
+<rect x="539.2" y="287.8" width="60.1" height="21.5" rx="10.8" fill="#F3EEFF" stroke="#D5C5FA" stroke-width="1"/>
+<text x="547.2" y="302.2" font-size="11.5" font-weight="700" fill="#5B21B6">gamma</text>
+<text x="46" y="414.6" font-size="15" font-weight="700" fill="#7A360E">Note</text>
+<text x="46" y="432.4" font-size="13" fill="#7A360E">A note under the region with a sentence of text.</text>
+<circle cx="732" cy="227.8" r="10.9" fill="#7A360E"/>
+<text x="732" y="231.9" font-size="11.5" font-weight="700" text-anchor="middle" fill="#FFFFFF">1</text>
+<rect x="32" y="463.7" width="14" height="14" rx="4" fill="#EAF2FF" stroke="#2563EB" stroke-width="1.4"/>
+<text x="54" y="475.3" font-size="12.5" fill="#566070">a card</text>
+<path d="M117.3 469.9L147.3 469.9" fill="none" stroke="#8893A2" stroke-width="1.6" marker-end="url(#fk-arrow-rail)"/>
+<text x="161.3" y="475.3" font-size="12.5" fill="#566070">runs next</text>
+<path d="M243.8 469.9L273.8 469.9" fill="none" stroke="#8893A2" stroke-width="1.6" stroke-dasharray="7 5" marker-end="url(#fk-arrow-rail)"/>
+<text x="287.8" y="475.3" font-size="12.5" fill="#566070">passes files</text>
+</svg>

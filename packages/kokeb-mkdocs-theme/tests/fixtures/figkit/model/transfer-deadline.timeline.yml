@@ -1,0 +1,23 @@
+kind: timeline
+id: transfer-deadline
+title: A transfer against its deadline
+kicker: Example
+alt: Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline.
+reads: >-
+  The CPU lane prepares the buffer for 20 microseconds, then the DMA lane moves it for 50, and the CPU lane completes
+  and checks it for 15. The Memory lane marks the cache clean before the move and the invalidate after it. The deadline falls at 100 microseconds, so this transfer ends with 15 microseconds to spare.
+print: landscape
+axis: {unit: us, min: 0, max: 110, ticks: [0, 20, 40, 60, 80, 100]}
+lanes:
+  - {id: cpu, label: CPU, tone: blue}
+  - {id: dma, label: DMA, tone: teal}
+  - {id: mem, label: Memory, tone: slate}
+spans:
+  - {lane: cpu, from: 0, to: 20, label: prepare, tone: blue}
+  - {lane: dma, from: 20, to: 70, label: move, tone: teal}
+  - {lane: cpu, from: 70, to: 85, label: complete, tone: blue}
+events:
+  - {lane: mem, at: 20, label: clean, tone: green}
+  - {lane: mem, at: 70, label: invalidate, tone: green}
+deadlines:
+  - {at: 100, label: deadline}

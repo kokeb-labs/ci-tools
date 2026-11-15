@@ -53,16 +53,60 @@ TONES: dict[str, dict[str, tuple[str, str, str, str]]] = {
 PARTS = ("strong", "text", "tint", "soft")
 THEMES = ("light", "dark")
 
+#: Palette versions. ``1`` is the original palette: every figure written before palette 2 keeps it, so its bytes do not
+#: change. ``2`` is the same palette with the failing non-text colours fixed (WCAG 2.x 1.4.11, 3:1 for the outline of a
+#: card, an arrow and an accent stripe) plus the ``status`` and ``heat`` families. New figure kinds use palette 2; an
+#: existing figure opts in with ``Fig(..., palette=2)``. Changing the default is a documented, versioned decision
+#: (docs/figkit.md, "Palette versions").
+DEFAULT_PALETTE = 1
 
-def resolve(token: str, theme: str) -> str:
-    """Hex value of ``token`` in ``theme``; raises KeyError for an unknown token."""
+#: Palette 2 overrides of base tokens: name -> (light, dark).
+BASE2: dict[str, tuple[str, str]] = {
+    "line": ("#738093", "#6C7889"),  # card outline: >= 3:1 on canvas, card and paper in both themes (was 1.54:1)
+    "rail": ("#7C8798", "#6C7889"),  # neutral arrows: >= 3:1 on canvas, card and paper in both themes
+}
+
+#: Palette 2 additions and overrides of tones.
+TONES2: dict[str, dict[str, tuple[str, str, str, str]]] = {
+    "stone": {"light": ("#857F79", "#57534E", "#F6F5F4", "#DDD9D5"), "dark": ("#8C8780", "#D6D3D1", "#1F1D1B", "#3F3B37")},
+    # Status family: the meaning is always also written as text and drawn as a glyph, never colour alone.
+    "ok": TONES["green"],
+    "warn": TONES["amber"],
+    "fail": TONES["rose"],
+    "na": {"light": ("#64748B", "#334155", "#F1F4F8", "#CBD5E1"), "dark": ("#94A3B8", "#E2E8F0", "#1B232E", "#3A4656")},
+    "planned": TONES["violet"],
+    # Heat ramp, step 0 (lowest) to 4: the fill is ``tint``, the text on it is ``text``, the outline is ``strong``.
+    "h0": {"light": ("#2563EB", "#0E1726", "#EAF2FF", "#BCD2F9"), "dark": ("#60A5FA", "#E8EDF3", "#13233A", "#2B4C78")},
+    "h1": {"light": ("#2563EB", "#0E1726", "#CFE0FB", "#BCD2F9"), "dark": ("#60A5FA", "#E8EDF3", "#1E3A63", "#2B4C78")},
+    "h2": {"light": ("#1E429F", "#0E1726", "#9CC0F5", "#BCD2F9"), "dark": ("#93C5FD", "#E8EDF3", "#2F5FA6", "#2B4C78")},
+    "h3": {"light": ("#1E429F", "#FFFFFF", "#3F73D8", "#BCD2F9"), "dark": ("#BFDBFE", "#0E131A", "#60A5FA", "#2B4C78")},
+    "h4": {"light": ("#1E429F", "#FFFFFF", "#1E429F", "#BCD2F9"), "dark": ("#BFDBFE", "#0E131A", "#BFDBFE", "#2B4C78")},
+}
+
+
+def resolve(token: str, theme: str, palette: int = 1) -> str:
+    """Hex value of ``token`` in ``theme`` and ``palette``; raises KeyError for an unknown token."""
     i = THEMES.index(theme)
+    if palette >= 2 and token in BASE2:
+        return BASE2[token][i]
     if token in BASE:
         return BASE[token][i]
     tone, _, part = token.partition(".")
+    if palette >= 2 and tone in TONES2 and part in PARTS:
+        return TONES2[tone][theme][PARTS.index(part)]
     if tone in TONES and part in PARTS:
         return TONES[tone][theme][PARTS.index(part)]
     raise KeyError(f"unknown colour token {token!r}")
+
+
+def tokens(palette: int = 1) -> list[str]:
+    """Every token name of a palette, sorted."""
+    names = list(BASE)
+    tones = dict(TONES)
+    if palette >= 2:
+        tones.update(TONES2)
+    names += [f"{t}.{p}" for t in tones for p in PARTS]
+    return sorted(set(names))
 
 
 def _lin(c: float) -> float:

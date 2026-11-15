@@ -1,0 +1,39 @@
+# A 32-byte journal record (little-endian) and the ring of slots it is stored in.
+kind: bytes
+id: journal-layout
+title: Fault journal record and ring
+kicker: Generated
+subtitle: Drawn from docs/model/journal-layout.bytes.yml.
+alt: Layout of the 32-byte fault journal record in four rows of eight bytes, from the magic and version to the CRC-32, and a ring of eight slots in which the next append overwrites the oldest record.
+reads: >-
+  A record is 32 bytes in four rows of eight. The first four bytes hold a magic, a format version and the record kind;
+  then a sequence number, a time stamp, the source, the status, a detail code and a value; the last four bytes are a
+  CRC-32 over the first 28. The journal is a ring of slots: an append writes the slot after the newest record, so the
+  oldest record is overwritten. A torn write leaves a slot whose CRC fails, which Open skips.
+print: landscape
+sources: [docs/model/journal-layout.bytes.yml]
+row_bytes: 8
+size: 32
+fields:
+  - {at: 0,  len: 2, name: magic, note: "0x4A4B", tone: slate}
+  - {at: 2,  len: 1, name: version, note: "1", tone: slate}
+  - {at: 3,  len: 1, name: kind, note: RecordKind, tone: blue}
+  - {at: 4,  len: 4, name: sequence, note: wraps mod 2^32, tone: violet}
+  - {at: 8,  len: 8, name: time, note: microseconds, tone: teal}
+  - {at: 16, len: 2, name: source, note: handler or thread id, tone: blue}
+  - {at: 18, len: 1, name: status, note: Status, tone: amber}
+  - {at: 19, len: 1, name: reserved, short: rsvd, note: "0", tone: stone}
+  - {at: 20, len: 4, name: detail, note: driver or vendor code, tone: amber}
+  - {at: 24, len: 4, name: value, note: count reason or mask, tone: green}
+  - {at: 28, len: 4, name: crc32, note: over bytes 0 to 27, tone: rose}
+ring:
+  title: "Ring of slots: the newest record is 5, the next append overwrites slot 6"
+  slots: 8
+  newest: 5
+  next: 6
+legend:
+  - [blue, identity]
+  - [violet, order]
+  - [teal, time]
+  - [amber, what failed]
+  - [rose, integrity]

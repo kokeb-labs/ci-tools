@@ -1,0 +1,74 @@
+---
+# Zones and what each may include (tools/include_checker/README.md). Paths are globs from the repository root.
+# "sdk" means headers named in sdk_headers; it is allowed only for files in deviations/boundary-files.yml.
+zones:
+  utils:
+    paths: ["lib/utils/inc/**", "lib/utils/src/**"]
+    may_include: [utils, std_subset]
+  rtos:
+    paths: ["lib/rtos/inc/**", "lib/rtos/src/**"]
+    may_include: [rtos, utils, std_subset]
+  rtos_backend:
+    paths: ["lib/rtos/backends/**"]
+    may_include: [rtos, utils, std_subset, sdk]
+  interfaces:
+    paths: ["lib/interfaces/inc/**", "lib/interfaces/src/**"]
+    may_include: [interfaces, rtos, utils, std_subset]
+  interfaces_host:
+    paths: ["lib/interfaces/host/**"]
+    may_include: [interfaces, rtos, utils, std_subset]
+  # MCU ports (ADR-0007): own CMake projects; they see only the public kb/<part>/ headers (LAY-011), and nothing
+  # in lib/ may include them (LAY-010).
+  port_esp32:
+    paths: ["ports/esp32/inc/**", "ports/esp32/src/**"]
+    may_include: [port_esp32, interfaces_public, rtos_public, utils_public, std_subset, sdk]
+    boundary_files: ports/esp32/deviations/boundary-files.yml
+  port_esp32_tests:
+    paths: ["ports/esp32/tests/**"]
+    may_include: [port_esp32, interfaces_public, rtos_public, utils_public, std_any]
+  port_esp32_examples:
+    paths: ["ports/esp32/examples/**"]
+    may_include: [port_esp32, interfaces_public, rtos_public, utils_public, handlers_public, drivers, std_any, sdk]
+  handlers:
+    paths: ["lib/handlers/inc/**", "lib/handlers/src/**"]
+    may_include: [handlers, interfaces, rtos, utils, drivers, std_subset]
+  drivers:
+    paths: ["drivers/**"]
+    may_include: [drivers, std_subset]   # checked by each driver's own CI; listed so kb-core never adds to it
+  # Test stand-ins for an SDK or RTOS (tests/fakes/<sdk>/): they implement the SDK headers, so they may include
+  # them; listed before tests so they match first. Nothing outside tests may include a fake.
+  test_fakes:
+    paths: ["tests/fakes/**"]
+    may_include: [test_fakes, utils, std_any, sdk_any]
+  tests:
+    paths: ["lib/*/tests/**", "lib/*/fuzz/**", "tests/**"]
+    may_include: [utils, rtos, rtos_backend, test_fakes, interfaces, interfaces_host, handlers, drivers, std_any]
+  examples_host:
+    paths: ["examples/host/**"]
+    may_include: [utils, rtos, interfaces, interfaces_host, handlers, drivers, std_any]
+# The public headers of each part, as a port or an example outside kb-core's lib/ sees them (LAY-011).
+public_headers:
+  utils_public: "lib/utils/inc/kb/utils/**"
+  rtos_public: "lib/rtos/inc/kb/rtos/**"
+  interfaces_public: "lib/interfaces/inc/kb/interfaces/**"
+  handlers_public: "lib/handlers/inc/kb/handlers/**"
+boundary_files: deviations/boundary-files.yml
+# Driver submodules are include targets of kb-core's tests but are checked by each driver's own CI, not here.
+external_zones: [drivers]
+sdk_headers:
+  - "esp_*"
+  - "driver/*"
+  - "hal/*"
+  - "soc/*"
+  - "freertos/*"
+  - "FreeRTOS.h"
+  - "task.h"
+  - "semphr.h"
+  - "stm32*"
+  - "cmsis_os*"
+  - "tx_api.h"
+forbidden_keywords: [virtual]   # LAY-012 (ADR-0006)
+platform_macros: [ESP_PLATFORM, USE_HAL_DRIVER, "STM32*", "configUSE_*", "TX_*", "CONFIG_IDF_*"]
+# Product and board names that must never appear in kb-core (LAY-009). Kept generic here; the private list lives
+# with the owner and is passed to CI as a secret file.
+denylist_file: null

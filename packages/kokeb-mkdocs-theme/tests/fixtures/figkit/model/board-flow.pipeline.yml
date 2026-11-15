@@ -1,0 +1,32 @@
+kind: pipeline
+id: board-flow
+title: From description to generated code
+kicker: Example
+alt: Pipeline in three columns in which a board description is read by checks and then written out by emitters as generated files.
+reads: >-
+  The Inputs column holds the board description and the image description. The Checks column holds the rules that
+  read them. The Outputs column holds the generated files the build consumes.
+print: landscape
+columns:
+  - id: inputs
+    title: Inputs
+    tone: blue
+    items:
+      - {id: board, title: board.yml, lines: [pins and buses], tag: input}
+      - {id: image, title: image.yml, lines: [parts and drivers]}
+  - id: checks
+    title: Checks
+    tone: amber
+    items:
+      - {id: rules, title: Rule registry, lines: [every rule has a code]}
+  - id: outputs
+    title: Outputs
+    tone: green
+    items:
+      - {id: cmake, title: image.cmake, lines: [targets and options]}
+      - {id: lock, title: image.lock, lines: [pinned versions]}
+links:
+  - {from: board, to: rules, label: read}
+  - {from: image, to: rules}
+  - {from: rules, to: cmake, label: emit}
+  - {from: rules, to: lock, dashed: true}

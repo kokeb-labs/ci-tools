@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="862" height="634" viewBox="0 0 862 634" role="img" aria-labelledby="layers-zones-title layers-zones-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" class="fk">
+<title id="layers-zones-title">Include zones</title>
+<desc id="layers-zones-desc">Zone graph of the include checker rules: handlers include interfaces, rtos, utils and drivers, interfaces include rtos and utils, and the MCU port and the RTOS backend may include SDK headers through boundary files only.</desc>
+<style>
+.fk{--fk-amber-strong:#C26A05;--fk-blue-strong:#2563EB;--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-card:#FFFFFF;--fk-frame:#E2E7EE;--fk-green-strong:#15803D;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-ink2:#2B3442;--fk-line:#738093;--fk-muted:#566070;--fk-rail:#7C8798;--fk-rose-soft:#F5BECB;--fk-rose-strong:#DB2752;--fk-rose-text:#9F1239;--fk-rose-tint:#FFEEF2;--fk-teal-soft:#A6DCD5;--fk-teal-strong:#0B7A72;--fk-teal-text:#0B5F59;--fk-teal-tint:#E6F6F4;--fk-violet-strong:#7C3AED;}
+@media (prefers-color-scheme:dark){.fk{--fk-amber-strong:#FBBF24;--fk-blue-strong:#60A5FA;--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-card:#151C26;--fk-frame:#283241;--fk-green-strong:#4ADE80;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-ink2:#D2DAE4;--fk-line:#6C7889;--fk-muted:#9AA6B5;--fk-rail:#6C7889;--fk-rose-soft:#6E3141;--fk-rose-strong:#FB7185;--fk-rose-text:#FECDD3;--fk-rose-tint:#321820;--fk-teal-soft:#215A54;--fk-teal-strong:#2BB3A3;--fk-teal-text:#A7F3E6;--fk-teal-tint:#0F2A28;--fk-violet-strong:#A78BFA;}}
+:root[data-theme="dark"] .fk,[data-md-color-scheme="slate"] .fk{--fk-amber-strong:#FBBF24;--fk-blue-strong:#60A5FA;--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-card:#151C26;--fk-frame:#283241;--fk-green-strong:#4ADE80;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-ink2:#D2DAE4;--fk-line:#6C7889;--fk-muted:#9AA6B5;--fk-rail:#6C7889;--fk-rose-soft:#6E3141;--fk-rose-strong:#FB7185;--fk-rose-text:#FECDD3;--fk-rose-tint:#321820;--fk-teal-soft:#215A54;--fk-teal-strong:#2BB3A3;--fk-teal-text:#A7F3E6;--fk-teal-tint:#0F2A28;--fk-violet-strong:#A78BFA;}
+:root[data-theme="light"] .fk,[data-md-color-scheme="default"] .fk{--fk-amber-strong:#C26A05;--fk-blue-strong:#2563EB;--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-card:#FFFFFF;--fk-frame:#E2E7EE;--fk-green-strong:#15803D;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-ink2:#2B3442;--fk-line:#738093;--fk-muted:#566070;--fk-rail:#7C8798;--fk-rose-soft:#F5BECB;--fk-rose-strong:#DB2752;--fk-rose-text:#9F1239;--fk-rose-tint:#FFEEF2;--fk-teal-soft:#A6DCD5;--fk-teal-strong:#0B7A72;--fk-teal-text:#0B5F59;--fk-teal-tint:#E6F6F4;--fk-violet-strong:#7C3AED;}
+.fk-f-amber-strong{fill:var(--fk-amber-strong)}.fk-s-amber-strong{stroke:var(--fk-amber-strong)}
+.fk-f-blue-strong{fill:var(--fk-blue-strong)}.fk-s-blue-strong{stroke:var(--fk-blue-strong)}
+.fk-f-brand-text{fill:var(--fk-brand-text)}.fk-s-brand-text{stroke:var(--fk-brand-text)}
+.fk-f-canvas{fill:var(--fk-canvas)}.fk-s-canvas{stroke:var(--fk-canvas)}
+.fk-f-card{fill:var(--fk-card)}.fk-s-card{stroke:var(--fk-card)}
+.fk-f-frame{fill:var(--fk-frame)}.fk-s-frame{stroke:var(--fk-frame)}
+.fk-f-green-strong{fill:var(--fk-green-strong)}.fk-s-green-strong{stroke:var(--fk-green-strong)}
+.fk-f-hair{fill:var(--fk-hair)}.fk-s-hair{stroke:var(--fk-hair)}
+.fk-f-ink{fill:var(--fk-ink)}.fk-s-ink{stroke:var(--fk-ink)}
+.fk-f-ink2{fill:var(--fk-ink2)}.fk-s-ink2{stroke:var(--fk-ink2)}
+.fk-f-line{fill:var(--fk-line)}.fk-s-line{stroke:var(--fk-line)}
+.fk-f-muted{fill:var(--fk-muted)}.fk-s-muted{stroke:var(--fk-muted)}
+.fk-f-rail{fill:var(--fk-rail)}.fk-s-rail{stroke:var(--fk-rail)}
+.fk-f-rose-soft{fill:var(--fk-rose-soft)}.fk-s-rose-soft{stroke:var(--fk-rose-soft)}
+.fk-f-rose-strong{fill:var(--fk-rose-strong)}.fk-s-rose-strong{stroke:var(--fk-rose-strong)}
+.fk-f-rose-text{fill:var(--fk-rose-text)}.fk-s-rose-text{stroke:var(--fk-rose-text)}
+.fk-f-rose-tint{fill:var(--fk-rose-tint)}.fk-s-rose-tint{stroke:var(--fk-rose-tint)}
+.fk-f-teal-soft{fill:var(--fk-teal-soft)}.fk-s-teal-soft{stroke:var(--fk-teal-soft)}
+.fk-f-teal-strong{fill:var(--fk-teal-strong)}.fk-s-teal-strong{stroke:var(--fk-teal-strong)}
+.fk-f-teal-text{fill:var(--fk-teal-text)}.fk-s-teal-text{stroke:var(--fk-teal-text)}
+.fk-f-teal-tint{fill:var(--fk-teal-tint)}.fk-s-teal-tint{stroke:var(--fk-teal-tint)}
+.fk-f-violet-strong{fill:var(--fk-violet-strong)}.fk-s-violet-strong{stroke:var(--fk-violet-strong)}
+@media (forced-colors:active){.fk text{fill:CanvasText}.fk rect,.fk circle{fill:Canvas;stroke:CanvasText}.fk path{stroke:CanvasText}.fk marker path{fill:CanvasText;stroke:none}}
+</style>
+<defs><marker id="layers-zones-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="fk-f-rail"/></marker></defs>
+<rect x="0.5" y="0.5" width="861" height="633" rx="16" class="fk-f-canvas fk-s-frame"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" class="fk-f-brand-text">GENERATED</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" class="fk-f-ink">Include zones</text>
+<text x="32" y="103.8" font-size="15" class="fk-f-muted">Drawn from the include checker's rules file. An arrow means may include; implied arrows are left out.</text>
+<rect x="32" y="119.8" width="798" height="1" class="fk-f-hair"/>
+<path d="M308 454.8 L308 499.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<path d="M185 332.8 L185 339.6 Q185 346.5 191.8 346.5 L219 346.5 Q227 346.5 227 354.5 L227 377.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<path d="M431 332.8 L431 356.1 Q431 364.1 423 364.1 L395.8 364.1 Q389 364.1 389 371 L389 377.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<path d="M185 210.8 L185 214.1 Q185 217.4 188.3 217.4 L342 217.4 Q350 217.4 350 225.4 L350 255.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<path d="M596 210.8 L596 230.6 Q596 238.6 588 238.6 L520 238.6 Q512 238.6 512 246.6 L512 255.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<path d="M758 210.8 L758 241.2 Q758 249.2 750 249.2 L680.3 249.2 Q677 249.2 677 252.5 L677 255.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<path d="M431 210.8 L431 255.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)" class="fk-s-rail"/>
+<rect x="213" y="503.8" width="190" height="69" rx="10" stroke-width="1" class="fk-f-card fk-s-line"/>
+<rect x="213" y="511.8" width="4" height="53" rx="2" class="fk-f-blue-strong"/>
+<rect x="213" y="381.8" width="190" height="69" rx="10" stroke-width="1" class="fk-f-card fk-s-line"/>
+<rect x="213" y="389.8" width="4" height="53" rx="2" class="fk-f-teal-strong"/>
+<rect x="90" y="259.8" width="190" height="69" rx="10" stroke-width="1.4" class="fk-f-teal-tint fk-s-teal-strong"/>
+<rect x="90" y="267.8" width="4" height="53" rx="2" class="fk-f-teal-strong"/>
+<rect x="336" y="259.8" width="190" height="69" rx="10" stroke-width="1" class="fk-f-card fk-s-line"/>
+<rect x="336" y="267.8" width="4" height="53" rx="2" class="fk-f-violet-strong"/>
+<rect x="90" y="137.8" width="190" height="69" rx="10" stroke-width="1" class="fk-f-card fk-s-line"/>
+<rect x="90" y="145.8" width="4" height="53" rx="2" class="fk-f-violet-strong"/>
+<rect x="582" y="137.8" width="190" height="69" rx="10" stroke-width="1" class="fk-f-card fk-s-line"/>
+<rect x="582" y="145.8" width="4" height="53" rx="2" class="fk-f-amber-strong"/>
+<rect x="582" y="259.8" width="190" height="69" rx="10" stroke-width="1" class="fk-f-card fk-s-line"/>
+<rect x="582" y="267.8" width="4" height="53" rx="2" class="fk-f-green-strong"/>
+<rect x="336" y="137.8" width="190" height="69" rx="10" stroke-width="1.4" class="fk-f-rose-tint fk-s-rose-strong"/>
+<rect x="336" y="145.8" width="4" height="53" rx="2" class="fk-f-rose-strong"/>
+<text x="233" y="530.5" font-size="15" font-weight="700" class="fk-f-ink">utils</text>
+<text x="233" y="555.4" font-size="13" class="fk-f-ink2">2 path globs</text>
+<text x="233" y="408.6" font-size="15" font-weight="700" class="fk-f-ink">rtos</text>
+<text x="233" y="433.4" font-size="13" class="fk-f-ink2">2 path globs</text>
+<text x="110" y="286.6" font-size="15" font-weight="700" class="fk-f-teal-text">rtos_backend</text>
+<text x="110" y="311.4" font-size="13" class="fk-f-ink2">1 path glob</text>
+<rect x="232.4" y="269.8" width="37.6" height="21.5" rx="10.8" stroke-width="1" class="fk-f-teal-tint fk-s-teal-soft"/>
+<text x="240.4" y="284.2" font-size="11.5" font-weight="700" class="fk-f-teal-text">sdk</text>
+<text x="356" y="286.6" font-size="15" font-weight="700" class="fk-f-ink">interfaces</text>
+<text x="356" y="311.4" font-size="13" class="fk-f-ink2">2 path globs</text>
+<text x="110" y="164.6" font-size="15" font-weight="700" class="fk-f-ink">interfaces_host</text>
+<text x="110" y="189.4" font-size="13" class="fk-f-ink2">1 path glob</text>
+<text x="602" y="164.6" font-size="15" font-weight="700" class="fk-f-ink">handlers</text>
+<text x="602" y="189.4" font-size="13" class="fk-f-ink2">2 path globs</text>
+<text x="602" y="286.6" font-size="15" font-weight="700" class="fk-f-ink">drivers</text>
+<text x="602" y="311.4" font-size="13" class="fk-f-ink2">1 path glob</text>
+<text x="356" y="164.6" font-size="15" font-weight="700" class="fk-f-rose-text">port_esp32</text>
+<text x="356" y="189.4" font-size="13" class="fk-f-ink2">2 path globs</text>
+<rect x="478.4" y="147.8" width="37.6" height="21.5" rx="10.8" stroke-width="1" class="fk-f-rose-tint fk-s-rose-soft"/>
+<text x="486.4" y="162.2" font-size="11.5" font-weight="700" class="fk-f-rose-text">sdk</text>
+<rect x="32" y="588.2" width="14" height="14" rx="4" stroke-width="1.4" class="fk-f-rose-tint fk-s-rose-strong"/>
+<text x="54" y="599.8" font-size="12.5" class="fk-f-muted">SDK access via boundary files</text>
+</svg>

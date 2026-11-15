@@ -1,0 +1,26 @@
+kind: seq
+id: bus-access
+title: A guarded bus access
+kicker: Example
+subtitle: A caller reads a register through a handler that guards the bus.
+alt: Sequence of a guarded register read, in which the caller asks the handler, the handler takes the bus lock, calls the driver, and the driver returns the value through the port.
+reads: >-
+  The Caller calls Read on the Handler. The Handler locks the Bus, then asks the Driver, which uses the Port to move
+  the bytes. The value returns the same way and the Handler releases the lock before it answers the Caller.
+print: landscape
+participants:
+  - {id: caller, label: Caller, tone: blue}
+  - {id: handler, label: Handler, tone: amber}
+  - {id: bus, label: Bus, tone: slate}
+  - {id: driver, label: Driver, tone: green}
+  - {id: port, label: Port, tone: rose}
+steps:
+  - {from: caller, to: handler, label: Read(reg)}
+  - {from: handler, to: bus, label: lock}
+  - {from: handler, to: driver, label: ReadRegister}
+  - {from: driver, to: port, label: transfer}
+  - {from: port, to: driver, label: bytes, return: true}
+  - {from: handler, to: handler, label: record health}
+  - {note: bus lock held until unlock, over: [handler, bus]}
+  - {from: handler, to: bus, label: unlock}
+  - {from: handler, to: caller, label: value, return: true}

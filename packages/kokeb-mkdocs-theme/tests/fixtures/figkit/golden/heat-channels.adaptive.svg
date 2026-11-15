@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="454" height="359" viewBox="0 0 454 359" role="img" aria-labelledby="heat-channels-title heat-channels-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" class="fk">
+<title id="heat-channels-title">Channels per port</title>
+<desc id="heat-channels-desc">Heat map of the number of channels each port offers for the ADC, PWM and timer peripherals, darker cells meaning more channels.</desc>
+<style>
+.fk{--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-h0-text:#0E1726;--fk-h0-tint:#EAF2FF;--fk-h1-text:#0E1726;--fk-h1-tint:#CFE0FB;--fk-h2-text:#0E1726;--fk-h2-tint:#9CC0F5;--fk-h3-text:#FFFFFF;--fk-h3-tint:#3F73D8;--fk-h4-text:#FFFFFF;--fk-h4-tint:#1E429F;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-line:#738093;}
+@media (prefers-color-scheme:dark){.fk{--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-frame:#283241;--fk-h0-text:#E8EDF3;--fk-h0-tint:#13233A;--fk-h1-text:#E8EDF3;--fk-h1-tint:#1E3A63;--fk-h2-text:#E8EDF3;--fk-h2-tint:#2F5FA6;--fk-h3-text:#0E131A;--fk-h3-tint:#60A5FA;--fk-h4-text:#0E131A;--fk-h4-tint:#BFDBFE;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-line:#6C7889;}}
+:root[data-theme="dark"] .fk,[data-md-color-scheme="slate"] .fk{--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-frame:#283241;--fk-h0-text:#E8EDF3;--fk-h0-tint:#13233A;--fk-h1-text:#E8EDF3;--fk-h1-tint:#1E3A63;--fk-h2-text:#E8EDF3;--fk-h2-tint:#2F5FA6;--fk-h3-text:#0E131A;--fk-h3-tint:#60A5FA;--fk-h4-text:#0E131A;--fk-h4-tint:#BFDBFE;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-line:#6C7889;}
+:root[data-theme="light"] .fk,[data-md-color-scheme="default"] .fk{--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-h0-text:#0E1726;--fk-h0-tint:#EAF2FF;--fk-h1-text:#0E1726;--fk-h1-tint:#CFE0FB;--fk-h2-text:#0E1726;--fk-h2-tint:#9CC0F5;--fk-h3-text:#FFFFFF;--fk-h3-tint:#3F73D8;--fk-h4-text:#FFFFFF;--fk-h4-tint:#1E429F;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-line:#738093;}
+.fk-f-brand-text{fill:var(--fk-brand-text)}.fk-s-brand-text{stroke:var(--fk-brand-text)}
+.fk-f-canvas{fill:var(--fk-canvas)}.fk-s-canvas{stroke:var(--fk-canvas)}
+.fk-f-frame{fill:var(--fk-frame)}.fk-s-frame{stroke:var(--fk-frame)}
+.fk-f-h0-text{fill:var(--fk-h0-text)}.fk-s-h0-text{stroke:var(--fk-h0-text)}
+.fk-f-h0-tint{fill:var(--fk-h0-tint)}.fk-s-h0-tint{stroke:var(--fk-h0-tint)}
+.fk-f-h1-text{fill:var(--fk-h1-text)}.fk-s-h1-text{stroke:var(--fk-h1-text)}
+.fk-f-h1-tint{fill:var(--fk-h1-tint)}.fk-s-h1-tint{stroke:var(--fk-h1-tint)}
+.fk-f-h2-text{fill:var(--fk-h2-text)}.fk-s-h2-text{stroke:var(--fk-h2-text)}
+.fk-f-h2-tint{fill:var(--fk-h2-tint)}.fk-s-h2-tint{stroke:var(--fk-h2-tint)}
+.fk-f-h3-text{fill:var(--fk-h3-text)}.fk-s-h3-text{stroke:var(--fk-h3-text)}
+.fk-f-h3-tint{fill:var(--fk-h3-tint)}.fk-s-h3-tint{stroke:var(--fk-h3-tint)}
+.fk-f-h4-text{fill:var(--fk-h4-text)}.fk-s-h4-text{stroke:var(--fk-h4-text)}
+.fk-f-h4-tint{fill:var(--fk-h4-tint)}.fk-s-h4-tint{stroke:var(--fk-h4-tint)}
+.fk-f-hair{fill:var(--fk-hair)}.fk-s-hair{stroke:var(--fk-hair)}
+.fk-f-ink{fill:var(--fk-ink)}.fk-s-ink{stroke:var(--fk-ink)}
+.fk-f-line{fill:var(--fk-line)}.fk-s-line{stroke:var(--fk-line)}
+@media (forced-colors:active){.fk text{fill:CanvasText}.fk rect,.fk circle{fill:Canvas;stroke:CanvasText}.fk path{stroke:CanvasText}.fk marker path{fill:CanvasText;stroke:none}}
+</style>
+<rect x="0.5" y="0.5" width="453" height="358" rx="16" class="fk-f-canvas fk-s-frame"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" class="fk-f-brand-text">EXAMPLE</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" class="fk-f-ink">Channels per port</text>
+<rect x="32" y="93.3" width="390" height="1" class="fk-f-hair"/>
+<rect x="161" y="154.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-h2-tint fk-s-line"/>
+<rect x="289" y="154.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-h4-tint fk-s-line"/>
+<rect x="161" y="214.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-h1-tint fk-s-line"/>
+<rect x="289" y="214.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-h3-tint fk-s-line"/>
+<rect x="161" y="274.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-h0-tint fk-s-line"/>
+<rect x="289" y="274.3" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-h1-tint fk-s-line"/>
+<text x="222" y="139.3" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Port A</text>
+<text x="350" y="139.3" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Port B</text>
+<text x="44" y="186.3" font-size="13" font-weight="700" class="fk-f-ink">ADC</text>
+<text x="222" y="186.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-h2-text">8 ch</text>
+<text x="350" y="186.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-h4-text">16 ch</text>
+<text x="44" y="246.3" font-size="13" font-weight="700" class="fk-f-ink">PWM</text>
+<text x="222" y="246.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-h1-text">4 ch</text>
+<text x="350" y="246.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-h3-text">12 ch</text>
+<text x="44" y="306.3" font-size="13" font-weight="700" class="fk-f-ink">Timer</text>
+<text x="222" y="306.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-h0-text">1 ch</text>
+<text x="350" y="306.3" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-h1-text">6 ch</text>
+</svg>

@@ -1,0 +1,21 @@
+kind: matrix
+id: port-capabilities
+title: Contract support by port
+kicker: Example
+alt: Matrix of which bus contracts each port supports, as native, adapted, planned or not applicable, with the published limit where there is one.
+reads: >-
+  Rows are the contracts I2C, SPI and CAN; columns are the host port, the ESP32 port and a planned port. A cell says
+  native, adapted, planned or n/a in words and with a mark, and a note gives the published limit.
+print: landscape
+rows: [{id: i2c, label: I2C}, {id: spi, label: SPI}, {id: can, label: CAN}]
+cols: [{id: host, label: Host}, {id: esp, label: ESP32}, {id: next, label: Next port}]
+cells:
+  - {row: i2c, col: host, status: ok, text: native}
+  - {row: i2c, col: esp, status: ok, text: native, note: 1 MHz}
+  - {row: i2c, col: next, status: planned, text: planned}
+  - {row: spi, col: host, status: warn, text: adapted}
+  - {row: spi, col: esp, status: ok, text: native}
+  - {row: spi, col: next, status: planned, text: planned}
+  - {row: can, col: host, status: na, text: n/a}
+  - {row: can, col: esp, status: fail, text: missing}
+  - {row: can, col: next, status: planned, text: planned}

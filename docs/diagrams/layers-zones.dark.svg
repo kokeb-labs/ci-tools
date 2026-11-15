@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="862" height="634" viewBox="0 0 862 634" role="img" aria-labelledby="layers-zones-title layers-zones-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="layers-zones-title">Include zones</title>
+<desc id="layers-zones-desc">Zone graph of the include checker rules: handlers include interfaces, rtos, utils and drivers, interfaces include rtos and utils, and the MCU port and the RTOS backend may include SDK headers through boundary files only.</desc>
+<defs><marker id="layers-zones-arrow-rail" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6C7889"/></marker></defs>
+<rect x="0.5" y="0.5" width="861" height="633" rx="16" fill="#0E131A" stroke="#283241"/>
+<text x="32" y="44" font-size="12.5" font-weight="700" letter-spacing="1.2" fill="#F8D27A">GENERATED</text>
+<text x="32" y="77.3" font-size="26" font-weight="700" fill="#E8EDF3">Include zones</text>
+<text x="32" y="103.8" font-size="15" fill="#9AA6B5">Drawn from the include checker's rules file. An arrow means may include; implied arrows are left out.</text>
+<rect x="32" y="119.8" width="798" height="1" fill="#252F3C"/>
+<path d="M308 454.8 L308 499.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<path d="M185 332.8 L185 339.6 Q185 346.5 191.8 346.5 L219 346.5 Q227 346.5 227 354.5 L227 377.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<path d="M431 332.8 L431 356.1 Q431 364.1 423 364.1 L395.8 364.1 Q389 364.1 389 371 L389 377.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<path d="M185 210.8 L185 214.1 Q185 217.4 188.3 217.4 L342 217.4 Q350 217.4 350 225.4 L350 255.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<path d="M596 210.8 L596 230.6 Q596 238.6 588 238.6 L520 238.6 Q512 238.6 512 246.6 L512 255.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<path d="M758 210.8 L758 241.2 Q758 249.2 750 249.2 L680.3 249.2 Q677 249.2 677 252.5 L677 255.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<path d="M431 210.8 L431 255.8" fill="none" stroke="#6C7889" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#layers-zones-arrow-rail)"/>
+<rect x="213" y="503.8" width="190" height="69" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1"/>
+<rect x="213" y="511.8" width="4" height="53" rx="2" fill="#60A5FA"/>
+<rect x="213" y="381.8" width="190" height="69" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1"/>
+<rect x="213" y="389.8" width="4" height="53" rx="2" fill="#2BB3A3"/>
+<rect x="90" y="259.8" width="190" height="69" rx="10" fill="#0F2A28" stroke="#2BB3A3" stroke-width="1.4"/>
+<rect x="90" y="267.8" width="4" height="53" rx="2" fill="#2BB3A3"/>
+<rect x="336" y="259.8" width="190" height="69" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1"/>
+<rect x="336" y="267.8" width="4" height="53" rx="2" fill="#A78BFA"/>
+<rect x="90" y="137.8" width="190" height="69" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1"/>
+<rect x="90" y="145.8" width="4" height="53" rx="2" fill="#A78BFA"/>
+<rect x="582" y="137.8" width="190" height="69" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1"/>
+<rect x="582" y="145.8" width="4" height="53" rx="2" fill="#FBBF24"/>
+<rect x="582" y="259.8" width="190" height="69" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1"/>
+<rect x="582" y="267.8" width="4" height="53" rx="2" fill="#4ADE80"/>
+<rect x="336" y="137.8" width="190" height="69" rx="10" fill="#321820" stroke="#FB7185" stroke-width="1.4"/>
+<rect x="336" y="145.8" width="4" height="53" rx="2" fill="#FB7185"/>
+<text x="233" y="530.5" font-size="15" font-weight="700" fill="#E8EDF3">utils</text>
+<text x="233" y="555.4" font-size="13" fill="#D2DAE4">2 path globs</text>
+<text x="233" y="408.6" font-size="15" font-weight="700" fill="#E8EDF3">rtos</text>
+<text x="233" y="433.4" font-size="13" fill="#D2DAE4">2 path globs</text>
+<text x="110" y="286.6" font-size="15" font-weight="700" fill="#A7F3E6">rtos_backend</text>
+<text x="110" y="311.4" font-size="13" fill="#D2DAE4">1 path glob</text>
+<rect x="232.4" y="269.8" width="37.6" height="21.5" rx="10.8" fill="#0F2A28" stroke="#215A54" stroke-width="1"/>
+<text x="240.4" y="284.2" font-size="11.5" font-weight="700" fill="#A7F3E6">sdk</text>
+<text x="356" y="286.6" font-size="15" font-weight="700" fill="#E8EDF3">interfaces</text>
+<text x="356" y="311.4" font-size="13" fill="#D2DAE4">2 path globs</text>
+<text x="110" y="164.6" font-size="15" font-weight="700" fill="#E8EDF3">interfaces_host</text>
+<text x="110" y="189.4" font-size="13" fill="#D2DAE4">1 path glob</text>
+<text x="602" y="164.6" font-size="15" font-weight="700" fill="#E8EDF3">handlers</text>
+<text x="602" y="189.4" font-size="13" fill="#D2DAE4">2 path globs</text>
+<text x="602" y="286.6" font-size="15" font-weight="700" fill="#E8EDF3">drivers</text>
+<text x="602" y="311.4" font-size="13" fill="#D2DAE4">1 path glob</text>
+<text x="356" y="164.6" font-size="15" font-weight="700" fill="#FECDD3">port_esp32</text>
+<text x="356" y="189.4" font-size="13" fill="#D2DAE4">2 path globs</text>
+<rect x="478.4" y="147.8" width="37.6" height="21.5" rx="10.8" fill="#321820" stroke="#6E3141" stroke-width="1"/>
+<text x="486.4" y="162.2" font-size="11.5" font-weight="700" fill="#FECDD3">sdk</text>
+<rect x="32" y="588.2" width="14" height="14" rx="4" fill="#321820" stroke="#FB7185" stroke-width="1.4"/>
+<text x="54" y="599.8" font-size="12.5" fill="#9AA6B5">SDK access via boundary files</text>
+</svg>

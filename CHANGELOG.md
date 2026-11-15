@@ -15,6 +15,45 @@ that heading.
 
 ## [Unreleased]
 
+## [1.22.0] - 2026-11-14
+
+### Added
+
+- **figkit figure kinds.** The theme package draws seven kinds of figure from a model file
+  `docs/model/<id>.<kind>.yml`, with no figure module: `state` (states, orthogonal transitions with labels, loops on
+  the side of a card for self transitions, initial and final states), `graph` (layered graph with optional transitive
+  reduction), `seq` (sequence), `timeline` (swim lanes, spans, events, deadlines), `matrix` (status matrix and heat map,
+  every cell carries text and a drawn mark, plus a table twin `<id>.table.html`), `bytes` (record layout and ring) and
+  `pipeline` (columns of stages). A model is checked against its kind's schema and every error is listed at once. See
+  `docs/figkit.md` and `docs/adr/0001-figure-toolchain.md`.
+- **Layout locks.** The `state` and `graph` kinds take node positions from Graphviz `dot`, run only by the new
+  `kokeb-docs figkit layout` command, and commit them as `docs/diagrams/<id>.layout.json`. `kokeb-docs figures` reads
+  the lock and never runs Graphviz, so figure bytes do not depend on the Graphviz version (macOS and Linux agree);
+  a missing or stale lock fails with the command to run. `figkit layout --check` reports, without failing, where the
+  installed `dot` would change a lock.
+- **Adaptive light and dark SVG.** A model figure also writes `<id>.adaptive.svg`, one file that follows the page theme
+  (`data-theme`, Material's colour scheme, the reader's preference), uses system colours in forced-colors mode and has
+  no script and no `style=` attribute; `kokeb-docs figkit css` writes the shared sheet for inline use under a strict
+  content security policy.
+- **Embedded font subset.** A model with `font: embed` carries a subset of Inter (at most 25 KB, SIL Open Font
+  License 1.1 notice in the file) in its standalone SVGs. `kokeb-docs figkit font` makes it (extra
+  `kokeb-mkdocs-theme[fonts]`: fonttools and brotli) and commits it as a lock, so rendering needs neither.
+- **Palette 2.** `Fig(..., palette=2)` fixes the non-text tokens that failed WCAG 2.x 1.4.11 (`line` was 1.54:1,
+  `stone.strong` 2.17:1, now 3:1 or more in both themes) and adds the `ok`, `warn`, `fail`, `na`, `planned` status
+  tones and the `h0` to `h4` heat ramp. Model figures use palette 2; every other figure keeps palette 1 and its bytes.
+- **Lints.** `kokeb-docs figures --lint` reports SVG defects (viewBox, role, title and description, script, event
+  handler, `style=`, external reference, id prefix, size), alt text and long description rules, shape contrast and A4
+  print fit (smallest text at least 7 pt), and Mermaid fences in published pages (`--ban-mermaid` makes them errors).
+  Palette 2 figures fail the build on these; older figures see them as warnings.
+- `kokeb-docs figkit new --kind K --id ID [--page PAGE]` scaffolds a model and its embed marker.
+- ADR 0001 (`docs/adr/0001-figure-toolchain.md`): toolchain, directory contract, Mermaid policy (not on published
+  pages; allowed in README files and pull requests), budgets.
+
+### Changed
+
+- The style guide sends sequences and state machines to figkit models instead of Mermaid fences on published pages.
+- `kokeb-mkdocs-theme` 1.1.0. The output of every existing figure is unchanged, byte for byte.
+
 ## [1.21.0] - 2026-11-14
 
 ### Added

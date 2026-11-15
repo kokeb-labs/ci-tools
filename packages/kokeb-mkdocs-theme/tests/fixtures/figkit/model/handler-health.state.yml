@@ -1,0 +1,39 @@
+# Handler lifecycle and health. The transitions are those of the handler health state diagram; the labels are the
+# short form of the call that causes each one.
+kind: state
+id: handler-health
+title: Handler lifecycle and health
+kicker: Generated
+subtitle: Drawn from docs/model/handler-health.state.yml. Only start, Deinitialize and Recover change the lifecycle.
+alt: State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them.
+reads: >-
+  A handler starts Unknown, moves to Starting on the start call, runs its declared stages one at a time, and reaches
+  Ready or Faulted. Ready becomes Degraded when a call fails and returns to Ready on the next good call; repeated or
+  fatal failures make it Faulted. Only Recover moves a Faulted handler back, through Recovering, and Deinitialize
+  returns it to Unknown.
+direction: TB
+print: landscape
+sources:
+  - docs/model/handler-health.state.yml
+states:
+  - {id: Unknown, tone: slate}
+  - {id: Starting, tone: blue}
+  - {id: Ready, tone: green}
+  - {id: Degraded, tone: amber}
+  - {id: Faulted, tone: rose}
+  - {id: Recovering, tone: violet}
+transitions:
+  - {from: "[*]", to: Unknown, label: ctor}
+  - {from: Unknown, to: Starting, label: EnsureInitialized}
+  - {from: Starting, to: Starting, label: next stage}
+  - {from: Starting, to: Ready, label: last stage ok}
+  - {from: Starting, to: Faulted, label: a stage fails}
+  - {from: Ready, to: Degraded, label: call fails}
+  - {from: Degraded, to: Ready, label: next call ok}
+  - {from: Degraded, to: Faulted, label: fault_after failures}
+  - {from: Ready, to: Faulted, label: fatal error}
+  - {from: Faulted, to: Recovering, label: Recover}
+  - {from: Recovering, to: Ready, label: plan ok}
+  - {from: Recovering, to: Faulted, label: fails, dashed: true}
+  - {from: Ready, to: Unknown, label: Deinitialize}
+  - {from: Faulted, to: Unknown, label: Deinitialize}
