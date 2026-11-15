@@ -4,6 +4,11 @@ name: 🔧 [RU] C++ Linting Tools
 on:
   workflow_call:
     inputs:
+      timeout_minutes:
+        description: "Time limit of the lint job in minutes (large header-only drivers need more than the default)"
+        type: number
+        required: false
+        default: 20
       clang_version:
         description: "Clang major version of clang-format and clang-tidy (20 is the supported version)"
         type: string
@@ -92,7 +97,7 @@ permissions: {}
 jobs:
   lint:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
     outputs:

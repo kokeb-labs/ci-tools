@@ -40,6 +40,11 @@ on:
         type: string
         required: false
         default: ""
+      scan_timeout_minutes:
+        description: "Time limit of each scan job in minutes (large header-only drivers need more than the default)"
+        type: number
+        required: false
+        default: 60
       scan_parallel:
         description: >-
           Job count of the host and Cortex-M CMake builds that run under the CodeQL tracer. Empty: 2. Raise it for
@@ -177,7 +182,7 @@ jobs:
     name: scan (${{ matrix.config }})
     needs: plan
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: ${{ inputs.scan_timeout_minutes }}
     permissions:
       contents: read
     strategy:

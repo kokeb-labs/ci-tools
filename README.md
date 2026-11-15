@@ -319,6 +319,7 @@ jobs:
 <!-- inputs:ru-cpp-lint.yml:start -->
 | Input | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
+| `timeout_minutes` | number | no | `20` | Time limit of the lint job in minutes (large header-only drivers need more than the default) |
 | `clang_version` | string | no | `20` | Clang major version of clang-format and clang-tidy (20 is the supported version) |
 | `clang_format_config` | string | no | `_config/.clang-format` | Path to clang-format configuration file |
 | `clang_tidy_config` | string | no | `_config/.clang-tidy` | Path to clang-tidy configuration file |
@@ -389,6 +390,7 @@ jobs:
 | `cmake_source_dir` | string | no | `.` | Directory with the top-level CMakeLists.txt |
 | `cmake_args` | string | no | `""` | Configure arguments that build every translation unit of the code under paths (for example -DMYCHIP_BUILD_TESTS=ON) |
 | `build_target` | string | no | `""` | Target of the host build; empty builds all |
+| `scan_timeout_minutes` | number | no | `60` | Time limit of each scan job in minutes (large header-only drivers need more than the default) |
 | `scan_parallel` | string | no | `""` | Job count of the host and Cortex-M CMake builds that run under the CodeQL tracer. Empty: 2. Raise it for small projects on big runners; an unbounded count starves the runner on large test suites. |
 | `cross` | boolean | no | `true` | Also analyse the Cortex-M build (cortex-m4f, the Arm GNU toolchain of toolchain.json), whose preprocessor paths differ from the host's |
 | `cross_cmake_args` | string | no | `""` | Configure arguments of the Cortex-M build; empty uses cmake_args |
