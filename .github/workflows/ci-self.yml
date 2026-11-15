@@ -146,6 +146,11 @@ jobs:
       - name: Unit tests for ru-layering's checker (fixtures, target graph, symbols, denylist, poison headers)
         run: python tools/layering/test_layering.py
 
+      - name: Unit tests for the language standard checker, and the registry is coherent
+        run: |
+          python tools/standards/test_standards.py
+          python tools/standards/check_standards.py --registry
+
       - name: Unit tests for ru-catalog's generator, schemas and SBOMs
         run: |
           python -m pip install --quiet --require-hashes --no-deps -r tools/catalog/requirements.txt
