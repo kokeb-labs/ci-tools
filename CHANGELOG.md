@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- `ru-build`: input `idf_scope` (default `auto`). Pull requests and branch pushes build one ESP-IDF version per app
+  (the `ci: pr` version of espidf-tools' `idf_versions.yml`), tags, schedules and manual runs every version the app
+  lists. Tools without `generate_matrix.py --ci-scope` build every version, as before, with a warning. The run
+  summary lists the versions and apps of the run.
+- `ru-build`: the native install clones the matrix entry's `idf_ref` when the tools give one (a tag listed under
+  its release branch), else `idf_version` as before.
+
 ## [1.20.0] - 2026-11-14
 
 ### Added

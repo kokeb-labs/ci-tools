@@ -13,7 +13,11 @@ name: ESP32 examples build
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
+  schedule:
+    - cron: "17 3 * * 1"   # every ESP-IDF version the apps list, once a week
+  workflow_dispatch:
 
 jobs:
   build:
@@ -38,6 +42,7 @@ jobs:
 | `auto_clone_tools` | boolean | `true` | Auto-clone tools repo if project_tools_dir is missing |
 | `group_build_types` | boolean | `true` | Build every build type of an app and IDF version in one job (default), so the runner is prepared and the ESP-IDF image pulled once per app instead of once per build type. false keeps one job per build type. |
 | `idf_install` | string | `native` | How the job gets ESP-IDF. native (default): a shallow clone of the IDF version with the tools of the matrix target only, kept in the Actions cache by IDF commit (about 1.1 GB; a warm restore takes seconds, against a minute or more to pull the 9 GB espressif/idf image). docker: the espressif/idf image through espressif/esp-idf-ci-action, as before. |
+| `idf_scope` | string | `auto` | Which ESP-IDF versions of each app a run builds. auto (default): pr on pull requests and branch pushes, full on tags, schedules and manual runs. pr: per app only the version with ci: pr in the tools' idf_versions.yml (else the app's first). full: every version the app lists. Tools without generate_matrix.py --ci-scope build every version, with a warning. |
 | `max_dec_total` | string | `0` | Maximum total dec size in bytes for size budget enforcement (0 to disable) |
 <!-- /generated -->
 
@@ -50,7 +55,8 @@ jobs:
 | `size-report` | pull requests only | `pull-requests: write` |
 
 - **`generate-matrix`** checks out with submodules, finds the project tools (below), runs `generate_matrix.py`
-  and outputs the matrix.
+  with the scope of the run (`idf_scope`, below) and outputs the matrix, with the versions and apps in the run
+  summary.
 - **`build`** builds every build type of one app and IDF version (`group_build_types`): it checks out, restores
   the pip and compiler (ccache) caches (skipped with `clean_build`) and installs the tools' `requirements.txt`.
   With `idf_install: native` (default) it resolves the IDF version to a commit, restores `~/esp-idf` and
@@ -81,6 +87,22 @@ The `generate-matrix` job needs `generate_matrix.py`, `build_app.sh` and `config
 | Otherwise | `espidf-tools` at the repository root, cloned from `main` (depth 1) when it is missing and `auto_clone_tools` is true |
 
 A submodule is the reproducible choice: the clone follows the tools' `main` branch.
+
+## Which ESP-IDF versions a run builds
+
+`idf_scope` (default `auto`) keeps CI minutes low while every version an app lists is still built regularly:
+
+| Run (`auto`) | Scope | ESP-IDF versions per app |
+| --- | --- | --- |
+| Pull request, push to a branch | `pr` | the version with `ci: pr` in the tools' `idf_versions.yml`, else the app's first |
+| Tag, schedule, manual run, release | `full` | every version the app lists in `app_config.yml` |
+
+Set `idf_scope: full` to build everything on every run, or `pr` to never build more than one version. Tools that
+predate `generate_matrix.py --ci-scope` (espidf-tools 1.0.0) build every version, with a warning in the log.
+
+The native install clones each entry's `idf_ref` (the version's git ref in `idf_versions.yml`), else its
+`idf_version`. See [ESP-IDF versions](https://kokeb-labs.github.io/espidf-tools/latest/idf-versions/) for the
+versions file and the support periods behind it.
 
 ## The matrix
 

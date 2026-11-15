@@ -38,6 +38,14 @@ on:
           image through espressif/esp-idf-ci-action, as before.
         type: string
         default: native
+      idf_scope:
+        description: >
+          Which ESP-IDF versions of each app a run builds. auto (default): pr on pull requests and branch pushes,
+          full on tags, schedules and manual runs. pr: per app only the version with ci: pr in the tools'
+          idf_versions.yml (else the app's first). full: every version the app lists. Tools without
+          generate_matrix.py --ci-scope build every version, with a warning.
+        type: string
+        default: auto
       max_dec_total:
         description: "Maximum total dec size in bytes for size budget enforcement (0 to disable)"
         type: string
@@ -195,13 +203,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml jq
 
-      - name: Check idf_install
+      - name: Check idf_install and idf_scope
         env:
           IDF_INSTALL: ${{ inputs.idf_install }}
+          IDF_SCOPE: ${{ inputs.idf_scope }}
         run: |
           case "$IDF_INSTALL" in
             native|docker) ;;
             *) echo "::error::idf_install must be native or docker, not '$IDF_INSTALL'"; exit 1 ;;
+          esac
+          case "$IDF_SCOPE" in
+            auto|pr|full) ;;
+            *) echo "::error::idf_scope must be auto, pr or full, not '$IDF_SCOPE'"; exit 1 ;;
           esac
 
       - name: Generate matrix
@@ -209,10 +222,33 @@ jobs:
         env:
           TOOLS_PATH: ${{ steps.validate.outputs.project_tools_path }}
           GROUP_BUILD_TYPES: ${{ inputs.group_build_types }}
+          IDF_SCOPE: ${{ inputs.idf_scope }}
         run: |
           set -e
+          # auto: pull requests and branch pushes build one ESP-IDF version per app, tags, schedules and manual
+          # runs every version (the same rule as idf_versions.py scope).
+          scope="$IDF_SCOPE"
+          if [ "$scope" = "auto" ]; then
+            case "$GITHUB_EVENT_NAME" in
+              pull_request|pull_request_target|merge_group) scope="pr" ;;
+              push) case "$GITHUB_REF" in refs/tags/*) scope="full" ;; *) scope="pr" ;; esac ;;
+              *) scope="full" ;;
+            esac
+          fi
           # Scripts directory and generate_matrix.py already validated
-          MATRIX=$(python3 "${TOOLS_PATH}/generate_matrix.py")
+          if python3 "${TOOLS_PATH}/generate_matrix.py" --help 2>/dev/null | grep -q -- '--ci-scope'; then
+            MATRIX=$(python3 "${TOOLS_PATH}/generate_matrix.py" --ci-scope "$scope")
+          else
+            echo "::warning::these espidf-tools have no generate_matrix.py --ci-scope: every ESP-IDF version is built"
+            scope="all"
+            MATRIX=$(python3 "${TOOLS_PATH}/generate_matrix.py")
+          fi
+          {
+            echo "### ESP-IDF build matrix (scope: $scope)"
+            echo ""
+            echo "$MATRIX" | jq -r '.include | group_by(.idf_version)[]
+              | "- \(.[0].idf_version) (\(.[0].idf_status // "unknown")): \(map(.app_name) | unique | join(", "))"'
+          } >> "$GITHUB_STEP_SUMMARY"
           if [ "${GROUP_BUILD_TYPES}" = "true" ]; then
             # One entry per app, IDF version and target; build_type holds every build type, space-separated.
             MATRIX=$(echo "$MATRIX" | jq -c '{include: (.include
@@ -300,11 +336,12 @@ jobs:
 
       # Native install: the commit the IDF version names today keys the cache, so a moved release branch installs
       # afresh once and every later run restores it.
+      # idf_ref (espidf-tools idf_versions.yml) is the git ref to clone; older tools give idf_version only.
       - name: Resolve the ESP-IDF commit
         id: idf
         if: ${{ inputs.idf_install == 'native' }}
         env:
-          IDF_VERSION: ${{ matrix.idf_version }}
+          IDF_VERSION: ${{ matrix.idf_ref || matrix.idf_version }}
         run: |
           set -euo pipefail
           case "$IDF_VERSION" in
@@ -335,7 +372,7 @@ jobs:
       - name: Install ESP-IDF (${{ matrix.target }} tools only)
         if: ${{ inputs.idf_install == 'native' && steps.idf_cache.outputs.cache-hit != 'true' }}
         env:
-          IDF_VERSION: ${{ matrix.idf_version }}
+          IDF_VERSION: ${{ matrix.idf_ref || matrix.idf_version }}
           IDF_SHA: ${{ steps.idf.outputs.sha }}
           TARGET: ${{ matrix.target }}
         run: |
