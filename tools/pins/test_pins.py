@@ -71,7 +71,8 @@ def args(d: str, **kw) -> argparse.Namespace:
     base = dict(lock="drivers/lock.yml", root=d, gates="gates.cmake", version_file="version.cmake",
                 required_check="CI gate / gate", tag_pattern=r"^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$",
                 forbid_branch_entries="true", url_pattern=r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+?(\.git)?$",
-                handbook_levels="high safety", private_repos="false", release_lock="", ref="refs/heads/main")
+                handbook_levels="high safety", private_repos="false", release_lock="", ref="refs/heads/main",
+                ignore_paths="")
     base.update(kw)
     return argparse.Namespace(**base)
 
@@ -115,6 +116,20 @@ class Pins(unittest.TestCase):
                          f"/repos/{REPO}": (200, {"private": True})})
         self.assertEqual(self.rules(api), ["PIN-009", "PIN-013"])
         self.assertEqual(self.rules(api, private_repos="true"), ["PIN-009"])
+
+    def test_soup_submodule_needs_ignore_paths(self):
+        def soup_rules(**kw):
+            with tempfile.TemporaryDirectory() as d:
+                make_repo(d, gitmodules_extra='[submodule "third_party/kernel"]\n\tpath = third_party/kernel\n'
+                                              '\turl = https://github.com/vendor/kernel.git\n')
+                subprocess.run(["git", "-C", d, "update-index", "--add", "--cacheinfo",
+                                f"160000,{'e' * 40},third_party/kernel"], check=True, capture_output=True)
+                subprocess.run(["git", "-C", d, "commit", "-q", "-m", "soup"], check=True, capture_output=True)
+                findings, _, _ = pins.check(args(d, **kw), FakeApi())
+            return sorted(f["rule"] for f in findings)
+        self.assertEqual(soup_rules(), ["PIN-001"])
+        self.assertEqual(soup_rules(ignore_paths="third_party/*"), [])
+        self.assertEqual(soup_rules(ignore_paths="drivers/*"), ["PIN-001"])
 
     def test_unreadable_repository(self):
         self.assertEqual(self.rules(FakeApi(**{f"/repos/{REPO}": (404, None)})), ["PIN-013"])
