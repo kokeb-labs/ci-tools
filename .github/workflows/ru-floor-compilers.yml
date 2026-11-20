@@ -55,6 +55,9 @@ jobs:
         compiler: [gcc, clang]
     container:
       image: ${{ matrix.compiler == 'gcc' && inputs.gcc_image || inputs.clang_image }}
+    defaults:
+      run:
+        shell: bash
     env:
       COMPILER: ${{ matrix.compiler }}
       SOURCE_DIR: ${{ inputs.source_dir }}
