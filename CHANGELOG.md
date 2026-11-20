@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.24.0] - 2026-11-19
+
 ### Changed
 
 - **`ru-repo-checks` also checks the trigger policy.** The handbook step group runs `check_triggers.py` over the caller's
