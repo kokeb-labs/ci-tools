@@ -1987,7 +1987,7 @@ a versioned site with <a href="https://github.com/jimporter/mike">mike</a>, with
 says what its pages contain.</p>
 <h2 id="where-the-theme-comes-from">Where the theme comes from<a class="headerlink" href="#where-the-theme-comes-from" title="Permanent link">&para;</a></h2>
 <p>The theme, the plugin, figkit and the pinned toolchain are the <code>kokeb-mkdocs-theme</code> package in
-<a href="https://github.com/kokeb-labs/ci-tools/blob/557f2d4071a9d3a84e20bad146afa2f9a7385fb7/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a>. Every job installs it with pip from
+<a href="https://github.com/kokeb-labs/ci-tools/blob/824b25e4dd5b357549d1b4c76d6b63de8a968020/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a>. Every job installs it with pip from
 <strong>the commit this workflow runs from</strong> (the <code>job</code> context's <code>workflow_repository</code> and <code>workflow_sha</code>), so a caller
 pinned to <code>@v1</code> builds with the theme released in <code>v1</code>, and a branch under review builds with that branch's theme.
 <code>theme_ref</code> overrides the ref. A repository's own <code>requirements-docs.txt</code>, if it has one, is installed afterwards
