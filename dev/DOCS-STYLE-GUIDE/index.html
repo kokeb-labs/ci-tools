@@ -1938,9 +1938,10 @@ driver uses. On a driver's home page the card sits under Pins and wiring, after 
   fails CI when the code changed and the figure did not. Embed with <code>&lt;!-- figure: &lt;id&gt; --&gt;</code> / <code>&lt;!-- /figure --&gt;</code>.</li>
 <li><strong>Models</strong> for sequences, state machines, timelines, graphs, matrices, byte layouts and pipelines: a file
   <code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code>, scaffolded with <code>kokeb-docs figkit new</code> (<a href="../figkit/">Figures with figkit</a>).</li>
-<li><strong>Mermaid</strong> is not used on published pages (<a href="../adr/0001-figure-toolchain/">ADR 0001</a>). It stays allowed in
-  README files and pull requests, where GitHub renders it. <code>kokeb-docs figures --lint</code> reports Mermaid fences in
-  <code>docs/</code>.</li>
+<li><strong>Mermaid</strong> is not used: it does not render on phones and in mobile apps (<a href="../adr/0001-figure-toolchain/">ADR 0001</a>).
+  <code>kokeb-docs figures --lint</code> reports Mermaid fences in <code>docs/</code>; a site that sets <code>extra: {no_mermaid: true}</code> also fails
+  <code>kokeb-docs check</code> on a fence in a README file or on a <code>.mmd</code> file. Draw a figkit figure instead (README files embed
+  one with the same marker pair).</li>
 <li><strong>Chip figures</strong> (pinout, block diagram, application circuit) are not written as modules: they are drawn from
   <code>docs/hardware.yml</code> (<a href="#chip-hardware">Chip hardware</a>).</li>
 </ul>
