@@ -57,6 +57,7 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 | [`ru-cross-build.yml`](ru-cross-build.md) | Compile a CMake target for microcontroller cores with the GNU Arm Embedded toolchain, so code that claims to run on any MCU is shown to compile for one on every pull request. | `contents: read` |
 | [`ru-docs-linkcheck.yml`](ru-docs-linkcheck.md) | Check every link in a repository's Markdown, external ones included, with lychee. | `contents: read` |
 | [`ru-docs-publish.yml`](ru-docs-publish.md) | Build a Jekyll site with Doxygen and publish it to `gh-pages` in version folders: the documentation pipeline that [`ru-mkdocs-publish`](ru-mkdocs-publish.md) replaces. | `contents: write` |
+| [`ru-floor-compilers.yml`](ru-floor-compilers.md) | Build and test a CMake project with the oldest compilers it promises to support (GCC 10 and Clang 13 by default), each in a container pinned by digest. | `contents: read` |
 | [`ru-handbook-check.yml`](ru-handbook-check.md) | Check a repository against the [Kokeb Labs handbook](https://kokeb-labs.github.io/handbook/) rules that a script can decide, and report every finding by rule ID. | `contents: read` |
 | [`ru-host-ci.yml`](ru-host-ci.md) | Build, test and analyse a CMake project on the host, with clang-tidy 18 and cppcheck over the compiler's own compile database. | `contents: read` |
 | [`ru-host-quality.yml`](ru-host-quality.md) | Complexity, coverage and sanitizer gates for a CMake C/C++ project, with the limits the Kokeb Labs handbook sets for each assurance level (ADR-0020). | `contents: read` |
@@ -70,7 +71,6 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Deprecated: use [`ru-release-firmware`](ru-release-firmware.md), which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that `ru-build` built for the same commit. | `contents: write` |
 | [`ru-release.yml`](ru-release.md) | Create a GitHub Release with generated notes for a tag. | `contents: write` |
 | [`ru-repo-checks.yml`](ru-repo-checks.md) | The small checks of a repository (sign-off, organisation standard, Markdown and YAML lint, handbook rules, template drift and cppcheck) as steps of one job, with the same scripts and failure rules as their single workflows. | `contents: read`, `pull-requests: read` |
-| [`ru-floor-compilers.yml`](ru-floor-compilers.md) | Build and test a CMake project with the oldest compilers it promises to support (GCC 10 and Clang 13 by default), each in a container pinned by digest. | `contents: read` |
 | [`ru-template-drift.yml`](ru-template-drift.md) | Find the files a driver or library has let drift from [driver-template](https://github.com/kokeb-labs/driver-template). | `contents: read` |
 | [`ru-yaml-lint.yml`](ru-yaml-lint.md) | Lint YAML files with yamllint against the repository's own rules. | `contents: read` |
 <!-- /generated -->

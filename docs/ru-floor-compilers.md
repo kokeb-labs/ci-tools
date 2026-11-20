@@ -33,7 +33,7 @@ digest.
 <!-- generated: jobs-ru-floor-compilers -->
 | Job | Permissions | Steps |
 | --- | --- | --- |
-| `floor` (Floor ${{ matrix.compiler }}) | `contents: read` | Install the build tools; `actions/checkout`; The compiler is the declared floor; Configure; Build; Test |
+| `floor` | `contents: read` | Install the build tools; `actions/checkout`; The compiler is the declared floor; Configure; Build; Test |
 <!-- /generated -->
 
 ## Inputs
@@ -42,7 +42,7 @@ digest.
 | Input | Type | Default | Description |
 | --- | --- | --- | --- |
 | `source_dir` | string | `.` | CMake source directory, relative to the repository root |
-| `cmake_args` | string | `""` | Extra arguments for the configure step, space separated (for example -DMYCHIP_BUILD_TESTS=ON) |
+| `cmake_args` | string | empty | Extra arguments for the configure step, space separated (for example -DMYCHIP_BUILD_TESTS=ON) |
 | `build_type` | string | `Debug` | CMAKE_BUILD_TYPE |
 | `gcc_image` | string | `gcc:10@sha256:19b31d0b2b263047b173e4e253d91f199d99c082973f13604d2913252c13309e` | Container image of the GCC floor, pinned by digest; its major version must equal language.compilers.gcc |
 | `clang_image` | string | `silkeh/clang:13@sha256:1c2be5e37d8165ece17c18449f1a866633876c56cf286919d1c3e226e87a0449` | Container image of the Clang floor, pinned by digest; its major version must equal language.compilers.clang |
