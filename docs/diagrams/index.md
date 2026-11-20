@@ -161,3 +161,21 @@ Drawn from:
 
 - `jobs` in [`.github/workflows/ru-build.yml`](../../.github/workflows/ru-build.yml)
 - `jobs` in [`.github/workflows/ru-release-firmware.yml`](../../.github/workflows/ru-release-firmware.yml)
+
+## Which repositories call which workflows
+
+<!-- figure: workflow-use -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="workflow-use.dark.svg">
+  <img src="workflow-use.svg"
+    alt="Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller
+    uses the gate and the organisation checks, kb-core and product repositories add host CI, and espidf-
+    tools uses only the gate, docs and organisation checks.">
+</picture>
+<!-- /figure -->
+
+Hardware description: [`docs/model/workflow-use.matrix.yml`](../model/workflow-use.matrix.yml)
+
+Drawn from:
+
+- [`docs/model/workflow-use.matrix.yml`](../model/workflow-use.matrix.yml)

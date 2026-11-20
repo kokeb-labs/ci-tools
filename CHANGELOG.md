@@ -15,6 +15,11 @@ that heading.
 
 ## [Unreleased]
 
+### Changed
+
+- The architecture diagram in `README.md` is a figkit matrix (`docs/model/workflow-use.matrix.yml`) instead of a Mermaid
+  fence, so it reads on a phone. No workflow changes.
+
 ## [1.25.1] - 2026-11-20
 
 ### Changed
