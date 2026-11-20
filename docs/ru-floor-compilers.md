@@ -51,5 +51,24 @@ digest.
 
 ## When to run it
 
-This repository's [trigger policy](triggers.md) allows no `schedule`, so a caller starts the workflow from `push` or
-`pull_request`. A driver runs it on pushes to `main`, which is where a use of a newer-compiler feature lands.
+Weekly, from the one scheduled workflow the [trigger policy](triggers.md) allows. A driver's
+`weekly-floor-compilers.yml` is only this call:
+
+```yaml
+name: Weekly floor compilers
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+permissions: {}
+jobs:
+  floor:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-floor-compilers.yml@v1
+    permissions:
+      contents: read
+    with:
+      cmake_args: -DMYCHIP_BUILD_TESTS=ON
+```
+
+The file must keep this shape: the trigger lint fails a scheduled file with steps, secrets or more than
+`contents: read`. A caller may also call the workflow from `push` or `pull_request` in a file of another name.
