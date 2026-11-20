@@ -3835,6 +3835,10 @@
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
+<li><strong>Driver safety class.</strong> <code>driver.schema.json</code> accepts <code>safety: {class: passive | sensing | actuating}</code> (what the
+  chip path can do to the physical world: nothing a safety decision rests on, a measurement one may rest on, or
+  moving, energising or switching something) and <code>hardware: {level: H0 | H1 | H2}</code>. Both are optional, so a pinned
+  driver without them still passes.</li>
 <li><strong>Language standards registry and checker.</strong> <code>tools/standards/standards.yml</code> lists the C++ profiles the organisation
   accepts (<code>KB-CPP20</code> current, <code>KB-CPP23</code> preview, <code>KB-CPP17</code> retired) with status, MISRA editions, CMake feature,
   flag and compiler floors. <code>tools/standards/check_standards.py</code> reads a driver's new <code>language:</code> block in
