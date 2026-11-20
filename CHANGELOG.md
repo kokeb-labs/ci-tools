@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+## [1.25.1] - 2026-11-20
+
+### Changed
+
+- `figkit`: a figure whose SVG passes 52 KB merges adjacent paths of the same style into one path of several sub-paths.
+  A chip application schematic has hundreds of single-segment wires and reached 64 to 68 KB, over the 60 KB budget that
+  `kokeb-docs check` now enforces for sites with `no_mermaid`; it drops to about 40 KB and looks the same. Smaller
+  figures are byte for byte as before, so no committed figure goes stale.
+
 ## [1.25.0] - 2026-11-20
 
 ### Added
