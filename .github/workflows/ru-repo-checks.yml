@@ -5,7 +5,8 @@
 #   DCO              every commit of a pull request is signed off by its author             (as dco.yml)
 #   org standard     README.md, LICENSE (MIT), CHANGELOG.md, .github/CODEOWNERS             (as org-standard-check.yml)
 #   Markdown lint    markdownlint-cli2                                                      (as ru-markdown-lint.yml)
-#   handbook rules   the handbook rules a script can decide, against .kokeb/handbook.yml   (as ru-handbook-check.yml)
+#   handbook rules   the handbook rules a script can decide, against .kokeb/handbook.yml, and the trigger policy
+#                    of the workflows (docs/triggers.md)                                    (as ru-handbook-check.yml)
 #   template drift   the files driver-template manages, against a fresh scaffold            (as ru-template-drift.yml)
 #   cppcheck         static analysis of the source directories                              (as ru-cpp-analysis.yml)
 #   YAML lint        yamllint                                                               (as ru-yaml-lint.yml)
@@ -414,7 +415,9 @@ jobs:
           repository: ${{ fromJSON(toJSON(job)).workflow_repository || 'kokeb-labs/ci-tools' }}
           ref: ${{ fromJSON(toJSON(job)).workflow_sha || 'v1' }}
           path: .handbook-check
-          sparse-checkout: tools/handbook_check
+          sparse-checkout: |
+            tools/handbook_check
+            .github/scripts
           persist-credentials: false
       - name: "Handbook: install PyYAML (pinned, hash-checked)"
         id: handbook_install
@@ -445,6 +448,20 @@ jobs:
           if [ "$status" -eq 2 ]; then exit 1; fi
           if [ "$status" -ne 0 ] && [ "$ENFORCE" = "true" ]; then exit 1; fi
           exit 0
+
+      - name: "Handbook: trigger policy of the workflows"
+        id: handbook_triggers
+        if: ${{ !cancelled() && steps.handbook_install.outcome == 'success' }}
+        env:
+          CHECK_PATH: ${{ inputs.handbook_path }}
+        run: |
+          set -euo pipefail
+          # Only push, pull_request, merge_group and workflow_call may start a workflow; the one scheduled
+          # exception is weekly-floor-compilers.yml, and only while it is nothing but the floor-compiler call.
+          # docs/triggers.md has the policy.
+          if compgen -G "$CHECK_PATH/.github/workflows/*.yml" > /dev/null; then
+            "$RUNNER_TEMP/h/bin/python" .handbook-check/.github/scripts/check_triggers.py "$CHECK_PATH"/.github/workflows/*.yml
+          fi
 
       # --- template drift ----------------------------------------------------------------------------------------
       - name: "Template drift: check out driver-template"
@@ -749,7 +766,7 @@ jobs:
               ("DCO", "run_dco", ["dco"]),
               ("Org standard", "run_org_standard", ["org_standard"]),
               ("Markdown lint", "run_markdown_lint", ["markdown"]),
-              ("Handbook rules", "run_handbook", ["handbook_checkout", "handbook_install", "handbook"]),
+              ("Handbook rules", "run_handbook", ["handbook_checkout", "handbook_install", "handbook", "handbook_triggers"]),
               ("Template drift", "run_template_drift", ["drift_checkout", "drift"]),
               ("cppcheck", "run_cppcheck", ["cppcheck_install", "cppcheck", "cppcheck_upload", "cppcheck_strict"]),
               ("YAML lint", "run_yaml_lint", ["yaml_install", "yaml"]),
