@@ -15,6 +15,14 @@ that heading.
 
 ## [Unreleased]
 
+### Changed
+
+- **KB-CPP-001 reads the declared standard.** The `forbidden-patterns/cmake-cxx-standard` check of `ru-handbook-check`
+  required `cxx_std_20` or `CMAKE_CXX_STANDARD 20` in the library's CMake files whatever the repository declared. It
+  now requires the standard of `language.standard` in `driver.yml` (17, 20 or 23) and names it in the finding. A
+  repository without the block, or with a malformed value, is held to C++20 as before, so no current caller changes
+  result.
+
 ### Added
 
 - **Language standards registry and checker.** `tools/standards/standards.yml` lists the C++ profiles the organisation

@@ -243,10 +243,24 @@ class Repo:
         if self.kind in ("driver", "library", "template"):
             texts = [(self.root / f).read_text(encoding="utf-8", errors="replace") for f in files
                      if (f == "CMakeLists.txt" or (f.startswith("cmake/") and f.endswith(".cmake")))]
-            if texts and not any(re.search(r"cxx_std_20|CMAKE_CXX_STANDARD\s+20", t) for t in texts):
+            std = self.declared_standard()
+            if texts and not any(re.search(rf"cxx_std_{std}\b|CMAKE_CXX_STANDARD\s+{std}\b", t) for t in texts):
                 self.add("KB-CPP-001", "forbidden-patterns/cmake-cxx-standard",
-                         "the library target does not require C++20 (target_compile_features ... cxx_std_20)",
+                         f"the library target does not require C++{std} (target_compile_features ... cxx_std_{std})",
                          "CMakeLists.txt")
+
+    def declared_standard(self) -> int:
+        """The C++ standard the repository declares (`language.standard` of driver.yml); 20 when it declares none.
+
+        The value is checked elsewhere (tools/standards): a malformed one here falls back to 20 rather than
+        reporting the same fault twice.
+        """
+        try:
+            d = yaml.safe_load((self.root / "driver.yml").read_text(encoding="utf-8")) or {}
+            std = (d.get("language") or {}).get("standard")
+        except (OSError, yaml.YAMLError, AttributeError):
+            return 20
+        return std if isinstance(std, int) and not isinstance(std, bool) and std in (17, 20, 23) else 20
 
     def check_sources(self, files: list[str]) -> None:
         if self.kind not in TARGET_KINDS:
