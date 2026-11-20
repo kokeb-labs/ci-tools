@@ -110,6 +110,24 @@ class HandbookCheckTest(unittest.TestCase):
         msgs = [m for r, m in errors(run(bad)) if r == "KB-CPP-012"]
         self.assertEqual(len(msgs), 2)
 
+    def test_cmake_follows_the_declared_standard(self):
+        lang = "language:\n  standard: {n}\n"
+        cmake = {23: GOOD["CMakeLists.txt"].replace("cxx_std_20", "cxx_std_23"),
+                 20: GOOD["CMakeLists.txt"]}
+
+        def findings(declared, cmake_text):
+            files = {**GOOD, "CMakeLists.txt": cmake_text}
+            if declared:
+                files["driver.yml"] = GOOD["driver.yml"] + lang.format(n=declared)
+            return [f for f in run(files).findings if "cmake-cxx-standard" in str(f)]
+
+        self.assertEqual(findings(None, cmake[20]), [])       # no declaration: C++20, as before
+        self.assertEqual(findings(20, cmake[20]), [])
+        self.assertEqual(findings(23, cmake[23]), [])         # a driver that declares 23 is held to 23
+        self.assertTrue(any("C++23" in str(f) for f in findings(23, cmake[20])))
+        self.assertTrue(any("C++20" in str(f) for f in findings(20, cmake[23])))
+        self.assertEqual(findings("twenty", cmake[20]), [])    # malformed: falls back to 20
+
     def test_cmake_glob_and_missing_cxx20(self):
         bad = dict(GOOD)
         bad["CMakeLists.txt"] = "file(GLOB SRC src/*.cpp)\nadd_library(abc ${SRC})\n"
