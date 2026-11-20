@@ -824,7 +824,38 @@ class Fig:
         for layer in LAYERS:
             body += self._layers[layer]
         body.append("</svg>")
-        return "\n".join(s for s in body if s) + "\n"
+        out = "\n".join(s for s in body if s) + "\n"
+        # A dense schematic (hundreds of single-segment wires) would pass the size budget by its repeated attributes
+        # alone: such a figure merges runs of equally styled paths. Smaller figures stay byte for byte as they were.
+        return _merge_paths(out) if len(out) > COMPACT_ABOVE else out
+
+
+COMPACT_ABOVE = 52 * 1024
+_PATH = re.compile(r'<path d="([^"]*)"((?: [a-z-]+="[^"]*")*)/>\n')
+
+
+def _merge_paths(svg: str) -> str:
+    """Merge adjacent ``<path>`` elements that differ only in ``d`` into one path of several sub-paths. Adjacent only, so
+    the paint order is unchanged."""
+    out, i = [], 0
+    run: list[str] = []
+    attrs = ""
+
+    def flush() -> None:
+        if run:
+            out.append(f'<path d="{" ".join(run)}"{attrs}/>\n')
+            run.clear()
+
+    for m in _PATH.finditer(svg):
+        if m.start() != i or m.group(2) != attrs or "marker" in attrs:
+            flush()
+            out.append(svg[i : m.start()])
+            attrs = m.group(2)
+        run.append(m.group(1))
+        i = m.end()
+    flush()
+    out.append(svg[i:])
+    return "".join(out)
 
 
 def _resolve(svg: str, theme: str, palette: int = 1) -> str:

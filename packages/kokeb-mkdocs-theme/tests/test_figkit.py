@@ -592,6 +592,18 @@ class BuildFlowTests(unittest.TestCase):
         r = self.run_cli(d, "check")
         self.assertIn("ERROR tools/scaffold/bus/i2c/blocks/bus.md: 1 mermaid fence", r.stdout)
 
+    def test_merge_paths_joins_only_adjacent_paths_of_one_style_and_never_arrows(self):
+        from kokeb_mkdocs_theme.figkit.core import _merge_paths
+
+        a = '<path d="M0 0 L1 1" fill="none" stroke="#000"/>\n'
+        b = '<path d="M2 2 L3 3" fill="none" stroke="#000"/>\n'
+        c = '<path d="M4 4 L5 5" fill="none" stroke="#111"/>\n'
+        arrow = '<path d="M6 6 L7 7" fill="none" stroke="#000" marker-end="url(#m)"/>\n'
+        text = '<text x="0" y="0">t</text>\n'
+        self.assertEqual(_merge_paths(a + b + c), '<path d="M0 0 L1 1 M2 2 L3 3" fill="none" stroke="#000"/>\n' + c)
+        self.assertEqual(_merge_paths(a + text + b), a + text + b)
+        self.assertEqual(_merge_paths(arrow + arrow), arrow + arrow)
+
     def test_render_time_budget(self):
         """Rendering every fixture (all three outputs each) stays far under the budget of 10 s (ADR 0001)."""
         import time
