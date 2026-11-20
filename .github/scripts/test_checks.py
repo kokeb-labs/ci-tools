@@ -488,5 +488,55 @@ class ChangelogTest(unittest.TestCase):
         self.assertIn("- x", top[2])
 
 
+class Triggers(unittest.TestCase):
+    CALLER = textwrap.dedent("""\
+        name: Weekly floor compilers
+        on:
+          schedule:
+            - cron: "17 4 * * 1"
+          workflow_dispatch:
+        permissions: {}
+        jobs:
+          floor:
+            uses: kokeb-labs/ci-tools/.github/workflows/ru-floor-compilers.yml@v1
+            permissions:
+              contents: read
+        """)
+
+    def check(self, name: str, text: str) -> subprocess.CompletedProcess:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / name
+            path.write_text(text)
+            return run("check_triggers.py", str(path))
+
+    def test_the_floor_caller_may_be_scheduled(self):
+        self.assertEqual(self.check("weekly-floor-compilers.yml", self.CALLER).returncode, 0)
+
+    def test_any_other_scheduled_workflow_fails(self):
+        self.assertEqual(self.check("nightly.yml", self.CALLER).returncode, 1)
+        self.assertEqual(self.check("ci-floor-compilers.yml", self.CALLER).returncode, 1)
+
+    def test_the_floor_caller_must_stay_narrow(self):
+        for label, text in (
+                ("steps", self.CALLER + "            steps: []\n"),
+                ("secrets", self.CALLER + "            secrets: inherit\n"),
+                ("write", self.CALLER.replace("contents: read", "contents: write")),
+                ("other reusable", self.CALLER.replace("ru-floor-compilers", "ru-host-quality")),
+                ("pull_request_target", self.CALLER.replace("workflow_dispatch:", "pull_request_target:"))):
+            self.assertEqual(self.check("weekly-floor-compilers.yml", text).returncode, 1, label)
+
+    def test_the_floor_reusable_has_no_cache_ref_secret_or_unpinned_action(self):
+        sha = "3d3c42e5aac5ba805825da76410c181273ba90b1"
+        ok = ("on:\n  workflow_call:\npermissions: {}\njobs:\n  floor:\n    runs-on: x\n    steps:\n"
+              f"      - uses: actions/checkout@{sha}\n")
+        self.assertEqual(self.check("ru-floor-compilers.yml", ok).returncode, 0)
+        for label, text in (
+                ("tag pin", ok.replace(sha, "v4")),
+                ("cache", ok + f"      - uses: actions/cache@{sha}\n"),
+                ("ref", ok + "        with:\n          ref: ${{ github.event.inputs.x }}\n"),
+                ("secrets", ok + "      - run: echo ${{ secrets.TOKEN }}\n")):
+            self.assertEqual(self.check("ru-floor-compilers.yml", text).returncode, 1, label)
+
+
 if __name__ == "__main__":
     unittest.main()

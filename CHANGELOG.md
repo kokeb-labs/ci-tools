@@ -25,6 +25,13 @@ that heading.
 
 ### Added
 
+- **`ru-floor-compilers.yml`.** Builds and tests a CMake project with the oldest compilers it promises (the
+  `compilers` of `driver.yml`: GCC 10 and Clang 13 for C++20), each in a container pinned by digest, and fails when
+  the image is not the declared floor. A new reusable workflow with optional inputs only, so existing callers are
+  unaffected. Self-tested on `tests/fixtures/floor`. It is the one workflow that may run on `schedule`:
+  `docs/triggers.md` gets a narrow exception (a caller named `weekly-floor-compilers.yml` that only calls it, no cache
+  or restore step, no checkout ref, nothing sensitive, actions pinned by SHA) and `check_triggers.py` enforces it and
+  still fails any other scheduled workflow. Guide: `docs/ru-floor-compilers.md`.
 - **Driver safety class.** `driver.schema.json` accepts `safety: {class: passive | sensing | actuating}` (what the
   chip path can do to the physical world: nothing a safety decision rests on, a measurement one may rest on, or
   moving, energising or switching something) and `hardware: {level: H0 | H1 | H2}`. Both are optional, so a pinned

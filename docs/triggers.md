@@ -16,12 +16,27 @@ A workflow starts only from:
 `release.yml` is the one exception: it starts from `workflow_run` when the self-CI finishes on `main`, and checks out
 only the commit that self-CI tested.
 
-Not allowed: `workflow_dispatch`, `schedule`, `pull_request_target`, `issue_comment`, `workflow_run` (outside
+One narrow exception, below: the weekly floor-compiler caller. Otherwise not allowed: `workflow_dispatch`, `schedule`, `pull_request_target`, `issue_comment`, `workflow_run` (outside
 `release.yml`) and the other events that run in the default branch's context. To run a workflow again, use
 **Re-run jobs** on its run; to run it on a branch, push the branch or open a draft pull request.
 
 The self-CI enforces the rule: `.github/scripts/check_triggers.py` fails on any other trigger in
 `.github/workflows/` or in a template's workflows.
+
+## The one scheduled workflow
+
+A driver checks every week that it still builds with the oldest compilers it promises (GCC 10 and Clang 13). The
+caller is `weekly-floor-compilers.yml` and may use `schedule` and `workflow_dispatch`; no other file may. It is safe
+because a scheduled run of it cannot write anything a later run restores, and cannot run code a pull request chose:
+
+- it is only a call of `ru-floor-compilers.yml`: no steps of its own, no secrets, `contents: read` and nothing more;
+- the reusable has no `actions/cache` or other restore or save step, so the run leaves nothing in the cache;
+- it checks out the default branch only, with no `ref:` input, and every action in it is pinned by a commit SHA;
+- the images it runs in are pinned by digest.
+
+`check_triggers.py` enforces all of this: the file name is the only place `schedule` or `workflow_dispatch` is
+accepted, a file of that name that does more than the call fails, and the reusable fails on a cache step, a `ref`,
+a secret or an action not pinned by SHA. A new scheduled workflow needs a new exception here, with its reasoning.
 
 ## Why
 
