@@ -22,7 +22,18 @@
     },
     "peripheral": {"type": ["string", "null"], "pattern": "^[a-z0-9_]+$"},
     "kb_core_min": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/semver"}]},
-    "authors": {"type": "array", "items": {"type": "string", "minLength": 1}}
+    "authors": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "hardware": {
+      "type": "object",
+      "required": ["level"],
+      "properties": {"level": {"enum": ["H0", "H1", "H2"]}}
+    },
+    "safety": {
+      "type": "object",
+      "required": ["class"],
+      "properties": {"class": {"enum": ["passive", "sensing", "actuating"]}},
+      "additionalProperties": false
+    }
   },
   "$defs": {
     "semver": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"}

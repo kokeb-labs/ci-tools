@@ -105,6 +105,15 @@ class Build(unittest.TestCase):
         doc, errors, _ = self.build(self.tree(DRIVER_YML.replace("1.2.0", "1.3.0")))
         self.assertTrue(any("not the tag's" in e for e in errors), errors)
 
+    def test_safety_class_and_hardware_level(self):
+        good = DRIVER_YML + "safety:\n  class: actuating\nhardware:\n  level: H0\n"
+        doc, errors, _ = self.build(self.tree(good))
+        self.assertEqual((errors, len(doc["drivers"])), ([], 1))
+        for bad in (DRIVER_YML + "safety:\n  class: dangerous\n", DRIVER_YML + "hardware:\n  level: H9\n"):
+            doc, errors, _ = self.build(self.tree(bad))
+            self.assertEqual(doc["drivers"], [])
+            self.assertTrue(any("driver.yml" in e for e in errors), errors)
+
     def test_unreadable_driver(self):
         t = self.tree()
         t.files.clear()
