@@ -17,6 +17,10 @@ that heading.
 
 ### Added
 
+- **Driver safety class.** `driver.schema.json` accepts `safety: {class: passive | sensing | actuating}` (what the
+  chip path can do to the physical world: nothing a safety decision rests on, a measurement one may rest on, or
+  moving, energising or switching something) and `hardware: {level: H0 | H1 | H2}`. Both are optional, so a pinned
+  driver without them still passes.
 - **Language standards registry and checker.** `tools/standards/standards.yml` lists the C++ profiles the organisation
   accepts (`KB-CPP20` current, `KB-CPP23` preview, `KB-CPP17` retired) with status, MISRA editions, CMake feature,
   flag and compiler floors. `tools/standards/check_standards.py` reads a driver's new `language:` block in
