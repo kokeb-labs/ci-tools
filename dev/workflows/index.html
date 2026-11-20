@@ -1466,6 +1466,8 @@
       
         
       
+        
+      
     
     
     
@@ -1841,6 +1843,11 @@ job starts (<a href="../permissions/">Permissions contract</a>).</p>
 <td><a href="../ru-docs-publish/"><code>ru-docs-publish.yml</code></a></td>
 <td>Build a Jekyll site with Doxygen and publish it to <code>gh-pages</code> in version folders: the documentation pipeline that <a href="../ru-mkdocs-publish/"><code>ru-mkdocs-publish</code></a> replaces.</td>
 <td><code>contents: write</code></td>
+</tr>
+<tr>
+<td><a href="../ru-floor-compilers/"><code>ru-floor-compilers.yml</code></a></td>
+<td>Build and test a CMake project with the oldest compilers it promises to support (GCC 10 and Clang 13 by default), each in a container pinned by digest.</td>
+<td><code>contents: read</code></td>
 </tr>
 <tr>
 <td><a href="../ru-handbook-check/"><code>ru-handbook-check.yml</code></a></td>

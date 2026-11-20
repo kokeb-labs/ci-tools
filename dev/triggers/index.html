@@ -824,6 +824,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-one-scheduled-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The one scheduled workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#why" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1040,6 +1051,8 @@
   
     
     
+      
+        
       
         
       
@@ -1328,6 +1341,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-one-scheduled-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The one scheduled workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#why" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1417,11 +1441,24 @@
 </table>
 <p><code>release.yml</code> is the one exception: it starts from <code>workflow_run</code> when the self-CI finishes on <code>main</code>, and checks out
 only the commit that self-CI tested.</p>
-<p>Not allowed: <code>workflow_dispatch</code>, <code>schedule</code>, <code>pull_request_target</code>, <code>issue_comment</code>, <code>workflow_run</code> (outside
+<p>One narrow exception, below: the weekly floor-compiler caller. Otherwise not allowed: <code>workflow_dispatch</code>, <code>schedule</code>, <code>pull_request_target</code>, <code>issue_comment</code>, <code>workflow_run</code> (outside
 <code>release.yml</code>) and the other events that run in the default branch's context. To run a workflow again, use
 <strong>Re-run jobs</strong> on its run; to run it on a branch, push the branch or open a draft pull request.</p>
 <p>The self-CI enforces the rule: <code>.github/scripts/check_triggers.py</code> fails on any other trigger in
 <code>.github/workflows/</code> or in a template's workflows.</p>
+<h2 id="the-one-scheduled-workflow">The one scheduled workflow<a class="headerlink" href="#the-one-scheduled-workflow" title="Permanent link">&para;</a></h2>
+<p>A driver checks every week that it still builds with the oldest compilers it promises (GCC 10 and Clang 13). The
+caller is <code>weekly-floor-compilers.yml</code> and may use <code>schedule</code> and <code>workflow_dispatch</code>; no other file may. It is safe
+because a scheduled run of it cannot write anything a later run restores, and cannot run code a pull request chose:</p>
+<ul>
+<li>it is only a call of <code>ru-floor-compilers.yml</code>: no steps of its own, no secrets, <code>contents: read</code> and nothing more;</li>
+<li>the reusable has no <code>actions/cache</code> or other restore or save step, so the run leaves nothing in the cache;</li>
+<li>it checks out the default branch only, with no <code>ref:</code> input, and every action in it is pinned by a commit SHA;</li>
+<li>the images it runs in are pinned by digest.</li>
+</ul>
+<p><code>check_triggers.py</code> enforces all of this: the file name is the only place <code>schedule</code> or <code>workflow_dispatch</code> is
+accepted, a file of that name that does more than the call fails, and the reusable fails on a cache step, a <code>ref</code>,
+a secret or an action not pinned by SHA. A new scheduled workflow needs a new exception here, with its reasoning.</p>
 <h2 id="why">Why<a class="headerlink" href="#why" title="Permanent link">&para;</a></h2>
 <p>A run started by one of those events executes in the context of the default branch. It can write the Actions cache
 entries that every later run on <code>main</code>, and every release built from <code>main</code>, restores. If such a run executes code
