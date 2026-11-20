@@ -70,6 +70,7 @@ third-party action is pinned to a commit SHA, so `@v1` pins everything a caller 
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | Deprecated: use [`ru-release-firmware`](ru-release-firmware.md), which also works in private repositories. This one creates a GitHub Release for a tag with the firmware that `ru-build` built for the same commit. | `contents: write` |
 | [`ru-release.yml`](ru-release.md) | Create a GitHub Release with generated notes for a tag. | `contents: write` |
 | [`ru-repo-checks.yml`](ru-repo-checks.md) | The small checks of a repository (sign-off, organisation standard, Markdown and YAML lint, handbook rules, template drift and cppcheck) as steps of one job, with the same scripts and failure rules as their single workflows. | `contents: read`, `pull-requests: read` |
+| [`ru-floor-compilers.yml`](ru-floor-compilers.md) | Build and test a CMake project with the oldest compilers it promises to support (GCC 10 and Clang 13 by default), each in a container pinned by digest. | `contents: read` |
 | [`ru-template-drift.yml`](ru-template-drift.md) | Find the files a driver or library has let drift from [driver-template](https://github.com/kokeb-labs/driver-template). | `contents: read` |
 | [`ru-yaml-lint.yml`](ru-yaml-lint.md) | Lint YAML files with yamllint against the repository's own rules. | `contents: read` |
 <!-- /generated -->

@@ -1,0 +1,102 @@
+---
+name: 🧱 [RU] Floor compilers
+
+# Builds and tests a CMake project with the OLDEST compilers it promises to support (a driver's `language.compilers`:
+# GCC 10 and Clang 13 for C++20), each in a container pinned by digest. The usual host job runs the newest compilers on
+# the runner and cannot see a feature that only a newer compiler has. A caller runs it on push to main (and, if it
+# wants, on pull requests); this repository's trigger policy (docs/triggers.md) allows no `schedule`.
+on:
+  workflow_call:
+    inputs:
+      source_dir:
+        description: "CMake source directory, relative to the repository root"
+        type: string
+        required: false
+        default: "."
+      cmake_args:
+        description: "Extra arguments for the configure step, space separated (for example -DMYCHIP_BUILD_TESTS=ON)"
+        type: string
+        required: false
+        default: ""
+      build_type:
+        description: "CMAKE_BUILD_TYPE"
+        type: string
+        required: false
+        default: "Debug"
+      gcc_image:
+        description: "Container image of the GCC floor, pinned by digest; its major version must equal language.compilers.gcc"
+        type: string
+        required: false
+        default: "gcc:10@sha256:19b31d0b2b263047b173e4e253d91f199d99c082973f13604d2913252c13309e"
+      clang_image:
+        description: "Container image of the Clang floor, pinned by digest; its major version must equal language.compilers.clang"
+        type: string
+        required: false
+        default: "silkeh/clang:13@sha256:1c2be5e37d8165ece17c18449f1a866633876c56cf286919d1c3e226e87a0449"
+      timeout_minutes:
+        description: "Timeout of each compiler's job, in minutes"
+        type: number
+        required: false
+        default: 45
+
+permissions: {}
+
+jobs:
+  floor:
+    name: Floor ${{ matrix.compiler }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    container:
+      image: ${{ matrix.compiler == 'gcc' && inputs.gcc_image || inputs.clang_image }}
+    env:
+      COMPILER: ${{ matrix.compiler }}
+      SOURCE_DIR: ${{ inputs.source_dir }}
+      CMAKE_ARGS: ${{ inputs.cmake_args }}
+      BUILD_TYPE: ${{ inputs.build_type }}
+    steps:
+      - name: Install the build tools
+        run: |
+          set -euo pipefail
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends cmake make git ca-certificates python3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - name: The compiler is the declared floor
+        run: |
+          set -euo pipefail
+          if [ "$COMPILER" = gcc ]; then CXX=g++; else CXX=clang++; fi
+          echo "CXX=$CXX" >> "$GITHUB_ENV"
+          "$CXX" --version | head -n 1
+          have=$("$CXX" -dumpversion | cut -d. -f1)
+          python3 - "$COMPILER" "$have" <<'PY'
+          import re, sys
+          compiler, have = sys.argv[1], sys.argv[2]
+          try:
+              text = open("driver.yml", encoding="utf-8").read()
+          except OSError:
+              print("no driver.yml: the floor is whatever the image holds"); sys.exit(0)
+          block = re.search(r"^\s+compilers:[^\n]*\n((?:\s+\S[^\n]*\n)+)", text, re.M)
+          want = re.search(rf"^\s+{compiler}:\s*[\"']?(\d+)", block.group(1), re.M) if block else None
+          if not want:
+              print("driver.yml declares no compiler floor: the floor is whatever the image holds"); sys.exit(0)
+          if want.group(1) != have:
+              sys.exit(f"::error::driver.yml promises {compiler} {want.group(1)} but the floor image holds {compiler} {have}: "
+                       "pass the matching image digest or correct language.compilers")
+          print(f"{compiler} {have} is the declared floor")
+          PY
+      - name: Configure
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC2086  # CMAKE_ARGS is a space separated list by contract
+          cmake -S "$SOURCE_DIR" -B build-floor -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" $CMAKE_ARGS
+      - name: Build
+        run: cmake --build build-floor --parallel
+      - name: Test
+        run: ctest --test-dir build-floor --output-on-failure

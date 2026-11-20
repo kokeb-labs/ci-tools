@@ -79,6 +79,7 @@ moving ref. Pinning a caller to `@v1` therefore pins everything it runs.
 | [`ru-release-firmware.yml`](.github/workflows/ru-release-firmware.yml) | ESP-IDF: GitHub Release with the firmware `ru-build` built for the tagged commit, in public and private repositories ([guide](docs/ru-release-firmware.md)) |
 | [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | Deprecated: use `ru-release-firmware.yml`. The same release without `actions: read`, so it fails in private repositories ([guide](docs/ru-release-with-artifacts.md)) |
 | [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | Signed build provenance (GitHub artifact attestation) for every file of a published release; public repositories ([guide](docs/ru-attest-release.md)) |
+| [`ru-floor-compilers.yml`](.github/workflows/ru-floor-compilers.yml) | Builds and tests with the oldest compilers a driver promises (`language.compilers`), in digest-pinned GCC 10 and Clang 13 containers; a caller decides when to run it ([guide](docs/ru-floor-compilers.md)) |
 | [`ru-template-drift.yml`](.github/workflows/ru-template-drift.yml) | Compares the files driver-template manages with what the template makes today from `.kokeb/template.yml` ([guide](docs/ru-template-drift.md)) |
 | [`ru-repo-checks.yml`](.github/workflows/ru-repo-checks.yml) | DCO, org standard, Markdown lint, handbook rules, template drift, cppcheck and YAML lint as steps of one job ([guide](docs/ru-repo-checks.md)) |
 | [`dco.yml`](.github/workflows/dco.yml) | Fails a pull request when a commit lacks a `Signed-off-by:` line matching its author ([guide](docs/dco.md)) |
@@ -141,6 +142,7 @@ workflow's job permissions ever differ from this table.
 | [`ru-release-firmware.yml`](.github/workflows/ru-release-firmware.yml) | `actions: read`, `contents: write` | find the tagged commit's CI run and download its firmware; create the release and upload the files |
 | [`ru-release-with-artifacts.yml`](.github/workflows/ru-release-with-artifacts.yml) | `contents: write` | Deprecated: create the release and upload the firmware (public repositories only; use `ru-release-firmware.yml`) |
 | [`ru-attest-release.yml`](.github/workflows/ru-attest-release.yml) | `attestations: write`, `contents: read`, `id-token: write` | download the release files; sign the provenance through Sigstore; store the attestation |
+| [`ru-floor-compilers.yml`](.github/workflows/ru-floor-compilers.yml) | `contents: read` | checkout, inside the floor compiler containers |
 | [`ru-template-drift.yml`](.github/workflows/ru-template-drift.yml) | `contents: read` | checkout of the caller and of driver-template |
 | [`ru-yaml-lint.yml`](.github/workflows/ru-yaml-lint.yml) | `contents: read` | checkout |
 | [`ru-repo-checks.yml`](.github/workflows/ru-repo-checks.yml) | `contents: read`, `pull-requests: read` | checkout of the caller, driver-template and the handbook checker; DCO lists the pull request's commits |
@@ -787,6 +789,29 @@ jobs:
 | `fix` | boolean | no | `false` | Automatically fix fixable issues (equivalent to --fix flag) |
 | `separator` | string | no | `""` | Separator to use between glob patterns (default: space) |
 <!-- inputs:ru-markdown-lint.yml:end -->
+
+### ru-floor-compilers
+
+```yaml
+jobs:
+  floor:
+    uses: kokeb-labs/ci-tools/.github/workflows/ru-floor-compilers.yml@v1
+    permissions:
+      contents: read
+    with:
+      cmake_args: -DMYCHIP_BUILD_TESTS=ON
+```
+
+<!-- inputs:ru-floor-compilers.yml:start -->
+| Input | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `source_dir` | string | no | `.` | CMake source directory, relative to the repository root |
+| `cmake_args` | string | no | `""` | Extra arguments for the configure step, space separated (for example -DMYCHIP_BUILD_TESTS=ON) |
+| `build_type` | string | no | `Debug` | CMAKE_BUILD_TYPE |
+| `gcc_image` | string | no | `gcc:10@sha256:19b31d0b2b263047b173e4e253d91f199d99c082973f13604d2913252c13309e` | Container image of the GCC floor, pinned by digest; its major version must equal language.compilers.gcc |
+| `clang_image` | string | no | `silkeh/clang:13@sha256:1c2be5e37d8165ece17c18449f1a866633876c56cf286919d1c3e226e87a0449` | Container image of the Clang floor, pinned by digest; its major version must equal language.compilers.clang |
+| `timeout_minutes` | number | no | `45` | Timeout of each compiler's job, in minutes |
+<!-- inputs:ru-floor-compilers.yml:end -->
 
 ### ru-yaml-lint
 

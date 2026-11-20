@@ -41,6 +41,7 @@ read from the workflow files.
 | [`ru-release-with-artifacts.yml`](ru-release-with-artifacts.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-release.yml`](ru-release.md) | `contents: write` | `release`: `contents: write` |
 | [`ru-repo-checks.yml`](ru-repo-checks.md) | `contents: read`, `pull-requests: read` | `checks`: `contents: read`, `pull-requests: read` |
+| [`ru-floor-compilers.yml`](ru-floor-compilers.md) | `contents: read` | `floor`: `contents: read` |
 | [`ru-template-drift.yml`](ru-template-drift.md) | `contents: read` | `drift`: `contents: read` |
 | [`ru-yaml-lint.yml`](ru-yaml-lint.md) | `contents: read` | `yamllint`: `contents: read` |
 <!-- /generated -->

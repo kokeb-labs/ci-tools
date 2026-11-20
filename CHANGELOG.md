@@ -17,6 +17,10 @@ that heading.
 
 ### Added
 
+- **`ru-floor-compilers.yml`.** Builds and tests a CMake project with the oldest compilers it
+  promises (the `compilers` of `driver.yml`: GCC 10 and Clang 13 for C++20), each in a container pinned by digest,
+  and fails when the image is not the declared floor. A new reusable workflow with optional inputs only, so existing callers are
+  unaffected. Self-tested on `tests/fixtures/floor`. Guide: `docs/ru-floor-compilers.md`.
 - **Language standards registry and checker.** `tools/standards/standards.yml` lists the C++ profiles the organisation
   accepts (`KB-CPP20` current, `KB-CPP23` preview, `KB-CPP17` retired) with status, MISRA editions, CMake feature,
   flag and compiler floors. `tools/standards/check_standards.py` reads a driver's new `language:` block in

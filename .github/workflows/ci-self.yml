@@ -320,6 +320,12 @@ jobs:
     permissions:
       contents: read
 
+  selftest-floor-compilers:
+    name: Self-test floor compilers
+    uses: ./.github/workflows/ci-floor-compilers.yml
+    permissions:
+      contents: read
+
   selftest-cross-build:
     name: Self-test cross-compile
     uses: ./.github/workflows/ci-cross-build.yml
@@ -392,6 +398,7 @@ jobs:
       - selftest-yaml-lint
       - selftest-docs-linkcheck
       - selftest-host-quality
+      - selftest-floor-compilers
       - selftest-cross-build
       - selftest-handbook-check
       - selftest-repo-checks

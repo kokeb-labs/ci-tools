@@ -1,0 +1,17 @@
+---
+name: 🧱 Floor compilers self-test
+
+# Called by ci-self.yml, so the required "CI gate" covers it; re-run it from the run page.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  fixture:
+    uses: ./.github/workflows/ru-floor-compilers.yml
+    permissions:
+      contents: read
+    with:
+      source_dir: tests/fixtures/floor
