@@ -100,72 +100,6 @@
   <meta property="og:description" content="Reusable GitHub Actions workflows for the Kokeb Labs organisation: C/C++ lint and analysis, host builds, ESP-IDF firmware builds, the documentation platform, link and lint checks, DCO and organisation-standard checks, releases and a single required CI gate.">
   <meta property="og:url" content="https://kokeb-labs.github.io/ci-tools/latest/changelog/">
   <meta name="twitter:card" content="summary">
-  <script>
-(function () {
-  if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
-      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
-  var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
-  var stub = {
-    initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
-    render: function (id, text) {
-      var el = null, pres = document.querySelectorAll("pre.mermaid:not([data-kb-mermaid])");
-      for (var i = 0; i < pres.length && !el; i++) if (pres[i].textContent === text) el = pres[i];
-      if (el) el.setAttribute("data-kb-mermaid", "");
-      return near(el).then(load).then(function (m) { return m.render(id, text); });
-    }
-  };
-  function load() {
-    return loading || (loading = new Promise(function (resolve, reject) {
-      var s = document.createElement("script");
-      s.src = SRC;
-      s.integrity = SRI;
-      s.crossOrigin = "anonymous";
-      s.onload = function () {
-        real = window.mermaid;
-        window.mermaid = stub;
-        real.initialize(config);
-        resolve(real);
-      };
-      s.onerror = function () { loading = null; reject(new Error("Mermaid did not load")); };
-      document.head.appendChild(s);
-    }));
-  }
-  // One observer for the diagrams still waiting: on the screen only until the reader engages, then a screen ahead.
-  function watch() {
-    if (io) io.disconnect();
-    io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) release(function (w) { return w.el === e.target; });
-      });
-    }, { rootMargin: ahead ? "100% 0px" : "0px" });
-    waiting.forEach(function (w) { io.observe(w.el); });
-  }
-  function release(which) {
-    waiting = waiting.filter(function (w) {
-      if (!which(w)) return true;
-      io.unobserve(w.el);
-      w.go();
-      return false;
-    });
-  }
-  function near(el) {
-    if (real || !el || !("IntersectionObserver" in window)) return Promise.resolve();
-    return new Promise(function (resolve) {
-      waiting.push({ el: el, go: resolve });
-      if (io) io.observe(el); else watch();
-    });
-  }
-  function engaged() {
-    ENGAGE.forEach(function (t) { window.removeEventListener(t, engaged, true); });
-    ahead = true;
-    if (io) watch();
-  }
-  ENGAGE.forEach(function (t) { window.addEventListener(t, engaged, { capture: true, passive: true }); });
-  window.addEventListener("beforeprint", function () { if (io) release(function () { return true; }); });
-  window.mermaid = stub;
-})();
-</script>
 
   </head>
   
@@ -1192,7 +1126,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[Unreleased]">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1260---2026-11-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.26.0] - 2026-11-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.26.0] - 2026-11-20">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2648,7 +2593,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[Unreleased]">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1260---2026-11-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1.26.0] - 2026-11-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1.26.0] - 2026-11-20">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -4081,10 +4037,16 @@
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <p>Every change to the reusable workflows, the theme package and the tools, newest first, from <code>CHANGELOG.md</code>.</p>
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<h2 id="1260---2026-11-20">[1.26.0] - 2026-11-20<a class="headerlink" href="#1260---2026-11-20" title="Permanent link">&para;</a></h2>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li><strong>Mermaid is gone from the docs platform.</strong> Every repository of the organisation now draws its diagrams with figkit
+  (committed light and dark SVG that read on a phone), so the theme no longer loads Mermaid on demand, no longer
+  registers the <code>mermaid</code> fence and ships no Mermaid styles; a stray fence renders as a plain code block.
+  <code>kokeb-docs check</code> now bans Mermaid by default (a fence in any Markdown file, README files included, or a <code>.mmd</code>
+  file is an error); a site that must keep one sets <code>extra: {no_mermaid: false}</code>. ADR 0001 and the style guide say so.</li>
 <li>The architecture diagram in <code>README.md</code> is a figkit matrix (<code>docs/model/workflow-use.matrix.yml</code>) instead of a Mermaid
-  fence, so it reads on a phone. No workflow changes.</li>
+  fence. No workflow changes.</li>
 </ul>
 <h2 id="1251---2026-11-20">[1.25.1] - 2026-11-20<a class="headerlink" href="#1251---2026-11-20" title="Permanent link">&para;</a></h2>
 <h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>

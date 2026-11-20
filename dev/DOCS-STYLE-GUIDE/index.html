@@ -102,72 +102,6 @@
   <meta property="og:description" content="Reusable GitHub Actions workflows for the Kokeb Labs organisation: C/C++ lint and analysis, host builds, ESP-IDF firmware builds, the documentation platform, link and lint checks, DCO and organisation-standard checks, releases and a single required CI gate.">
   <meta property="og:url" content="https://kokeb-labs.github.io/ci-tools/latest/DOCS-STYLE-GUIDE/">
   <meta name="twitter:card" content="summary">
-  <script>
-(function () {
-  if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
-      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
-  var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
-  var stub = {
-    initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
-    render: function (id, text) {
-      var el = null, pres = document.querySelectorAll("pre.mermaid:not([data-kb-mermaid])");
-      for (var i = 0; i < pres.length && !el; i++) if (pres[i].textContent === text) el = pres[i];
-      if (el) el.setAttribute("data-kb-mermaid", "");
-      return near(el).then(load).then(function (m) { return m.render(id, text); });
-    }
-  };
-  function load() {
-    return loading || (loading = new Promise(function (resolve, reject) {
-      var s = document.createElement("script");
-      s.src = SRC;
-      s.integrity = SRI;
-      s.crossOrigin = "anonymous";
-      s.onload = function () {
-        real = window.mermaid;
-        window.mermaid = stub;
-        real.initialize(config);
-        resolve(real);
-      };
-      s.onerror = function () { loading = null; reject(new Error("Mermaid did not load")); };
-      document.head.appendChild(s);
-    }));
-  }
-  // One observer for the diagrams still waiting: on the screen only until the reader engages, then a screen ahead.
-  function watch() {
-    if (io) io.disconnect();
-    io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) release(function (w) { return w.el === e.target; });
-      });
-    }, { rootMargin: ahead ? "100% 0px" : "0px" });
-    waiting.forEach(function (w) { io.observe(w.el); });
-  }
-  function release(which) {
-    waiting = waiting.filter(function (w) {
-      if (!which(w)) return true;
-      io.unobserve(w.el);
-      w.go();
-      return false;
-    });
-  }
-  function near(el) {
-    if (real || !el || !("IntersectionObserver" in window)) return Promise.resolve();
-    return new Promise(function (resolve) {
-      waiting.push({ el: el, go: resolve });
-      if (io) io.observe(el); else watch();
-    });
-  }
-  function engaged() {
-    ENGAGE.forEach(function (t) { window.removeEventListener(t, engaged, true); });
-    ahead = true;
-    if (io) watch();
-  }
-  ENGAGE.forEach(function (t) { window.addEventListener(t, engaged, { capture: true, passive: true }); });
-  window.addEventListener("beforeprint", function () { if (io) release(function () { return true; }); });
-  window.mermaid = stub;
-})();
-</script>
 
   </head>
   
@@ -1853,7 +1787,7 @@ navigation and table of contents).</p>
 <tr>
 <td>Sequence, state machine, timeline, matrix, byte layout</td>
 <td>a figkit model (<code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code>)</td>
-<td><a href="../figkit/">Figures with figkit</a>; Mermaid only in README files and pull requests</td>
+<td><a href="../figkit/">Figures with figkit</a></td>
 </tr>
 <tr>
 <td>Architecture, signal flow, layouts</td>
@@ -1939,8 +1873,8 @@ driver uses. On a driver's home page the card sits under Pins and wiring, after 
 <li><strong>Models</strong> for sequences, state machines, timelines, graphs, matrices, byte layouts and pipelines: a file
   <code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code>, scaffolded with <code>kokeb-docs figkit new</code> (<a href="../figkit/">Figures with figkit</a>).</li>
 <li><strong>Mermaid</strong> is not used: it does not render on phones and in mobile apps (<a href="../adr/0001-figure-toolchain/">ADR 0001</a>).
-  <code>kokeb-docs figures --lint</code> reports Mermaid fences in <code>docs/</code>; a site that sets <code>extra: {no_mermaid: true}</code> also fails
-  <code>kokeb-docs check</code> on a fence in a README file or on a <code>.mmd</code> file. Draw a figkit figure instead (README files embed
+  <code>kokeb-docs check</code> fails on a Mermaid fence (README files too) or a <code>.mmd</code> file unless the site sets
+  <code>extra: {no_mermaid: false}</code>; the theme does not load Mermaid. Draw a figkit figure instead (README files embed
   one with the same marker pair).</li>
 <li><strong>Chip figures</strong> (pinout, block diagram, application circuit) are not written as modules: they are drawn from
   <code>docs/hardware.yml</code> (<a href="#chip-hardware">Chip hardware</a>).</li>
@@ -2035,7 +1969,7 @@ cells short; long prose goes under the table.</p>
 <tr>
 <td>Architecture</td>
 <td><code>architecture.md</code></td>
-<td>The layer figure (core, communication interface, platform port); a table of layers with files; one call traced through the layers (Mermaid); design choices (CRTP, no heap); source map</td>
+<td>The layer figure (core, communication interface, platform port); a table of layers with files; one call traced through the layers (a figure); design choices (CRTP, no heap); source map</td>
 </tr>
 <tr>
 <td>API guide</td>

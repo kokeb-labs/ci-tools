@@ -102,72 +102,6 @@
   <meta property="og:description" content="Reusable GitHub Actions workflows for the Kokeb Labs organisation: C/C++ lint and analysis, host builds, ESP-IDF firmware builds, the documentation platform, link and lint checks, DCO and organisation-standard checks, releases and a single required CI gate.">
   <meta property="og:url" content="https://kokeb-labs.github.io/ci-tools/latest/adr/0001-figure-toolchain/">
   <meta name="twitter:card" content="summary">
-  <script>
-(function () {
-  if (typeof mermaid != "undefined" && !(mermaid instanceof Element)) return;
-  var SRC = "https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js",
-      SRI = "sha384-EOXBFmc3gx5mb+vn0vPvvGqACToJD24hhacX5Yx+8NUUQrHIle/Qi5Bg9o3zKwW2", config = {}, real, loading;
-  var waiting = [], io = null, ahead = false, ENGAGE = ["scroll", "keydown", "pointerdown", "touchstart"];
-  var stub = {
-    initialize: function (c) { config = c || {}; if (real) real.initialize(config); },
-    render: function (id, text) {
-      var el = null, pres = document.querySelectorAll("pre.mermaid:not([data-kb-mermaid])");
-      for (var i = 0; i < pres.length && !el; i++) if (pres[i].textContent === text) el = pres[i];
-      if (el) el.setAttribute("data-kb-mermaid", "");
-      return near(el).then(load).then(function (m) { return m.render(id, text); });
-    }
-  };
-  function load() {
-    return loading || (loading = new Promise(function (resolve, reject) {
-      var s = document.createElement("script");
-      s.src = SRC;
-      s.integrity = SRI;
-      s.crossOrigin = "anonymous";
-      s.onload = function () {
-        real = window.mermaid;
-        window.mermaid = stub;
-        real.initialize(config);
-        resolve(real);
-      };
-      s.onerror = function () { loading = null; reject(new Error("Mermaid did not load")); };
-      document.head.appendChild(s);
-    }));
-  }
-  // One observer for the diagrams still waiting: on the screen only until the reader engages, then a screen ahead.
-  function watch() {
-    if (io) io.disconnect();
-    io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) release(function (w) { return w.el === e.target; });
-      });
-    }, { rootMargin: ahead ? "100% 0px" : "0px" });
-    waiting.forEach(function (w) { io.observe(w.el); });
-  }
-  function release(which) {
-    waiting = waiting.filter(function (w) {
-      if (!which(w)) return true;
-      io.unobserve(w.el);
-      w.go();
-      return false;
-    });
-  }
-  function near(el) {
-    if (real || !el || !("IntersectionObserver" in window)) return Promise.resolve();
-    return new Promise(function (resolve) {
-      waiting.push({ el: el, go: resolve });
-      if (io) io.observe(el); else watch();
-    });
-  }
-  function engaged() {
-    ENGAGE.forEach(function (t) { window.removeEventListener(t, engaged, true); });
-    ahead = true;
-    if (io) watch();
-  }
-  ENGAGE.forEach(function (t) { window.addEventListener(t, engaged, { capture: true, passive: true }); });
-  window.addEventListener("beforeprint", function () { if (io) release(function () { return true; }); });
-  window.mermaid = stub;
-})();
-</script>
 
   </head>
   
@@ -1610,10 +1544,12 @@ every caller and is a major-version change, not part of this decision. All paths
 --check</code> fails when a lock is missing or was made from different inputs ("layout stale, run <code>kokeb-docs figkit
 layout &lt;id&gt;</code>"), and when a committed output differs from a fresh build.</p>
 <h3 id="3-mermaid-policy">3. Mermaid policy<a class="headerlink" href="#3-mermaid-policy" title="Permanent link">&para;</a></h3>
-<p>Mermaid is <strong>not used on published pages</strong>. It stays allowed in <code>README.md</code> files and in pull request text, where
-GitHub renders it and nothing is published from it. <code>kokeb-docs figures --lint</code> reports a <code>mermaid</code> fence in a page
-under <code>docs/</code> as a warning; <code>--lint --ban-mermaid</code> makes it an error. Existing sites are migrated page by page; the
-theme keeps its Mermaid partial until the last published fence is gone.</p>
+<p>Mermaid is <strong>not used</strong>, on published pages or in <code>README.md</code> files: it does not render on phones and in mobile apps.
+Every repository of the organisation was migrated to figkit figures, which are committed SVG that GitHub shows too.
+<code>kokeb-docs check</code> runs <code>figures --lint --ban-mermaid</code>, so a <code>mermaid</code> fence or a <code>.mmd</code> file is an error; a site can opt
+out with <code>extra: {no_mermaid: false}</code> in its configuration. The theme no longer loads Mermaid, ships no styles for it and
+no longer registers the fence, so a stray fence shows as a plain code block. (Until release 1.26.0 the policy allowed
+Mermaid in README files and kept an on-demand loader in the theme.)</p>
 <h3 id="4-budgets">4. Budgets<a class="headerlink" href="#4-budgets" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
