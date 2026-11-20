@@ -45,6 +45,24 @@ def _take_config(argv: list[str]) -> tuple[list[str], str | None]:
     return rest, config
 
 
+def no_mermaid(root: pathlib.Path) -> bool:
+    """Whether the site configuration opts in with ``extra: {no_mermaid: true}``: then ``kokeb-docs check`` fails on
+    any Mermaid fence (README files included) or ``.mmd`` file."""
+    import re
+
+    from .paths import CONFIG_NAMES
+
+    names = [pathlib.Path(os.environ["KOKEB_DOCS_CONFIG"])] if os.environ.get("KOKEB_DOCS_CONFIG") else []
+    names += [root / n for n in CONFIG_NAMES]
+    for n in names:
+        try:
+            if re.search(r"^[ \t]+no_mermaid[ \t]*:[ \t]*true\b", n.read_text(), re.M):
+                return True
+        except OSError:
+            continue
+    return False
+
+
 def _check() -> int:
     from .paths import repo_root
 
@@ -63,6 +81,10 @@ def _check() -> int:
     from . import gen
 
     rc |= gen.main(["--check"])
+    if no_mermaid(root):
+        from .figkit import build
+
+        rc |= build.main(["--lint", "--ban-mermaid"])
     # The chip-first README layout, once the repository describes its chip with an overview.
     if (root / "README.md").is_file() and (root / "docs/hardware.yml").is_file():
         import yaml

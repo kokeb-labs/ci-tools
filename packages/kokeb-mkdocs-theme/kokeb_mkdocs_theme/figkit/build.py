@@ -304,16 +304,27 @@ def markdown_files() -> list[pathlib.Path]:
     return out
 
 
-def mermaid_fences() -> list[tuple[str, int]]:
-    """Pages under docs/ (README files excluded) that hold a ``mermaid`` fence: ``[(path, count)]``."""
+def mermaid_fences(ban: bool = False) -> list[tuple[str, int]]:
+    """Pages that hold a ``mermaid`` fence, and ``.mmd`` sources: ``[(path, count)]``.
+
+    Without ``ban``: published pages under docs/ only (README files excluded). With ``ban`` (``--ban-mermaid``, or
+    ``no_mermaid: true`` under ``extra:`` in the site configuration): every Markdown file of the repository, README
+    files included, and every ``.mmd`` file (count 0): Mermaid is not rendered on phones and in mobile apps, so no
+    figure may use it, not even as the source format.
+    """
     out = []
     for p in markdown_files():
         rel = p.relative_to(ROOT)
-        if rel.parts[0] != "docs" or p.name.lower() == "readme.md":
+        if not ban and (rel.parts[0] != "docs" or p.name.lower() == "readme.md"):
             continue
         n = len(re.findall(r"^[ \t]*(?:`{3,}|~{3,})[ \t]*mermaid\b", p.read_text(), re.M))
         if n:
             out.append((rel.as_posix(), n))
+    if ban:
+        for p in sorted(ROOT.rglob("*.mmd")):
+            rel = p.relative_to(ROOT)
+            if not any(part in SKIP_DIRS or part.startswith(".git") for part in rel.parts):
+                out.append((rel.as_posix(), 0))
     return out
 
 
@@ -321,6 +332,10 @@ def fill_embeds(index: dict, write: bool) -> list[str]:
     """Fill (or with ``write=False`` check) every figure marker. Returns problems."""
     bad = []
     for p in markdown_files():
+        # Scaffold blocks are text a generator pastes into pages of another repository, where the figure id names
+        # another model: the marker stays empty here and is filled in the scaffolded page.
+        if "scaffold" in p.relative_to(ROOT).parts[:-1]:
+            continue
         text = p.read_text()
         if "<!-- figure:" not in text:
             continue
@@ -419,10 +434,14 @@ def main(argv=None) -> int:
                 errors += lv == "error"
         shown = {m for lst in LINTS.values() for _lv, m in lst}
         problems = [p for p in problems if p.split(": ", 1)[-1] not in shown]
-        for page, n in mermaid_fences():
+        for page, n in mermaid_fences(args.ban_mermaid):
             level = "ERROR" if args.ban_mermaid else "WARN"
-            print(f"[figures] {level} {page}: {n} mermaid fence(s); published pages use figkit figures "
-                  "(docs/figkit.md); Mermaid stays allowed in README files and pull requests")
+            what = f"{n} mermaid fence(s)" if n else "a Mermaid source"
+            tail = ("Mermaid is banned (no phone rendering): redraw it as a figkit figure, docs/figkit.md"
+                    if args.ban_mermaid else
+                    "published pages use figkit figures (docs/figkit.md); Mermaid stays allowed in README files and "
+                    "pull requests until the site sets no_mermaid")
+            print(f"[figures] {level} {page}: {what}; {tail}")
             errors += bool(args.ban_mermaid)
         for p in problems:
             print(f"[figures] ERROR {p}", file=sys.stderr)

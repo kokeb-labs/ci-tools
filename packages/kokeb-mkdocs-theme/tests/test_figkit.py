@@ -564,6 +564,33 @@ class BuildFlowTests(unittest.TestCase):
         r = self.run_cli(d, "figures", "--lint", "--ban-mermaid")
         self.assertEqual(r.returncode, 1)
         self.assertIn("ERROR docs/page.md", r.stdout)
+        self.assertIn("ERROR README.md", r.stdout)  # banned everywhere once Mermaid is banned
+
+    def test_no_mermaid_in_the_site_configuration_fails_check_on_fences_and_mmd_files(self):
+        d = self.make_repo()
+        (d / "README.md").write_text("# R\n\n```mermaid\nflowchart TD\n  A-->B\n```\n")
+        (d / "docs/old.mmd").write_text("flowchart TD\n  A-->B\n")
+        self.run_cli(d, "figures")
+        self.assertEqual(self.run_cli(d, "check").returncode, 0)  # not opted in: allowed
+        (d / "mkdocs.yml").write_text("site_name: t\nextra:\n  no_mermaid: true\n")
+        r = self.run_cli(d, "check")
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("ERROR README.md: 1 mermaid fence", r.stdout)
+        self.assertIn("ERROR docs/old.mmd: a Mermaid source", r.stdout)
+
+    def test_scaffold_blocks_keep_empty_markers_but_are_still_scanned_for_mermaid(self):
+        d = self.make_repo()
+        block = d / "tools/scaffold/bus/i2c/blocks"
+        block.mkdir(parents=True)
+        (block / "bus.md").write_text("<!-- figure: nothing-here -->\n<!-- /figure -->\n\n```mermaid\nflowchart TD\n```\n")
+        (d / "mkdocs.yml").write_text("site_name: t\nextra:\n  no_mermaid: true\n")
+        r = self.run_cli(d, "figures")
+        self.assertNotIn("nothing-here", r.stdout + r.stderr)
+        self.assertEqual(
+            (block / "bus.md").read_text().split("\n", 1)[0] + "\n" + (block / "bus.md").read_text().split("\n")[1],
+            "<!-- figure: nothing-here -->\n<!-- /figure -->")
+        r = self.run_cli(d, "check")
+        self.assertIn("ERROR tools/scaffold/bus/i2c/blocks/bus.md: 1 mermaid fence", r.stdout)
 
     def test_render_time_budget(self):
         """Rendering every fixture (all three outputs each) stays far under the budget of 10 s (ADR 0001)."""
