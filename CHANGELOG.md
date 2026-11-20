@@ -21,6 +21,8 @@ that heading.
   `mermaid` fence (README files included) and any `.mmd` file; `kokeb-docs figures --lint --ban-mermaid` now covers the
   same. Mermaid does not render on phones and in mobile apps, so figures are figkit SVGs. Without the setting nothing
   changes (published-page fences are still a warning).
+- `kokeb-docs figures`: Markdown under a `scaffold` folder (text a generator pastes into pages of another repository)
+  keeps its empty figure markers instead of being filled with this repository's figure; the Mermaid ban still scans it.
 
 ## [1.24.0] - 2026-11-19
 

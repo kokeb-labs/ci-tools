@@ -578,6 +578,20 @@ class BuildFlowTests(unittest.TestCase):
         self.assertIn("ERROR README.md: 1 mermaid fence", r.stdout)
         self.assertIn("ERROR docs/old.mmd: a Mermaid source", r.stdout)
 
+    def test_scaffold_blocks_keep_empty_markers_but_are_still_scanned_for_mermaid(self):
+        d = self.make_repo()
+        block = d / "tools/scaffold/bus/i2c/blocks"
+        block.mkdir(parents=True)
+        (block / "bus.md").write_text("<!-- figure: nothing-here -->\n<!-- /figure -->\n\n```mermaid\nflowchart TD\n```\n")
+        (d / "mkdocs.yml").write_text("site_name: t\nextra:\n  no_mermaid: true\n")
+        r = self.run_cli(d, "figures")
+        self.assertNotIn("nothing-here", r.stdout + r.stderr)
+        self.assertEqual(
+            (block / "bus.md").read_text().split("\n", 1)[0] + "\n" + (block / "bus.md").read_text().split("\n")[1],
+            "<!-- figure: nothing-here -->\n<!-- /figure -->")
+        r = self.run_cli(d, "check")
+        self.assertIn("ERROR tools/scaffold/bus/i2c/blocks/bus.md: 1 mermaid fence", r.stdout)
+
     def test_render_time_budget(self):
         """Rendering every fixture (all three outputs each) stays far under the budget of 10 s (ADR 0001)."""
         import time

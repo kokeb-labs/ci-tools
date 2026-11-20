@@ -332,6 +332,10 @@ def fill_embeds(index: dict, write: bool) -> list[str]:
     """Fill (or with ``write=False`` check) every figure marker. Returns problems."""
     bad = []
     for p in markdown_files():
+        # Scaffold blocks are text a generator pastes into pages of another repository, where the figure id names
+        # another model: the marker stays empty here and is filled in the scaffolded page.
+        if "scaffold" in p.relative_to(ROOT).parts[:-1]:
+            continue
         text = p.read_text()
         if "<!-- figure:" not in text:
             continue
