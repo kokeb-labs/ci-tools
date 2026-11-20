@@ -5,7 +5,7 @@ name: 🧱 [RU] Floor compilers
 # GCC 10 and Clang 13 for C++20), each in a container pinned by digest. The usual host job runs the newest compilers on
 # the runner and cannot see a feature that only a newer compiler has. Meant for a weekly
 # schedule in the caller (weekly-floor-compilers.yml, the one scheduled file docs/triggers.md allows): so this file
-# has no cache or restore step, no checkout ref, no secrets, and every action is pinned by a commit SHA.
+# has no cache or restore step, no checkout ref, nothing sensitive, and every action is pinned by a commit SHA.
 on:
   workflow_call:
     inputs:
