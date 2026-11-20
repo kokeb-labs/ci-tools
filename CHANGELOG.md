@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.23.0] - 2026-11-19
+
 ### Changed
 
 - **KB-CPP-001 reads the declared standard.** The `forbidden-patterns/cmake-cxx-standard` check of `ru-handbook-check`
