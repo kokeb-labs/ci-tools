@@ -1,0 +1,57 @@
+---
+kind: matrix
+id: workflow-use
+title: Which repositories call which workflows
+alt: >-
+  Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller uses the gate and
+  the organisation checks, kb-core and product repositories add host CI, and espidf-tools uses only the gate, docs
+  and organisation checks.
+reads: >-
+  Rows are the calling repositories: driver repositories, kb-core, espidf-tools and product and board repositories.
+  Columns are the workflow families: Gate is ru-ci-gate, Host is ru-host-ci, Lint is ru-cpp-lint and ru-cpp-analysis,
+  Docs is ru-mkdocs-publish with the link and Markdown checks, Build is ru-build, Release is ru-release or
+  ru-release-firmware, and Org is dco and org-standard-check. A cell says yes when the caller uses that family and no
+  when it does not. Every caller pins ci-tools at v1.
+print: landscape
+rows:
+  - {id: drivers, label: Drivers}
+  - {id: core, label: kb-core}
+  - {id: tools, label: espidf-tools}
+  - {id: products, label: Products}
+cols:
+  - {id: gate, label: Gate}
+  - {id: host, label: Host}
+  - {id: lint, label: Lint}
+  - {id: docs, label: Docs}
+  - {id: build, label: Build}
+  - {id: rel, label: Release}
+  - {id: org, label: Org}
+cells:
+  - {row: drivers, col: gate, status: ok, text: "yes"}
+  - {row: drivers, col: host, status: na, text: "no"}
+  - {row: drivers, col: lint, status: ok, text: "yes"}
+  - {row: drivers, col: docs, status: ok, text: "yes"}
+  - {row: drivers, col: build, status: ok, text: "yes"}
+  - {row: drivers, col: rel, status: ok, text: "yes"}
+  - {row: drivers, col: org, status: ok, text: "yes"}
+  - {row: core, col: gate, status: ok, text: "yes"}
+  - {row: core, col: host, status: ok, text: "yes"}
+  - {row: core, col: lint, status: ok, text: "yes"}
+  - {row: core, col: docs, status: ok, text: "yes"}
+  - {row: core, col: build, status: ok, text: "yes"}
+  - {row: core, col: rel, status: ok, text: "yes"}
+  - {row: core, col: org, status: ok, text: "yes"}
+  - {row: tools, col: gate, status: ok, text: "yes"}
+  - {row: tools, col: host, status: na, text: "no"}
+  - {row: tools, col: lint, status: na, text: "no"}
+  - {row: tools, col: docs, status: ok, text: "yes"}
+  - {row: tools, col: build, status: na, text: "no"}
+  - {row: tools, col: rel, status: na, text: "no"}
+  - {row: tools, col: org, status: ok, text: "yes"}
+  - {row: products, col: gate, status: ok, text: "yes"}
+  - {row: products, col: host, status: ok, text: "yes"}
+  - {row: products, col: lint, status: ok, text: "yes"}
+  - {row: products, col: docs, status: ok, text: "yes"}
+  - {row: products, col: build, status: ok, text: "yes"}
+  - {row: products, col: rel, status: ok, text: "yes"}
+  - {row: products, col: org, status: ok, text: "yes"}

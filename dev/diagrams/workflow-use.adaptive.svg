@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1094" height="396" viewBox="0 0 1094 396" role="img" aria-labelledby="workflow-use-title workflow-use-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" class="fk">
+<title id="workflow-use-title">Which repositories call which workflows</title>
+<desc id="workflow-use-desc">Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller uses the gate and the organisation checks, kb-core and product repositories add host CI, and espidf-tools uses only the gate, docs and organisation checks.</desc>
+<style>
+.fk{--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-na-strong:#64748B;--fk-na-text:#334155;--fk-na-tint:#F1F4F8;--fk-ok-strong:#15803D;--fk-ok-text:#14532D;--fk-ok-tint:#EAF7EF;}
+@media (prefers-color-scheme:dark){.fk{--fk-canvas:#0E131A;--fk-frame:#283241;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-na-strong:#94A3B8;--fk-na-text:#E2E8F0;--fk-na-tint:#1B232E;--fk-ok-strong:#4ADE80;--fk-ok-text:#BBF7D0;--fk-ok-tint:#11281A;}}
+:root[data-theme="dark"] .fk,[data-md-color-scheme="slate"] .fk{--fk-canvas:#0E131A;--fk-frame:#283241;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-na-strong:#94A3B8;--fk-na-text:#E2E8F0;--fk-na-tint:#1B232E;--fk-ok-strong:#4ADE80;--fk-ok-text:#BBF7D0;--fk-ok-tint:#11281A;}
+:root[data-theme="light"] .fk,[data-md-color-scheme="default"] .fk{--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-na-strong:#64748B;--fk-na-text:#334155;--fk-na-tint:#F1F4F8;--fk-ok-strong:#15803D;--fk-ok-text:#14532D;--fk-ok-tint:#EAF7EF;}
+.fk-f-canvas{fill:var(--fk-canvas)}.fk-s-canvas{stroke:var(--fk-canvas)}
+.fk-f-frame{fill:var(--fk-frame)}.fk-s-frame{stroke:var(--fk-frame)}
+.fk-f-hair{fill:var(--fk-hair)}.fk-s-hair{stroke:var(--fk-hair)}
+.fk-f-ink{fill:var(--fk-ink)}.fk-s-ink{stroke:var(--fk-ink)}
+.fk-f-na-strong{fill:var(--fk-na-strong)}.fk-s-na-strong{stroke:var(--fk-na-strong)}
+.fk-f-na-text{fill:var(--fk-na-text)}.fk-s-na-text{stroke:var(--fk-na-text)}
+.fk-f-na-tint{fill:var(--fk-na-tint)}.fk-s-na-tint{stroke:var(--fk-na-tint)}
+.fk-f-ok-strong{fill:var(--fk-ok-strong)}.fk-s-ok-strong{stroke:var(--fk-ok-strong)}
+.fk-f-ok-text{fill:var(--fk-ok-text)}.fk-s-ok-text{stroke:var(--fk-ok-text)}
+.fk-f-ok-tint{fill:var(--fk-ok-tint)}.fk-s-ok-tint{stroke:var(--fk-ok-tint)}
+@media (forced-colors:active){.fk text{fill:CanvasText}.fk rect,.fk circle{fill:Canvas;stroke:CanvasText}.fk path{stroke:CanvasText}.fk marker path{fill:CanvasText;stroke:none}}
+</style>
+<rect x="0.5" y="0.5" width="1093" height="395" rx="16" class="fk-f-canvas fk-s-frame"/>
+<text x="32" y="54.8" font-size="26" font-weight="700" class="fk-f-ink">Which repositories call which workflows</text>
+<rect x="32" y="70.8" width="1030" height="1" class="fk-f-hair"/>
+<rect x="161" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M192.1 158.8 L196.1 163.8 L205.1 152.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="289" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-na-tint fk-s-na-strong"/>
+<path d="M323.6 158.8 L335.6 158.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-na-strong"/>
+<rect x="417" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M448.1 158.8 L452.1 163.8 L461.1 152.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="545" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M576.1 158.8 L580.1 163.8 L589.1 152.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="673" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M704.1 158.8 L708.1 163.8 L717.1 152.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="801" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M832.1 158.8 L836.1 163.8 L845.1 152.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="929" y="131.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M960.1 158.8 L964.1 163.8 L973.1 152.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="161" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M192.1 218.8 L196.1 223.8 L205.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="289" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M320.1 218.8 L324.1 223.8 L333.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="417" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M448.1 218.8 L452.1 223.8 L461.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="545" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M576.1 218.8 L580.1 223.8 L589.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="673" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M704.1 218.8 L708.1 223.8 L717.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="801" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M832.1 218.8 L836.1 223.8 L845.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="929" y="191.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M960.1 218.8 L964.1 223.8 L973.1 212.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="161" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M192.1 278.8 L196.1 283.8 L205.1 272.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="289" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-na-tint fk-s-na-strong"/>
+<path d="M323.6 278.8 L335.6 278.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-na-strong"/>
+<rect x="417" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-na-tint fk-s-na-strong"/>
+<path d="M451.6 278.8 L463.6 278.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-na-strong"/>
+<rect x="545" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M576.1 278.8 L580.1 283.8 L589.1 272.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="673" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-na-tint fk-s-na-strong"/>
+<path d="M707.6 278.8 L719.6 278.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-na-strong"/>
+<rect x="801" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-na-tint fk-s-na-strong"/>
+<path d="M835.6 278.8 L847.6 278.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-na-strong"/>
+<rect x="929" y="251.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M960.1 278.8 L964.1 283.8 L973.1 272.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="161" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M192.1 338.8 L196.1 343.8 L205.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="289" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M320.1 338.8 L324.1 343.8 L333.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="417" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M448.1 338.8 L452.1 343.8 L461.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="545" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M576.1 338.8 L580.1 343.8 L589.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="673" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M704.1 338.8 L708.1 343.8 L717.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="801" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M832.1 338.8 L836.1 343.8 L845.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<rect x="929" y="311.8" width="122" height="54" rx="10" stroke-width="1.4" class="fk-f-ok-tint fk-s-ok-strong"/>
+<path d="M960.1 338.8 L964.1 343.8 L973.1 332.8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="fk-s-ok-strong"/>
+<text x="222" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Gate</text>
+<text x="350" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Host</text>
+<text x="478" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Lint</text>
+<text x="606" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Docs</text>
+<text x="734" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Build</text>
+<text x="862" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Release</text>
+<text x="990" y="116.8" font-size="13" font-weight="700" text-anchor="middle" class="fk-f-ink">Org</text>
+<text x="44" y="163.8" font-size="13" font-weight="700" class="fk-f-ink">Drivers</text>
+<text x="232" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="360" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-na-text">no</text>
+<text x="488" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="616" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="744" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="872" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="1000" y="163.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="44" y="223.8" font-size="13" font-weight="700" class="fk-f-ink">kb-core</text>
+<text x="232" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="360" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="488" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="616" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="744" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="872" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="1000" y="223.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="44" y="283.8" font-size="13" font-weight="700" class="fk-f-ink">espidf-tools</text>
+<text x="232" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="360" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-na-text">no</text>
+<text x="488" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-na-text">no</text>
+<text x="616" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="744" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-na-text">no</text>
+<text x="872" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-na-text">no</text>
+<text x="1000" y="283.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="44" y="343.8" font-size="13" font-weight="700" class="fk-f-ink">Products</text>
+<text x="232" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="360" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="488" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="616" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="744" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="872" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+<text x="1000" y="343.8" font-size="13" font-weight="600" text-anchor="middle" class="fk-f-ok-text">yes</text>
+</svg>

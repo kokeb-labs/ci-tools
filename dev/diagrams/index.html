@@ -1279,6 +1279,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#which-repositories-call-which-workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which repositories call which workflows
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1447,13 +1458,29 @@ committed figure no longer matches the code. Each figure below lists the files i
 <details class="kb-figure-desc">
 <summary>Figure description and sources</summary>
 <p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
-<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/819ba1a535e3b8736e26a29aea19656d11ebd7eb/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/819ba1a535e3b8736e26a29aea19656d11ebd7eb/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/819ba1a535e3b8736e26a29aea19656d11ebd7eb/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
+<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/df0344131ba94a20d1e3155d93d952f93bdebcc7/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/df0344131ba94a20d1e3155d93d952f93bdebcc7/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/df0344131ba94a20d1e3155d93d952f93bdebcc7/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
 </details>
-<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/819ba1a535e3b8736e26a29aea19656d11ebd7eb/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
+<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/df0344131ba94a20d1e3155d93d952f93bdebcc7/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
 <p>Drawn from:</p>
 <ul>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/819ba1a535e3b8736e26a29aea19656d11ebd7eb/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/819ba1a535e3b8736e26a29aea19656d11ebd7eb/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/df0344131ba94a20d1e3155d93d952f93bdebcc7/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/df0344131ba94a20d1e3155d93d952f93bdebcc7/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
+</ul>
+<h2 id="which-repositories-call-which-workflows">Which repositories call which workflows<a class="headerlink" href="#which-repositories-call-which-workflows" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="workflow-use.svg#only-light" alt="Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller uses the gate and the organisation checks, kb-core and product repositories add host CI, and espidf-tools uses only the gate, docs and organisation checks." width="1094" height="396" loading="lazy"><img src="workflow-use.dark.svg#only-dark" alt="Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller uses the gate and the organisation checks, kb-core and product repositories add host CI, and espidf-tools uses only the gate, docs and organisation checks." width="1094" height="396" loading="lazy">
+<figcaption>Which repositories call which workflows</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>Rows are the calling repositories: driver repositories, kb-core, espidf-tools and product and board repositories. Columns are the workflow families: Gate is ru-ci-gate, Host is ru-host-ci, Lint is ru-cpp-lint and ru-cpp-analysis, Docs is ru-mkdocs-publish with the link and Markdown checks, Build is ru-build, Release is ru-release or ru-release-firmware, and Org is dco and org-standard-check. A cell says yes when the caller uses that family and no when it does not. Every caller pins ci-tools at v1.</p>
+<p>Drawn from: <a href="../model/workflow-use.matrix.yml"><code>docs/model/workflow-use.matrix.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/workflow-use.matrix.yml"><code>docs/model/workflow-use.matrix.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/workflow-use.matrix.yml"><code>docs/model/workflow-use.matrix.yml</code></a></li>
 </ul>
 
 
