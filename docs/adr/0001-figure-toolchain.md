@@ -74,10 +74,12 @@ layout <id>`"), and when a committed output differs from a fresh build.
 
 ### 3. Mermaid policy
 
-Mermaid is **not used on published pages**. It stays allowed in `README.md` files and in pull request text, where
-GitHub renders it and nothing is published from it. `kokeb-docs figures --lint` reports a `mermaid` fence in a page
-under `docs/` as a warning; `--lint --ban-mermaid` makes it an error. Existing sites are migrated page by page; the
-theme keeps its Mermaid partial until the last published fence is gone.
+Mermaid is **not used**, on published pages or in `README.md` files: it does not render on phones and in mobile apps.
+Every repository of the organisation was migrated to figkit figures, which are committed SVG that GitHub shows too.
+`kokeb-docs check` runs `figures --lint --ban-mermaid`, so a `mermaid` fence or a `.mmd` file is an error; a site can opt
+out with `extra: {no_mermaid: false}` in its configuration. The theme no longer loads Mermaid, ships no styles for it and
+no longer registers the fence, so a stray fence shows as a plain code block. (Until release 1.26.0 the policy allowed
+Mermaid in README files and kept an on-demand loader in the theme.)
 
 ### 4. Budgets
 

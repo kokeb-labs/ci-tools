@@ -252,7 +252,7 @@ links:
 | `kokeb-docs figkit font [ID...]` | Writes the font subsets of figures with `font: embed` (needs the `fonts` extra) |
 | `kokeb-docs figkit css [OUT]` | The shared style sheet for adaptive SVGs inlined in a page |
 | `kokeb-docs figures [--check]` | Draws every figure and writes, or checks, the outputs; never runs Graphviz |
-| `kokeb-docs figures --lint [--ban-mermaid]` | All findings: SVG, alt text, shape contrast, print fit, Mermaid fences; with `--ban-mermaid` a fence anywhere (README files too) or a `.mmd` file is an error. `extra: {no_mermaid: true}` in the site configuration turns it on for `kokeb-docs check` |
+| `kokeb-docs figures --lint [--ban-mermaid]` | All findings: SVG, alt text, shape contrast, print fit, Mermaid fences; with `--ban-mermaid` a fence anywhere (README files too) or a `.mmd` file is an error. `kokeb-docs check` runs it with `--ban-mermaid` unless the site configuration sets `extra: {no_mermaid: false}` |
 
 ## Checks
 
