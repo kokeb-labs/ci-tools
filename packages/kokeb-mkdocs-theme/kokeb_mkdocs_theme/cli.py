@@ -46,8 +46,9 @@ def _take_config(argv: list[str]) -> tuple[list[str], str | None]:
 
 
 def no_mermaid(root: pathlib.Path) -> bool:
-    """Whether the site configuration opts in with ``extra: {no_mermaid: true}``: then ``kokeb-docs check`` fails on
-    any Mermaid fence (README files included) or ``.mmd`` file."""
+    """Whether ``kokeb-docs check`` bans Mermaid: it does unless the site configuration sets
+    ``extra: {no_mermaid: false}``. A Mermaid fence (README files included) or a ``.mmd`` file is an error, because
+    Mermaid does not render on phones and the theme no longer loads it."""
     import re
 
     from .paths import CONFIG_NAMES
@@ -56,11 +57,11 @@ def no_mermaid(root: pathlib.Path) -> bool:
     names += [root / n for n in CONFIG_NAMES]
     for n in names:
         try:
-            if re.search(r"^[ \t]+no_mermaid[ \t]*:[ \t]*true\b", n.read_text(), re.M):
-                return True
+            if re.search(r"^[ \t]+no_mermaid[ \t]*:[ \t]*false\b", n.read_text(), re.M):
+                return False
         except OSError:
             continue
-    return False
+    return True
 
 
 def _check() -> int:

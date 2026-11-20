@@ -27,7 +27,7 @@ plugins:
 ```
 
 The plugin fills in `site_url` (`https://kokeb-labs.github.io/<repo>/latest/`; the root for an unversioned site), `repo_name`, `edit_uri`, copyright,
-mike versioning, the Markdown extensions (admonitions, tabs, snippets from the repository root, Mermaid,
+mike versioning, the Markdown extensions (admonitions, tabs, snippets from the repository root,
 GitHub-style anchors, ...) and strict validation.
 
 A site is versioned with mike unless it is the organisation site (`kokeb-labs.github.io`), or sets
@@ -63,7 +63,7 @@ repository links, figures and generated regions resolve as they would with a roo
 
 | Path | What |
 | --- | --- |
-| `kokeb_mkdocs_theme/theme/` | Theme (`extends: material`): `main.html`, header with the org crumb, footer, inline mark, `assets/kokeb/kokeb.css` (tokens for light and dark, typography, admonitions, code, tables, hero, cards, chip card, figures, Mermaid, focus), the Doxygen stylesheet, the root `404.html` |
+| `kokeb_mkdocs_theme/theme/` | Theme (`extends: material`): `main.html`, header with the org crumb, footer, inline mark, `assets/kokeb/kokeb.css` (tokens for light and dark, typography, admonitions, code, tables, hero, cards, chip card, figures, focus), the Doxygen stylesheet, the root `404.html` |
 | `kokeb_mkdocs_theme/plugin.py` | Defaults, Markdown extensions, validation, build-input exclusion, page checks |
 | `kokeb_mkdocs_theme/hooks.py` | Repository links to GitHub, API links, figure embeds, raw-HTML rebase, image and alt-text gate |
 | `kokeb_mkdocs_theme/figkit/` | Code-sourced SVG figures, light and dark from one layout, contrast-checked; `kinds/` draws a state machine, sequence, timeline, graph, matrix, byte layout or pipeline from a model file ([Figures with figkit](../../docs/figkit.md)) |

@@ -1,5 +1,4 @@
-{#- Kokeb Labs theme: Material's base page plus the Kokeb Labs stylesheet, social metadata, Mermaid on demand and the
-    older-version banner. -#}
+{#- Kokeb Labs theme: Material's base page plus the Kokeb Labs stylesheet, social metadata and the older-version banner. -#}
 {% extends "base.html" %}
 
 {% block extrahead %}
@@ -14,7 +13,6 @@
   {% if desc %}<meta property="og:description" content="{{ desc }}">{% endif %}
   {% if page and page.canonical_url %}<meta property="og:url" content="{{ page.canonical_url }}">{% endif %}
   <meta name="twitter:card" content="summary">
-  {% include "partials/mermaid-lazy.html" %}
 {% endblock %}
 
 {% block fonts %}

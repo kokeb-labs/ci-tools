@@ -15,10 +15,17 @@ that heading.
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-11-20
+
 ### Changed
 
+- **Mermaid is gone from the docs platform.** Every repository of the organisation now draws its diagrams with figkit
+  (committed light and dark SVG that read on a phone), so the theme no longer loads Mermaid on demand, no longer
+  registers the `mermaid` fence and ships no Mermaid styles; a stray fence renders as a plain code block.
+  `kokeb-docs check` now bans Mermaid by default (a fence in any Markdown file, README files included, or a `.mmd`
+  file is an error); a site that must keep one sets `extra: {no_mermaid: false}`. ADR 0001 and the style guide say so.
 - The architecture diagram in `README.md` is a figkit matrix (`docs/model/workflow-use.matrix.yml`) instead of a Mermaid
-  fence, so it reads on a phone. No workflow changes.
+  fence. No workflow changes.
 
 ## [1.25.1] - 2026-11-20
 

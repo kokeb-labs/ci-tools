@@ -9,7 +9,7 @@ same Markdown dialect, the same validation and the same versioning without copyi
 * **Markdown extensions**: snippets (``--8<-- "tests/docs/x.cpp:section"`` includes code the repository compiles,
   paths from the repository root: the folder of ``mkdocs.yml``, or the folder that holds ``docs_dir`` when the
   configuration is elsewhere, e.g. ``_config/mkdocs.yml`` with ``docs_dir: ../docs``), admonitions, details, tabs, tables, footnotes, attribute lists, Markdown in HTML, task
-  lists, keys, emoji, highlighting with line anchors, Mermaid fences and GitHub-style heading anchors (so ``#links``
+  lists, keys, emoji, highlighting with line anchors and GitHub-style heading anchors (so ``#links``
   work on GitHub and on the site). The site may add more.
 * **Validation**: a link MkDocs cannot resolve, a missing anchor or a page left out of the navigation is a warning,
   which ``mkdocs build --strict`` turns into a failure.
@@ -57,7 +57,6 @@ def _slugify():
 
 def _extensions() -> dict[str, dict]:
     from material.extensions import emoji
-    from pymdownx.superfences import fence_code_format
 
     return {
         "abbr": {},
@@ -77,9 +76,7 @@ def _extensions() -> dict[str, dict]:
         "pymdownx.keys": {},
         "pymdownx.mark": {},
         "pymdownx.smartsymbols": {},
-        "pymdownx.superfences": {
-            "custom_fences": [{"name": "mermaid", "class": "mermaid", "format": fence_code_format}]
-        },
+        "pymdownx.superfences": {},
         "pymdownx.tabbed": {"alternate_style": True, "slugify": _slugify()},
         "pymdownx.tasklist": {"custom_checkbox": True},
         "pymdownx.tilde": {},

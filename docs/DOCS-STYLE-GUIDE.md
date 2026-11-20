@@ -41,7 +41,7 @@ The theme styles these; use them instead of inventing markup.
 | Code | fenced block with a language; `title="file.cpp"` for a file | Code from a compiled file: `--8<-- "tests/docs/x.cpp:section"` |
 | Registers, parameters, pins, options | a table | Header row, units in the header, code font for names |
 | Bit fields | a table inside `<div class="kb-registers" markdown>` | Offset and name columns get code font |
-| Sequence, state machine, timeline, matrix, byte layout | a figkit model (`docs/model/<id>.<kind>.yml`) | [Figures with figkit](figkit.md); Mermaid only in README files and pull requests |
+| Sequence, state machine, timeline, matrix, byte layout | a figkit model (`docs/model/<id>.<kind>.yml`) | [Figures with figkit](figkit.md) |
 | Architecture, signal flow, layouts | a figkit figure | Light and dark from one layout, checked for contrast |
 | A light-only image (vendor SVG, photo) | `![alt](x.svg){ .kb-plate }` | Sits on a white plate in dark mode |
 | Steps | `<div class="kb-steps" markdown>` around an ordered list | Numbered circles and a rail |
@@ -98,8 +98,8 @@ driver uses. On a driver's home page the card sits under Pins and wiring, after 
 - **Models** for sequences, state machines, timelines, graphs, matrices, byte layouts and pipelines: a file
   `docs/model/<id>.<kind>.yml`, scaffolded with `kokeb-docs figkit new` ([Figures with figkit](figkit.md)).
 - **Mermaid** is not used: it does not render on phones and in mobile apps ([ADR 0001](adr/0001-figure-toolchain.md)).
-  `kokeb-docs figures --lint` reports Mermaid fences in `docs/`; a site that sets `extra: {no_mermaid: true}` also fails
-  `kokeb-docs check` on a fence in a README file or on a `.mmd` file. Draw a figkit figure instead (README files embed
+  `kokeb-docs check` fails on a Mermaid fence (README files too) or a `.mmd` file unless the site sets
+  `extra: {no_mermaid: false}`; the theme does not load Mermaid. Draw a figkit figure instead (README files embed
   one with the same marker pair).
 - **Chip figures** (pinout, block diagram, application circuit) are not written as modules: they are drawn from
   `docs/hardware.yml` ([Chip hardware](#chip-hardware)).
@@ -176,7 +176,7 @@ cells short; long prose goes under the table.
 | Quickstart | `quickstart.md` | Safety note if it moves hardware; wiring table; add the driver; the port (compiled); a ~15-line example (compiled); what each step does; a "if it does not work" table |
 | Installation | `installation.md` | Requirements; submodule; CMake target and options; ESP-IDF component; build layout; version; compile-time switches |
 | Hardware | `hardware.md` | The chip figures and the pin table from `docs/hardware.yml` ([below](#chip-hardware)): pinout, generated pin table, block diagram, application circuit and its parts; control pins; bus settings table (mode, speed, frame, timing); a timing diagram or Mermaid sequence for the protocol; power ranges; errata that affect the host; evaluation boards; reference documents table |
-| Architecture | `architecture.md` | The layer figure (core, communication interface, platform port); a table of layers with files; one call traced through the layers (Mermaid); design choices (CRTP, no heap); source map |
+| Architecture | `architecture.md` | The layer figure (core, communication interface, platform port); a table of layers with files; one call traced through the layers (a figure); design choices (CRTP, no heap); source map |
 | API guide | `api-guide.md` | Task-oriented, compiled snippets: the shape of the API (subsystems table); initialise; configure; read; write; batch or stream if any; raw register / parameter access; errors and faults (a table of signals); tuning |
 | API reference | `api-reference.md` | Button to `api/index.html`; a "start here" table of the five most useful Doxygen pages |
 | Examples | `examples.md` | `<!-- generated: examples -->` (from `examples/*/app_config.yml`); one-time setup; "what to read in an example" table |

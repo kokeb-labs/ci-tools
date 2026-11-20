@@ -566,17 +566,17 @@ class BuildFlowTests(unittest.TestCase):
         self.assertIn("ERROR docs/page.md", r.stdout)
         self.assertIn("ERROR README.md", r.stdout)  # banned everywhere once Mermaid is banned
 
-    def test_no_mermaid_in_the_site_configuration_fails_check_on_fences_and_mmd_files(self):
+    def test_check_bans_mermaid_by_default_and_a_site_can_opt_out(self):
         d = self.make_repo()
         (d / "README.md").write_text("# R\n\n```mermaid\nflowchart TD\n  A-->B\n```\n")
         (d / "docs/old.mmd").write_text("flowchart TD\n  A-->B\n")
         self.run_cli(d, "figures")
-        self.assertEqual(self.run_cli(d, "check").returncode, 0)  # not opted in: allowed
-        (d / "mkdocs.yml").write_text("site_name: t\nextra:\n  no_mermaid: true\n")
-        r = self.run_cli(d, "check")
+        r = self.run_cli(d, "check")  # banned by default
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
         self.assertIn("ERROR README.md: 1 mermaid fence", r.stdout)
         self.assertIn("ERROR docs/old.mmd: a Mermaid source", r.stdout)
+        (d / "mkdocs.yml").write_text("site_name: t\nextra:\n  no_mermaid: false\n")
+        self.assertEqual(self.run_cli(d, "check").returncode, 0)  # opted out
 
     def test_scaffold_blocks_keep_empty_markers_but_are_still_scanned_for_mermaid(self):
         d = self.make_repo()
