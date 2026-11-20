@@ -26,35 +26,15 @@ uses: kokeb-labs/ci-tools/.github/workflows/<name>.yml@v1
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  subgraph callers["Calling repositories (pin @v1)"]
-    drivers["driver-&lt;chip&gt; repos"]
-    core["kb-core"]
-    tools["espidf-tools"]
-    products["product and board repos"]
-  end
-
-  subgraph citools["kokeb-labs/ci-tools"]
-    gate["ru-ci-gate"]
-    host["ru-host-ci"]
-    lint["ru-cpp-lint / ru-cpp-analysis"]
-    pub["ru-mkdocs-publish"]
-    text["ru-docs-linkcheck / ru-markdown-lint / ru-yaml-lint"]
-    rel["ru-release"]
-    build["ru-build"]
-    relart["ru-release-firmware"]
-    org["dco / org-standard-check"]
-  end
-
-  drivers --> gate & lint & pub & text & build & relart & org
-  core --> gate & host & lint & pub & text & build & rel & org
-  tools --> gate & pub & text & org
-  products --> gate & host & lint & pub & build & relart & org
-  build -- "clones or finds" --> tools
-  pub -- "push" --> pages[("gh-pages branch<br/>(GitHub Pages)")]
-  rel & relart -- "create" --> releases[("GitHub Releases")]
-```
+<!-- figure: workflow-use -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/workflow-use.dark.svg">
+  <img src="docs/diagrams/workflow-use.svg"
+    alt="Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller
+    uses the gate and the organisation checks, kb-core and product repositories add host CI, and espidf-
+    tools uses only the gate, docs and organisation checks.">
+</picture>
+<!-- /figure -->
 
 Each workflow is self-contained. It calls only third-party actions, which are
 pinned to commit SHAs, and never another workflow of this repository at a

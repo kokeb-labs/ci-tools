@@ -146,5 +146,22 @@
       ".github/workflows/ru-build.yml:jobs",
       ".github/workflows/ru-release-firmware.yml:jobs"
     ]
+  },
+  "workflow-use": {
+    "title": "Which repositories call which workflows",
+    "alt": "Matrix of the reusable workflow families of ci-tools against the calling repositories: every caller uses the gate and the organisation checks, kb-core and product repositories add host CI, and espidf-tools uses only the gate, docs and organisation checks.",
+    "description": "Rows are the calling repositories: driver repositories, kb-core, espidf-tools and product and board repositories. Columns are the workflow families: Gate is ru-ci-gate, Host is ru-host-ci, Lint is ru-cpp-lint and ru-cpp-analysis, Docs is ru-mkdocs-publish with the link and Markdown checks, Build is ru-build, Release is ru-release or ru-release-firmware, and Org is dco and org-standard-check. A cell says yes when the caller uses that family and no when it does not. Every caller pins ci-tools at v1.",
+    "profile": "detail",
+    "width": 1094,
+    "source": "docs/model/workflow-use.matrix.yml",
+    "sources": [
+      "docs/model/workflow-use.matrix.yml"
+    ],
+    "kind": "matrix",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": true,
+    "font": ""
   }
 }
