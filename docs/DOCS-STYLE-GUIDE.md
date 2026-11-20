@@ -97,9 +97,10 @@ driver uses. On a driver's home page the card sits under Pins and wiring, after 
   fails CI when the code changed and the figure did not. Embed with `<!-- figure: <id> -->` / `<!-- /figure -->`.
 - **Models** for sequences, state machines, timelines, graphs, matrices, byte layouts and pipelines: a file
   `docs/model/<id>.<kind>.yml`, scaffolded with `kokeb-docs figkit new` ([Figures with figkit](figkit.md)).
-- **Mermaid** is not used on published pages ([ADR 0001](adr/0001-figure-toolchain.md)). It stays allowed in
-  README files and pull requests, where GitHub renders it. `kokeb-docs figures --lint` reports Mermaid fences in
-  `docs/`.
+- **Mermaid** is not used: it does not render on phones and in mobile apps ([ADR 0001](adr/0001-figure-toolchain.md)).
+  `kokeb-docs figures --lint` reports Mermaid fences in `docs/`; a site that sets `extra: {no_mermaid: true}` also fails
+  `kokeb-docs check` on a fence in a README file or on a `.mmd` file. Draw a figkit figure instead (README files embed
+  one with the same marker pair).
 - **Chip figures** (pinout, block diagram, application circuit) are not written as modules: they are drawn from
   `docs/hardware.yml` ([Chip hardware](#chip-hardware)).
 

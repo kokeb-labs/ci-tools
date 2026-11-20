@@ -564,6 +564,19 @@ class BuildFlowTests(unittest.TestCase):
         r = self.run_cli(d, "figures", "--lint", "--ban-mermaid")
         self.assertEqual(r.returncode, 1)
         self.assertIn("ERROR docs/page.md", r.stdout)
+        self.assertIn("ERROR README.md", r.stdout)  # banned everywhere once Mermaid is banned
+
+    def test_no_mermaid_in_the_site_configuration_fails_check_on_fences_and_mmd_files(self):
+        d = self.make_repo()
+        (d / "README.md").write_text("# R\n\n```mermaid\nflowchart TD\n  A-->B\n```\n")
+        (d / "docs/old.mmd").write_text("flowchart TD\n  A-->B\n")
+        self.run_cli(d, "figures")
+        self.assertEqual(self.run_cli(d, "check").returncode, 0)  # not opted in: allowed
+        (d / "mkdocs.yml").write_text("site_name: t\nextra:\n  no_mermaid: true\n")
+        r = self.run_cli(d, "check")
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("ERROR README.md: 1 mermaid fence", r.stdout)
+        self.assertIn("ERROR docs/old.mmd: a Mermaid source", r.stdout)
 
     def test_render_time_budget(self):
         """Rendering every fixture (all three outputs each) stays far under the budget of 10 s (ADR 0001)."""

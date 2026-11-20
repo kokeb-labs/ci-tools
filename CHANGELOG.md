@@ -15,6 +15,13 @@ that heading.
 
 ## [Unreleased]
 
+### Added
+
+- `kokeb-docs`: a site that sets `extra: {no_mermaid: true}` in its configuration fails `kokeb-docs check` on any
+  `mermaid` fence (README files included) and any `.mmd` file; `kokeb-docs figures --lint --ban-mermaid` now covers the
+  same. Mermaid does not render on phones and in mobile apps, so figures are figkit SVGs. Without the setting nothing
+  changes (published-page fences are still a warning).
+
 ## [1.24.0] - 2026-11-19
 
 ### Changed
