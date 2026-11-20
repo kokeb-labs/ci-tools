@@ -11,7 +11,7 @@ seconds, so as seven jobs they cost seven minutes a run; as one job they cost on
 | DCO | [`dco`](dco.md) | a commit of the pull request has no `Signed-off-by` matching its author | `run_dco: false` |
 | Org standard | [`org-standard-check`](org-standard-check.md) | a required root file is missing or empty, or `LICENSE` is not MIT | `run_org_standard: false` |
 | Markdown lint | [`ru-markdown-lint`](ru-markdown-lint.md) (the markdownlint-cli2 action) | markdownlint reports an issue | `run_markdown_lint: false` |
-| Handbook rules | [`ru-handbook-check`](ru-handbook-check.md) | a handbook error (with `handbook_enforce: true`, the default) | `run_handbook: false` |
+| Handbook rules | [`ru-handbook-check`](ru-handbook-check.md) | a handbook error (with `handbook_enforce: true`, the default), or a workflow with a trigger the policy forbids (docs/triggers.md) | `run_handbook: false` |
 | Template drift | [`ru-template-drift`](ru-template-drift.md) | never by default; with `template_drift_enforce: true`, on drift | `run_template_drift: false` |
 | cppcheck | [`ru-cpp-analysis`](ru-cpp-analysis.md) | cppcheck itself fails, or with `cppcheck_strict: true` it reports a finding | `run_cppcheck: false` |
 | YAML lint | [`ru-yaml-lint`](ru-yaml-lint.md) | yamllint reports an error (with `yaml_strict_mode: true`, a warning too) | `run_yaml_lint: false` |
@@ -59,7 +59,7 @@ to the caller's repository, its pull requests, its caches or its releases.
 <!-- generated: jobs-ru-repo-checks -->
 | Job | Permissions | Steps |
 | --- | --- | --- |
-| `checks` (repository checks) | `contents: read`, `pull-requests: read` | DCO: check the sign-off of every commit; `actions/checkout`; Org standard: required files and the MIT licence; Markdown lint: markdownlint-cli2; Markdown lint: result; Handbook: check out the checker; Handbook: install PyYAML (pinned, hash-checked); Handbook: check; Template drift: check out driver-template; Template drift: compare with the template; cppcheck: install; cppcheck: run; cppcheck: upload the report; cppcheck: fail on findings (strict); Remove the checked-out tools; YAML lint: install yamllint (pinned, hash-checked); YAML lint: yamllint; Summary |
+| `checks` (repository checks) | `contents: read`, `pull-requests: read` | DCO: check the sign-off of every commit; `actions/checkout`; Org standard: required files and the MIT licence; Markdown lint: markdownlint-cli2; Markdown lint: result; Handbook: check out the checker; Handbook: install PyYAML (pinned, hash-checked); Handbook: check; Handbook: trigger policy of the workflows; Template drift: check out driver-template; Template drift: compare with the template; cppcheck: install; cppcheck: run; cppcheck: upload the report; cppcheck: fail on findings (strict); Remove the checked-out tools; YAML lint: install yamllint (pinned, hash-checked); YAML lint: yamllint; Summary |
 <!-- /generated -->
 
 ## Inputs

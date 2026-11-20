@@ -15,6 +15,13 @@ that heading.
 
 ## [Unreleased]
 
+### Changed
+
+- **`ru-repo-checks` also checks the trigger policy.** The handbook step group runs `check_triggers.py` over the caller's
+  `.github/workflows/*.yml`, so a repository fails on any workflow started by `workflow_dispatch`, `schedule`,
+  `workflow_run` or `pull_request_target`, except the narrow `weekly-floor-compilers.yml` caller. It is part of
+  `run_handbook`; a caller that has such a workflow today and calls `ru-repo-checks` will fail until it is removed.
+
 ## [1.23.0] - 2026-11-19
 
 ### Changed
