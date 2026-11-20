@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-11-20
+
 ### Added
 
 - `kokeb-docs`: a site that sets `extra: {no_mermaid: true}` in its configuration fails `kokeb-docs check` on any
