@@ -15,6 +15,35 @@ that heading.
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-11-21
+
+### Added
+
+- **figkit `timing`**: bus waveforms and protocol transactions from a model file `docs/model/<id>.timing.yml`: SPI
+  (with `mode: {cpol, cpha}`, checked against the clock's idle level), I2C, UART, RS-485, CAN, single-wire timing and
+  register or frame transactions. A WaveDrom-like `wave` string per signal (`0 1 l h p n z x = . |`), brackets over
+  slots (`groups`), intervals under a lane (`marks`) that each name a cited value, and a values table (symbol, min,
+  typ, max, unit, datasheet section and page) drawn under the waveform and written as the table twin.
+- **figkit `topology`**: several devices on one host, as a daisy chain (`style: chain`: data passes through each
+  device, the last one may return to the host) or a shared bus (`style: bus`: I2C addresses, RS-485 and CAN nodes,
+  a half-duplex line), with shared lines as rails, terminators (`ends`), pull-ups (`pullups`), a node that stands for
+  the devices left out (`{more: true}`), the lines the host joins (`host_shared`) and the cited limits (`facts`). Drawn as a vertical stack so it reads on a
+  phone.
+- **Every number cites the datasheet** in both kinds: a param, an address, a terminator or a fact without a `ref`, a
+  group label, note or detail that holds a number without one, an unknown ref, a `doc` that is not in
+  `docs/datasheets.yml`, and a section still marked `TODO` fail the build. A name a model does not define under
+  `refs` is taken from the repository's `docs/hardware.yml`.
+- **The `phone` profile**: figures about 640 px wide whose smallest text is checked to be at least 7.8 px on a 360 px
+  screen; `timing` and `topology` use it by default.
+- `kokeb-docs figkit new --kind timing|topology` scaffolds both kinds.
+
+### Changed
+
+- The chip-first rollout items listed against figkit are covered by the releases since 1.20 (parts between the MCU
+  and the chip, a hook list on one wire, a supply that reaches no chip pin, frames up to 128 bits, long names wrapped
+  or ellipsised, "Inside the part", `applications_ref`, the protocol capability legend); this release adds no change
+  to them, and the existing figures stay byte for byte as they were.
+
 ## [1.26.0] - 2026-11-20
 
 ### Changed

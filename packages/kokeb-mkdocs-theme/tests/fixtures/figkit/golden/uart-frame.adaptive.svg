@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="389" viewBox="0 0 640 389" role="img" aria-labelledby="uart-frame-title uart-frame-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" class="fk">
+<title id="uart-frame-title">UART character</title>
+<desc id="uart-frame-desc">One UART character on the TX line: the start bit, eight data bits sent least significant bit first and the stop bit, at the bit time the datasheet gives.</desc>
+<style>
+.fk{--fk-blue-strong:#2563EB;--fk-blue-text:#1E429F;--fk-blue-tint:#EAF2FF;--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-ink2:#2B3442;--fk-muted:#566070;--fk-slate-strong:#64748B;--fk-slate-text:#334155;}
+@media (prefers-color-scheme:dark){.fk{--fk-blue-strong:#60A5FA;--fk-blue-text:#BFDBFE;--fk-blue-tint:#13233A;--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-frame:#283241;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-ink2:#D2DAE4;--fk-muted:#9AA6B5;--fk-slate-strong:#94A3B8;--fk-slate-text:#E2E8F0;}}
+:root[data-theme="dark"] .fk,[data-md-color-scheme="slate"] .fk{--fk-blue-strong:#60A5FA;--fk-blue-text:#BFDBFE;--fk-blue-tint:#13233A;--fk-brand-text:#F8D27A;--fk-canvas:#0E131A;--fk-frame:#283241;--fk-hair:#252F3C;--fk-ink:#E8EDF3;--fk-ink2:#D2DAE4;--fk-muted:#9AA6B5;--fk-slate-strong:#94A3B8;--fk-slate-text:#E2E8F0;}
+:root[data-theme="light"] .fk,[data-md-color-scheme="default"] .fk{--fk-blue-strong:#2563EB;--fk-blue-text:#1E429F;--fk-blue-tint:#EAF2FF;--fk-brand-text:#7A360E;--fk-canvas:#FFFFFF;--fk-frame:#E2E7EE;--fk-hair:#E2E7EE;--fk-ink:#0E1726;--fk-ink2:#2B3442;--fk-muted:#566070;--fk-slate-strong:#64748B;--fk-slate-text:#334155;}
+.fk-f-blue-strong{fill:var(--fk-blue-strong)}.fk-s-blue-strong{stroke:var(--fk-blue-strong)}
+.fk-f-blue-text{fill:var(--fk-blue-text)}.fk-s-blue-text{stroke:var(--fk-blue-text)}
+.fk-f-blue-tint{fill:var(--fk-blue-tint)}.fk-s-blue-tint{stroke:var(--fk-blue-tint)}
+.fk-f-brand-text{fill:var(--fk-brand-text)}.fk-s-brand-text{stroke:var(--fk-brand-text)}
+.fk-f-canvas{fill:var(--fk-canvas)}.fk-s-canvas{stroke:var(--fk-canvas)}
+.fk-f-frame{fill:var(--fk-frame)}.fk-s-frame{stroke:var(--fk-frame)}
+.fk-f-hair{fill:var(--fk-hair)}.fk-s-hair{stroke:var(--fk-hair)}
+.fk-f-ink{fill:var(--fk-ink)}.fk-s-ink{stroke:var(--fk-ink)}
+.fk-f-ink2{fill:var(--fk-ink2)}.fk-s-ink2{stroke:var(--fk-ink2)}
+.fk-f-muted{fill:var(--fk-muted)}.fk-s-muted{stroke:var(--fk-muted)}
+.fk-f-slate-strong{fill:var(--fk-slate-strong)}.fk-s-slate-strong{stroke:var(--fk-slate-strong)}
+.fk-f-slate-text{fill:var(--fk-slate-text)}.fk-s-slate-text{stroke:var(--fk-slate-text)}
+@media (forced-colors:active){.fk text{fill:CanvasText}.fk rect,.fk circle{fill:Canvas;stroke:CanvasText}.fk path{stroke:CanvasText}.fk marker path{fill:CanvasText;stroke:none}}
+</style>
+<rect x="0.5" y="0.5" width="639" height="388" rx="16" class="fk-f-canvas fk-s-frame"/>
+<text x="32" y="44.4" font-size="13" font-weight="700" letter-spacing="1.2" class="fk-f-brand-text">ON THE BUS</text>
+<text x="32" y="76.2" font-size="24" font-weight="700" class="fk-f-ink">UART character</text>
+<text x="32" y="102.7" font-size="15" class="fk-f-muted">Datasheet: 6.5 UART, p. 10.</text>
+<rect x="32" y="118.7" width="576" height="1" class="fk-f-hair"/>
+<path d="M88 211.1 L88 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M134.7 211.1 L134.7 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M181.5 211.1 L181.5 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M228.2 211.1 L228.2 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M274.9 211.1 L274.9 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M321.6 211.1 L321.6 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M368.4 211.1 L368.4 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M415.1 211.1 L415.1 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M461.8 211.1 L461.8 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M508.5 211.1 L508.5 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M555.3 211.1 L555.3 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M602 211.1 L602 247.1" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M32 293.2 L608 293.2" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M32 366 L608 366" fill="none" stroke-width="1" class="fk-s-hair"/>
+<path d="M135.7 202.1 L135.7 197.1 L180.5 197.1 L180.5 202.1" fill="none" stroke-width="1.4" class="fk-s-slate-strong"/>
+<path d="M182.5 169.9 L182.5 164.9 L554.3 164.9 L554.3 169.9" fill="none" stroke-width="1.4" class="fk-s-blue-strong"/>
+<path d="M556.3 202.1 L556.3 197.1 L601 197.1 L601 202.1" fill="none" stroke-width="1.4" class="fk-s-slate-strong"/>
+<path d="M88 216.1 L134.7 216.1 L134.7 216.1 L134.7 242.1 L181.5 242.1" fill="none" stroke-width="2" class="fk-s-ink2"/>
+<path d="M181.5 242.1 L181.5 229.1" fill="none" stroke-width="2" class="fk-s-ink2"/>
+<path d="M555.3 216.1 L602 216.1" fill="none" stroke-width="2" class="fk-s-ink2"/>
+<path d="M181.5 229.1 L186.5 216.1 L223.2 216.1 L228.2 229.1 L223.2 242.1 L186.5 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M228.2 229.1 L233.2 216.1 L269.9 216.1 L274.9 229.1 L269.9 242.1 L233.2 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M274.9 229.1 L279.9 216.1 L316.6 216.1 L321.6 229.1 L316.6 242.1 L279.9 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M321.6 229.1 L326.6 216.1 L363.4 216.1 L368.4 229.1 L363.4 242.1 L326.6 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M368.4 229.1 L373.4 216.1 L410.1 216.1 L415.1 229.1 L410.1 242.1 L373.4 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M415.1 229.1 L420.1 216.1 L456.8 216.1 L461.8 229.1 L456.8 242.1 L420.1 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M461.8 229.1 L466.8 216.1 L503.5 216.1 L508.5 229.1 L503.5 242.1 L466.8 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<path d="M508.5 229.1 L513.5 216.1 L550.3 216.1 L555.3 229.1 L550.3 242.1 L513.5 242.1 Z" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="fk-f-blue-tint fk-s-blue-strong"/>
+<text x="158.1" y="186.2" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-slate-text">start</text>
+<text x="368.4" y="154" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">data</text>
+<text x="578.6" y="186.2" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-slate-text">stop</text>
+<text x="32" y="234.5" font-size="15" font-weight="700" font-family="'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" class="fk-f-ink">TX</text>
+<text x="204.8" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D0</text>
+<text x="251.5" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D1</text>
+<text x="298.3" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D2</text>
+<text x="345" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D3</text>
+<text x="391.7" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D4</text>
+<text x="438.5" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D5</text>
+<text x="485.2" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D6</text>
+<text x="531.9" y="234.1" font-size="14" font-weight="600" text-anchor="middle" class="fk-f-blue-text">D7</text>
+<text x="32" y="277.5" font-size="17" font-weight="700" class="fk-f-ink">Timing values</text>
+<text x="32" y="313.9" font-size="15" font-weight="700" font-family="'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" class="fk-f-ink">baud</text>
+<text x="608" y="313.9" font-size="15" font-weight="700" text-anchor="end" class="fk-f-ink">typ 115200 bit/s</text>
+<text x="32" y="334.2" font-size="15" class="fk-f-ink2">Bit rate</text>
+<text x="32" y="354.4" font-size="14" class="fk-f-muted">Datasheet 6.5 UART, p. 10</text>
+</svg>

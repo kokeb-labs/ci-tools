@@ -1,0 +1,23 @@
+---
+kind: topology
+id: can-bus
+title: CAN bus with three nodes
+kicker: Several devices
+alt: >-
+  A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of
+  the pair.
+reads: >-
+  The MCU and the devices Node 2 and Node N hang off the two rails CANH and CANL on the right, through their
+  transceivers. A terminator sits at each end of the pair.
+style: bus
+refs:
+  bus: {doc: ds, section: "8.2 Bus topology", page: 21}
+host: {label: MCU, detail: CAN controller and transceiver}
+nodes:
+  - {label: Node 2, address: node ID 2, ref: bus}
+  - {more: true, label: "…"}
+  - {label: Node N, address: node ID up to 127, ref: bus}
+shared: [CANH, CANL]
+ends: {label: "120 Ω", ref: bus}
+facts:
+  - {text: "Node IDs 1 to 127", ref: bus}

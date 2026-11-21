@@ -39,6 +39,9 @@ PRINT_WIDTH_PT = {"portrait": 510.0, "landscape": 757.0}
 MIN_PRINT_PT = 7.0
 #: Width at which GitHub shows a README image; an ``overview`` figure keeps text >= 11 px there.
 READ_WIDTH = 830
+#: A phone screen (CSS px) and the smallest text a ``phone`` profile figure may show on it.
+PHONE_WIDTH = 360
+PHONE_MIN_PX = 7.8
 LAYERS = ("bg", "region", "edge", "node", "label")
 
 PROFILES = {
@@ -46,6 +49,12 @@ PROFILES = {
     "detail": dict(
         title=26, subtitle=15, kicker=12.5, card_title=15, card_body=13, mono=12.5, region=13, pill=11.5,
         small=12, edge_label=12, note=13, legend=12.5, pad=14, rx=10, stroke=1.6,
+    ),
+    # Bus figures (timing, topology): drawn about 640 px wide so that a phone at 360 px still shows text of at least
+    # PHONE_MIN_PX (checked); on a desktop page they are shown at their own width.
+    "phone": dict(
+        title=24, subtitle=15, kicker=13, card_title=17, card_body=15, mono=15, region=15, pill=14,
+        small=14, edge_label=14, note=15, legend=14, pad=14, rx=10, stroke=2.0,
     ),
     # Landing pages and READMEs: shown about 830 px wide, so no text below 16 px at 1200 px wide.
     "overview": dict(
@@ -713,6 +722,11 @@ class Fig:
                     out.append(f"{th}: text {s!r} is {ratio:.2f}:1 ({fg} on {bg}), needs {MIN_CONTRAST}:1")
             if bb.r > self.body_w + 0.5 and bb.x >= 0:
                 out.append(f"text {s!r} runs past the right edge")
+        if self.profile == "phone":
+            shown = round(self._min_size * min(1.0, PHONE_WIDTH / self.width), 2)
+            if shown < PHONE_MIN_PX:
+                out.append(f"phone figure: smallest text is {shown} px on a {PHONE_WIDTH} px screen (needs "
+                           f"{PHONE_MIN_PX}); draw it narrower or with fewer columns")
         if self.profile == "overview" and self.min_display_px < 11:
             out.append(f"overview figure: smallest text is {self.min_display_px} px at README width (needs 11)")
         return out

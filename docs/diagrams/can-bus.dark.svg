@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="664" viewBox="0 0 640 664" role="img" aria-labelledby="can-bus-title can-bus-desc" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<title id="can-bus-title">CAN bus with three nodes</title>
+<desc id="can-bus-desc">A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of the pair.</desc>
+<rect x="0.5" y="0.5" width="639" height="663" rx="16" fill="#0E131A" stroke="#283241"/>
+<text x="32" y="44.4" font-size="13" font-weight="700" letter-spacing="1.2" fill="#F8D27A">SEVERAL DEVICES</text>
+<text x="32" y="76.2" font-size="24" font-weight="700" fill="#E8EDF3">CAN bus with three nodes</text>
+<text x="32" y="102.7" font-size="15" fill="#9AA6B5">Datasheet: 8.2 Bus topology, p. 21.</text>
+<rect x="32" y="118.7" width="576" height="1" fill="#252F3C"/>
+<path d="M515.3 172.9 L515.3 515.9" fill="none" stroke="#D2DAE4" stroke-width="2.2"/>
+<path d="M461.1 198.9 L515.3 198.9" fill="none" stroke="#D2DAE4" stroke-width="1.8"/>
+<path d="M461.1 290.9 L515.3 290.9" fill="none" stroke="#D2DAE4" stroke-width="1.8"/>
+<path d="M461.1 390.4 L515.3 390.4" fill="none" stroke="#D2DAE4" stroke-width="1.8" stroke-dasharray="5 4"/>
+<path d="M461.1 447.9 L515.3 447.9" fill="none" stroke="#D2DAE4" stroke-width="1.8"/>
+<path d="M571.8 172.9 L571.8 515.9" fill="none" stroke="#D2DAE4" stroke-width="2.2"/>
+<path d="M461.1 208.9 L571.8 208.9" fill="none" stroke="#D2DAE4" stroke-width="1.8"/>
+<path d="M461.1 300.9 L571.8 300.9" fill="none" stroke="#D2DAE4" stroke-width="1.8"/>
+<path d="M461.1 390.4 L571.8 390.4" fill="none" stroke="#D2DAE4" stroke-width="1.8" stroke-dasharray="5 4"/>
+<path d="M461.1 457.9 L571.8 457.9" fill="none" stroke="#D2DAE4" stroke-width="1.8"/>
+<rect x="32" y="182.9" width="429.1" height="74" rx="10" fill="#13233A" stroke="#60A5FA" stroke-width="1.4"/>
+<rect x="32" y="190.9" width="4" height="58" rx="2" fill="#60A5FA"/>
+<rect x="32" y="274.9" width="429.1" height="74" rx="10" fill="#0F2A28" stroke="#2BB3A3" stroke-width="1.4"/>
+<rect x="32" y="282.9" width="4" height="58" rx="2" fill="#2BB3A3"/>
+<rect x="32" y="366.9" width="429.1" height="47" rx="10" fill="#151C26" stroke="#6C7889" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="32" y="431.9" width="429.1" height="74" rx="10" fill="#0F2A28" stroke="#2BB3A3" stroke-width="1.4"/>
+<rect x="32" y="439.9" width="4" height="58" rx="2" fill="#2BB3A3"/>
+<rect x="32" y="568.1" width="576" height="65.1" rx="10" fill="#1B232E" stroke="#3A4656" stroke-width="1"/>
+<text x="52" y="211.3" font-size="17" font-weight="700" fill="#BFDBFE">MCU</text>
+<text x="52" y="239.1" font-size="15" fill="#D2DAE4">CAN controller and transceiver</text>
+<text x="52" y="303.3" font-size="17" font-weight="700" fill="#A7F3E6">Node 2</text>
+<text x="52" y="331.1" font-size="15" fill="#D2DAE4">node ID 2</text>
+<text x="52" y="395.3" font-size="17" font-weight="700" fill="#E8EDF3">…</text>
+<text x="52" y="460.3" font-size="17" font-weight="700" fill="#A7F3E6">Node N</text>
+<text x="52" y="488.1" font-size="15" fill="#D2DAE4">node ID up to 127</text>
+<text x="515.3" y="164.9" font-size="14" font-weight="700" text-anchor="middle" fill="#E8EDF3">CANH</text>
+<circle cx="515.3" cy="198.9" r="3.6" fill="#D2DAE4"/>
+<circle cx="515.3" cy="290.9" r="3.6" fill="#D2DAE4"/>
+<circle cx="515.3" cy="390.4" r="3.6" fill="#D2DAE4"/>
+<circle cx="515.3" cy="447.9" r="3.6" fill="#D2DAE4"/>
+<text x="571.8" y="164.9" font-size="14" font-weight="700" text-anchor="middle" fill="#E8EDF3">CANL</text>
+<circle cx="571.8" cy="208.9" r="3.6" fill="#D2DAE4"/>
+<circle cx="571.8" cy="300.9" r="3.6" fill="#D2DAE4"/>
+<circle cx="571.8" cy="390.4" r="3.6" fill="#D2DAE4"/>
+<circle cx="571.8" cy="457.9" r="3.6" fill="#D2DAE4"/>
+<rect x="519.3" y="169.9" width="48.5" height="10" rx="2" fill="#2C2310" stroke="#FBBF24" stroke-width="1.6"/>
+<rect x="519.3" y="508.9" width="48.5" height="10" rx="2" fill="#2C2310" stroke="#FBBF24" stroke-width="1.6"/>
+<text x="608" y="540.1" font-size="14" font-weight="600" text-anchor="end" fill="#FDE68A">120 Ω at both ends</text>
+<text x="46" y="596.5" font-size="17" font-weight="700" fill="#E2E8F0">Limits</text>
+<text x="46" y="617" font-size="15" fill="#E2E8F0">Node IDs 1 to 127 (8.2, p. 21).</text>
+</svg>

@@ -1,0 +1,24 @@
+---
+kind: topology
+id: spi-chain
+title: SPI daisy chain
+kicker: Several devices
+alt: >-
+  Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the next SDI and the
+  last SDO returns to the MCU, with SCK and CSN shared.
+reads: >-
+  The MCU on the left drives MOSI into SDI of XMPL100 1; its SDO feeds the next device and so on to XMPL100 N, whose
+  SDO returns to MISO. SCK and CSN are rails every device shares, so one select frames the datagrams of every driver.
+style: chain
+refs:
+  signals: {doc: ds, section: "6.3 Daisy chain", page: 8}
+host: {label: MCU, detail: SPI controller}
+nodes:
+  - {label: XMPL100 1, detail: first}
+  - {more: true, label: "…"}
+  - {label: XMPL100 N, detail: last}
+chain: {in: SDI, out: SDO, host_out: MOSI, host_in: MISO}
+shared: [SCK, CSN]
+facts:
+  - {text: "Each device delays the data by 40 clocks; send 40 bits per device in one CSN low phase", ref: signals}
+  - {text: "Each device takes the last 40 bits it holds when CSN rises", ref: signals}

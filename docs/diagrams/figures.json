@@ -33,6 +33,23 @@
     "twin": false,
     "font": ""
   },
+  "can-bus": {
+    "title": "CAN bus with three nodes",
+    "alt": "A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of the pair.",
+    "description": "The MCU and the devices Node 2 and Node N hang off the two rails CANH and CANL on the right, through their transceivers. A terminator sits at each end of the pair.",
+    "profile": "phone",
+    "width": 640,
+    "source": "docs/model/can-bus.topology.yml",
+    "sources": [
+      "docs/model/can-bus.topology.yml"
+    ],
+    "kind": "topology",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
+    "font": ""
+  },
   "handler-health": {
     "title": "Handler lifecycle and health",
     "alt": "State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them.",
@@ -61,6 +78,23 @@
       "docs/model/heat-channels.matrix.yml"
     ],
     "kind": "matrix",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": true,
+    "font": ""
+  },
+  "i2c-timing": {
+    "title": "I2C read of one register",
+    "alt": "I2C timing of a register read: a start condition, the 7-bit address with the write bit, an acknowledge, and the start, setup and hold times the datasheet gives.",
+    "description": "The two lanes are SCL and SDA, left to right in time. SDA falls while SCL is high (the start), the address bits follow, each held while SCL is high, then the device pulls SDA low for the acknowledge; the table gives each interval with its datasheet value.",
+    "profile": "phone",
+    "width": 640,
+    "source": "docs/model/i2c-timing.timing.yml",
+    "sources": [
+      "docs/model/i2c-timing.timing.yml"
+    ],
+    "kind": "timing",
     "palette": 2,
     "print": "landscape",
     "adaptive": true,
@@ -116,6 +150,23 @@
     "print": "landscape",
     "adaptive": true,
     "twin": true,
+    "font": ""
+  },
+  "spi-chain": {
+    "title": "SPI daisy chain",
+    "alt": "Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the next SDI and the last SDO returns to the MCU, with SCK and CSN shared.",
+    "description": "The MCU on the left drives MOSI into SDI of XMPL100 1; its SDO feeds the next device and so on to XMPL100 N, whose SDO returns to MISO. SCK and CSN are rails every device shares, so one select frames the datagrams of every driver.",
+    "profile": "phone",
+    "width": 640,
+    "source": "docs/model/spi-chain.topology.yml",
+    "sources": [
+      "docs/model/spi-chain.topology.yml"
+    ],
+    "kind": "topology",
+    "palette": 2,
+    "print": "landscape",
+    "adaptive": true,
+    "twin": false,
     "font": ""
   },
   "transfer-deadline": {
