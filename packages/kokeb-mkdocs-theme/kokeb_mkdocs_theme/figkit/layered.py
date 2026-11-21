@@ -125,13 +125,25 @@ def _run_dot(spec: dict, ranksep: float) -> dict:
     return {"nodes": nodes, "edges": edges, "size": [round(width), round(height)]}
 
 
+RANK_TOL = 1.5  # px: lock positions are rounded to whole pixels, so equal centres can differ by up to 1
+
+
 def _ranks_of(nodes: dict, direction: str) -> list[list[str]]:
-    """Nodes grouped by rank (equal centre on the rank axis), in rank order."""
+    """Nodes grouped by rank (equal centre on the rank axis, within ``RANK_TOL``), in rank order.
+
+    The lock stores each box's top-left corner rounded to a whole pixel, so cards of one rank whose sizes differ by
+    an odd number of pixels have centres half a pixel apart. Rounding the centre split them in two ranks; the centres
+    are compared with a tolerance instead. Distinct ranks are a gutter apart, far more than the tolerance.
+    """
     key = (lambda b: b[1] + b[3] / 2) if direction == "TB" else (lambda b: b[0] + b[2] / 2)
-    groups: dict[int, list[str]] = {}
-    for n, b in nodes.items():
-        groups.setdefault(round(key(b)), []).append(n)
-    return [sorted(groups[k]) for k in sorted(groups)]
+    groups: list[tuple[float, list[str]]] = []  # (centre of the first member, members)
+    for n, b in sorted(nodes.items(), key=lambda kv: (key(kv[1]), kv[0])):
+        c = key(b)
+        if groups and c - groups[-1][0] <= RANK_TOL:
+            groups[-1][1].append(n)
+        else:
+            groups.append((c, [n]))
+    return [sorted(members) for _, members in groups]
 
 
 def gutter_need(spec: dict, nodes: dict, label_h: dict) -> float:
