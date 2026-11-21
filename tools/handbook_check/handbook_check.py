@@ -250,17 +250,25 @@ class Repo:
                          "CMakeLists.txt")
 
     def declared_standard(self) -> int:
-        """The C++ standard the repository declares (`language.standard` of driver.yml); 20 when it declares none.
+        """The C++ standard the repository declares (`language.standard`); 20 when it declares none.
+
+        A driver declares it in driver.yml; a library repository (kb-core) has no driver.yml and declares its
+        language and metadata in kb.yml, which is read when driver.yml is absent.
 
         The value is checked elsewhere (tools/standards): a malformed one here falls back to 20 rather than
         reporting the same fault twice.
         """
-        try:
-            d = yaml.safe_load((self.root / "driver.yml").read_text(encoding="utf-8")) or {}
-            std = (d.get("language") or {}).get("standard")
-        except (OSError, yaml.YAMLError, AttributeError):
-            return 20
-        return std if isinstance(std, int) and not isinstance(std, bool) and std in (17, 20, 23) else 20
+        for name in ("driver.yml", "kb.yml"):
+            path = self.root / name
+            if not path.is_file():
+                continue
+            try:
+                d = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+                std = (d.get("language") or {}).get("standard")
+            except (OSError, yaml.YAMLError, AttributeError):
+                return 20
+            return std if isinstance(std, int) and not isinstance(std, bool) and std in (17, 20, 23) else 20
+        return 20
 
     def check_sources(self, files: list[str]) -> None:
         if self.kind not in TARGET_KINDS:

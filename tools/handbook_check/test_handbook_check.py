@@ -128,6 +128,25 @@ class HandbookCheckTest(unittest.TestCase):
         self.assertTrue(any("C++20" in str(f) for f in findings(20, cmake[23])))
         self.assertEqual(findings("twenty", cmake[20]), [])    # malformed: falls back to 20
 
+    def test_library_reads_kb_yml_when_driver_yml_is_absent(self):
+        lib = {k: v for k, v in GOOD.items() if k != "driver.yml"}
+        lib[".kokeb/handbook.yml"] = GOOD[".kokeb/handbook.yml"].replace("kind: driver", "kind: library")
+        lib["kb.yml"] = "---\nname: kb-core\nlanguage:\n  standard: 23\n"
+
+        def cmake_findings(files):
+            return [f for f in run(files).findings if "cmake-cxx-standard" in str(f)]
+
+        c23 = GOOD["CMakeLists.txt"].replace("cxx_std_20", "cxx_std_23")
+        self.assertEqual(cmake_findings({**lib, "CMakeLists.txt": c23}), [])       # kb.yml says 23, cmake agrees
+        self.assertTrue(any("C++23" in str(f) for f in cmake_findings(lib)))       # cmake still at 20: reported
+        no_decl = {**lib, "kb.yml": "---\nname: kb-core\n"}
+        self.assertEqual(cmake_findings(no_decl), [])                              # nothing declared: 20
+        self.assertEqual([m for r, m in errors(run(lib)) if r == "KB-REPO-018"], [])  # no driver.yml demanded
+
+    def test_driver_yml_wins_over_kb_yml(self):
+        files = {**GOOD, "kb.yml": "language:\n  standard: 23\n"}
+        self.assertEqual([f for f in run(files).findings if "cmake-cxx-standard" in str(f)], [])
+
     def test_cmake_glob_and_missing_cxx20(self):
         bad = dict(GOOD)
         bad["CMakeLists.txt"] = "file(GLOB SRC src/*.cpp)\nadd_library(abc ${SRC})\n"

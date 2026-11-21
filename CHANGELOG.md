@@ -15,6 +15,19 @@ that heading.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Docs theme accessibility**: the header search dialog (`<div class="md-search" role="dialog">`) now has an accessible
+  name (`aria-label="Search"`, from a `partials/search.html` override of Material 9.8.0), which clears axe
+  `aria-dialog-name` and the Lighthouse accessibility drop from 1.00 to 0.96. The version selector button's name now
+  contains its visible text (`latest, Select version`), which clears axe `label-content-name-mismatch`.
+- **Handbook check**: a library repository (kb-core) declares its language in `kb.yml`; the C++ standard that
+  KB-CPP-001 checks the CMake target against is read from `kb.yml` `language.standard` when there is no `driver.yml`
+  (`driver.yml` wins when both exist). Before, a library without `driver.yml` was held to C++20.
+- **figkit `layered`**: cards of one rank whose heights (or widths, left to right) differ by an odd number of pixels
+  were split into two ranks, because the rank key was the rounded centre. Centres are now compared with a 1.5 px
+  tolerance. No layout lock changed.
+
 ## [1.27.0] - 2026-11-21
 
 ### Added

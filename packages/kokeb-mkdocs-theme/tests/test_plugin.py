@@ -82,6 +82,26 @@ class SiteTest(unittest.TestCase):
             self.assertNotIn("version", cfg.extra)
 
 
+class AccessibleNameTest(unittest.TestCase):
+    """axe: the search dialog has a name (aria-dialog-name); the version button's name holds its visible text."""
+
+    def test_search_dialog_has_an_accessible_name(self):
+        cfg, site, tmp = built("search-site", {"KOKEB_DOCS_VERSIONED": ""})
+        with tmp:
+            page = (site / "index.html").read_text()
+        tag = re.search(r'<div class="md-search"[^>]*>', page)
+        self.assertIsNotNone(tag)
+        self.assertIn('role="dialog"', tag.group(0))
+        self.assertIn('aria-label="Search"', tag.group(0))
+
+    def test_version_button_label_script_is_shipped(self):
+        cfg, site, tmp = built("search-site", {"KOKEB_DOCS_VERSIONED": ""})
+        with tmp:
+            page = (site / "index.html").read_text()
+        self.assertIn(".md-version__current", page)
+        self.assertIn('setAttribute("aria-label", text + ", " + label)', page)
+
+
 class RepositoryLinkTest(unittest.TestCase):
     """A link from docs/ to a repository file becomes a GitHub link; one to a file that does not exist fails."""
 

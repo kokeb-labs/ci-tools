@@ -174,6 +174,21 @@ class DeterminismTests(unittest.TestCase):
             self.assertEqual(one, two, path.name)
 
 
+class RankGroupingTests(unittest.TestCase):
+    def test_odd_height_difference_keeps_one_rank(self):
+        """Boxes of one rank whose heights differ by an odd number of pixels have centres half a pixel apart."""
+        nodes = {"a": [0, 10, 100, 40], "b": [120, 10, 100, 41], "c": [240, 11, 100, 39], "d": [0, 100, 100, 40]}
+        self.assertEqual(layered._ranks_of(nodes, "TB"), [["a", "b", "c"], ["d"]])
+
+    def test_odd_width_difference_keeps_one_rank_left_to_right(self):
+        nodes = {"a": [10, 0, 40, 30], "b": [10, 50, 41, 30], "c": [100, 0, 40, 30]}
+        self.assertEqual(layered._ranks_of(nodes, "LR"), [["a", "b"], ["c"]])
+
+    def test_distinct_ranks_stay_apart(self):
+        nodes = {"a": [0, 0, 10, 40], "b": [0, 62, 10, 40]}
+        self.assertEqual(layered._ranks_of(nodes, "TB"), [["a"], ["b"]])
+
+
 class LayoutLockTests(unittest.TestCase):
     def model(self):
         return yaml.safe_load((FIX / "model/handler-health.state.yml").read_text())
