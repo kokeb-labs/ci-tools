@@ -15,6 +15,8 @@ that heading.
 
 ## [Unreleased]
 
+## [1.27.1] - 2026-11-21
+
 ### Fixed
 
 - **Docs theme accessibility**: the header search dialog (`<div class="md-search" role="dialog">`) now has an accessible
