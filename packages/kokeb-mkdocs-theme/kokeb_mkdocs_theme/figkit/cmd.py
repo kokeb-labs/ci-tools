@@ -66,6 +66,30 @@ fields:
   - {at: 2, len: 2, name: length, tone: blue}
   - {at: 4, len: 4, name: payload, tone: green}
 """,
+    "timing": """bus: spi
+mode: {cpol: 0, cpha: 0}
+refs:
+  timing: {doc: ds, section: "TODO the datasheet's timing section", page: 1}
+signals:
+  - {id: cs, label: CS, wave: "10......1"}
+  - {id: sck, label: SCK, wave: "0.pppppp0", clock: true}
+  - {id: sdi, label: SDI, wave: "x.======x", data: [D5, D4, D3, D2, D1, D0]}
+params:
+  - {id: tcss, symbol: tCSS, label: CS low to the first SCK edge, min: 1, unit: ns, ref: timing}
+marks:
+  - {param: tcss, signal: cs, from: 1, to: 2}
+""",
+    "topology": """style: bus
+refs:
+  bus: {doc: ds, section: "TODO the datasheet's section on several devices", page: 1}
+host: {label: MCU, detail: bus controller}
+nodes:
+  - {label: Device A, address: "0x40", ref: bus}
+  - {label: Device B, address: "0x41", ref: bus}
+shared: [SDA, SCL]
+facts:
+  - {text: "Up to 2 devices on one bus", ref: bus}
+""",
     "pipeline": """columns:
   - id: inputs
     title: Inputs

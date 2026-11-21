@@ -40,6 +40,23 @@ Drawn from:
 
 - [`docs/model/bus-access.seq.yml`](../model/bus-access.seq.yml)
 
+## CAN bus with three nodes
+
+<!-- figure: can-bus -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="can-bus.dark.svg">
+  <img src="can-bus.svg"
+    alt="A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor
+    at each end of the pair.">
+</picture>
+<!-- /figure -->
+
+Hardware description: [`docs/model/can-bus.topology.yml`](../model/can-bus.topology.yml)
+
+Drawn from:
+
+- [`docs/model/can-bus.topology.yml`](../model/can-bus.topology.yml)
+
 ## Handler lifecycle and health
 
 <!-- figure: handler-health -->
@@ -73,6 +90,23 @@ Hardware description: [`docs/model/heat-channels.matrix.yml`](../model/heat-chan
 Drawn from:
 
 - [`docs/model/heat-channels.matrix.yml`](../model/heat-channels.matrix.yml)
+
+## I2C read of one register
+
+<!-- figure: i2c-timing -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="i2c-timing.dark.svg">
+  <img src="i2c-timing.svg"
+    alt="I2C timing of a register read: a start condition, the 7-bit address with the write bit, an
+    acknowledge, and the start, setup and hold times the datasheet gives.">
+</picture>
+<!-- /figure -->
+
+Hardware description: [`docs/model/i2c-timing.timing.yml`](../model/i2c-timing.timing.yml)
+
+Drawn from:
+
+- [`docs/model/i2c-timing.timing.yml`](../model/i2c-timing.timing.yml)
 
 ## Fault journal record and ring
 
@@ -125,6 +159,23 @@ Hardware description: [`docs/model/port-capabilities.matrix.yml`](../model/port-
 Drawn from:
 
 - [`docs/model/port-capabilities.matrix.yml`](../model/port-capabilities.matrix.yml)
+
+## SPI daisy chain
+
+<!-- figure: spi-chain -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="spi-chain.dark.svg">
+  <img src="spi-chain.svg"
+    alt="Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the
+    next SDI and the last SDO returns to the MCU, with SCK and CSN shared.">
+</picture>
+<!-- /figure -->
+
+Hardware description: [`docs/model/spi-chain.topology.yml`](../model/spi-chain.topology.yml)
+
+Drawn from:
+
+- [`docs/model/spi-chain.topology.yml`](../model/spi-chain.topology.yml)
 
 ## A transfer against its deadline
 

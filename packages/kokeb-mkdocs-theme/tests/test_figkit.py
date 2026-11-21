@@ -302,7 +302,8 @@ class KindTests(unittest.TestCase):
         self.assertIn("native (1 MHz)", html)
 
     def test_kinds_registry(self):
-        self.assertEqual(set(kinds.KINDS), {"state", "graph", "seq", "timeline", "matrix", "bytes", "pipeline"})
+        self.assertEqual(set(kinds.KINDS), {"state", "graph", "seq", "timeline", "matrix", "bytes", "pipeline", "timing",
+                                             "topology"})
         for name in kinds.KINDS:
             self.assertTrue(hasattr(kinds.module(name), "validate"))
         self.assertEqual({p.name.split(".")[-2] for p in MODELS}, set(kinds.KINDS))

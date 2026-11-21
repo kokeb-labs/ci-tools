@@ -1,10 +1,10 @@
 # Figures with figkit
 
-Draw a state machine, sequence, timeline, graph, matrix, byte layout or pipeline from a small model file, and have CI
-check it.
+Draw a state machine, sequence, timeline, graph, matrix, byte layout, pipeline, bus waveform or multi-device topology from
+a small model file, and have CI check it.
 
 figkit is the figure kit of the theme package. A figure is either a Python module (`docs/diagrams/figures/<id>.py`,
-for facts read from code) or, for the seven kinds on this page, a model file `docs/model/<id>.<kind>.yml` and nothing
+for facts read from code) or, for the nine kinds on this page, a model file `docs/model/<id>.<kind>.yml` and nothing
 else. The decision behind it is [ADR 0001](adr/0001-figure-toolchain.md).
 
 ## Add a figure
@@ -242,12 +242,100 @@ links:
   - {from: board, to: cmake, label: emit}
 ```
 
+### Bus timing (`timing`)
+
+Waveforms of a bus (SPI, I2C, UART, RS-485, CAN, a single-wire protocol) or a protocol transaction (a register read, a
+burst, a command frame), drawn about 640 px wide so they read on a 360 px phone (the `phone` profile, checked). Each
+signal is a lane whose `wave` has one character per time slot: `0` and `1` (or `l` and `h`) levels, `p` one clock
+period starting high, `n` one starting low, `z` released, `x` undefined, `=` a data slot labelled from `data`, `.`
+extends the previous slot (a clock repeats) and `|` is a slot of its own that leaves time out. `groups` put brackets
+over slots (the address byte, the ACK), `marks` draw an interval under a lane, and `params` hold every number.
+
+<!-- figure: i2c-timing -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="diagrams/i2c-timing.dark.svg">
+  <img src="diagrams/i2c-timing.svg"
+    alt="I2C timing of a register read: a start condition, the 7-bit address with the write bit, an
+    acknowledge, and the start, setup and hold times the datasheet gives.">
+</picture>
+<!-- /figure -->
+
+```yaml
+kind: timing
+id: i2c-timing
+bus: i2c                                     # spi (with mode: {cpol, cpha}), i2c, uart, rs485, can, single-wire, transaction
+refs:
+  i2c: {doc: ds, section: "6.4 I2C timing", page: 9}
+signals:
+  - {id: scl, label: SCL, wave: "11nnnnnnnnn|n1"}
+  - {id: sda, label: SDA, wave: "10========0|=1", data: [A6, A5, A4, A3, A2, A1, A0, W, D0]}
+groups:
+  - {from: 2, to: 9, label: "address 0x48", ref: addr}    # a number in a label needs a ref
+params:
+  - {id: thd-sta, symbol: tHD;STA, label: Hold time after a start condition, min: 0.6, unit: us, ref: i2c}
+marks:
+  - {param: thd-sta, signal: sda, from: 1, to: 2}
+```
+
+The values are drawn as a table under the waveform (symbol, value, what it is and the datasheet section and page),
+and written again as the table twin `<id>.table.html`.
+
+### Topology (`topology`)
+
+Several devices on one host: a daisy chain (`style: chain`, data passes through each device: an SPI shift chain, an
+LED strip) or a shared bus (`style: bus`: I2C devices at their addresses, RS-485 or CAN nodes, a half-duplex servo
+line). The host is on top and the devices under it, so the figure stays narrow; the shared lines are rails on the
+right with a stub and a junction dot from every card, `ends` draws a terminator at both ends of a pair and `pullups`
+one resistor per line. A `{more: true}` node stands for the devices left out.
+
+<!-- figure: spi-chain -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="diagrams/spi-chain.dark.svg">
+  <img src="diagrams/spi-chain.svg"
+    alt="Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the
+    next SDI and the last SDO returns to the MCU, with SCK and CSN shared.">
+</picture>
+<!-- /figure -->
+
+<!-- figure: can-bus -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="diagrams/can-bus.dark.svg">
+  <img src="diagrams/can-bus.svg"
+    alt="A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor
+    at each end of the pair.">
+</picture>
+<!-- /figure -->
+
+```yaml
+kind: topology
+id: can-bus
+style: bus
+host: {label: MCU, detail: CAN controller and transceiver}
+nodes:
+  - {label: Node 2, address: node ID 2, ref: bus}           # an address always cites where it comes from
+  - {more: true, label: "…"}
+  - {label: Node N, address: node ID up to 127, ref: bus}
+shared: [CANH, CANL]
+ends: {label: "120 Ω", ref: bus}
+facts:
+  - {text: "Node IDs 1 to 127", ref: bus}
+```
+
+### Every number cites the datasheet
+
+A `timing` or `topology` model names its citations under `refs` (`{doc, section, page}`, as in `docs/hardware.yml`);
+a name it does not define is taken from the repository's `docs/hardware.yml`, so a driver cites the sections it lists
+already. `doc` must be a document of `docs/datasheets.yml`. The build fails for a param, an address, a terminator or a
+fact without a `ref`, for a group label, note or detail that holds a number without one (a name such as `XMPL100` or
+`I2C` is not a number), for an unknown ref, and for a section still marked `TODO`. The figure's subtitle lists the
+sections it used.
+
 ## Commands
 
 | Command | Does |
 | --- | --- |
 | `kokeb-docs figkit kinds` | Lists the kinds |
-| `kokeb-docs figkit new --kind K --id ID [--page P]` | Scaffolds a model and, with `--page`, its embed marker |
+| `kokeb-docs figkit new --kind K --id ID [--page P]` | Scaffolds a model and, with `--page`, its embed marker (for `timing` and `topology` with a `TODO` citation that fails the build until it names the datasheet section) |
 | `kokeb-docs figkit layout [ID...] [--check]` | Runs Graphviz and writes the layout locks; `--check` only reports where the installed `dot` would change a committed lock (advisory, exit 0) |
 | `kokeb-docs figkit font [ID...]` | Writes the font subsets of figures with `font: embed` (needs the `fonts` extra) |
 | `kokeb-docs figkit css [OUT]` | The shared style sheet for adaptive SVGs inlined in a page |
@@ -261,6 +349,8 @@ links:
 | Text contrast | 4.5:1 in both themes | every figure |
 | Fit | text inside its card and the figure, no overlapping cards, no arrow under a card or across text | every figure |
 | Shape contrast | 3:1 for the outline of a card, an arrow, a stripe, a status mark | palette 2 figures (warnings for older ones in `--lint`) |
+| Phone fit | smallest text at least 7.8 px on a 360 px screen | `timing` and `topology` (the `phone` profile) |
+| Citations | every number names a datasheet section and page that exists | `timing` and `topology` |
 | Print fit | smallest text at least 7 pt when the figure is scaled to an A4 content width (510 pt portrait, 757 pt landscape) | palette 2 figures with a `print` mode |
 | SVG lint | `viewBox`, `role="img"`, title and description, no script, event handler, `style=` or external reference, ids start with the figure id, at most 60 KB | palette 2 figures; any defect shows in `--lint` |
 | Alt lint | one sentence, 40 to 300 characters, not "image of" or "diagram of", differs from the title; the long description has two sentences and names every state, participant, lane and column | palette 2 figures |

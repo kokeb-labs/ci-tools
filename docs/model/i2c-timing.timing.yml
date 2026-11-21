@@ -1,0 +1,29 @@
+---
+kind: timing
+id: i2c-timing
+title: I2C read of one register
+kicker: On the bus
+alt: >-
+  I2C timing of a register read: a start condition, the 7-bit address with the write bit, an acknowledge, and the
+  start, setup and hold times the datasheet gives.
+reads: >-
+  The two lanes are SCL and SDA, left to right in time. SDA falls while SCL is high (the start), the address bits
+  follow, each held while SCL is high, then the device pulls SDA low for the acknowledge; the table gives each interval
+  with its datasheet value.
+bus: i2c
+refs:
+  i2c: {doc: ds, section: "6.4 I2C timing", page: 9}
+  addr: {doc: ds, section: "7.1 Device address", page: 12}
+signals:
+  - {id: scl, label: SCL, wave: "11nnnnnnnnn|n1"}
+  - {id: sda, label: SDA, wave: "10========0|=1", data: [A6, A5, A4, A3, A2, A1, A0, W, D0], tone: blue}
+groups:
+  - {from: 2, to: 9, label: "address 0x48", ref: addr}
+  - {from: 10, to: 11, label: ACK}
+params:
+  - {id: thd-sta, symbol: tHD;STA, label: Hold time after a start condition, min: 0.6, unit: us, ref: i2c}
+  - {id: tsu-dat, symbol: tSU;DAT, label: Data setup time, min: 100, unit: ns, ref: i2c}
+  - {id: fscl, symbol: fSCL, label: SCL clock frequency, max: 400, unit: kHz, ref: i2c}
+marks:
+  - {param: thd-sta, signal: sda, from: 1, to: 2}
+  - {param: tsu-dat, signal: sda, from: 3, to: 3.5}

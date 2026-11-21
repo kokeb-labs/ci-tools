@@ -11,7 +11,7 @@ module is then three lines::
     def build(_data):
         return from_model("docs/model/handler-health.state.yml")
 
-The kinds: ``state``, ``graph``, ``seq``, ``timeline``, ``matrix``, ``bytes`` and ``pipeline``; ``kinds.KINDS`` maps a
+The kinds: ``state``, ``graph``, ``seq``, ``timeline``, ``matrix``, ``bytes``, ``pipeline``, ``timing`` and ``topology``; ``kinds.KINDS`` maps a
 name to its module (each has ``validate(model, where)`` and ``build(model, lock_dir, where)``).
 """
 
@@ -33,6 +33,8 @@ KINDS = {
     "matrix": "matrix",
     "bytes": "bytelayout",
     "pipeline": "pipeline",
+    "timing": "timing",
+    "topology": "topology",
 }
 
 #: Kinds that need a layout lock (Graphviz is run once by ``kokeb-docs figkit layout``).
