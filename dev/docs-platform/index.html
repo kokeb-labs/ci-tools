@@ -1407,7 +1407,7 @@
 <tbody>
 <tr>
 <td>Theme package</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/dd899c35c7df71fb9531f34008f373bd9c33714c/packages/kokeb-mkdocs-theme/README.md"><code>packages/kokeb-mkdocs-theme</code></a></td>
 <td><code>theme: kokeb</code> (brand, layout, components, light and dark), <code>plugins: [kokeb]</code> (Markdown dialect, validation, repository links, figures, page checks), figkit, the <code>kokeb-docs</code> command and the pinned toolchain</td>
 </tr>
 <tr>
@@ -1417,12 +1417,12 @@
 </tr>
 <tr>
 <td>Template</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/dd899c35c7df71fb9531f34008f373bd9c33714c/templates/mkdocs-site/mkdocs.yml"><code>templates/mkdocs-site</code></a></td>
 <td>The skeleton of a driver site; the self-CI builds it</td>
 </tr>
 <tr>
 <td>Migration tool</td>
-<td><a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
+<td><a href="https://github.com/kokeb-labs/ci-tools/blob/dd899c35c7df71fb9531f34008f373bd9c33714c/tools/docs-migrate.py"><code>tools/docs-migrate.py</code></a></td>
 <td>The mechanical move from Jekyll, with a <code>--check</code> dry run</td>
 </tr>
 <tr>
@@ -1536,7 +1536,7 @@ Markdown extensions, strict validation and the version selector.</p>
 </tr>
 </tbody>
 </table>
-<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
+<p>This site uses a generator itself: <a href="https://github.com/kokeb-labs/ci-tools/blob/dd899c35c7df71fb9531f34008f373bd9c33714c/tools/docs/generators/workflows.py"><code>tools/docs/generators/workflows.py</code></a>
 writes the catalogue, the permissions table and every inputs and jobs table from the workflow files.</p>
 <h2 id="preview-a-site-locally">Preview a site locally<a class="headerlink" href="#preview-a-site-locally" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>.venv/bin/activate
@@ -1674,10 +1674,29 @@ the repository moves onto the package like this:</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.top", "navigation.footer", "navigation.tracking", "navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
     
     
+  
       <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../search/main.js"></script>
       
-    
+    <script>
+    (function () {
+      function fix() {
+        var buttons = document.querySelectorAll(".md-version__current");
+        for (var i = 0; i < buttons.length; i++) {
+          var b = buttons[i], text = (b.textContent || "").replace(/\s+/g, " ").trim();
+          var label = b.getAttribute("aria-label") || "";
+          if (text && label.toLowerCase().indexOf(text.toLowerCase()) === -1) {
+            b.setAttribute("aria-label", text + ", " + label);
+          }
+        }
+      }
+      fix();
+      if (window.MutationObserver) {
+        new MutationObserver(fix).observe(document.body, {childList: true, subtree: true});
+      }
+    })();
+  </script>
+
   </body>
 </html>

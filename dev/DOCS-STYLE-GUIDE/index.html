@@ -2223,10 +2223,29 @@ duplicated API tables (that is the site's job).</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.prune", "navigation.top", "navigation.footer", "navigation.tracking", "navigation.instant", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit", "content.tabs.link", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
     
     
+  
       <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../search/main.js"></script>
       
-    
+    <script>
+    (function () {
+      function fix() {
+        var buttons = document.querySelectorAll(".md-version__current");
+        for (var i = 0; i < buttons.length; i++) {
+          var b = buttons[i], text = (b.textContent || "").replace(/\s+/g, " ").trim();
+          var label = b.getAttribute("aria-label") || "";
+          if (text && label.toLowerCase().indexOf(text.toLowerCase()) === -1) {
+            b.setAttribute("aria-label", text + ", " + label);
+          }
+        }
+      }
+      fix();
+      if (window.MutationObserver) {
+        new MutationObserver(fix).observe(document.body, {childList: true, subtree: true});
+      }
+    })();
+  </script>
+
   </body>
 </html>
