@@ -361,11 +361,9 @@ def build(model: dict, lock_dir, where: str = "model", root=None):
                        bg=f"{dt}.tint", anchor="middle")
         flush()
         for gx in gaps:
-            if True:
-                f.rect(gx - 4, y + 1, 8, LANE_H - 2, fill="canvas", stroke=None, rx=0, layer="label")
-                for dx in (-4, 4):
-                    f.line([(gx + dx - 3, y + LANE_H - 2), (gx + dx + 3, y + 2)], color="ink2", sw=1.4,
-                           layer="label")
+            f.rect(gx - 4, y + 1, 8, LANE_H - 2, fill="canvas", stroke=None, rx=0, layer="label")
+            for dx in (-4, 4):
+                f.line([(gx + dx - 3, y + LANE_H - 2), (gx + dx + 3, y + 2)], color="ink2", sw=1.4, layer="label")
         lane_spans.append((y, y + LANE_H))
         y += LANE_H
         # Marks under this lane, packed into rows.
