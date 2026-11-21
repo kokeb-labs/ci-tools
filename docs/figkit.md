@@ -286,7 +286,8 @@ Several devices on one host: a daisy chain (`style: chain`, data passes through 
 LED strip) or a shared bus (`style: bus`: I2C devices at their addresses, RS-485 or CAN nodes, a half-duplex servo
 line). The host is on top and the devices under it, so the figure stays narrow; the shared lines are rails on the
 right with a stub and a junction dot from every card, `ends` draws a terminator at both ends of a pair and `pullups`
-one resistor per line. A `{more: true}` node stands for the devices left out.
+one resistor per line. A `{more: true}` node stands for the devices left out, and `host_shared` names the shared
+lines the host joins when it does not join all of them (an LED chain's supply).
 
 <!-- figure: spi-chain -->
 <picture>

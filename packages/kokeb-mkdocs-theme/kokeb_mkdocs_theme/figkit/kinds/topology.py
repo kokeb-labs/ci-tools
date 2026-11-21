@@ -19,7 +19,8 @@ Model::
       out: SDO
       host_out: MOSI                             # the host pin that feeds the first device
       host_in: MISO                              # optional: the last device's output back to the host
-    shared: [SCK, CSN]                           # lines every device and the host share (drawn as rails below)
+    shared: [SCK, CSN]                           # lines every device and the host share (drawn as rails on the right)
+    host_shared: [CSN]                           # optional: the shared lines the host joins (default: all of them)
     ends: {label: "120 Ω", ref: can}             # style bus, two rails: a terminator at each end
     pullups: {label: "pull-ups to VDD", ref: i2c}  # style bus: one resistor per rail at the far end
     facts:                                       # the limits, each with its datasheet reference
@@ -36,7 +37,7 @@ from ._cite import Citations, has_number
 from ._common import Check, check_header, make_fig
 
 REQUIRED = {"style", "host", "nodes"}
-ALLOWED = {"refs", "chain", "shared", "ends", "pullups", "facts", "bus_label"}
+ALLOWED = {"refs", "chain", "shared", "host_shared", "ends", "pullups", "facts", "bus_label"}
 RAIL_GAP = 30.0
 
 
@@ -77,6 +78,9 @@ def validate(model: dict, where: str, root=None) -> Citations:
     if not isinstance(shared, list) or not all(isinstance(s, str) and s.strip() for s in shared):
         c.bad("shared: a list of line names")
         shared = []
+    hs = model.get("host_shared")
+    if hs is not None and (not isinstance(hs, list) or any(h not in shared for h in hs)):
+        c.bad("host_shared: a list of names from shared")
     if len(shared) > 4:
         c.bad("shared: at most four lines")
     if style == "chain":
@@ -194,6 +198,7 @@ def build(model: dict, lock_dir, where: str = "model", root=None):
         rx0 = x_card + card_w + stub
         rx = [rx0 + rsp / 2 + i * rsp for i in range(ns)]
         cards = [(b, more) for b, _it, more in boxes]
+        host_joins = set(model.get("host_shared") if model.get("host_shared") is not None else shared)
         r_top = host_box.y + 8
         r_bot = cards[-1][0].b - 8
         if ends:
@@ -206,6 +211,8 @@ def build(model: dict, lock_dir, where: str = "model", root=None):
             f.text(rx[i], r_top - 8 if not pu else r_top - 26, name, size=small, weight=700, color="ink",
                    anchor="middle")
             for j, (b, more) in enumerate(cards):
+                if j == 0 and name not in host_joins:
+                    continue
                 sy = b.y + 16 + i * 10 if b.h > 40 + ns * 10 else b.cy
                 f.line([(b.r, sy), (rx[i], sy)], color="ink2", sw=1.8, dash="5 4" if more else None, layer="edge")
                 f.circle(rx[i], sy, 3.6, fill="ink2", layer="label")

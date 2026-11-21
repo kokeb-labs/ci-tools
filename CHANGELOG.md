@@ -27,7 +27,7 @@ that heading.
 - **figkit `topology`**: several devices on one host, as a daisy chain (`style: chain`: data passes through each
   device, the last one may return to the host) or a shared bus (`style: bus`: I2C addresses, RS-485 and CAN nodes,
   a half-duplex line), with shared lines as rails, terminators (`ends`), pull-ups (`pullups`), a node that stands for
-  the devices left out (`{more: true}`) and the cited limits (`facts`). Drawn as a vertical stack so it reads on a
+  the devices left out (`{more: true}`), the lines the host joins (`host_shared`) and the cited limits (`facts`). Drawn as a vertical stack so it reads on a
   phone.
 - **Every number cites the datasheet** in both kinds: a param, an address, a terminator or a fact without a `ref`, a
   group label, note or detail that holds a number without one, an unknown ref, a `doc` that is not in

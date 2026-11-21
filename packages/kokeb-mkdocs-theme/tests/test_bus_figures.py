@@ -142,6 +142,14 @@ class TopologyTests(unittest.TestCase):
         del m["chain"]["in"]
         self.assertIn("chain: missing 'in'", problems_of(topology.validate, m))
 
+    def test_host_shared_is_a_subset(self):
+        m = load("spi-chain.topology.yml")
+        m["host_shared"] = ["VDD"]
+        self.assertIn("host_shared: a list of names from shared", problems_of(topology.validate, m))
+        m["host_shared"] = ["CSN"]
+        fig = topology.build(m, GOLDEN, "m")
+        self.assertEqual(fig.problems(), [])
+
     def test_node_count(self):
         m = load("spi-chain.topology.yml")
         m["nodes"] = m["nodes"][:1]
