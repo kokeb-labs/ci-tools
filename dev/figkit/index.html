@@ -1173,6 +1173,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#bus-timing-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bus timing (timing)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topology-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Topology (topology)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#every-number-cites-the-datasheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Every number cites the datasheet
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1496,6 +1529,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#bus-timing-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bus timing (timing)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topology-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Topology (topology)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#every-number-cites-the-datasheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Every number cites the datasheet
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1582,10 +1648,10 @@
 
 
 <h1 id="figures-with-figkit">Figures with figkit<a class="headerlink" href="#figures-with-figkit" title="Permanent link">&para;</a></h1>
-<p>Draw a state machine, sequence, timeline, graph, matrix, byte layout or pipeline from a small model file, and have CI
-check it.</p>
+<p>Draw a state machine, sequence, timeline, graph, matrix, byte layout, pipeline, bus waveform or multi-device topology from
+a small model file, and have CI check it.</p>
 <p>figkit is the figure kit of the theme package. A figure is either a Python module (<code>docs/diagrams/figures/&lt;id&gt;.py</code>,
-for facts read from code) or, for the seven kinds on this page, a model file <code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code> and nothing
+for facts read from code) or, for the nine kinds on this page, a model file <code>docs/model/&lt;id&gt;.&lt;kind&gt;.yml</code> and nothing
 else. The decision behind it is <a href="../adr/0001-figure-toolchain/">ADR 0001</a>.</p>
 <h2 id="add-a-figure">Add a figure<a class="headerlink" href="#add-a-figure" title="Permanent link">&para;</a></h2>
 <div class="kb-steps">
@@ -1828,6 +1894,87 @@ An optional <code>ring</code> draws a row of slots with the newest and the next 
 </span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="nt">links</span><span class="p">:</span>
 </span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">from</span><span class="p">:</span><span class="w"> </span><span class="nv">board</span><span class="p p-Indicator">,</span><span class="nt"> to</span><span class="p">:</span><span class="w"> </span><span class="nv">cmake</span><span class="p p-Indicator">,</span><span class="nt"> label</span><span class="p">:</span><span class="w"> </span><span class="nv">emit</span><span class="p p-Indicator">}</span>
 </span></code></pre></div>
+<h3 id="bus-timing-timing">Bus timing (<code>timing</code>)<a class="headerlink" href="#bus-timing-timing" title="Permanent link">&para;</a></h3>
+<p>Waveforms of a bus (SPI, I2C, UART, RS-485, CAN, a single-wire protocol) or a protocol transaction (a register read, a
+burst, a command frame), drawn about 640 px wide so they read on a 360 px phone (the <code>phone</code> profile, checked). Each
+signal is a lane whose <code>wave</code> has one character per time slot: <code>0</code> and <code>1</code> (or <code>l</code> and <code>h</code>) levels, <code>p</code> one clock
+period starting high, <code>n</code> one starting low, <code>z</code> released, <code>x</code> undefined, <code>=</code> a data slot labelled from <code>data</code>, <code>.</code>
+extends the previous slot (a clock repeats) and <code>|</code> is a slot of its own that leaves time out. <code>groups</code> put brackets
+over slots (the address byte, the ACK), <code>marks</code> draw an interval under a lane, and <code>params</code> hold every number.</p>
+<figure class="kb-figure">
+<img src="../diagrams/i2c-timing.svg#only-light" alt="I2C timing of a register read: a start condition, the 7-bit address with the write bit, an acknowledge, and the start, setup and hold times the datasheet gives." width="640" height="619" loading="lazy"><img src="../diagrams/i2c-timing.dark.svg#only-dark" alt="I2C timing of a register read: a start condition, the 7-bit address with the write bit, an acknowledge, and the start, setup and hold times the datasheet gives." width="640" height="619" loading="lazy">
+<figcaption>I2C read of one register</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The two lanes are SCL and SDA, left to right in time. SDA falls while SCL is high (the start), the address bits follow, each held while SCL is high, then the device pulls SDA low for the acknowledge; the table gives each interval with its datasheet value.</p>
+<p>Drawn from: <a href="../model/i2c-timing.timing.yml"><code>docs/model/i2c-timing.timing.yml</code></a>.</p>
+</details>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timing</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i2c-timing</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nt">bus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i2c</span><span class="w">                                     </span><span class="c1"># spi (with mode: {cpol, cpha}), i2c, uart, rs485, can, single-wire, transaction</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nt">refs</span><span class="p">:</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="nt">i2c</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">doc</span><span class="p">:</span><span class="w"> </span><span class="nv">ds</span><span class="p p-Indicator">,</span><span class="nt"> section</span><span class="p">:</span><span class="w"> </span><span class="s">"6.4</span><span class="nv"> </span><span class="s">I2C</span><span class="nv"> </span><span class="s">timing"</span><span class="p p-Indicator">,</span><span class="nt"> page</span><span class="p">:</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">}</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="nt">signals</span><span class="p">:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">scl</span><span class="p p-Indicator">,</span><span class="nt"> label</span><span class="p">:</span><span class="w"> </span><span class="nv">SCL</span><span class="p p-Indicator">,</span><span class="nt"> wave</span><span class="p">:</span><span class="w"> </span><span class="s">"11nnnnnnnnn|n1"</span><span class="p p-Indicator">}</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sda</span><span class="p p-Indicator">,</span><span class="nt"> label</span><span class="p">:</span><span class="w"> </span><span class="nv">SDA</span><span class="p p-Indicator">,</span><span class="nt"> wave</span><span class="p">:</span><span class="w"> </span><span class="s">"10========0|=1"</span><span class="p p-Indicator">,</span><span class="nt"> data</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">A6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">A5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">A4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">A3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">A2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">A1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">A0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">W</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">D0</span><span class="p p-Indicator">]}</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="nt">groups</span><span class="p">:</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">from</span><span class="p">:</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="nt"> to</span><span class="p">:</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">,</span><span class="nt"> label</span><span class="p">:</span><span class="w"> </span><span class="s">"address</span><span class="nv"> </span><span class="s">0x48"</span><span class="p p-Indicator">,</span><span class="nt"> ref</span><span class="p">:</span><span class="w"> </span><span class="nv">addr</span><span class="p p-Indicator">}</span><span class="w">    </span><span class="c1"># a number in a label needs a ref</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="nt">params</span><span class="p">:</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">thd-sta</span><span class="p p-Indicator">,</span><span class="nt"> symbol</span><span class="p">:</span><span class="w"> </span><span class="nv">tHD;STA</span><span class="p p-Indicator">,</span><span class="nt"> label</span><span class="p">:</span><span class="w"> </span><span class="nv">Hold time after a start condition</span><span class="p p-Indicator">,</span><span class="nt"> min</span><span class="p">:</span><span class="w"> </span><span class="nv">0.6</span><span class="p p-Indicator">,</span><span class="nt"> unit</span><span class="p">:</span><span class="w"> </span><span class="nv">us</span><span class="p p-Indicator">,</span><span class="nt"> ref</span><span class="p">:</span><span class="w"> </span><span class="nv">i2c</span><span class="p p-Indicator">}</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="nt">marks</span><span class="p">:</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">param</span><span class="p">:</span><span class="w"> </span><span class="nv">thd-sta</span><span class="p p-Indicator">,</span><span class="nt"> signal</span><span class="p">:</span><span class="w"> </span><span class="nv">sda</span><span class="p p-Indicator">,</span><span class="nt"> from</span><span class="p">:</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="nt"> to</span><span class="p">:</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">}</span>
+</span></code></pre></div>
+<p>The values are drawn as a table under the waveform (symbol, value, what it is and the datasheet section and page),
+and written again as the table twin <code>&lt;id&gt;.table.html</code>.</p>
+<h3 id="topology-topology">Topology (<code>topology</code>)<a class="headerlink" href="#topology-topology" title="Permanent link">&para;</a></h3>
+<p>Several devices on one host: a daisy chain (<code>style: chain</code>, data passes through each device: an SPI shift chain, an
+LED strip) or a shared bus (<code>style: bus</code>: I2C devices at their addresses, RS-485 or CAN nodes, a half-duplex servo
+line). The host is on top and the devices under it, so the figure stays narrow; the shared lines are rails on the
+right with a stub and a junction dot from every card, <code>ends</code> draws a terminator at both ends of a pair and <code>pullups</code>
+one resistor per line. A <code>{more: true}</code> node stands for the devices left out, and <code>host_shared</code> names the shared
+lines the host joins when it does not join all of them (an LED chain's supply).</p>
+<figure class="kb-figure">
+<img src="../diagrams/spi-chain.svg#only-light" alt="Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the next SDI and the last SDO returns to the MCU, with SCK and CSN shared." width="640" height="769" loading="lazy"><img src="../diagrams/spi-chain.dark.svg#only-dark" alt="Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the next SDI and the last SDO returns to the MCU, with SCK and CSN shared." width="640" height="769" loading="lazy">
+<figcaption>SPI daisy chain</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The MCU on the left drives MOSI into SDI of XMPL100 1; its SDO feeds the next device and so on to XMPL100 N, whose SDO returns to MISO. SCK and CSN are rails every device shares, so one select frames the datagrams of every driver.</p>
+<p>Drawn from: <a href="../model/spi-chain.topology.yml"><code>docs/model/spi-chain.topology.yml</code></a>.</p>
+</details>
+<figure class="kb-figure">
+<img src="../diagrams/can-bus.svg#only-light" alt="A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of the pair." width="640" height="664" loading="lazy"><img src="../diagrams/can-bus.dark.svg#only-dark" alt="A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of the pair." width="640" height="664" loading="lazy">
+<figcaption>CAN bus with three nodes</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The MCU and the devices Node 2 and Node N hang off the two rails CANH and CANL on the right, through their transceivers. A terminator sits at each end of the pair.</p>
+<p>Drawn from: <a href="../model/can-bus.topology.yml"><code>docs/model/can-bus.topology.yml</code></a>.</p>
+</details>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topology</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">can-bus</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nt">style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bus</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="nv">MCU</span><span class="p p-Indicator">,</span><span class="nt"> detail</span><span class="p">:</span><span class="w"> </span><span class="nv">CAN controller and transceiver</span><span class="p p-Indicator">}</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nt">nodes</span><span class="p">:</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="nv">Node 2</span><span class="p p-Indicator">,</span><span class="nt"> address</span><span class="p">:</span><span class="w"> </span><span class="nv">node ID 2</span><span class="p p-Indicator">,</span><span class="nt"> ref</span><span class="p">:</span><span class="w"> </span><span class="nv">bus</span><span class="p p-Indicator">}</span><span class="w">           </span><span class="c1"># an address always cites where it comes from</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">more</span><span class="p">:</span><span class="w"> </span><span class="nv">true</span><span class="p p-Indicator">,</span><span class="nt"> label</span><span class="p">:</span><span class="w"> </span><span class="s">"…"</span><span class="p p-Indicator">}</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="nv">Node N</span><span class="p p-Indicator">,</span><span class="nt"> address</span><span class="p">:</span><span class="w"> </span><span class="nv">node ID up to 127</span><span class="p p-Indicator">,</span><span class="nt"> ref</span><span class="p">:</span><span class="w"> </span><span class="nv">bus</span><span class="p p-Indicator">}</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nt">shared</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">CANH</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">CANL</span><span class="p p-Indicator">]</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="nt">ends</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="s">"120</span><span class="nv"> </span><span class="s">Ω"</span><span class="p p-Indicator">,</span><span class="nt"> ref</span><span class="p">:</span><span class="w"> </span><span class="nv">bus</span><span class="p p-Indicator">}</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="nt">facts</span><span class="p">:</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">"Node</span><span class="nv"> </span><span class="s">IDs</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">127"</span><span class="p p-Indicator">,</span><span class="nt"> ref</span><span class="p">:</span><span class="w"> </span><span class="nv">bus</span><span class="p p-Indicator">}</span>
+</span></code></pre></div>
+<h3 id="every-number-cites-the-datasheet">Every number cites the datasheet<a class="headerlink" href="#every-number-cites-the-datasheet" title="Permanent link">&para;</a></h3>
+<p>A <code>timing</code> or <code>topology</code> model names its citations under <code>refs</code> (<code>{doc, section, page}</code>, as in <code>docs/hardware.yml</code>);
+a name it does not define is taken from the repository's <code>docs/hardware.yml</code>, so a driver cites the sections it lists
+already. <code>doc</code> must be a document of <code>docs/datasheets.yml</code>. The build fails for a param, an address, a terminator or a
+fact without a <code>ref</code>, for a group label, note or detail that holds a number without one (a name such as <code>XMPL100</code> or
+<code>I2C</code> is not a number), for an unknown ref, and for a section still marked <code>TODO</code>. The figure's subtitle lists the
+sections it used.</p>
 <h2 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1843,7 +1990,7 @@ An optional <code>ring</code> draws a row of slots with the newest and the next 
 </tr>
 <tr>
 <td><code>kokeb-docs figkit new --kind K --id ID [--page P]</code></td>
-<td>Scaffolds a model and, with <code>--page</code>, its embed marker</td>
+<td>Scaffolds a model and, with <code>--page</code>, its embed marker (for <code>timing</code> and <code>topology</code> with a <code>TODO</code> citation that fails the build until it names the datasheet section)</td>
 </tr>
 <tr>
 <td><code>kokeb-docs figkit layout [ID...] [--check]</code></td>
@@ -1891,6 +2038,16 @@ An optional <code>ring</code> draws a row of slots with the newest and the next 
 <td>Shape contrast</td>
 <td>3:1 for the outline of a card, an arrow, a stripe, a status mark</td>
 <td>palette 2 figures (warnings for older ones in <code>--lint</code>)</td>
+</tr>
+<tr>
+<td>Phone fit</td>
+<td>smallest text at least 7.8 px on a 360 px screen</td>
+<td><code>timing</code> and <code>topology</code> (the <code>phone</code> profile)</td>
+</tr>
+<tr>
+<td>Citations</td>
+<td>every number names a datasheet section and page that exists</td>
+<td><code>timing</code> and <code>topology</code></td>
 </tr>
 <tr>
 <td>Print fit</td>
@@ -1963,10 +2120,10 @@ that carry meaning reach 3:1, and adds status and heat tokens:</p>
 <p>An existing Python figure opts in with <code>Fig(..., palette=2)</code>; marker ids then start with the figure id. Making palette 2
 the default will be announced under <strong>Breaking</strong> in the changelog and ships in a major release.</p>
 <h2 id="python-api">Python API<a class="headerlink" href="#python-api" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kokeb_mkdocs_theme.figkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fig</span>                  <span class="c1"># the original calls, unchanged</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kokeb_mkdocs_theme.figkit.kinds</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_model</span>     <span class="c1"># a model file (or dict) to a finished Fig</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">fig</span> <span class="o">=</span> <span class="n">from_model</span><span class="p">(</span><span class="s2">"docs/model/handler-health.state.yml"</span><span class="p">)</span>    <span class="c1"># reads the layout lock, never runs Graphviz</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kokeb_mkdocs_theme.figkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fig</span>                  <span class="c1"># the original calls, unchanged</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kokeb_mkdocs_theme.figkit.kinds</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_model</span>     <span class="c1"># a model file (or dict) to a finished Fig</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">fig</span> <span class="o">=</span> <span class="n">from_model</span><span class="p">(</span><span class="s2">"docs/model/handler-health.state.yml"</span><span class="p">)</span>    <span class="c1"># reads the layout lock, never runs Graphviz</span>
 </span></code></pre></div>
 <p>A figure module can wrap a model: <code>def build(_data): return from_model("docs/model/x.state.yml")</code>, with
 <code>SOURCES = ["docs/model/x.state.yml"]</code>.</p>

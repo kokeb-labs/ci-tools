@@ -1137,6 +1137,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#can-bus-with-three-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CAN bus with three nodes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#handler-lifecycle-and-health" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1152,6 +1163,17 @@
     <span class="md-ellipsis">
       
         Channels per port
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#i2c-read-of-one-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        I2C read of one register
       
     </span>
   </a>
@@ -1185,6 +1207,17 @@
     <span class="md-ellipsis">
       
         Contract support by port
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spi-daisy-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SPI daisy chain
       
     </span>
   </a>
@@ -1287,6 +1320,22 @@ committed figure no longer matches the code. Each figure below lists the files i
 <ul>
 <li><a href="../model/bus-access.seq.yml"><code>docs/model/bus-access.seq.yml</code></a></li>
 </ul>
+<h2 id="can-bus-with-three-nodes">CAN bus with three nodes<a class="headerlink" href="#can-bus-with-three-nodes" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="can-bus.svg#only-light" alt="A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of the pair." width="640" height="664" loading="lazy"><img src="can-bus.dark.svg#only-dark" alt="A CAN bus on which an MCU and two devices share the CANH and CANL lines, with a terminating resistor at each end of the pair." width="640" height="664" loading="lazy">
+<figcaption>CAN bus with three nodes</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The MCU and the devices Node 2 and Node N hang off the two rails CANH and CANL on the right, through their transceivers. A terminator sits at each end of the pair.</p>
+<p>Drawn from: <a href="../model/can-bus.topology.yml"><code>docs/model/can-bus.topology.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/can-bus.topology.yml"><code>docs/model/can-bus.topology.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/can-bus.topology.yml"><code>docs/model/can-bus.topology.yml</code></a></li>
+</ul>
 <h2 id="handler-lifecycle-and-health">Handler lifecycle and health<a class="headerlink" href="#handler-lifecycle-and-health" title="Permanent link">&para;</a></h2>
 <figure class="kb-figure">
 <img src="handler-health.svg#only-light" alt="State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them." width="697" height="1310" loading="lazy"><img src="handler-health.dark.svg#only-dark" alt="State machine of a handler with the states Unknown, Starting, Ready, Degraded, Faulted and Recovering, and the calls that move it between them." width="697" height="1310" loading="lazy">
@@ -1318,6 +1367,22 @@ committed figure no longer matches the code. Each figure below lists the files i
 <p>Drawn from:</p>
 <ul>
 <li><a href="../model/heat-channels.matrix.yml"><code>docs/model/heat-channels.matrix.yml</code></a></li>
+</ul>
+<h2 id="i2c-read-of-one-register">I2C read of one register<a class="headerlink" href="#i2c-read-of-one-register" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="i2c-timing.svg#only-light" alt="I2C timing of a register read: a start condition, the 7-bit address with the write bit, an acknowledge, and the start, setup and hold times the datasheet gives." width="640" height="619" loading="lazy"><img src="i2c-timing.dark.svg#only-dark" alt="I2C timing of a register read: a start condition, the 7-bit address with the write bit, an acknowledge, and the start, setup and hold times the datasheet gives." width="640" height="619" loading="lazy">
+<figcaption>I2C read of one register</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The two lanes are SCL and SDA, left to right in time. SDA falls while SCL is high (the start), the address bits follow, each held while SCL is high, then the device pulls SDA low for the acknowledge; the table gives each interval with its datasheet value.</p>
+<p>Drawn from: <a href="../model/i2c-timing.timing.yml"><code>docs/model/i2c-timing.timing.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/i2c-timing.timing.yml"><code>docs/model/i2c-timing.timing.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/i2c-timing.timing.yml"><code>docs/model/i2c-timing.timing.yml</code></a></li>
 </ul>
 <h2 id="fault-journal-record-and-ring">Fault journal record and ring<a class="headerlink" href="#fault-journal-record-and-ring" title="Permanent link">&para;</a></h2>
 <figure class="kb-figure">
@@ -1367,6 +1432,22 @@ committed figure no longer matches the code. Each figure below lists the files i
 <ul>
 <li><a href="../model/port-capabilities.matrix.yml"><code>docs/model/port-capabilities.matrix.yml</code></a></li>
 </ul>
+<h2 id="spi-daisy-chain">SPI daisy chain<a class="headerlink" href="#spi-daisy-chain" title="Permanent link">&para;</a></h2>
+<figure class="kb-figure">
+<img src="spi-chain.svg#only-light" alt="Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the next SDI and the last SDO returns to the MCU, with SCK and CSN shared." width="640" height="769" loading="lazy"><img src="spi-chain.dark.svg#only-dark" alt="Daisy chain of XMPL100 devices on one SPI bus: the MCU feeds SDI of the first, each SDO feeds the next SDI and the last SDO returns to the MCU, with SCK and CSN shared." width="640" height="769" loading="lazy">
+<figcaption>SPI daisy chain</figcaption>
+</figure>
+
+<details class="kb-figure-desc">
+<summary>Figure description and sources</summary>
+<p>The MCU on the left drives MOSI into SDI of XMPL100 1; its SDO feeds the next device and so on to XMPL100 N, whose SDO returns to MISO. SCK and CSN are rails every device shares, so one select frames the datagrams of every driver.</p>
+<p>Drawn from: <a href="../model/spi-chain.topology.yml"><code>docs/model/spi-chain.topology.yml</code></a>.</p>
+</details>
+<p>Hardware description: <a href="../model/spi-chain.topology.yml"><code>docs/model/spi-chain.topology.yml</code></a></p>
+<p>Drawn from:</p>
+<ul>
+<li><a href="../model/spi-chain.topology.yml"><code>docs/model/spi-chain.topology.yml</code></a></li>
+</ul>
 <h2 id="a-transfer-against-its-deadline">A transfer against its deadline<a class="headerlink" href="#a-transfer-against-its-deadline" title="Permanent link">&para;</a></h2>
 <figure class="kb-figure">
 <img src="transfer-deadline.svg#only-light" alt="Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline." width="1000" height="395" loading="lazy"><img src="transfer-deadline.dark.svg#only-dark" alt="Timeline of one transfer in which the CPU prepares a buffer, the DMA engine moves it, the CPU completes it, and the whole transfer ends before its deadline." width="1000" height="395" loading="lazy">
@@ -1392,13 +1473,13 @@ committed figure no longer matches the code. Each figure below lists the files i
 <details class="kb-figure-desc">
 <summary>Figure description and sources</summary>
 <p>Two lanes, each read left to right. The top lane runs on every push and pull request: the caller's esp32-examples-build-ci.yml calls ru-build, whose generate-matrix job checks out espidf-tools and turns app_config.yml into a matrix, whose build job runs once per matrix entry in the espressif/idf image, and whose size-report job comments a size table on pull requests. The build job uploads one fw-* artifact per entry. The bottom lane runs when a version tag is pushed: the caller's release.yml calls ru-release-firmware, which downloads those artifacts for the tagged commit and attaches them to a GitHub Release, so nothing is rebuilt. Solid arrows mean "runs next", dashed arrows carry files. Job names are read from the workflow files.</p>
-<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/5507d9cadc623bb315f1aa64c1378b0194ee48ec/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/5507d9cadc623bb315f1aa64c1378b0194ee48ec/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/5507d9cadc623bb315f1aa64c1378b0194ee48ec/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
+<p>Drawn from: <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a> <code>jobs</code>; <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a> <code>jobs</code>; figure module <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a>.</p>
 </details>
-<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/5507d9cadc623bb315f1aa64c1378b0194ee48ec/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
+<p>Figure module: <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/docs/diagrams/figures/workflow-flow.py"><code>docs/diagrams/figures/workflow-flow.py</code></a></p>
 <p>Drawn from:</p>
 <ul>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/5507d9cadc623bb315f1aa64c1378b0194ee48ec/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
-<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/5507d9cadc623bb315f1aa64c1378b0194ee48ec/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/.github/workflows/ru-build.yml"><code>.github/workflows/ru-build.yml</code></a></li>
+<li><code>jobs</code> in <a href="https://github.com/kokeb-labs/ci-tools/blob/5fa8e5f4ef6012ada6862f0a0d697ad7c4fff5e2/.github/workflows/ru-release-firmware.yml"><code>.github/workflows/ru-release-firmware.yml</code></a></li>
 </ul>
 <h2 id="which-repositories-call-which-workflows">Which repositories call which workflows<a class="headerlink" href="#which-repositories-call-which-workflows" title="Permanent link">&para;</a></h2>
 <figure class="kb-figure">
