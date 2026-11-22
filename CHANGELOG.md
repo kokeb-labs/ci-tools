@@ -15,6 +15,39 @@ that heading.
 
 ## [Unreleased]
 
+## [1.28.0] - 2026-11-22
+
+### Added
+
+- **Trigger policy: the weekly vulnerability scan** (`docs/triggers.md`, `check_triggers.py`). A file named exactly
+  `weekly-vulnerabilities.yml` may use `schedule` and `workflow_dispatch`, and only while it is nothing but a call of
+  `ci-vulnerabilities.yml` (the local file, or one pinned by a 40-hex SHA): top-level `permissions: {}`, the called job
+  exactly `contents: write` and `issues: write`, no steps, no secrets, no `ref:` input. The reusable
+  `ci-vulnerabilities.yml`, when present, fails the check on a cache step or `cache:` input, a checkout `ref`, a secret,
+  an action not pinned by SHA, a job with `contents: write` that has no default-branch guard, or a call of `ci-docs.yml`
+  that refreshes the vulnerability data without `cache: false`. The floor-compiler exception is unchanged and keeps
+  `contents: read`; any other scheduled workflow still fails.
+- **`ru-mkdocs-publish` input `cache`** (boolean, default `true`). `false` turns off every cache of the workflow (pip,
+  the lychee binary, the Lighthouse and screenshot tools), for a scheduled run that must not write the Actions cache.
+- **Theme: `extra.kokeb.repo_facts`**, off by default; see Changed.
+
+### Changed
+
+- **Docs theme, no console errors**: Material's repository link no longer fetches the latest release, stars and forks
+  from `api.github.com` (a repository with only a pre-release answered `releases/latest` with 404 on every page); set
+  `extra.kokeb.repo_facts: true` to get them back. The older-version banner script resolves its scope against the page
+  address (Material's `new URL(".")` threw `Invalid URL` on every page of a versioned site). The built-in `search`
+  plugin no longer adds `search/main.js`, which threw `base_url is not defined`.
+
+### Fixed
+
+- **Docs theme accessibility**: a table wider than the column scrolls in a wrapper that is now a focusable region
+  (`tabindex="0"`, `role="region"`, `aria-label` from the heading above the table), the fix for axe
+  `scrollable-region-focusable`; it shows a focus ring for keyboard focus.
+- **Docs theme layout**: the Latin Inter face is preloaded, which should shorten the window of the text reflowing
+  when the font arrives, and the version chip is smaller on a phone so the site name is not cut to its first
+  letter.
+
 ## [1.27.1] - 2026-11-21
 
 ### Fixed

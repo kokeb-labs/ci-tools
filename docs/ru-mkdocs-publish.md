@@ -73,6 +73,7 @@ same page under `latest/` (`/docs/x/`, `/development/x/` to `latest/x/`; `/doxs/
 | `lighthouse` | boolean | `true` | Run Lighthouse on the built site (home page and the first navigation pages) against the budgets. |
 | `lighthouse_budgets` | string | `performance=0.8 accessibility=0.95 best-practices=0.9 seo=0.9` | Minimum Lighthouse category scores (0-1, median of three runs, mobile emulation), space-separated category=score pairs. A score below its minimum fails the job. |
 | `screenshots` | boolean | `true` | Capture the home page and the first navigation pages at 375 and 1280 px, light and dark (artifact). |
+| `cache` | boolean | `true` | false: the run reads and writes no Actions cache (no pip cache on setup-python, no cache for the lychee binary, no cache for the Lighthouse and screenshot tools); the tools are downloaded every time. Use it for a scheduled run, which executes in the default branch's context (docs/triggers.md). |
 | `versioning` | boolean | `true` | true: a versioned site, published with mike (default branch -> dev_version, v* tag -> that version, with latest_alias moved to it). false: one unversioned site (the organisation portal), published from the default branch as the whole content of deployment_branch at its root (a custom domain only from a CNAME file in the site); tags publish nothing. The build tells the theme plugin which (KOKEB_DOCS_VERSIONED), so site_url and the version selector match. |
 | `deploy` | boolean | `false` | Publish to deployment_branch. Never happens on a pull_request event, whatever this says; callers usually pass a repository-variable gate here. |
 | `deployment_branch` | string | `gh-pages` | Branch GitHub Pages serves from. |
@@ -126,6 +127,13 @@ The build, the drift checks (`KOKEB_DOCS_CONFIG` is set from `mkdocs_config`), t
 that path, and the theme takes the folder that holds `docs_dir` as the repository root, so snippets and repository
 links are unchanged. Doxygen runs in `doxygen_working_directory` (default the root), so paths inside a
 `_config/Doxyfile` stay relative to the root.
+
+## Runs that use no cache
+
+A scheduled run executes in the default branch's context, so it must not write the Actions cache that later runs on
+`main` restore ([trigger policy](triggers.md#the-weekly-vulnerability-scan)). `cache: false` turns every cache of this
+workflow off: `setup-python` without `cache: pip`, no cache for the lychee binary and none for the Lighthouse and
+screenshot tools; they are downloaded (pinned, hash-checked) on every run. The default `true` is unchanged.
 
 ## Unversioned sites
 

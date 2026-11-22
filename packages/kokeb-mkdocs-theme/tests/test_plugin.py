@@ -102,6 +102,53 @@ class AccessibleNameTest(unittest.TestCase):
         self.assertIn('setAttribute("aria-label", text + ", " + label)', page)
 
 
+class ConsoleAndKeyboardTest(unittest.TestCase):
+    """Every page of a versioned site loaded without console errors, and wide tables reachable from the keyboard."""
+
+    def page(self, fixture: str = "search-site", env: dict | None = None) -> str:
+        cfg, site, tmp = built(fixture, {"KOKEB_DOCS_VERSIONED": "true", **(env or {})})
+        with tmp:
+            return (site / "index.html").read_text()
+
+    def test_outdated_banner_scope_is_resolved_against_the_page(self):
+        page = self.page()
+        self.assertRegex(page, r'new URL\("\.",location\)')  # Material's own `new URL(".")` throws "Invalid URL"
+        self.assertNotRegex(page, r'new URL\("\.?\.?"\)')
+
+    def test_repository_facts_are_off_unless_asked_for(self):
+        self.assertNotIn('data-md-component="source"', self.page())
+        # The link itself stays.
+        self.assertIn('class="md-source"', self.page())
+
+    def test_repository_facts_can_be_turned_on(self):
+        tmp = tempfile.TemporaryDirectory()
+        root = pathlib.Path(tmp.name)
+        (root / "docs").mkdir()
+        (root / "docs/index.md").write_text("# Home\n")
+        (root / "mkdocs.yml").write_text(
+            (FIXTURES / "search-site/mkdocs.yml").read_text() + "extra:\n  kokeb:\n    repo_facts: true\n")
+        cfg = load_config(str(root / "mkdocs.yml"), site_dir=str(root / "site"), strict=True)
+        cfg.plugins.on_startup(command="build", dirty=False)
+        with tmp:
+            build(cfg)
+            self.assertIn('data-md-component="source"', (root / "site/index.html").read_text())
+
+    def test_builtin_search_plugin_adds_no_stock_theme_script(self):
+        tmp = tempfile.TemporaryDirectory()
+        with tmp:
+            cfg = load_config(str(FIXTURES / "repo-site/mkdocs.yml"), site_dir=tmp.name, strict=True)
+            cfg.plugins.on_startup(command="build", dirty=False)
+            build(cfg)
+            self.assertNotIn("search/main.js", (pathlib.Path(tmp.name) / "index.html").read_text())
+            self.assertTrue((pathlib.Path(tmp.name) / "search/search_index.json").exists())
+
+    def test_scrollable_table_wrappers_become_focusable_regions(self):
+        page = self.page()
+        for needle in ('.md-typeset__scrollwrap', 'setAttribute("tabindex", "0")', 'setAttribute("role", "region")',
+                       'setAttribute("aria-label"'):
+            self.assertIn(needle, page)
+
+
 class RepositoryLinkTest(unittest.TestCase):
     """A link from docs/ to a repository file becomes a GitHub link; one to a file that does not exist fails."""
 

@@ -16,14 +16,20 @@ A workflow starts only from:
 `release.yml` is the one exception: it starts from `workflow_run` when the self-CI finishes on `main`, and checks out
 only the commit that self-CI tested.
 
-One narrow exception, below: the weekly floor-compiler caller. Otherwise not allowed: `workflow_dispatch`, `schedule`, `pull_request_target`, `issue_comment`, `workflow_run` (outside
+Two narrow exceptions, below: the weekly floor-compiler caller and the weekly vulnerability-scan caller. Otherwise not
+allowed: `workflow_dispatch`, `schedule`, `pull_request_target`, `issue_comment`, `workflow_run` (outside
 `release.yml`) and the other events that run in the default branch's context. To run a workflow again, use
 **Re-run jobs** on its run; to run it on a branch, push the branch or open a draft pull request.
 
 The self-CI enforces the rule: `.github/scripts/check_triggers.py` fails on any other trigger in
 `.github/workflows/` or in a template's workflows.
 
-## The one scheduled workflow
+## The scheduled workflows
+
+There are two, each a caller with a fixed file name. Everything else that uses `schedule` or `workflow_dispatch`
+fails, and a new scheduled workflow needs a new exception here, with its reasoning.
+
+### The weekly floor-compiler check
 
 A driver checks every week that it still builds with the oldest compilers it promises (GCC 10 and Clang 13). The
 caller is `weekly-floor-compilers.yml` and may use `schedule` and `workflow_dispatch`; no other file may. It is safe
@@ -36,7 +42,35 @@ because a scheduled run of it cannot write anything a later run restores, and ca
 
 `check_triggers.py` enforces all of this: the file name is the only place `schedule` or `workflow_dispatch` is
 accepted, a file of that name that does more than the call fails, and the reusable fails on a cache step, a `ref`,
-a secret or an action not pinned by SHA. A new scheduled workflow needs a new exception here, with its reasoning.
+a secret or an action not pinned by SHA.
+
+### The weekly vulnerability scan
+
+A library that publishes a vulnerability snapshot with its documentation (kb-core) checks every week that the data is
+fresh. The caller is `weekly-vulnerabilities.yml` and may use `schedule` and `workflow_dispatch`; no other file may.
+Unlike the floor check, the run needs a write token: the scan opens one issue (`issues: write`) and the rebuilt site
+is pushed to the deployment branch (`contents: write`). It is safe for the same reason as the floor check, that the
+run cannot leave anything a later run restores, and cannot run code a pull request chose:
+
+- it is only a call of `ci-vulnerabilities.yml`, either the local file (`./.github/workflows/ci-vulnerabilities.yml`,
+  the default branch's own copy) or a copy pinned by a 40-hex commit SHA, never a tag or branch: no steps of its own,
+  no secrets, no `ref:` input;
+- top-level `permissions: {}`, and for the called job exactly `contents: write` and `issues: write`;
+- the reusable has no `actions/cache` or other restore or save step and no `cache:` input other than `false` (a
+  call of `ru-mkdocs-publish` passes `cache: false`, see [its guide](ru-mkdocs-publish.md#runs-that-use-no-cache)),
+  so the run leaves nothing in the cache; a call of `ci-docs.yml` that passes `refresh_vulnerabilities: true` must
+  pass `cache: false` too;
+- the reusable checks out the default branch only, with no `ref:` input, and every action in it is pinned by a commit
+  SHA;
+- every job of the reusable that has `contents: write` (the publish) is guarded by
+  `github.ref == format('refs/heads/{0}', github.event.repository.default_branch)`, so a scheduled or dispatched run
+  on any other branch cannot publish. A manual dispatch of the caller from another branch therefore only scans.
+
+`check_triggers.py` enforces all of this: the file name is the only place `schedule` or `workflow_dispatch` is
+accepted for the scan, a file of that name that does more than the call, asks for other permissions or calls anything
+else fails, and `ci-vulnerabilities.yml` fails on a cache step, a `cache:` input, a `ref`, a secret, an unpinned action
+or an unguarded write job. A copy of the caller in the other direction does not widen anything: the floor caller still
+accepts only `contents: read`.
 
 ## Why
 

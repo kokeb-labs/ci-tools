@@ -19,6 +19,9 @@
   {#- Inter and JetBrains Mono come from this site (assets/kokeb/fonts.css), never a third party. Non-blocking: the
       stylesheet loads as print media and switches to all once it is in; until then the fallback faces in kokeb.css
       (same metrics) show. -#}
+  {#- The Latin Inter face is the one nearly every page needs; fetching it early shortens the time the fallback face
+      shows before the text is set again (layout shift). -#}
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="{{ 'assets/kokeb/inter-latin-wght-normal.woff2' | url }}">
   <link rel="stylesheet" media="print" onload="this.media='all'" href="{{ 'assets/kokeb/fonts.css' | url }}">
   <noscript><link rel="stylesheet" href="{{ 'assets/kokeb/fonts.css' | url }}"></noscript>
 {% endblock %}
@@ -54,6 +57,47 @@
       fix();
       if (window.MutationObserver) {
         new MutationObserver(fix).observe(document.body, {childList: true, subtree: true});
+      }
+    })();
+  </script>
+  {#- Material wraps every table in a div.md-typeset__scrollwrap that scrolls sideways when the table is wider than the
+      column. A scroll container the keyboard cannot reach fails axe `scrollable-region-focusable`, so a wrapper that
+      overflows becomes a focusable region named after the heading above its table, and keys scroll it. -#}
+  <script>
+    (function () {
+      function name(wrap) {
+        var el = wrap, text = "";
+        while (el && !text) {
+          var prev = el.previousElementSibling;
+          while (prev && !/^H[1-6]$/.test(prev.tagName)) { prev = prev.previousElementSibling; }
+          if (prev) { text = (prev.textContent || "").replace(/[\u00b6#]/g, "").replace(/\s+/g, " ").trim(); }
+          el = prev ? null : el.parentElement;
+          if (el && el.classList && el.classList.contains("md-content__inner")) { el = null; }
+        }
+        return (text ? text + ": table" : "Table") + ", scrolls sideways";
+      }
+      function scrollable() {
+        var wraps = document.querySelectorAll(".md-typeset__scrollwrap");
+        for (var i = 0; i < wraps.length; i++) {
+          var w = wraps[i];
+          if (w.scrollWidth > w.clientWidth + 1) {
+            w.setAttribute("tabindex", "0");
+            w.setAttribute("role", "region");
+            if (!w.getAttribute("aria-label")) { w.setAttribute("aria-label", name(w)); }
+          } else if (w.getAttribute("role") === "region") {
+            w.removeAttribute("tabindex");
+            w.removeAttribute("role");
+            w.removeAttribute("aria-label");
+          }
+        }
+      }
+      var timer = 0;
+      function later() { clearTimeout(timer); timer = setTimeout(scrollable, 50); }
+      scrollable();
+      window.addEventListener("resize", later);
+      window.addEventListener("load", later);
+      if (window.MutationObserver) {
+        new MutationObserver(later).observe(document.body, {childList: true, subtree: true});
       }
     })();
   </script>

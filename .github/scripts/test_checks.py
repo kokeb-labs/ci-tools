@@ -537,6 +537,108 @@ class Triggers(unittest.TestCase):
                 ("secrets", ok + "      - run: echo ${{ secrets.TOKEN }}\n")):
             self.assertEqual(self.check("ru-floor-compilers.yml", text).returncode, 1, label)
 
+    VULN_CALLER = textwrap.dedent("""\
+        name: Weekly vulnerability scan
+        on:
+          schedule:
+            - cron: "17 5 * * 1"
+          workflow_dispatch:
+        permissions: {}
+        jobs:
+          scan:
+            uses: ./.github/workflows/ci-vulnerabilities.yml
+            permissions:
+              contents: write
+              issues: write
+        """)
+    SHA = "3d3c42e5aac5ba805825da76410c181273ba90b1"
+    VULN_REUSABLE = textwrap.dedent("""\
+        on:
+          push:
+            branches: [main]
+          workflow_call:
+        permissions: {}
+        jobs:
+          scan:
+            runs-on: ubuntu-24.04
+            permissions:
+              contents: read
+              issues: write
+            steps:
+              - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+          publish:
+            needs: scan
+            if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+            permissions:
+              contents: write
+            uses: ./.github/workflows/ci-docs.yml
+            with:
+              refresh_vulnerabilities: true
+              cache: false
+        """)
+
+    def test_the_vulnerability_caller_may_be_scheduled(self):
+        self.assertEqual(self.check("weekly-vulnerabilities.yml", self.VULN_CALLER).returncode, 0)
+        pinned = self.VULN_CALLER.replace(
+            "./.github/workflows/ci-vulnerabilities.yml",
+            f"kokeb-labs/kb-core/.github/workflows/ci-vulnerabilities.yml@{self.SHA}")
+        self.assertEqual(self.check("weekly-vulnerabilities.yml", pinned).returncode, 0)
+
+    def test_the_vulnerability_exception_is_only_for_its_file_name(self):
+        for name in ("nightly.yml", "ci-vulnerabilities.yml", "weekly-floor-compilers.yml", "weekly-vulnerability.yml"):
+            self.assertEqual(self.check(name, self.VULN_CALLER).returncode, 1, name)
+        # and the floor caller keeps its own rules: it may not call the vulnerability scan with write permissions
+        self.assertEqual(self.check("weekly-floor-compilers.yml", self.CALLER.replace(
+            "contents: read", "contents: write\n      issues: write")).returncode, 1)
+
+    def test_the_vulnerability_caller_must_stay_narrow(self):
+        for label, text in (
+                ("steps", self.VULN_CALLER + "    steps: []\n"),
+                ("secrets", self.VULN_CALLER + "    secrets: inherit\n"),
+                ("ref input", self.VULN_CALLER + "    with:\n      ref: ${{ github.event.inputs.x }}\n"),
+                ("no job permissions", self.VULN_CALLER.replace(
+                    "    permissions:\n      contents: write\n      issues: write\n", "")),
+                ("read only", self.VULN_CALLER.replace("contents: write", "contents: read")),
+                ("more than needed", self.VULN_CALLER + "      pull-requests: write\n"),
+                ("no issues", self.VULN_CALLER.replace("      issues: write\n", "")),
+                ("top-level write", self.VULN_CALLER.replace("permissions: {}", "permissions:\n  contents: write")),
+                ("other reusable", self.VULN_CALLER.replace("ci-vulnerabilities", "ci-docs")),
+                ("tag-pinned remote", self.VULN_CALLER.replace(
+                    "./.github/workflows/ci-vulnerabilities.yml",
+                    "kokeb-labs/kb-core/.github/workflows/ci-vulnerabilities.yml@v1")),
+                ("branch-pinned remote", self.VULN_CALLER.replace(
+                    "./.github/workflows/ci-vulnerabilities.yml",
+                    "kokeb-labs/kb-core/.github/workflows/ci-vulnerabilities.yml@main")),
+                ("pull_request_target too", self.VULN_CALLER.replace(
+                    "  workflow_dispatch:", "  workflow_dispatch:\n  pull_request_target:"))):
+            self.assertEqual(self.check("weekly-vulnerabilities.yml", text).returncode, 1, label)
+
+    def test_the_vulnerability_reusable_accepts_the_guarded_pinned_cache_free_scan(self):
+        self.assertEqual(self.check("ci-vulnerabilities.yml", self.VULN_REUSABLE).returncode, 0)
+
+    def test_the_vulnerability_reusable_has_no_cache_ref_secret_unpinned_action_or_open_publish(self):
+        ok = self.VULN_REUSABLE
+        sha = self.SHA
+        for label, text in (
+                ("tag pin", ok.replace(sha, "v4")),
+                ("cache action", ok.replace("    steps:", f"    steps:\n      - uses: actions/cache@{sha}")),
+                ("pip cache", ok.replace(f"      - uses: actions/checkout@{sha}",
+                                         f"      - uses: actions/setup-python@{sha}\n        with:\n          cache: pip")),
+                ("cache true to the docs", ok.replace("cache: false", "cache: true")),
+                ("no cache input to the docs", ok.replace("      cache: false\n", "")),
+                ("ref", ok.replace(f"      - uses: actions/checkout@{sha}",
+                                   f"      - uses: actions/checkout@{sha}\n        with:\n          ref: ${{{{ inputs.x }}}}")),
+                ("secrets", ok + "    secrets: inherit\n"),
+                ("publish without a guard", ok.replace(
+                    "    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}\n", "")),
+                ("publish guarded by something else", ok.replace("github.ref ==", "github.event_name =="))):
+            self.assertEqual(self.check("ci-vulnerabilities.yml", text).returncode, 1, label)
+
+    def test_a_cache_free_docs_call_that_does_not_refresh_needs_no_cache_input(self):
+        text = self.VULN_REUSABLE.replace("      refresh_vulnerabilities: true\n", "").replace(
+            "      cache: false\n", "")
+        self.assertEqual(self.check("ci-vulnerabilities.yml", text).returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

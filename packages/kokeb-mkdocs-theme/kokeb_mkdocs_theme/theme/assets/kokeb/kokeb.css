@@ -283,6 +283,19 @@
   border-radius: 0.3rem;
 }
 
+/* On a phone the version chip stays small so the site name keeps its room in the header. */
+@media screen and (max-width: 37.4375em) {
+  .md-version__current {
+    padding: 0.05rem 0.3rem;
+    font-size: 0.65rem;
+    margin-left: 0.2rem;
+  }
+  .md-header__title {
+    margin-left: 0.4rem;
+    margin-right: 0.2rem;
+  }
+}
+
 .md-version__list {
   border-radius: 0.5rem;
 }
@@ -487,6 +500,13 @@
 
 .md-typeset__table {
   padding: 0 0.8rem;
+}
+
+/* A table wider than the column scrolls inside its wrapper; main.html makes that wrapper a focusable region so the
+   keyboard can scroll it. The focus ring shows only for keyboard focus. */
+.md-typeset__scrollwrap[role="region"]:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: -2px;
 }
 
 /* Register / bit-field tables: { .kb-registers } on the paragraph before is not possible in Markdown, so a table

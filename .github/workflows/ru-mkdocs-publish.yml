@@ -105,6 +105,13 @@ on:
         description: "Capture the home page and the first navigation pages at 375 and 1280 px, light and dark (artifact)."
         type: boolean
         default: true
+      cache:
+        description: >-
+          false: the run reads and writes no Actions cache (no pip cache on setup-python, no cache for the lychee
+          binary, no cache for the Lighthouse and screenshot tools); the tools are downloaded every time. Use it for a
+          scheduled run, which executes in the default branch's context (docs/triggers.md).
+        type: boolean
+        default: true
       versioning:
         description: >-
           true: a versioned site, published with mike (default branch -> dev_version, v* tag -> that version, with
@@ -192,7 +199,7 @@ jobs:
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: ${{ inputs.python_version }}
-          cache: pip
+          cache: ${{ inputs.cache && 'pip' || '' }}
           cache-dependency-path: |
             ${{ inputs.requirements }}
             ${{ inputs.mkdocs_config }}
@@ -282,7 +289,7 @@ jobs:
       # lychee is installed here, pinned and hash-checked, and kept in the Actions cache; lychee-action downloaded
       # it from GitHub releases on every run, so a release outage (HTTP 5xx) failed the job.
       - name: Restore lychee
-        if: ${{ inputs.link_check }}
+        if: ${{ inputs.link_check && inputs.cache }}
         id: lychee_bin
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
@@ -354,6 +361,7 @@ jobs:
       # This job has no checkout, so setup-python's pip cache (keyed on a file in it) cannot be used: pip's
       # wheels, the npm download of @lhci/cli and Playwright's Chromium are cached here by what decides them.
       - name: Cache the tool downloads
+        if: ${{ inputs.cache }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
           path: |
@@ -462,7 +470,7 @@ jobs:
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: ${{ inputs.python_version }}
-          cache: pip
+          cache: ${{ inputs.cache && 'pip' || '' }}
           cache-dependency-path: |
             ${{ inputs.requirements }}
             ${{ inputs.mkdocs_config }}
