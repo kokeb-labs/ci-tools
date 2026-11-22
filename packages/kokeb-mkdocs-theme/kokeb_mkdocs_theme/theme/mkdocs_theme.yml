@@ -56,3 +56,7 @@ features:
   - content.action.edit
   - content.tabs.link
   - toc.follow
+
+# The built-in `search` plugin adds search/main.js (a script for the stock MkDocs themes) unless this is set; on
+# Material it throws "base_url is not defined" on every page. Material has its own search; the index is still built.
+search_index_only: true

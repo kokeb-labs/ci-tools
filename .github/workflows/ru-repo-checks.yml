@@ -457,7 +457,8 @@ jobs:
         run: |
           set -euo pipefail
           # Only push, pull_request, merge_group and workflow_call may start a workflow; the one scheduled
-          # exception is weekly-floor-compilers.yml, and only while it is nothing but the floor-compiler call.
+          # exceptions are weekly-floor-compilers.yml (nothing but the floor-compiler call) and
+          # weekly-vulnerabilities.yml (nothing but the vulnerability-scan call); docs/triggers.md has both.
           # docs/triggers.md has the policy.
           if compgen -G "$CHECK_PATH/.github/workflows/*.yml" > /dev/null; then
             "$RUNNER_TEMP/h/bin/python" .handbook-check/.github/scripts/check_triggers.py "$CHECK_PATH"/.github/workflows/*.yml

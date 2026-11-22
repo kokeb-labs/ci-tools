@@ -47,6 +47,19 @@ Markdown extensions, strict validation and the version selector.
 | Selector | Version selector in the header, banner on old versions | None |
 | Set by | Default | `versioning: false` on the workflow; the plugin knows `<org>.github.io` by itself |
 
+## What the theme does in the browser
+
+- **Repository link without GitHub facts.** The header link to the repository is plain. Material would fetch the
+  latest release, stars and forks from `api.github.com` in every reader's browser, which logs a console error on each
+  page while the repository has only a pre-release (`releases/latest` answers 404). A site that wants the facts sets
+  `extra: {kokeb: {repo_facts: true}}` in its `mkdocs.yml`.
+- **No console errors on a versioned site.** Material's older-version banner script builds its scope with
+  `new URL(".")`, which throws on every page; the theme resolves it against the page address.
+- **Wide tables can be scrolled from the keyboard.** A table wider than the column scrolls inside a wrapper; the
+  theme makes that wrapper a focusable region (`tabindex="0"`, `role="region"`) named after the heading above the
+  table, and shows a focus ring.
+- **A small version chip on a phone**, so the site name keeps its room in the header.
+
 ## The `kokeb-docs` command
 
 | Command | Does |

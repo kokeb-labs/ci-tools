@@ -1,0 +1,16 @@
+{#-
+  Material's repository link (mkdocs-material 9.8.0, partials/source.html). Material fills in the repository's latest
+  release, stars and forks from api.github.com in the browser for an element marked data-md-component="source". A
+  repository whose only release is a pre-release answers `releases/latest` with 404, which every page then logs as a
+  console error, and a reader's address reaches GitHub's API. The facts are therefore off; a site that wants them
+  sets `extra.kokeb.repo_facts: true`. Keep in step with Material when its version changes.
+-#}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source"{% if (config.extra.kokeb or {}).repo_facts %} data-md-component="source"{% endif %}>
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+  </div>
+</a>
