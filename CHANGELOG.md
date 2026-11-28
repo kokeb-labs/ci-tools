@@ -15,6 +15,15 @@ that heading.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`ru-floor-compilers`**: the test step ran `ctest --test-dir`, which the CMake 3.18 of the GCC 10 and Clang 13 floor
+  images does not know, so a floor job could build and run no test. It now runs `cd build-floor && ctest
+  --no-tests=error --output-on-failure`, and fails when the project registers no test.
+- **`ru-mkdocs-publish`**: a push to a branch other than the default branch (a `release/*` or feature branch) with
+  `deploy: true` failed the `Publish` job with "publishes only from main or a vX.Y[.Z] tag". The job is now skipped
+  on such refs, and a `Publish (skipped)` job says why. Pull requests, `main` and `v*` tags behave as before.
+
 ## [1.27.1] - 2026-11-21
 
 ### Fixed

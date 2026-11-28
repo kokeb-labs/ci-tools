@@ -110,4 +110,9 @@ jobs:
       - name: Build
         run: cmake --build build-floor --parallel
       - name: Test
-        run: ctest --test-dir build-floor --output-on-failure
+        run: |
+          set -euo pipefail
+          # Not `ctest --test-dir`: the floor images ship CMake 3.18, which does not know it (added in 3.20).
+          # --no-tests=error makes a build that registered no test fail, instead of passing with nothing run.
+          cd build-floor
+          ctest --no-tests=error --output-on-failure
