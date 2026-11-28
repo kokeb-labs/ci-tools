@@ -25,6 +25,9 @@ for extra plugins.
 | Push of a `vX.Y.Z` tag | Yes | Yes | Version `vX.Y.Z` (`release_version: minor`: `X.Y`), and `latest` moves to it |
 | Push of a `vX.Y.Z-rc.N` tag (any tag with `-`) | Yes | Yes | Version `vX.Y.Z-rc.N`; `latest` stays where it is |
 
+Any other push (a feature or `release/*` branch) builds and checks, and the `Publish` job is skipped: a
+`Publish (skipped)` job says why in its summary, and the check is green, not red.
+
 With `versioning: false` (the organisation portal) there are no versions: see
 [Unversioned sites](#unversioned-sites).
 

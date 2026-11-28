@@ -35,7 +35,7 @@ read from the workflow files.
 | [`ru-layering.yml`](ru-layering.md) | `contents: read` | `check`: `contents: read` |
 | [`ru-markdown-lint.yml`](ru-markdown-lint.md) | `contents: read` | `markdownlint`: `contents: read` |
 | [`ru-misra.yml`](ru-misra.md) | `contents: read` | `plan`: `contents: read`<br>`scan`: `contents: read`<br>`report`: `contents: read` |
-| [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`deploy`: `contents: write` |
+| [`ru-mkdocs-publish.yml`](ru-mkdocs-publish.md) | `contents: write` | `build`: `contents: read`<br>`quality`: `contents: read`<br>`publish-skipped`: none<br>`deploy`: `contents: write` |
 | [`ru-mutation.yml`](ru-mutation.md) | `contents: read` | `plan`: `contents: read`<br>`run`: `contents: read`<br>`report`: `contents: read` |
 | [`ru-pin-hygiene.yml`](ru-pin-hygiene.md) | `contents: read` | `pins`: `contents: read` |
 | [`ru-release-firmware.yml`](ru-release-firmware.md) | `actions: read`, `contents: write` | `release`: `actions: read`, `contents: write` |

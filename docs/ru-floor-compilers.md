@@ -9,7 +9,9 @@ workflow builds and tests the project with exactly those, so the promise is chec
 
 Each compiler runs in its own job and both always run. A job first checks that the image holds the compiler the
 `driver.yml` promises (an image of another major version fails with a message that names both), then configures,
-builds and runs `ctest`.
+builds and runs `ctest` from the build directory (`cd build-floor && ctest`, because the
+images ship CMake 3.18, which has no `--test-dir`). A project that registers no test fails the job
+(`--no-tests=error`): a floor that builds but runs nothing proves nothing.
 
 ## Caller
 
